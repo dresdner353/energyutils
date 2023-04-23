@@ -71,7 +71,7 @@ Sun Apr 23 15:39:58 2023 Writing hour data to Desktop/Reports/HDF_example_hour.c
 ## Tariff Output Files
 These files detail the total usage and costs/credit for the defined tariffs. If you have specified a FIT rate, that will appear in this file. You get two formats for the same output, one JSONL and one CSV.
 
-JSON:
+JSONL:
 ```json
 {"tariff": "Boost", "rate": 0.1228, "import": 22.3945, "import_cost": 2.7500, "export": 0, "export_credit": 0}
 {"tariff": "Day", "rate": 0.4241, "import": 288.6415, "import_cost": 122.4129, "export": 0, "export_credit": 0}
