@@ -9,6 +9,9 @@ The ```shelly_em_data_util.py``` script is designed to retrieve Shelly EM data f
 * Obtain a cloud API auth key from your Shelly account.
 * Obtain your Shelly EM device ID
 * Get the recommended Shelly Cloud hostname from your account
+* The expected CT clamp wiring is:
+   - P1 -> Grid Import, clamp direction for incoming current from the grid
+   - P2 -> Solar Generation, clamp direction for incoming current from the solar inverter
 
 ## Usage
 ```
