@@ -68,7 +68,7 @@ Sun Apr 23 15:39:58 2023 Writing hour data to Desktop/Reports/HDF_example_hour.j
 Sun Apr 23 15:39:58 2023 Writing hour data to Desktop/Reports/HDF_example_hour.csv
 ```
 
-## All Data Files 
+## All Data Files (HDF_example_all.*)
 The all data file shows the lowest granularity of usage and costs/credit combined per hour. These are the only output files that are NOT filtered by the start/end script options. So whatever is in the HDF file will end up in the all data files regardless.
 
 The "ts" field here is an EPOCH timestamp (seconds since 1/1/1970 UTC). You also have a "datetime" field which is a "YYYY/MM/DD HH:MM:SS" format string in local time. This time represents the start of the hour being represented. So the very first row shown below is the usage during 11pm local time on that specific day. 
@@ -169,7 +169,7 @@ Spreadsheet view of this CSV:
 2022/12/10 11:00:00,20221210,0,0,11,1.895,0.804,202212,Day,0.424,1670670000,2022
 2022/12/10 12:00:00,20221210,0,0,12,1.245,0.528,202212,Day,0.424,1670673600,2022
 
-## Tariff Files 
+## Tariff Files (HDF_example_tariff.*)
 The tariff files detail the total period usage and costs/credit for the defined tariffs. If you have specified a FIT rate, that will also appear in this file with the name 'FIT'. These files help most when comparing usage/costs against a bill received for the same period.
 
 JSONL:
@@ -189,7 +189,7 @@ export,export_credit,import,import_cost,rate,tariff
 0,0,74.496,15.585,0.209,Night
 ```
 
-## Hourly Files
+## Hourly Files (HDF_example_hour.*)
 The hourly files show the combined total import and export per common hour across the entire period. There will only be 24 entries in these files. 
 
 JSON:
@@ -247,7 +247,7 @@ CSV:
 0,0,23,14.995,3.137
 ```
 
-## Daily Files
+## Daily Files (HDF_example_day.*)
 The daily files show the total import and export per full day along with cost/credit details.
 
 JSON:
@@ -313,7 +313,7 @@ CSV:
 20230328,0,0,12.192,4.273
 ```
 
-## Monthly Files
+## Monthly Files (HDF_example_month.*)
 The monthly files show the total import and export per full calendar month along with cost/credit details.
 
 JSON:
@@ -326,7 +326,7 @@ export,export_credit,import,import_cost,month
 0,0,385.532,140.748,202303
 ```
 
-## Yearly Files
+## Yearly Files (HDF_example_year.*)
 The yearly files show the total import and export per full calendar year along with cost/credit details.
 
 JSON:
