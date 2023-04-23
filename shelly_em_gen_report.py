@@ -124,6 +124,10 @@ def add_worksheet(
 
 # main()
 
+# default storage dir for data
+home = os.path.expanduser('~')
+default_idir = home + '/.shellyemdata'   
+
 parser = argparse.ArgumentParser(
         description = 'Shelly EM Report Generator'
         )
@@ -135,6 +139,13 @@ parser.add_argument(
         )
 
 parser.add_argument(
+        '--idir', 
+        help = 'Input Directory for data files', 
+        default = default_idir,
+        required = False
+        )
+
+parser.add_argument(
         '--timezone', 
         help = 'Output Timezone', 
         default = 'Europe/Dublin',
@@ -142,8 +153,15 @@ parser.add_argument(
         )
 
 parser.add_argument(
-        '--tariff', 
-        help = 'kwh Tariff <HH:HH:rate/kWh> <HH:HH:rate/kWh> ...', 
+        '--tariff_rate', 
+        help = 'kwh Tariff <NAME:rate/kWh> <NAME:rate/kWh> ...', 
+        nargs = '+',
+        required = False
+        )
+
+parser.add_argument(
+        '--tariff_interval', 
+        help = 'Time Interval for Tariff <HH:HH:Tariff Name> <HH:HH:Tariff Name> ...', 
         nargs = '+',
         required = False
         )
@@ -158,57 +176,82 @@ parser.add_argument(
 args = vars(parser.parse_args())
 report_file_name = args['file']
 timezone = args['timezone']
-tariff_list = args['tariff']
-gv_verbose = args['verbose']
+tariff_list = args['tariff_rate']
+interval_list = args['tariff_interval']
+idir = args['idir']
+verbose = args['verbose']
 
-# storage dir for data
-home = os.path.expanduser('~')
-data_dir = home + '/.shellyemdata'   
-
-# tariffs
-tariff_rec_list = []
+# tariffs 
+tariff_dict = {}
 if tariff_list:
     for tariff_str in tariff_list:
         fields = tariff_str.split(':')
+        if len(fields) == 2:
+            tariff_dict[fields[0]] = float(fields[1])
+
+    log_message(
+            verbose,
+            'Tariff Rates: %s' % (
+                tariff_dict)
+            )
+
+# tariff intervals
+tarff_interval_dict = {}
+if interval_list:
+    for interval_str in interval_list:
+        fields = interval_str.split(':')
         if len(fields) == 3:
-            tariff_rec = {}
-            tariff_rec['start_hh'] = int(fields[0])
-            tariff_rec['end_hh'] = int(fields[1])
-            tariff_rec['kwh_rate'] = float(fields[2])
-            tariff_rec_list.append(tariff_rec)
+            start_hh = int(fields[0])
+            end_hh = int(fields[1])
+            tariff_name = fields[2]
+
+            while start_hh != end_hh:
+                if tariff_name in tariff_dict:
+                    tarff_interval_dict[start_hh] = tariff_name
+                    start_hh = (start_hh + 1) % 24
+    log_message(
+            verbose,
+            'Tariff Intervals: %s' % (
+                tarff_interval_dict)
+            )
+
+    if len(tarff_interval_dict) != 24:
+        log_message(
+                1,
+                'WARNING: Tariff interval data present for only %d/24 hours' % (
+                    len(tarff_interval_dict))
+                )
 
 
 # load all data
 data_dict = {}
 file_count = 0
-for filename in os.listdir(data_dir):
+for filename in os.listdir(idir):
     # only loading .jsonl files
     if not filename.endswith(".jsonl"):
         continue
 
     file_count += 1
-    full_path = '%s/%s' % (data_dir, filename)
+    full_path = '%s/%s' % (idir, filename)
     with open(full_path) as fp:
         for line in fp:
             rec = json.loads(line)
-            # Render to UTC datetime
+            data_dict[rec['ts']] = rec
+
+            # Render epoch ts to UTC datetime
             rec['datetime'] = datetime.datetime.fromtimestamp(rec['ts'])
             # Render to local time zone
             rec['datetime'] = rec['datetime'].astimezone(zoneinfo.ZoneInfo(timezone))
             # strip out timezone (xlsxwriter will not work with it)
             rec['datetime'] = rec['datetime'].replace(tzinfo=None)
 
-            dt_hh = rec['datetime'].hour
+            dt_hour = rec['datetime'].hour
             rec['cost'] = 0
-            for tariff_rec in tariff_rec_list:
-                if (dt_hh >= tariff_rec['start_hh'] and 
-                    dt_hh < tariff_rec['end_hh']):
-                    # calculate as kWh times kWh rate
-                    rec['cost'] = (rec['import'] / 1000) * tariff_rec['kwh_rate'] 
-                    break
-
-
-            data_dict[rec['ts']] = rec
+            if dt_hour in tarff_interval_dict:
+                # calculate as kWh times kWh rate
+                rec['tariff_name'] = tarff_interval_dict[dt_hour]
+                rec['tariff_rate'] = tariff_dict[rec['tariff_name']]
+                rec['cost'] = rec['import'] * rec['tariff_rate']
 
 log_message(
         1,
@@ -283,8 +326,7 @@ field_dict = {
             'width' : 15,
             'header_format' : 'general',
             'format' : 'num',
-            'field' : 'import',
-            'conversion' : 'value / 1000'
+            'field' : 'import'
             },
         'Cost' : {
             'col' : 2,
@@ -299,7 +341,6 @@ field_dict = {
             'header_format' : 'general',
             'format' : 'num',
             'field' : 'export',
-            'conversion' : 'value / 1000'
             },
         'Solar (kWh)' : {
             'col' : 4,
@@ -307,7 +348,6 @@ field_dict = {
             'header_format' : 'general',
             'format' : 'num',
             'field' : 'solar',
-            'conversion' : 'value / 1000'
             },
         'Consumed (kWh)' : {
             'col' : 5,
@@ -315,7 +355,6 @@ field_dict = {
             'header_format' : 'general',
             'format' : 'num',
             'field' : 'consumed',
-            'conversion' : 'value / 1000'
             },
         'Avg Import (kWh)' : {
             'col' : 6,
@@ -323,7 +362,6 @@ field_dict = {
             'header_format' : 'general',
             'format' : 'num',
             'field' : 'avg_import',
-            'conversion' : 'value / 1000'
             },
         'Avg Export (kWh)' : {
             'col' : 7,
@@ -331,7 +369,6 @@ field_dict = {
             'header_format' : 'general',
             'format' : 'num',
             'field' : 'avg_export',
-            'conversion' : 'value / 1000'
             },
         'Avg Solar (kWh)' : {
             'col' : 8,
@@ -339,7 +376,6 @@ field_dict = {
             'header_format' : 'general',
             'format' : 'num',
             'field' : 'avg_solar',
-            'conversion' : 'value / 1000'
             },
         'Avg Consumed (kWh)' : {
             'col' : 9,
@@ -347,7 +383,6 @@ field_dict = {
             'header_format' : 'general',
             'format' : 'num',
             'field' : 'avg_consumed',
-            'conversion' : 'value / 1000'
             },
         'Avg Cost' : {
             'col' : 10,

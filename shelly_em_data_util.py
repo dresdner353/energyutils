@@ -110,7 +110,7 @@ parser.add_argument(
 
 parser.add_argument(
         '--odir', 
-        help = 'Output Directory', 
+        help = 'Output Directory for generated files', 
         default = default_odir,
         required = False
         )
