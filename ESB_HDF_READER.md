@@ -37,7 +37,7 @@ Notes:
 * Timezone can be asserted with the --timezone option. By default, this is set to Europe/Dublin. The ESB HDF data comes in local Europe/Dublin timezone. So this option should not be required.
 * Electricity tariffs can be set using the --tariff_rate option and provided multiple times per separate tariff
 * Tariff intervals are defined using the --tariff_interval option that sets the start and end hour and maps to the named tariff rate
-* A FIT rate for solar export may be set using the --fit_rate
+* A FIT rate for microgen export may be set using the --fit_rate
 * Decimal places can be controlled using the --decimal_places option and this defaults to 3 
 
 
