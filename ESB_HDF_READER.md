@@ -1,6 +1,6 @@
 # ESB HDF Reader
 
-The Electricity Supply Board in Ireland have a data download service available to customers with smart meters. They refer to this data as their harmonised data format. It's essentially power import and export data provided in 30-minute intervals and downloaded in CSV files. It has been an awkward data source in general as the power usage values are timestamped n local time when the usage period ended and also need to be summed up per hour and divided by 2 to get real kWh values.
+The Electricity Supply Board in Ireland have a data download service available to customers with smart meters. They refer to this data as their harmonised data format. It's essentially power import and export data provided in 30-minute intervals and downloaded in CSV files. It has been an awkward data source in general as the power usage values are timestamped in local time when the usage period ended and also need to be summed up per half-hour and divided by 2 to get real kWh values.
 
 The ```esb_hdf_reader.py``` script can be used to parse this data into a more analytics or spreadsheet-friendly form. 
 
