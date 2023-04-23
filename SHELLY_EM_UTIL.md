@@ -4,7 +4,7 @@ The Shelly EM is a small ESP8266-based device that can be used to monitor 1-2 AC
 
 The device operates as a client on a WiFi network and may either be accessed directly or via the Shelly Cloud APIs. 
 
-The ```shelly_em_data_util.py``` script is designed to retrieve Shelly EM data from the Shelly Cloud service. For this to be possible, your need to:
+The ```shelly_em_data_util.py``` script is designed to retrieve Shelly EM data from the Shelly Cloud service. For this to be possible, you need to:
 * Enable your Shelly EM for cloud (so it can upload usage data to the cloud)
 * Obtain a cloud API auth key from your Shelly account.
 * Obtain your Shelly EM device ID
