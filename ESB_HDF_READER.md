@@ -31,9 +31,9 @@ optional arguments:
 ```
 
 Notes:
-* The script is run and pointed as a HDF file as downloaded from the ESB (--file file.csv)
+* The script is run and pointed at a HDF file as downloaded from the ESB (--file file.csv)
 * The output directory is set to control where the script dumps all generated JSONL and CSV files (--odir <dir>)
-* The start and end dates (--start/--end) may be optionally set narrow the aggregation to a specific billing period. The days are fully inclusive (from 00:00 on start day to 23:59 on end day)
+* The start and end dates (--start/--end) may be optionally set to narrow the aggregation to a specific time/billing period. The days are fully inclusive (from 00:00 on the start day to 23:59 on the end day)
 * Timezone can be asserted with the --timezone option. By default, this is set to Europe/Dublin. The ESB HDF data comes in local Europe/Dublin timezone. So this option should not be required.
 * Electricity tariffs can be set using the --tariff_rate option and provided multiple times per separate tariff
 * Tariff intervals are defined using the --tariff_interval option that sets the start and end hour and maps to the named tariff rate
