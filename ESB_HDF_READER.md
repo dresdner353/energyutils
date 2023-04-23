@@ -88,6 +88,7 @@ export,export_credit,import,import_cost,rate,tariff
 0,0,74.496,15.585,0.209,Night
 ```
 
+Spreadsheet view of this CSV:
 | export | export_credit | import  | import_cost | rate  | tariff |
 |--------|---------------|---------|-------------|-------|--------|
 | 0      | 0             | 22.395  | 2.75        | 0.123 | Boost  |
