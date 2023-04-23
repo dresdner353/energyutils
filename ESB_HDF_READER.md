@@ -1,6 +1,6 @@
 # ESB HDF Reader
 
-The Electricity Supply Board in Ireland have a data dowload service available to customers with smart meters. They refer to this data as their harmonised data format. It's esentially power import and export data provided in 30-minute intervals and downloaded in CSV files.
+The Electricity Supply Board in Ireland have a data download service available to customers with smart meters. They refer to this data as their harmonised data format. It's essentially power import and export data provided in 30-minute intervals and downloaded in CSV files. It has been an awkward data source in general as the power usage values are timestamped n local time when the usage period ended and also need to be summed up per hour and divided by 2 to get real kWh values.
 
 The ```esb_hdf_reader.py``` script can be used to parse this data into a more analytics or spreadsheet-friendly form. 
 
@@ -43,7 +43,15 @@ Notes:
 
 ## Example Call (using the included example file)
 ```
-python3 energyutils/esb_hdf_reader.py --file energyutils/HDF_example.csv --tariff_rate Day:0.4241 Night:0.2092 Boost:0.1228 --tariff_interval 08:23:Day 23:02:Night 02:04:Boost 04:08:Night --start 20230301 --end 20230328 --fit_rate 0.21 --odir Desktop/Reports
+python3 energyutils/esb_hdf_reader.py \
+            --file energyutils/HDF_example.csv \
+            --tariff_rate Day:0.4241 Night:0.2092 Boost:0.1228 \
+            --tariff_interval 08:23:Day 23:02:Night 02:04:Boost 04:08:Night \
+            --start 20230301 \
+            --end 20230328 \
+            --fit_rate 0.21 \
+            --odir Desktop/Reports
+
 Sun Apr 23 15:39:58 2023 Parsed 3125 hourly records from /Users/cormac/work/energyutils/HDF_example.csv
 Sun Apr 23 15:39:58 2023 Cost Calculation between 2023-03-01T00:00:00+00:00 <--> 2023-03-28T23:59:59+01:00
 Sun Apr 23 15:39:58 2023 Writing tariff data to Desktop/Reports/HDF_example_tariff.jsonl
@@ -63,6 +71,7 @@ Sun Apr 23 15:39:58 2023 Writing hour data to Desktop/Reports/HDF_example_hour.c
 ## Tariff Output Files
 These files detail the total usage and costs/credit for the defined tariffs. If you have specified a FIT rate, that will appear in this file. You get two formats for the same output, one JSONL and one CSV.
 
+JSON:
 ```json
 {"tariff": "Boost", "rate": 0.1228, "import": 22.3945, "import_cost": 2.7500, "export": 0, "export_credit": 0}
 {"tariff": "Day", "rate": 0.4241, "import": 288.6415, "import_cost": 122.4129, "export": 0, "export_credit": 0}
@@ -70,10 +79,18 @@ These files detail the total usage and costs/credit for the defined tariffs. If 
 {"tariff": "Night", "rate": 0.2092, "import": 74.4965, "import_cost": 15.5847, "export": 0, "export_credit": 0}
 ```
 
-```csv
+CSV:
+```
 export,export_credit,import,import_cost,rate,tariff
 0,0,22.395,2.75,0.123,Boost
 0,0,288.641,122.413,0.424,Day
 0,0,0,0,0.21,FIT
 0,0,74.496,15.585,0.209,Night
 ```
+
+| export | export_credit | import  | import_cost | rate  | tariff |
+|--------|---------------|---------|-------------|-------|--------|
+| 0      | 0             | 22.395  | 2.75        | 0.123 | Boost  |
+| 0      | 0             | 288.641 | 122.413     | 0.424 | Day    |
+| 0      | 0             | 0       | 0           | 0.21  | FIT    |
+| 0      | 0             | 74.496  | 15.585      | 0.209 | Night  |
