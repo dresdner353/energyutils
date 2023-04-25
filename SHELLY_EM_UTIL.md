@@ -37,7 +37,7 @@ Notes:
 * The --id option sets the device ID to query
 * The output directory is set by --odir but this also defaults to ~/.shellyemdata
 * The --days option sets the number of full days to retrieve since yesterday
-   - Data for any given day is only retrieved when the target YYYYMMDD.jsonl file is not present in the output directory
+   - Data for any given day is only retrieved when the target YYYYMMDD_hour.jsonl file is not present in the output directory
    - So retrieval acts incrementally, only pulling data for days you do not already have. 
 * The --auth_key is the API key you retrieved from your account
 * The --incl_today option can be added to additionally request data for the current incomplete day. Normally the latest daya retrieved is yesterday
