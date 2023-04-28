@@ -40,13 +40,37 @@ def add_worksheet(
     worksheet = workbook.add_worksheet(sheet_title)
 
     # Headers
-    for field in field_dict:
+    # key list taken from from dict original 
+    # construction order
+    header_fields = list(field_dict.keys())
 
+    # build set of fields present in data dict
+    data_field_set = set()
+    for key in data_dict:
+        for field in data_dict[key]:
+            data_field_set.add(field)
+
+    # remove headers not represented
+    # needs to use a 2nd set for this
+    header_purge_set = set()
+    for field in header_fields:
+        if not field in data_field_set:
+            header_purge_set.add(field)
+
+    # purge from header list
+    for field in header_purge_set:
+        header_fields.remove(field)
+
+    # print in-use headers and assign columns
+    col = -1
+    for field in header_fields:
+        col += 1
         field_rec = field_dict[field]
+        field_rec['col'] = col
         worksheet.write_string(
                 0, 
                 field_rec['col'], 
-                field,
+                field_rec['title'], 
                 format_dict[field_rec['header_format']])
     
         # column width
@@ -58,55 +82,38 @@ def add_worksheet(
     # Freeze top row
     worksheet.freeze_panes(1, 0)
 
-    # key sort
+    # data incremental sort on key
     key_list = list(data_dict.keys())
     key_list.sort()
     
-    # Rows
+    # Populate Rows in sorted order
     row = 0
     for key in key_list:
         rec = data_dict[key]
-
         row += 1
-        for field in field_dict:
 
+        for field in header_fields:
             field_rec = field_dict[field]
-            data_field = field_rec['field']
-            if data_field in rec:
+            if field in rec:
                 # write cell
-
-                if field_rec['format'] in ['datetime', 'day', 'month', 'year', 'hour']:
-                    value = rec[data_field]
-                    worksheet.write_datetime(
+                if field_rec['format'] == 'datetime':
+                    value = rec[field]
+                    worksheet.write_string(
                             row,
                             field_rec['col'],
                             value,
                             format_dict[field_rec['format']])
 
-                elif field_rec['format'] == 'epoch':
-                    value = rec[data_field]
-                    if 'conversion' in field_rec:
-                        value = eval(field_rec['conversion'])
-                    worksheet.write_number(
-                            row,
-                            field_rec['col'],
-                            value,
-                            format_dict[field_rec['format']])
-
-                elif field_rec['format'] == 'text':
-                    value = rec[data_field]
-                    if 'conversion' in field_rec:
-                        value = eval(field_rec['conversion'])
+                elif field_rec['format'] == 'str':
+                    value = rec[field]
                     worksheet.write_string(
                             row,
                             field_rec['col'],
                             value,
                             format_dict[field_rec['format']])
     
-                elif field_rec['format'] == 'num':
-                    value = rec[data_field]
-                    if 'conversion' in field_rec:
-                        value = eval(field_rec['conversion'])
+                elif field_rec['format'] in ['integer', 'float']:
+                    value = rec[field]
                     worksheet.write_number(
                             row,
                             field_rec['col'],
@@ -114,12 +121,9 @@ def add_worksheet(
                             format_dict[field_rec['format']])
                 else:
                     # unknown field format
+                    # skipped
                     pass
     return
-
-
-
-    
 
 
 # main()
@@ -175,7 +179,6 @@ parser.add_argument(
 
 args = vars(parser.parse_args())
 report_file_name = args['file']
-timezone = args['timezone']
 tariff_list = args['tariff_rate']
 interval_list = args['tariff_interval']
 idir = args['idir']
@@ -238,14 +241,8 @@ for filename in os.listdir(idir):
             rec = json.loads(line)
             data_dict[rec['ts']] = rec
 
-            # Render epoch ts to UTC datetime
-            rec['datetime'] = datetime.datetime.fromtimestamp(rec['ts'])
-            # Render to local time zone
-            rec['datetime'] = rec['datetime'].astimezone(zoneinfo.ZoneInfo(timezone))
-            # strip out timezone (xlsxwriter will not work with it)
-            rec['datetime'] = rec['datetime'].replace(tzinfo=None)
-
-            dt_hour = rec['datetime'].hour
+            # cost calculation based on hour
+            dt_hour = rec['hour']
             rec['cost'] = 0
             if dt_hour in tarff_interval_dict:
                 # calculate as kWh times kWh rate
@@ -271,125 +268,98 @@ general_label_format.set_text_wrap()
 general_label_format.set_bg_color('#C1C1C1')
 format_dict['general'] = general_label_format
 
-num_format = workbook.add_format() 
-num_format.set_num_format("#,##0.000") # with commas
-num_format.set_locked(True) # read-only
-format_dict['num'] = num_format
+str_format = workbook.add_format() 
+str_format.set_num_format("General") # text
+str_format.set_locked(True) # read-only
+format_dict['str'] = str_format
 
-text_format = workbook.add_format({'text_wrap': True}) 
-text_format.set_num_format("0") # normal number, no decimal places
-text_format.set_locked(True) # read-only
-format_dict['text'] = text_format
+float_format = workbook.add_format() 
+float_format.set_num_format("#,##0.000") # with commas
+float_format.set_locked(True) # read-only
+format_dict['float'] = float_format
 
-epoch_format = workbook.add_format({'text_wrap': True}) 
-epoch_format.set_num_format("0") # normal number, no decimal places
-epoch_format.set_locked(True) # read-only
-format_dict['epoch'] = epoch_format
+int_format = workbook.add_format() 
+int_format.set_num_format("0") # no decimal places
+int_format.set_locked(True) # read-only
+format_dict['integer'] = int_format
 
-timestamp_format = workbook.add_format() 
-timestamp_format.set_num_format('yyyy/mm/dd hh:mm:ss')
-format_dict['datetime'] = timestamp_format
-
-hour_format = workbook.add_format() 
-hour_format.set_num_format('hh')
-format_dict['hour'] = hour_format
-
-day_format = workbook.add_format() 
-day_format.set_num_format('yyyy/mm/dd')
-format_dict['day'] = day_format
-
-month_format = workbook.add_format() 
-month_format.set_num_format('yyyy/mm')
-format_dict['month'] = month_format
-
-year_format = workbook.add_format() 
-year_format.set_num_format('yyyy')
-format_dict['year'] = year_format
+datetime_format = workbook.add_format() 
+datetime_format.set_num_format('yyyy/mm/dd hh:mm:ss')
+format_dict['datetime'] = datetime_format
 
 field_dict = {
-        'Date/Time' : {
-            'col' : 0,
+        'ts' : {
+            'title' : 'Timestamp',
+            'width' : 20,
+            'header_format' : 'general',
+            'format' : 'integer',
+            },
+        'datetime' : {
+            'title' : 'Date/Time',
             'width' : 20,
             'header_format' : 'general',
             'format' : 'datetime',
-            'field' : 'datetime'
             },
-        'Hour' : {
-            'col' : 0,
-            'width' : 20,
-            'header_format' : 'general',
-            'format' : 'hour',
-            'field' : 'hour'
-            },
-        'Import (kWh)' : {
-            'col' : 1,
+        'import' : {
+            'title' : 'Import (kWh)',
             'width' : 15,
             'header_format' : 'general',
-            'format' : 'num',
+            'format' : 'float',
             'field' : 'import'
             },
-        'Cost' : {
-            'col' : 2,
+        'cost' : {
+            'title' : 'Cost',
             'width' : 15,
             'header_format' : 'general',
-            'format' : 'num',
-            'field' : 'cost',
+            'format' : 'float',
             },
-        'Export (kWh)' : {
-            'col' : 3,
+        'export' : {
+            'title' : 'Export (kWh)',
             'width' : 15,
             'header_format' : 'general',
-            'format' : 'num',
-            'field' : 'export',
+            'format' : 'float',
             },
-        'Solar (kWh)' : {
-            'col' : 4,
+        'solar' : {
+            'title' : 'Solar (kWh)',
             'width' : 15,
             'header_format' : 'general',
-            'format' : 'num',
-            'field' : 'solar',
+            'format' : 'float',
             },
-        'Consumed (kWh)' : {
-            'col' : 5,
+        'consumed' : {
+            'title' : 'Consumed (kWh)',
             'width' : 15,
             'header_format' : 'general',
-            'format' : 'num',
-            'field' : 'consumed',
+            'format' : 'float',
             },
-        'Avg Import (kWh)' : {
-            'col' : 6,
+        'avg_import' : {
+            'title' : 'Avg Import (kWh)',
             'width' : 15,
             'header_format' : 'general',
-            'format' : 'num',
-            'field' : 'avg_import',
+            'format' : 'float',
             },
-        'Avg Export (kWh)' : {
-            'col' : 7,
+        'avg_export' : {
+            'title' : 'Avg Export (kWh)',
             'width' : 15,
             'header_format' : 'general',
-            'format' : 'num',
-            'field' : 'avg_export',
+            'format' : 'float',
             },
-        'Avg Solar (kWh)' : {
-            'col' : 8,
+        'avg_solar' : {
+            'title' : 'Avg Solar (kWh)',
             'width' : 15,
             'header_format' : 'general',
-            'format' : 'num',
-            'field' : 'avg_solar',
+            'format' : 'float',
             },
-        'Avg Consumed (kWh)' : {
-            'col' : 9,
+        'avg_consumed' : {
+            'title' : 'Avg Consumed (kWh)',
             'width' : 15,
             'header_format' : 'general',
-            'format' : 'num',
-            'field' : 'avg_consumed',
+            'format' : 'float',
             },
-        'Avg Cost' : {
-            'col' : 10,
+        'avg_cost' : {
+            'title' : 'Avg Cost',
             'width' : 15,
             'header_format' : 'general',
-            'format' : 'num',
-            'field' : 'avg_cost',
+            'format' : 'float',
             },
 
         }
@@ -410,33 +380,11 @@ day_hour_dict = {}
 
 for ts in data_dict:
     rec = data_dict[ts]
-    dt = rec['datetime']
 
-    # round datetimes to specific day, month or year
-    day = dt.replace(
-            hour = 0,
-            minute = 0,
-            second = 0,
-            microsecond = 0
-            )
-
-    month = dt.replace(
-                day = 1,
-                hour = 0,
-                minute = 0,
-                second = 0,
-                microsecond = 0)
-
-    year = dt.replace(
-            month = 1,
-            day = 1,
-            hour = 0,
-            minute = 0,
-            second = 0,
-            microsecond = 0
-            )
-
-    hour = dt.hour
+    hour = rec['hour']
+    day = rec['day']
+    month = rec['month']
+    year = rec['year']
 
     if not day in day_dict:
         day_dict[day] = {}
@@ -467,7 +415,7 @@ for ts in data_dict:
 
     if not hour in day_hour_dict:
         day_hour_dict[hour] = {}
-        day_hour_dict[hour]['hour'] = dt
+        day_hour_dict[hour]['datetime'] = hour
         day_hour_dict[hour]['import'] = 0
         day_hour_dict[hour]['export'] = 0
         day_hour_dict[hour]['solar'] = 0
@@ -505,7 +453,8 @@ for ts in data_dict:
     day_hour_dict[hour]['avg_consumed'] = day_hour_dict[hour]['consumed'] / day_hour_dict[hour]['days']
     day_hour_dict[hour]['avg_cost'] = day_hour_dict[hour]['cost'] / day_hour_dict[hour]['days']
 
-field_dict['Date/Time']['format'] = 'day'
+field_dict['datetime']['format'] = 'str'
+field_dict['datetime']['title'] = 'Day'
 add_worksheet(
         workbook,
         'Day',
@@ -513,7 +462,8 @@ add_worksheet(
         field_dict,
         day_dict)
 
-field_dict['Date/Time']['format'] = 'month'
+field_dict['datetime']['format'] = 'str'
+field_dict['datetime']['title'] = 'Month'
 add_worksheet(
         workbook,
         'Month',
@@ -521,7 +471,8 @@ add_worksheet(
         field_dict,
         month_dict)
 
-field_dict['Date/Time']['format'] = 'year'
+field_dict['datetime']['format'] = 'str'
+field_dict['datetime']['title'] = 'Year'
 add_worksheet(
         workbook,
         'Year',
@@ -529,7 +480,8 @@ add_worksheet(
         field_dict,
         year_dict)
 
-field_dict['Date/Time']['format'] = 'hour'
+field_dict['datetime']['format'] = 'integer'
+field_dict['datetime']['title'] = 'Hour'
 add_worksheet(
         workbook,
         '24h',
