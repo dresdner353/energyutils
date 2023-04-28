@@ -300,6 +300,30 @@ field_dict = {
             'header_format' : 'general',
             'format' : 'datetime',
             },
+        'year' : {
+            'title' : 'Year',
+            'width' : 5,
+            'header_format' : 'general',
+            'format' : 'str',
+            },
+        'month' : {
+            'title' : 'Month',
+            'width' : 7,
+            'header_format' : 'general',
+            'format' : 'str',
+            },
+        'day' : {
+            'title' : 'Day',
+            'width' : 8,
+            'header_format' : 'general',
+            'format' : 'str',
+            },
+        'hour' : {
+            'title' : 'Hour',
+            'width' : 5,
+            'header_format' : 'general',
+            'format' : 'integer',
+            },
         'import' : {
             'title' : 'Import (kWh)',
             'width' : 15,
@@ -388,7 +412,7 @@ for ts in data_dict:
 
     if not day in day_dict:
         day_dict[day] = {}
-        day_dict[day]['datetime'] = day
+        day_dict[day]['day'] = day
         day_dict[day]['import'] = 0
         day_dict[day]['export'] = 0
         day_dict[day]['solar'] = 0
@@ -397,7 +421,7 @@ for ts in data_dict:
 
     if not month in month_dict:
         month_dict[month] = {}
-        month_dict[month]['datetime'] = month
+        month_dict[month]['month'] = month
         month_dict[month]['import'] = 0
         month_dict[month]['export'] = 0
         month_dict[month]['solar'] = 0
@@ -406,7 +430,7 @@ for ts in data_dict:
 
     if not year in year_dict:
         year_dict[year] = {}
-        year_dict[year]['datetime'] = year
+        year_dict[year]['year'] = year
         year_dict[year]['import'] = 0
         year_dict[year]['export'] = 0
         year_dict[year]['solar'] = 0
@@ -415,7 +439,7 @@ for ts in data_dict:
 
     if not hour in day_hour_dict:
         day_hour_dict[hour] = {}
-        day_hour_dict[hour]['datetime'] = hour
+        day_hour_dict[hour]['hour'] = hour
         day_hour_dict[hour]['import'] = 0
         day_hour_dict[hour]['export'] = 0
         day_hour_dict[hour]['solar'] = 0
@@ -453,8 +477,6 @@ for ts in data_dict:
     day_hour_dict[hour]['avg_consumed'] = day_hour_dict[hour]['consumed'] / day_hour_dict[hour]['days']
     day_hour_dict[hour]['avg_cost'] = day_hour_dict[hour]['cost'] / day_hour_dict[hour]['days']
 
-field_dict['datetime']['format'] = 'str'
-field_dict['datetime']['title'] = 'Day'
 add_worksheet(
         workbook,
         'Day',
@@ -462,8 +484,6 @@ add_worksheet(
         field_dict,
         day_dict)
 
-field_dict['datetime']['format'] = 'str'
-field_dict['datetime']['title'] = 'Month'
 add_worksheet(
         workbook,
         'Month',
@@ -471,8 +491,6 @@ add_worksheet(
         field_dict,
         month_dict)
 
-field_dict['datetime']['format'] = 'str'
-field_dict['datetime']['title'] = 'Year'
 add_worksheet(
         workbook,
         'Year',
@@ -480,8 +498,6 @@ add_worksheet(
         field_dict,
         year_dict)
 
-field_dict['datetime']['format'] = 'integer'
-field_dict['datetime']['title'] = 'Hour'
 add_worksheet(
         workbook,
         '24h',
