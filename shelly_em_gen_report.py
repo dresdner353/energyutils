@@ -98,7 +98,7 @@ def add_worksheet(
                 # write cell
                 if field_rec['format'] == 'datetime':
                     value = rec[field]
-                    worksheet.write_string(
+                    worksheet.write_datetime(
                             row,
                             field_rec['col'],
                             value,
@@ -150,13 +150,6 @@ parser.add_argument(
         )
 
 parser.add_argument(
-        '--timezone', 
-        help = 'Output Timezone', 
-        default = 'Europe/Dublin',
-        required = False
-        )
-
-parser.add_argument(
         '--tariff_rate', 
         help = 'kwh Tariff <NAME:rate/kWh> <NAME:rate/kWh> ...', 
         nargs = '+',
@@ -171,6 +164,13 @@ parser.add_argument(
         )
 
 parser.add_argument(
+        '--fit_rate', 
+        help = 'FIT Rate rate/kWh', 
+        type = float,
+        required = False
+        )
+
+parser.add_argument(
         '--verbose', 
         help = 'Enable verbose output', 
         action = 'store_true'
@@ -181,6 +181,7 @@ args = vars(parser.parse_args())
 report_file_name = args['file']
 tariff_list = args['tariff_rate']
 interval_list = args['tariff_interval']
+fit_rate = args['fit_rate']
 idir = args['idir']
 verbose = args['verbose']
 
@@ -241,14 +242,30 @@ for filename in os.listdir(idir):
             rec = json.loads(line)
             data_dict[rec['ts']] = rec
 
+            # naive year datetime conversion
+            # replaces existing year, month and day fields
+            ts_dt = datetime.datetime.strptime(
+                    rec['datetime'], 
+                    '%Y/%m/%d %H:%M:%S')
+            rec['datetime'] = ts_dt
+
+            # month and day over-rides with 
+            # locale-specific text versions
+            rec['month'] = ts_dt.strftime('%b %Y')
+            rec['day'] = ts_dt.strftime('%b %d %Y')
+
             # cost calculation based on hour
             dt_hour = rec['hour']
-            rec['cost'] = 0
+            rec['import_cost'] = 0
+            rec['export_credit'] = 0
             if dt_hour in tarff_interval_dict:
                 # calculate as kWh times kWh rate
                 rec['tariff_name'] = tarff_interval_dict[dt_hour]
                 rec['tariff_rate'] = tariff_dict[rec['tariff_name']]
-                rec['cost'] = rec['import'] * rec['tariff_rate']
+                rec['import_cost'] = rec['import'] * rec['tariff_rate']
+
+            if fit_rate:
+                usage_rec['export_credit'] = usage_rec['export'] * fit_rate
 
 log_message(
         1,
@@ -308,13 +325,13 @@ field_dict = {
             },
         'month' : {
             'title' : 'Month',
-            'width' : 7,
+            'width' : 9,
             'header_format' : 'general',
             'format' : 'str',
             },
         'day' : {
             'title' : 'Day',
-            'width' : 8,
+            'width' : 12,
             'header_format' : 'general',
             'format' : 'str',
             },
@@ -331,14 +348,20 @@ field_dict = {
             'format' : 'float',
             'field' : 'import'
             },
-        'cost' : {
-            'title' : 'Cost',
+        'import_cost' : {
+            'title' : 'Import Cost',
             'width' : 15,
             'header_format' : 'general',
             'format' : 'float',
             },
         'export' : {
             'title' : 'Export (kWh)',
+            'width' : 15,
+            'header_format' : 'general',
+            'format' : 'float',
+            },
+        'export_credit' : {
+            'title' : 'Export Credit',
             'width' : 15,
             'header_format' : 'general',
             'format' : 'float',
@@ -379,18 +402,23 @@ field_dict = {
             'header_format' : 'general',
             'format' : 'float',
             },
-        'avg_cost' : {
-            'title' : 'Avg Cost',
+        'avg_import_cost' : {
+            'title' : 'Avg Import Cost',
             'width' : 15,
             'header_format' : 'general',
             'format' : 'float',
             },
-
+        'avg_export_credit' : {
+            'title' : 'Avg Export Credit',
+            'width' : 15,
+            'header_format' : 'general',
+            'format' : 'float',
+            },
         }
 
 add_worksheet(
         workbook,
-        'Hour',
+        'All',
         format_dict,
         field_dict,
         data_dict)
@@ -417,7 +445,8 @@ for ts in data_dict:
         day_dict[day]['export'] = 0
         day_dict[day]['solar'] = 0
         day_dict[day]['consumed'] = 0
-        day_dict[day]['cost'] = 0
+        day_dict[day]['import_cost'] = 0
+        day_dict[day]['export_credit'] = 0
 
     if not month in month_dict:
         month_dict[month] = {}
@@ -426,7 +455,8 @@ for ts in data_dict:
         month_dict[month]['export'] = 0
         month_dict[month]['solar'] = 0
         month_dict[month]['consumed'] = 0
-        month_dict[month]['cost'] = 0
+        month_dict[month]['import_cost'] = 0
+        month_dict[month]['export_credit'] = 0
 
     if not year in year_dict:
         year_dict[year] = {}
@@ -435,7 +465,8 @@ for ts in data_dict:
         year_dict[year]['export'] = 0
         year_dict[year]['solar'] = 0
         year_dict[year]['consumed'] = 0
-        year_dict[year]['cost'] = 0
+        year_dict[year]['import_cost'] = 0
+        year_dict[year]['export_credit'] = 0
 
     if not hour in day_hour_dict:
         day_hour_dict[hour] = {}
@@ -444,38 +475,44 @@ for ts in data_dict:
         day_hour_dict[hour]['export'] = 0
         day_hour_dict[hour]['solar'] = 0
         day_hour_dict[hour]['consumed'] = 0
-        day_hour_dict[hour]['cost'] = 0
+        day_hour_dict[hour]['import_cost'] = 0
+        day_hour_dict[hour]['export_credit'] = 0
         day_hour_dict[hour]['days'] = 0
 
     day_dict[day]['import'] += rec['import']
     day_dict[day]['export'] += rec['export']
     day_dict[day]['solar'] += rec['solar']
     day_dict[day]['consumed'] += rec['consumed']
-    day_dict[day]['cost'] += rec['cost']
+    day_dict[day]['import_cost'] += rec['import_cost']
+    day_dict[day]['export_credit'] += rec['export_credit']
 
     month_dict[month]['import'] += rec['import']
     month_dict[month]['export'] += rec['export']
     month_dict[month]['solar'] += rec['solar']
     month_dict[month]['consumed'] += rec['consumed']
-    month_dict[month]['cost'] += rec['cost']
+    month_dict[month]['import_cost'] += rec['import_cost']
+    month_dict[month]['export_credit'] += rec['export_credit']
 
     year_dict[year]['import'] += rec['import']
     year_dict[year]['export'] += rec['export']
     year_dict[year]['solar'] += rec['solar']
     year_dict[year]['consumed'] += rec['consumed']
-    year_dict[year]['cost'] += rec['cost']
+    year_dict[year]['import_cost'] += rec['import_cost']
+    year_dict[year]['export_credit'] += rec['export_credit']
 
     day_hour_dict[hour]['import'] += rec['import']
     day_hour_dict[hour]['export'] += rec['export']
     day_hour_dict[hour]['solar'] += rec['solar']
     day_hour_dict[hour]['consumed'] += rec['consumed']
-    day_hour_dict[hour]['cost'] += rec['cost']
+    day_hour_dict[hour]['import_cost'] += rec['import_cost']
+    day_hour_dict[hour]['export_credit'] += rec['export_credit']
     day_hour_dict[hour]['days'] += 1
     day_hour_dict[hour]['avg_import'] = day_hour_dict[hour]['import'] / day_hour_dict[hour]['days']
     day_hour_dict[hour]['avg_export'] = day_hour_dict[hour]['export'] / day_hour_dict[hour]['days']
     day_hour_dict[hour]['avg_solar'] = day_hour_dict[hour]['solar'] / day_hour_dict[hour]['days']
     day_hour_dict[hour]['avg_consumed'] = day_hour_dict[hour]['consumed'] / day_hour_dict[hour]['days']
-    day_hour_dict[hour]['avg_cost'] = day_hour_dict[hour]['cost'] / day_hour_dict[hour]['days']
+    day_hour_dict[hour]['avg_import_cost'] = day_hour_dict[hour]['import_cost'] / day_hour_dict[hour]['days']
+    day_hour_dict[hour]['avg_export_credit'] = day_hour_dict[hour]['export_credit'] / day_hour_dict[hour]['days']
 
 add_worksheet(
         workbook,
