@@ -243,18 +243,31 @@ for i in range(0, backfill_days):
         # populate consumption records
         data_dict = {}
         for shelly_rec in grid_resp_dict['data']['history']:
-            local_rec = {}
+            usage_rec = {}
 
             # epoch timestamp from shelly API local time 
             ts, ts_dt = parse_time(
                     shelly_rec['datetime'],
                     grid_resp_dict['data']['timezone'])
 
-            local_rec['ts'] = ts
-            local_rec['datetime'] = ts_dt.strftime("%Y/%m/%d %H:%M:%S")
-            local_rec['import'] = shelly_rec['consumption'] / 1000
-            local_rec['export'] = shelly_rec['reversed'] / 1000
-            data_dict[ts] = local_rec
+            data_dict[ts] = usage_rec
+
+            usage_rec['ts'] = ts
+            usage_rec['datetime'] = ts_dt.strftime("%Y/%m/%d %H:%M:%S")
+            usage_rec['import'] = shelly_rec['consumption'] / 1000
+            usage_rec['export'] = shelly_rec['reversed'] / 1000
+
+            # aggregation keys
+            usage_rec['hour'] = ts_dt.hour
+            usage_rec['day'] = '%04d%02d%02d' % (
+                    ts_dt.year, 
+                    ts_dt.month, 
+                    ts_dt.day)
+            usage_rec['month'] = '%04d%02d' % (
+                    ts_dt.year, 
+                    ts_dt.month) 
+            usage_rec['year'] = '%04d' %(
+                    ts_dt.year)
 
         # merge in solar production
         for shelly_rec in solar_resp_dict['data']['history']:
@@ -264,9 +277,9 @@ for i in range(0, backfill_days):
                     shelly_rec['datetime'],
                     grid_resp_dict['data']['timezone'])
 
-            local_rec = data_dict[ts]
-            local_rec['solar'] = shelly_rec['consumption'] / 1000
-            local_rec['consumed'] = local_rec['import'] + local_rec['solar'] - local_rec['export']
+            usage_rec = data_dict[ts]
+            usage_rec['solar'] = shelly_rec['consumption'] / 1000
+            usage_rec['consumed'] = usage_rec['import'] + usage_rec['solar'] - usage_rec['export']
 
         f = open(dest_jsonl_file, "w")
         key_list = list(data_dict.keys())
