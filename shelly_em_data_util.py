@@ -281,13 +281,6 @@ for i in range(0, backfill_days):
             usage_rec['solar'] = shelly_rec['consumption'] / 1000
             usage_rec['consumed'] = usage_rec['import'] + usage_rec['solar'] - usage_rec['export']
 
-        f = open(dest_jsonl_file, "w")
-        key_list = list(data_dict.keys())
-        key_list.sort()
-        for key in key_list:
-            f.write(json.dumps(data_dict[key]) + '\n')
-        f.close()
-
         output_results(
                 odir,
                 data_dict,
