@@ -33,7 +33,7 @@ optional arguments:
   --verbose             Enable verbose output
 ```
 Notes:
-* The API host is set by the --host arg. This mandatoy
+* The API host is set by the --host arg. 
 * The --id option sets the device ID to query
 * The output directory is set by --odir but this also defaults to ~/.shellyemdata
 * The --days option sets the number of full days to retrieve since yesterday
@@ -45,107 +45,108 @@ Notes:
 ## Example Run
 ```
 % python3  work/energyutils/shelly_em_data_util.py \
-        --host shelly-63-eu.shelly.cloud \
+        --host shelly-XX-eu.shelly.cloud \
         --id XXXXXXXXXXXX \
-        --auth_key XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX \
+        --auth_key XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX \
         --days 10
 
-Sun Apr 23 19:20:11 2023 Getting data for 2023-04-22 00:00:00s
-Sun Apr 23 19:20:12 2023 Writing hour data to /Users/cormac/.shellyemdata/20230422_hour.jsonl
-Sun Apr 23 19:20:12 2023 Writing hour data to /Users/cormac/.shellyemdata/20230422_hour.csv
-Sun Apr 23 19:20:12 2023 Getting data for 2023-04-21 00:00:00s
-Sun Apr 23 19:20:12 2023 Writing hour data to /Users/cormac/.shellyemdata/20230421_hour.jsonl
-Sun Apr 23 19:20:12 2023 Writing hour data to /Users/cormac/.shellyemdata/20230421_hour.csv
-Sun Apr 23 19:20:12 2023 Getting data for 2023-04-20 00:00:00s
-Sun Apr 23 19:20:13 2023 Writing hour data to /Users/cormac/.shellyemdata/20230420_hour.jsonl
-Sun Apr 23 19:20:13 2023 Writing hour data to /Users/cormac/.shellyemdata/20230420_hour.csv
-Sun Apr 23 19:20:13 2023 Getting data for 2023-04-19 00:00:00s
-Sun Apr 23 19:20:13 2023 Writing hour data to /Users/cormac/.shellyemdata/20230419_hour.jsonl
-Sun Apr 23 19:20:13 2023 Writing hour data to /Users/cormac/.shellyemdata/20230419_hour.csv
-Sun Apr 23 19:20:13 2023 Getting data for 2023-04-18 00:00:00s
-Sun Apr 23 19:20:13 2023 Writing hour data to /Users/cormac/.shellyemdata/20230418_hour.jsonl
-Sun Apr 23 19:20:13 2023 Writing hour data to /Users/cormac/.shellyemdata/20230418_hour.csv
-Sun Apr 23 19:20:13 2023 Getting data for 2023-04-17 00:00:00s
-Sun Apr 23 19:20:14 2023 Writing hour data to /Users/cormac/.shellyemdata/20230417_hour.jsonl
-Sun Apr 23 19:20:14 2023 Writing hour data to /Users/cormac/.shellyemdata/20230417_hour.csv
-Sun Apr 23 19:20:14 2023 Getting data for 2023-04-16 00:00:00s
-Sun Apr 23 19:20:14 2023 Writing hour data to /Users/cormac/.shellyemdata/20230416_hour.jsonl
-Sun Apr 23 19:20:14 2023 Writing hour data to /Users/cormac/.shellyemdata/20230416_hour.csv
-Sun Apr 23 19:20:14 2023 Getting data for 2023-04-15 00:00:00s
-Sun Apr 23 19:20:15 2023 Writing hour data to /Users/cormac/.shellyemdata/20230415_hour.jsonl
-Sun Apr 23 19:20:15 2023 Writing hour data to /Users/cormac/.shellyemdata/20230415_hour.csv
-Sun Apr 23 19:20:15 2023 Getting data for 2023-04-14 00:00:00s
-Sun Apr 23 19:20:15 2023 Writing hour data to /Users/cormac/.shellyemdata/20230414_hour.jsonl
-Sun Apr 23 19:20:15 2023 Writing hour data to /Users/cormac/.shellyemdata/20230414_hour.csv
-Sun Apr 23 19:20:15 2023 Getting data for 2023-04-13 00:00:00s
-Sun Apr 23 19:20:15 2023 Writing hour data to /Users/cormac/.shellyemdata/20230413_hour.jsonl
-Sun Apr 23 19:20:15 2023 Writing hour data to /Users/cormac/.shellyemdata/20230413_hour.csv
+Mon May  1 12:29:30 2023 Getting data for 2023-04-30 00:00:00s
+Mon May  1 12:29:31 2023 Writing to /Users/cormac/.shellyemdata/20230430.jsonl
+Mon May  1 12:29:31 2023 Writing to /Users/cormac/.shellyemdata/20230430.csv
+Mon May  1 12:29:31 2023 Getting data for 2023-04-29 00:00:00s
+Mon May  1 12:29:31 2023 Writing to /Users/cormac/.shellyemdata/20230429.jsonl
+Mon May  1 12:29:31 2023 Writing to /Users/cormac/.shellyemdata/20230429.csv
+Mon May  1 12:29:31 2023 Getting data for 2023-04-28 00:00:00s
+Mon May  1 12:29:31 2023 Writing to /Users/cormac/.shellyemdata/20230428.jsonl
+Mon May  1 12:29:31 2023 Writing to /Users/cormac/.shellyemdata/20230428.csv
+Mon May  1 12:29:31 2023 Getting data for 2023-04-27 00:00:00s
+Mon May  1 12:29:32 2023 Writing to /Users/cormac/.shellyemdata/20230427.jsonl
+Mon May  1 12:29:32 2023 Writing to /Users/cormac/.shellyemdata/20230427.csv
+Mon May  1 12:29:32 2023 Getting data for 2023-04-26 00:00:00s
+Mon May  1 12:29:32 2023 Writing to /Users/cormac/.shellyemdata/20230426.jsonl
+Mon May  1 12:29:32 2023 Writing to /Users/cormac/.shellyemdata/20230426.csv
+Mon May  1 12:29:32 2023 Getting data for 2023-04-25 00:00:00s
+Mon May  1 12:29:33 2023 Writing to /Users/cormac/.shellyemdata/20230425.jsonl
+Mon May  1 12:29:33 2023 Writing to /Users/cormac/.shellyemdata/20230425.csv
+Mon May  1 12:29:33 2023 Getting data for 2023-04-24 00:00:00s
+Mon May  1 12:29:33 2023 Writing to /Users/cormac/.shellyemdata/20230424.jsonl
+Mon May  1 12:29:33 2023 Writing to /Users/cormac/.shellyemdata/20230424.csv
+Mon May  1 12:29:33 2023 Getting data for 2023-04-23 00:00:00s
+Mon May  1 12:29:34 2023 Writing to /Users/cormac/.shellyemdata/20230423.jsonl
+Mon May  1 12:29:34 2023 Writing to /Users/cormac/.shellyemdata/20230423.csv
+Mon May  1 12:29:34 2023 Getting data for 2023-04-22 00:00:00s
+Mon May  1 12:29:34 2023 Writing to /Users/cormac/.shellyemdata/20230422.jsonl
+Mon May  1 12:29:34 2023 Writing to /Users/cormac/.shellyemdata/20230422.csv
+Mon May  1 12:29:34 2023 Getting data for 2023-04-21 00:00:00s
+Mon May  1 12:29:35 2023 Writing to /Users/cormac/.shellyemdata/20230421.jsonl
+Mon May  1 12:29:35 2023 Writing to /Users/cormac/.shellyemdata/20230421.csv
 ```
 
 ## Sample Files
-Each generated files is named YYYYMMDD_hour.jsonl and YYYYMMDD_hour.csv
+Each generated file contains hourly data for an entire day. Both JSONL and CSV variants are generated per day. The naming convention is YYYYMMDD.jsonl and YYYYMMDD.csv.
 
 ### Example JSONL File
 ```json
-{"ts": 1680044400, "datetime": "2023/03/29 00:00:00", "import": 0.40762, "export": 0.0, "hour": 0, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.40762}
-{"ts": 1680048000, "datetime": "2023/03/29 01:00:00", "import": 0.2341, "export": 0.0, "hour": 1, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.2341}
-{"ts": 1680051600, "datetime": "2023/03/29 02:00:00", "import": 0.41236, "export": 0.0, "hour": 2, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.41236}
-{"ts": 1680055200, "datetime": "2023/03/29 03:00:00", "import": 0.30924, "export": 0.0, "hour": 3, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.30924}
-{"ts": 1680058800, "datetime": "2023/03/29 04:00:00", "import": 0.65054, "export": 0.0, "hour": 4, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.65054}
-{"ts": 1680062400, "datetime": "2023/03/29 05:00:00", "import": 0.16457, "export": 0.0, "hour": 5, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.16457}
-{"ts": 1680066000, "datetime": "2023/03/29 06:00:00", "import": 0.17308, "export": 0.0, "hour": 6, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.17308}
-{"ts": 1680069600, "datetime": "2023/03/29 07:00:00", "import": 0.58873, "export": 0.0, "hour": 7, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.58873}
-{"ts": 1680073200, "datetime": "2023/03/29 08:00:00", "import": 0.26086000000000004, "export": 0.0, "hour": 8, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.26086000000000004}
-{"ts": 1680076800, "datetime": "2023/03/29 09:00:00", "import": 0.20024, "export": 0.0, "hour": 9, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.20024}
-{"ts": 1680080400, "datetime": "2023/03/29 10:00:00", "import": 0.21928, "export": 0.0, "hour": 10, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.21928}
-{"ts": 1680084000, "datetime": "2023/03/29 11:00:00", "import": 0.23954, "export": 0.0, "hour": 11, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.23954}
-{"ts": 1680087600, "datetime": "2023/03/29 12:00:00", "import": 0.6045499999999999, "export": 0.0, "hour": 12, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.6045499999999999}
-{"ts": 1680091200, "datetime": "2023/03/29 13:00:00", "import": 0.20205, "export": 0.0, "hour": 13, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.20205}
-{"ts": 1680094800, "datetime": "2023/03/29 14:00:00", "import": 0.28997, "export": 0.0, "hour": 14, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.28997}
-{"ts": 1680098400, "datetime": "2023/03/29 15:00:00", "import": 0.68952, "export": 0.0, "hour": 15, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.68952}
-{"ts": 1680102000, "datetime": "2023/03/29 16:00:00", "import": 0.33292, "export": 0.0, "hour": 16, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.33292}
-{"ts": 1680105600, "datetime": "2023/03/29 17:00:00", "import": 0.70727, "export": 0.0, "hour": 17, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.70727}
-{"ts": 1680109200, "datetime": "2023/03/29 18:00:00", "import": 0.47598, "export": 0.0, "hour": 18, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.47598}
-{"ts": 1680112800, "datetime": "2023/03/29 19:00:00", "import": 0.46469, "export": 0.0, "hour": 19, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.46469}
-{"ts": 1680116400, "datetime": "2023/03/29 20:00:00", "import": 0.5719, "export": 0.0, "hour": 20, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.5719}
-{"ts": 1680120000, "datetime": "2023/03/29 21:00:00", "import": 0.82553, "export": 0.0, "hour": 21, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.82553}
-{"ts": 1680123600, "datetime": "2023/03/29 22:00:00", "import": 0.68426, "export": 0.0, "hour": 22, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.68426}
-{"ts": 1680127200, "datetime": "2023/03/29 23:00:00", "import": 0.41863, "export": 0.0, "hour": 23, "day": "20230329", "month": "202303", "year": "2023", "solar": 0.0, "consumed": 0.41863}
+{"ts": 1682204400, "datetime": "2023/04/23 00:00:00", "import": 0.2204, "export": 0.0000, "hour": 0, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.2204}
+{"ts": 1682208000, "datetime": "2023/04/23 01:00:00", "import": 0.5702, "export": 0.0000, "hour": 1, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.5702}
+{"ts": 1682211600, "datetime": "2023/04/23 02:00:00", "import": 0.2022, "export": 0.0000, "hour": 2, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.2022}
+{"ts": 1682215200, "datetime": "2023/04/23 03:00:00", "import": 0.7248, "export": 0.0000, "hour": 3, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.7248}
+{"ts": 1682218800, "datetime": "2023/04/23 04:00:00", "import": 0.2424, "export": 0.0000, "hour": 4, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.2424}
+{"ts": 1682222400, "datetime": "2023/04/23 05:00:00", "import": 0.1822, "export": 0.0000, "hour": 5, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.1822}
+{"ts": 1682226000, "datetime": "2023/04/23 06:00:00", "import": 0.1910, "export": 0.0000, "hour": 6, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.1910}
+{"ts": 1682229600, "datetime": "2023/04/23 07:00:00", "import": 0.1883, "export": 0.0000, "hour": 7, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.1883}
+{"ts": 1682233200, "datetime": "2023/04/23 08:00:00", "import": 0.2155, "export": 0.0000, "hour": 8, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.2155}
+{"ts": 1682236800, "datetime": "2023/04/23 09:00:00", "import": 0.4580, "export": 0.0000, "hour": 9, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.4580}
+{"ts": 1682240400, "datetime": "2023/04/23 10:00:00", "import": 0.2347, "export": 0.0000, "hour": 10, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.2347}
+{"ts": 1682244000, "datetime": "2023/04/23 11:00:00", "import": 0.2378, "export": 0.0000, "hour": 11, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.2378}
+{"ts": 1682247600, "datetime": "2023/04/23 12:00:00", "import": 0.3397, "export": 0.0000, "hour": 12, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.3397}
+{"ts": 1682251200, "datetime": "2023/04/23 13:00:00", "import": 0.5761, "export": 0.0000, "hour": 13, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.5761}
+{"ts": 1682254800, "datetime": "2023/04/23 14:00:00", "import": 0.6475, "export": 0.0000, "hour": 14, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.6475}
+{"ts": 1682258400, "datetime": "2023/04/23 15:00:00", "import": 0.5648, "export": 0.0000, "hour": 15, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.5648}
+{"ts": 1682262000, "datetime": "2023/04/23 16:00:00", "import": 0.5572, "export": 0.0000, "hour": 16, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.5572}
+{"ts": 1682265600, "datetime": "2023/04/23 17:00:00", "import": 0.5142, "export": 0.0000, "hour": 17, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.5142}
+{"ts": 1682269200, "datetime": "2023/04/23 18:00:00", "import": 0.4518, "export": 0.0000, "hour": 18, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.4518}
+{"ts": 1682272800, "datetime": "2023/04/23 19:00:00", "import": 0.4121, "export": 0.0000, "hour": 19, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.4121}
+{"ts": 1682276400, "datetime": "2023/04/23 20:00:00", "import": 0.7231, "export": 0.0000, "hour": 20, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.7231}
+{"ts": 1682280000, "datetime": "2023/04/23 21:00:00", "import": 0.5967, "export": 0.0000, "hour": 21, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.5967}
+{"ts": 1682283600, "datetime": "2023/04/23 22:00:00", "import": 0.5816, "export": 0.0000, "hour": 22, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.5816}
+{"ts": 1682287200, "datetime": "2023/04/23 23:00:00", "import": 0.4998, "export": 0.0000, "hour": 23, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.4998}
 ```
 
 ### Example CSV File
 ```csv
 consumed,datetime,day,export,hour,import,month,solar,ts,year
-0.408,2023/03/29 00:00:00,20230329,0.0,0,0.408,202303,0.0,1680044400,2023
-0.234,2023/03/29 01:00:00,20230329,0.0,1,0.234,202303,0.0,1680048000,2023
-0.412,2023/03/29 02:00:00,20230329,0.0,2,0.412,202303,0.0,1680051600,2023
-0.309,2023/03/29 03:00:00,20230329,0.0,3,0.309,202303,0.0,1680055200,2023
-0.651,2023/03/29 04:00:00,20230329,0.0,4,0.651,202303,0.0,1680058800,2023
-0.165,2023/03/29 05:00:00,20230329,0.0,5,0.165,202303,0.0,1680062400,2023
-0.173,2023/03/29 06:00:00,20230329,0.0,6,0.173,202303,0.0,1680066000,2023
-0.589,2023/03/29 07:00:00,20230329,0.0,7,0.589,202303,0.0,1680069600,2023
-0.261,2023/03/29 08:00:00,20230329,0.0,8,0.261,202303,0.0,1680073200,2023
-0.2,2023/03/29 09:00:00,20230329,0.0,9,0.2,202303,0.0,1680076800,2023
-0.219,2023/03/29 10:00:00,20230329,0.0,10,0.219,202303,0.0,1680080400,2023
-0.24,2023/03/29 11:00:00,20230329,0.0,11,0.24,202303,0.0,1680084000,2023
-0.605,2023/03/29 12:00:00,20230329,0.0,12,0.605,202303,0.0,1680087600,2023
-0.202,2023/03/29 13:00:00,20230329,0.0,13,0.202,202303,0.0,1680091200,2023
-0.29,2023/03/29 14:00:00,20230329,0.0,14,0.29,202303,0.0,1680094800,2023
-0.69,2023/03/29 15:00:00,20230329,0.0,15,0.69,202303,0.0,1680098400,2023
-0.333,2023/03/29 16:00:00,20230329,0.0,16,0.333,202303,0.0,1680102000,2023
-0.707,2023/03/29 17:00:00,20230329,0.0,17,0.707,202303,0.0,1680105600,2023
-0.476,2023/03/29 18:00:00,20230329,0.0,18,0.476,202303,0.0,1680109200,2023
-0.465,2023/03/29 19:00:00,20230329,0.0,19,0.465,202303,0.0,1680112800,2023
-0.572,2023/03/29 20:00:00,20230329,0.0,20,0.572,202303,0.0,1680116400,2023
-0.826,2023/03/29 21:00:00,20230329,0.0,21,0.826,202303,0.0,1680120000,2023
-0.684,2023/03/29 22:00:00,20230329,0.0,22,0.684,202303,0.0,1680123600,2023
-0.419,2023/03/29 23:00:00,20230329,0.0,23,0.419,202303,0.0,1680127200,2023
+0.22,2023/04/23 00:00:00,20230423,0.0,0,0.22,202304,0.0,1682204400,2023
+0.57,2023/04/23 01:00:00,20230423,0.0,1,0.57,202304,0.0,1682208000,2023
+0.202,2023/04/23 02:00:00,20230423,0.0,2,0.202,202304,0.0,1682211600,2023
+0.725,2023/04/23 03:00:00,20230423,0.0,3,0.725,202304,0.0,1682215200,2023
+0.242,2023/04/23 04:00:00,20230423,0.0,4,0.242,202304,0.0,1682218800,2023
+0.182,2023/04/23 05:00:00,20230423,0.0,5,0.182,202304,0.0,1682222400,2023
+0.191,2023/04/23 06:00:00,20230423,0.0,6,0.191,202304,0.0,1682226000,2023
+0.188,2023/04/23 07:00:00,20230423,0.0,7,0.188,202304,0.0,1682229600,2023
+0.215,2023/04/23 08:00:00,20230423,0.0,8,0.215,202304,0.0,1682233200,2023
+0.458,2023/04/23 09:00:00,20230423,0.0,9,0.458,202304,0.0,1682236800,2023
+0.235,2023/04/23 10:00:00,20230423,0.0,10,0.235,202304,0.0,1682240400,2023
+0.238,2023/04/23 11:00:00,20230423,0.0,11,0.238,202304,0.0,1682244000,2023
+0.34,2023/04/23 12:00:00,20230423,0.0,12,0.34,202304,0.0,1682247600,2023
+0.576,2023/04/23 13:00:00,20230423,0.0,13,0.576,202304,0.0,1682251200,2023
+0.648,2023/04/23 14:00:00,20230423,0.0,14,0.648,202304,0.0,1682254800,2023
+0.565,2023/04/23 15:00:00,20230423,0.0,15,0.565,202304,0.0,1682258400,2023
+0.557,2023/04/23 16:00:00,20230423,0.0,16,0.557,202304,0.0,1682262000,2023
+0.514,2023/04/23 17:00:00,20230423,0.0,17,0.514,202304,0.0,1682265600,2023
+0.452,2023/04/23 18:00:00,20230423,0.0,18,0.452,202304,0.0,1682269200,2023
+0.412,2023/04/23 19:00:00,20230423,0.0,19,0.412,202304,0.0,1682272800,2023
+0.723,2023/04/23 20:00:00,20230423,0.0,20,0.723,202304,0.0,1682276400,2023
+0.597,2023/04/23 21:00:00,20230423,0.0,21,0.597,202304,0.0,1682280000,2023
+0.582,2023/04/23 22:00:00,20230423,0.0,22,0.582,202304,0.0,1682283600,2023
+0.5,2023/04/23 23:00:00,20230423,0.0,23,0.5,202304,0.0,1682287200,2023
 ```
+
 ### Field Descriptions
 * ts   
 The EPOCH timestamp of the start of the consumption hour
 * datetime   
-A string datetime in YYYY/MM/DD HH:MM:SS in local time. The timezone for your device is retrieved in the Shelly API call
+A string datetime in YYYY/MM/DD HH:MM:SS in local time. 
 * hour
 Hour of given day 0-23
 * day
