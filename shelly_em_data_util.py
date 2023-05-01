@@ -45,7 +45,6 @@ def output_results(
         odir,
         data_dict,
         prefix,
-        title,
         decimal_places):
 
     # no date, nothing to do
@@ -53,11 +52,10 @@ def output_results(
         return
 
     # JSONL File
-    dest_jsonl_file = '%s/%s_%s.jsonl' % (odir, prefix, title)
+    dest_jsonl_file = '%s/%s.jsonl' % (odir, prefix)
     log_message(
             1,
-            'Writing %s data to %s' % (
-                title,
+            'Writing to %s' % (
                 dest_jsonl_file)
             )
     with open(dest_jsonl_file, "w") as f:
@@ -69,11 +67,10 @@ def output_results(
     first_rec = data_dict[first_key]
     field_list = list(first_rec.keys())
     field_list.sort()
-    dest_csv_file = '%s/%s_%s.csv' % (odir, prefix, title)
+    dest_csv_file = '%s/%s.csv' % (odir, prefix)
     log_message(
             1,
-            'Writing %s data to %s' % (
-                title,
+            'Writing to %s' % (
                 dest_csv_file)
             )
     with open(dest_csv_file, 'w') as f:
@@ -165,6 +162,12 @@ incl_today = args['incl_today']
 decimal_places = args['decimal_places']
 gv_verbose = args['verbose']
 
+# JSON encoder force decimal places to 3
+class RoundingFloat(float):
+    __repr__ = staticmethod(lambda x: format(x, '.4f'))
+
+json.encoder.c_make_encoder = None
+json.encoder.float = RoundingFloat
 
 if not os.path.exists(odir):
     os.mkdir(odir)
@@ -285,7 +288,6 @@ for i in range(0, backfill_days):
                 odir,
                 data_dict,
                 dest_file_prefix,
-                'hour',
                 decimal_places)
 
     # move back to previous day
