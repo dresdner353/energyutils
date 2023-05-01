@@ -23,6 +23,32 @@ def log_message(
     return
 
 
+def parse_range_time(
+        datetime_str,
+        timezone,
+        end):
+
+    # naive parse
+    dt = datetime.datetime.strptime(datetime_str, '%Y%m%d')
+
+    # end of day
+    if end:
+        dt = dt.replace(
+                hour = 23,
+                minute = 59,
+                second = 59
+                )
+
+    # assert local timezone
+    dt = dt.replace(tzinfo = zoneinfo.ZoneInfo(timezone))
+
+    # convert go epoch as God intended
+    time_stamp = int(dt.timestamp())
+
+    # return both values
+    return time_stamp, dt
+
+
 def add_worksheet(
         workbook,
         sheet_title,
@@ -30,6 +56,10 @@ def add_worksheet(
         field_dict,
         data_dict,
         chart_list = None):
+
+    # nothing to do if no data sent
+    if len(data_dict) == 0:
+        return
 
     log_message(
             1,
@@ -198,6 +228,25 @@ parser.add_argument(
         )
 
 parser.add_argument(
+        '--start', 
+        help = 'Calculation Start Date (YYYYMMDD)', 
+        required = False
+        )
+
+parser.add_argument(
+        '--end', 
+        help = 'Calculation End Date (YYYYMMDD)', 
+        required = False
+        )
+
+parser.add_argument(
+        '--timezone', 
+        help = 'Timezone', 
+        default = 'Europe/Dublin',
+        required = False
+        )
+
+parser.add_argument(
         '--tariff_rate', 
         help = 'kwh Tariff <NAME:rate/kWh> <NAME:rate/kWh> ...', 
         nargs = '+',
@@ -231,6 +280,9 @@ tariff_list = args['tariff_rate']
 interval_list = args['tariff_interval']
 fit_rate = args['fit_rate']
 idir = args['idir']
+start_date = args['start']
+end_date = args['end']
+timezone = args['timezone']
 verbose = args['verbose']
 
 # tariffs 
@@ -274,6 +326,22 @@ if interval_list:
                     len(tarff_interval_dict))
                 )
 
+# start/end range
+start_ts = 0
+end_ts = 0
+start_dt = None
+end_dt = None
+if start_date:
+    start_ts, start_dt = parse_range_time(
+            start_date,
+            timezone,
+            end = False)
+
+if end_date:
+    end_ts, end_dt = parse_range_time(
+            end_date,
+            timezone,
+            end = True)
 
 # load all data
 data_dict = {}
@@ -288,6 +356,18 @@ for filename in os.listdir(idir):
     with open(full_path) as fp:
         for line in fp:
             rec = json.loads(line)
+
+            # skip records if out of range
+            # FIXME probably could also include skipping of 
+            # full files based on name
+            if (start_ts and 
+                rec['ts'] < start_ts):
+                continue
+
+            if (end_ts and 
+                rec['ts'] > end_ts):
+                continue
+
             data_dict[rec['ts']] = rec
 
             # naive year datetime conversion
@@ -456,42 +536,6 @@ field_dict = {
             'header_format' : 'general',
             'format' : 'float',
             },
-        'avg_import' : {
-            'title' : 'Avg Import (kWh)',
-            'width' : 15,
-            'header_format' : 'general',
-            'format' : 'float',
-            },
-        'avg_export' : {
-            'title' : 'Avg Export (kWh)',
-            'width' : 15,
-            'header_format' : 'general',
-            'format' : 'float',
-            },
-        'avg_solar' : {
-            'title' : 'Avg Solar (kWh)',
-            'width' : 15,
-            'header_format' : 'general',
-            'format' : 'float',
-            },
-        'avg_consumed' : {
-            'title' : 'Avg Consumed (kWh)',
-            'width' : 15,
-            'header_format' : 'general',
-            'format' : 'float',
-            },
-        'avg_import_cost' : {
-            'title' : 'Avg Import Cost',
-            'width' : 15,
-            'header_format' : 'general',
-            'format' : 'float',
-            },
-        'avg_export_credit' : {
-            'title' : 'Avg Export Credit',
-            'width' : 15,
-            'header_format' : 'general',
-            'format' : 'float',
-            },
         }
 
 add_worksheet(
@@ -516,8 +560,12 @@ for ts in data_dict:
     day = rec['day']
     month = rec['month']
     year = rec['year']
-    tariff_name = rec['tariff_name']
-    tariff_rate = rec['tariff_rate']
+
+    tariff_name = None
+    tariff_rate = None
+    if 'tariff_name' in rec:
+        tariff_name = rec['tariff_name']
+        tariff_rate = rec['tariff_rate']
 
     if not day in day_dict:
         day_dict[day] = {}
@@ -533,37 +581,44 @@ for ts in data_dict:
         month_dict[month] = {}
         month_dict[month]['month'] = month
         month_dict[month]['import'] = 0
+        month_dict[month]['rel_import'] = 0
         month_dict[month]['export'] = 0
         month_dict[month]['import_cost'] = 0
         month_dict[month]['export_credit'] = 0
+        month_dict[month]['rel_cost'] = 0
 
     if not year in year_dict:
         year_dict[year] = {}
         year_dict[year]['year'] = year
         year_dict[year]['import'] = 0
+        year_dict[year]['rel_import'] = 0
         year_dict[year]['export'] = 0
         year_dict[year]['import_cost'] = 0
         year_dict[year]['export_credit'] = 0
+        year_dict[year]['rel_cost'] = 0
 
     if not hour in hour_dict:
         hour_dict[hour] = {}
         hour_dict[hour]['hour'] = hour
         hour_dict[hour]['import'] = 0
+        hour_dict[hour]['rel_import'] = 0
         hour_dict[hour]['export'] = 0
         hour_dict[hour]['import_cost'] = 0
         hour_dict[hour]['export_credit'] = 0
         hour_dict[hour]['days'] = 0
+        hour_dict[hour]['rel_cost'] = 0
 
-    if not tariff_name in tariff_dict:
-        tariff_dict[tariff_name] = {}
-        tariff_dict[tariff_name]['tariff_name'] = tariff_name
-        tariff_dict[tariff_name]['tariff_rate'] = tariff_rate
-        tariff_dict[tariff_name]['import'] = 0
-        tariff_dict[tariff_name]['import_cost'] = 0
-        tariff_dict[tariff_name]['export'] = 0 
-        tariff_dict[tariff_name]['export_credit'] = 0
-    tariff_dict[tariff_name]['import'] += rec['import']
-    tariff_dict[tariff_name]['import_cost'] += rec['import_cost']
+    if tariff_name:
+        if not tariff_name in tariff_dict:
+            tariff_dict[tariff_name] = {}
+            tariff_dict[tariff_name]['tariff_name'] = tariff_name
+            tariff_dict[tariff_name]['tariff_rate'] = tariff_rate
+            tariff_dict[tariff_name]['import'] = 0
+            tariff_dict[tariff_name]['import_cost'] = 0
+            tariff_dict[tariff_name]['export'] = 0 
+            tariff_dict[tariff_name]['export_credit'] = 0
+        tariff_dict[tariff_name]['import'] += rec['import']
+        tariff_dict[tariff_name]['import_cost'] += rec['import_cost']
 
     if fit_rate:
         if not 'FIT' in tariff_dict:
@@ -586,24 +641,26 @@ for ts in data_dict:
     day_dict[day]['rel_cost'] += rec['rel_cost']
 
     month_dict[month]['import'] += rec['import']
+    month_dict[month]['rel_import'] += rec['rel_import']
     month_dict[month]['export'] += rec['export']
     month_dict[month]['import_cost'] += rec['import_cost']
     month_dict[month]['export_credit'] += rec['export_credit']
+    month_dict[month]['rel_cost'] += rec['rel_cost']
 
     year_dict[year]['import'] += rec['import']
+    year_dict[year]['rel_import'] += rec['rel_import']
     year_dict[year]['export'] += rec['export']
     year_dict[year]['import_cost'] += rec['import_cost']
     year_dict[year]['export_credit'] += rec['export_credit']
+    year_dict[year]['rel_cost'] += rec['rel_cost']
 
     hour_dict[hour]['import'] += rec['import']
+    hour_dict[hour]['rel_import'] += rec['rel_import']
     hour_dict[hour]['export'] += rec['export']
     hour_dict[hour]['import_cost'] += rec['import_cost']
     hour_dict[hour]['export_credit'] += rec['export_credit']
+    hour_dict[hour]['rel_cost'] += rec['rel_cost']
     hour_dict[hour]['days'] += 1
-    hour_dict[hour]['avg_import'] = hour_dict[hour]['import'] / hour_dict[hour]['days']
-    hour_dict[hour]['avg_export'] = hour_dict[hour]['export'] / hour_dict[hour]['days']
-    hour_dict[hour]['avg_import_cost'] = hour_dict[hour]['import_cost'] / hour_dict[hour]['days']
-    hour_dict[hour]['avg_export_credit'] = hour_dict[hour]['export_credit'] / hour_dict[hour]['days']
 
     if 'solar' in rec:
         if not 'solar' in day_dict:
@@ -616,7 +673,6 @@ for ts in data_dict:
         month_dict[month]['solar'] += rec['solar']
         year_dict[year]['solar'] += rec['solar']
         hour_dict[hour]['solar'] += rec['solar']
-        hour_dict[hour]['avg_solar'] = hour_dict[hour]['solar'] / hour_dict[hour]['days']
 
     if 'consumed' in rec:
         if not 'consumed' in day_dict:
@@ -629,7 +685,6 @@ for ts in data_dict:
         month_dict[month]['consumed'] += rec['consumed']
         year_dict[year]['consumed'] += rec['consumed']
         hour_dict[hour]['consumed'] += rec['consumed']
-        hour_dict[hour]['avg_consumed'] = hour_dict[hour]['consumed'] / hour_dict[hour]['days']
 
 
 add_worksheet(
@@ -640,37 +695,21 @@ add_worksheet(
         day_dict,
         chart_list = [
             {
-                'title' : 'Day Usage',
-                'type' : 'line',
-                'style' : 11,
+                'title' : 'Day Relative Import',
+                'type' : 'column',
+                #'sub_type' : 'stacked',
                 'x_title' : 'Day',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
                 'series' : [
                     {
-                        'field': 'import',
-                        'colour': 'red'
-                        },
-                    {
-                        'field': 'export',
-                        'colour': 'green'
-                        },
-                    {
                         'field': 'rel_import',
-                        'colour': 'pink'
-                        },
-                    {
-                        'field': 'solar', 
-                        'colour': 'yellow'
-                        },
-                    {
-                        'field': 'consumed',
-                        'colour': 'blue'
+                        'colour': 'green'
                         },
                     ]
                 },
             {
-                'title' : 'Day Cost',
+                'title' : 'Day Relative Cost',
                 'type' : 'column',
                 'x_title' : 'Day',
                 'x_rotation' : -45,
@@ -707,42 +746,26 @@ add_worksheet(
         hour_dict,
         chart_list = [
             {
-                'title' : '24h Analysis',
-                'type' : 'bar',
-                'x_title' : 'kWh',
-                'y_title' : 'Hour',
+                'title' : '24h Relative Import',
+                'type' : 'column',
+                'x_title' : 'Hour',
+                'y_title' : 'kWh',
                 'series' : [
                     {
-                        'field': 'import',
-                        'colour': 'red'
-                        },
-                    {
-                        'field': 'avg_import',
-                        'colour': 'magenta'
-                        },
-                    {
-                        'field': 'export',
+                        'field': 'rel_import',
                         'colour': 'green'
                         },
+                    ]
+                },
+            {
+                'title' : '24h Relative Cost',
+                'type' : 'column',
+                'x_title' : 'Hour',
+                'y_title' : 'Euro',
+                'series' : [
                     {
-                        'field': 'avg_export',
-                        'colour': 'lime'
-                        },
-                    {
-                        'field': 'solar',
-                        'colour': 'yellow'
-                        },
-                    {
-                        'field': 'avg_solar',
-                        'colour': 'orange'
-                        },
-                    {
-                        'field': 'consumed',
-                        'colour': 'navy'
-                        },
-                    {
-                        'field': 'avg_consumed',
-                        'colour': 'blue'
+                        'field': 'rel_cost',
+                        'colour': 'green'
                         },
                     ]
                 }
