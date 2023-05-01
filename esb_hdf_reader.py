@@ -43,32 +43,6 @@ def parse_esb_time(
     return time_stamp, dt
 
 
-def parse_range_time(
-        datetime_str,
-        timezone,
-        end):
-
-    # naive parse
-    dt = datetime.datetime.strptime(datetime_str, '%Y%m%d')
-
-    # end of day
-    if end:
-        dt = dt.replace(
-                hour = 23,
-                minute = 59,
-                second = 59
-                )
-
-    # assert local timezone
-    dt = dt.replace(tzinfo = zoneinfo.ZoneInfo(timezone))
-
-    # convert go epoch as God intended
-    time_stamp = int(dt.timestamp())
-
-    # return both values
-    return time_stamp, dt
-
-
 def output_results(
         odir,
         data_dict,
