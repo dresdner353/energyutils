@@ -17,7 +17,7 @@ optional arguments:
   --odir ODIR           Output Directory
   --timezone TIMEZONE   Timezone
   --decimal_places DECIMAL_PLACES
-                        Decimal Places (def:3)
+                        Decimal Places (def:4)
   --verbose             Enable verbose output
 
 ```
@@ -26,7 +26,7 @@ Notes:
 * The script is run and pointed at a HDF file as downloaded from the ESB (--file file.csv)
 * The output directory is set to control where the script dumps all generated JSONL and CSV files (--odir <dir>)
 * Timezone can be asserted with the --timezone option. By default, this is set to Europe/Dublin. The ESB HDF data comes in local Europe/Dublin timezone. So this option should not be required.
-* Decimal places can be controlled using the --decimal_places option and this defaults to 3 
+* Decimal places can be controlled using the --decimal_places option and this defaults to 4. This only affects data written to the CSV files.
 
 
 ## Example Call (using the included example file)

@@ -117,9 +117,9 @@ parser.add_argument(
 
 parser.add_argument(
         '--decimal_places', 
-        help = 'Decimal Places (def:3)', 
+        help = 'Decimal Places (def:4)', 
         type = int,
-        default = 3,
+        default = 4,
         required = False
         )
 

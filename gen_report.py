@@ -420,16 +420,18 @@ format_dict['general'] = general_label_format
 str_format = workbook.add_format() 
 str_format.set_num_format('General') # text
 str_format.set_align('right')
-str_format.set_locked(True) # read-only
+str_format.set_locked(True) 
 format_dict['str'] = str_format
 
 float_format = workbook.add_format() 
-float_format.set_num_format('#,##0.000') # with commas
-float_format.set_locked(True) # read-only
+# with commas and 3 decimal places
+float_format.set_num_format('#,##0.000') 
+float_format.set_locked(True) 
 format_dict['float'] = float_format
 
 int_format = workbook.add_format() 
-int_format.set_num_format('0') # no decimal places
+# no decimal places
+int_format.set_num_format('0') 
 int_format.set_locked(True) # read-only
 format_dict['integer'] = int_format
 
