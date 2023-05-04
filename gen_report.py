@@ -195,8 +195,11 @@ def add_worksheet(
                     'name': [sheet_title, 0, field_rec['col']],
                     'categories': [sheet_title, 1, 0, row, 0],
                     'values': [sheet_title, 1, field_rec['col'], row, field_rec['col']],
-                    'line': {'color': series_rec['colour']},
                     }
+            # optional series colour
+            if 'colour' in series_rec:
+                series_dict['line'] = {'color': series_rec['colour']}
+
             chart.add_series(series_dict)
             log_message(
                     0,
@@ -706,7 +709,6 @@ add_worksheet(
                 'series' : [
                     {
                         'field': 'rel_import',
-                        'colour': 'green'
                         },
                     ]
                 },
@@ -719,7 +721,6 @@ add_worksheet(
                 'series' : [
                     {
                         'field': 'rel_cost',
-                        'colour': 'red'
                         },
                     ]
                 }
@@ -755,7 +756,6 @@ add_worksheet(
                 'series' : [
                     {
                         'field': 'rel_import',
-                        'colour': 'green'
                         },
                     ]
                 },
@@ -767,7 +767,6 @@ add_worksheet(
                 'series' : [
                     {
                         'field': 'rel_cost',
-                        'colour': 'green'
                         },
                     ]
                 }
