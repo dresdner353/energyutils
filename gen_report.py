@@ -760,7 +760,7 @@ add_worksheet(
         day_dict,
         chart_list = [
             {
-                'title' : 'Day Import',
+                'title' : 'Day kWh',
                 'type' : 'column',
                 #'sub_type' : 'stacked',
                 'x_title' : 'Day',
@@ -769,15 +769,15 @@ add_worksheet(
                 'series' : [
                     {
                         'field': 'import',
-                        'colour': 'red',
+                        'colour': '#C30000',
                         },
                     {
                         'field': 'export',
-                        'colour': 'orange',
+                        'colour': '#008000',
                         },
                     {
                         'field': 'rel_import',
-                        'colour': 'green',
+                        'colour': '#008080',
                         },
                     ]
                 },
@@ -790,6 +790,7 @@ add_worksheet(
                 'series' : [
                     {
                         'field': 'rel_cost',
+                        'colour': '#008000',
                         },
                     ]
                 }
@@ -804,7 +805,7 @@ add_worksheet(
         week_dict,
         chart_list = [
             {
-                'title' : 'Weekly Import',
+                'title' : 'Weekly kWh',
                 'type' : 'column',
                 'x_title' : 'Week',
                 'x_rotation' : -45,
@@ -812,15 +813,15 @@ add_worksheet(
                 'series' : [
                     {
                         'field': 'import',
-                        'colour': 'red',
+                        'colour': '#C30000',
                         },
                     {
                         'field': 'export',
-                        'colour': 'orange',
+                        'colour': '#008000',
                         },
                     {
                         'field': 'rel_import',
-                        'colour': 'green',
+                        'colour': '#008080',
                         },
                     ]
                 },
@@ -833,6 +834,7 @@ add_worksheet(
                 'series' : [
                     {
                         'field': 'rel_cost',
+                        'colour': '#008000',
                         },
                     ]
                 }
@@ -847,7 +849,7 @@ add_worksheet(
         month_dict,
         chart_list = [
             {
-                'title' : 'Monthly Import',
+                'title' : 'Monthly kWh',
                 'type' : 'column',
                 'x_title' : 'Week',
                 'x_rotation' : -45,
@@ -855,15 +857,15 @@ add_worksheet(
                 'series' : [
                     {
                         'field': 'import',
-                        'colour': 'red',
+                        'colour': '#C30000',
                         },
                     {
                         'field': 'export',
-                        'colour': 'orange',
+                        'colour': '#008000',
                         },
                     {
                         'field': 'rel_import',
-                        'colour': 'green',
+                        'colour': '#008080',
                         },
                     ]
                 },
@@ -876,6 +878,7 @@ add_worksheet(
                 'series' : [
                     {
                         'field': 'rel_cost',
+                        'colour': '#008000',
                         },
                     ]
                 }
@@ -897,14 +900,14 @@ add_worksheet(
         weekday_dict,
         chart_list = [
             {
-                'title' : 'Weekday Import',
+                'title' : 'Weekday kWh',
                 'type' : 'column',
                 'x_title' : 'Weekday',
                 'y_title' : 'kWh',
                 'series' : [
                     {
                         'field': 'rel_import',
-                        'colour': 'green',
+                        'colour': '#008080',
                         },
                     ]
                 },
@@ -916,6 +919,7 @@ add_worksheet(
                 'series' : [
                     {
                         'field': 'rel_cost',
+                        'colour': '#008000',
                         },
                     ]
                 }
@@ -929,14 +933,14 @@ add_worksheet(
         hour_dict,
         chart_list = [
             {
-                'title' : '24h Import',
+                'title' : '24h kWh',
                 'type' : 'column',
                 'x_title' : 'Hour',
                 'y_title' : 'kWh',
                 'series' : [
                     {
                         'field': 'rel_import',
-                        'colour': 'green',
+                        'colour': '#008080',
                         },
                     ]
                 },
@@ -948,6 +952,7 @@ add_worksheet(
                 'series' : [
                     {
                         'field': 'rel_cost',
+                        'colour': '#008000',
                         },
                     ]
                 }
@@ -968,11 +973,11 @@ add_worksheet(
                 'series' : [
                     {
                         'field': 'import',
-                        'colour': 'red',
+                        'colour': '#C30000',
                         },
                     {
                         'field': 'export',
-                        'colour': 'green',
+                        'colour': '#008000',
                         },
                     ]
                 },
@@ -984,11 +989,11 @@ add_worksheet(
                 'series' : [
                     {
                         'field': 'import_cost',
-                        'colour': 'red',
+                        'colour': '#C30000',
                         },
                     {
                         'field': 'export_credit',
-                        'colour': 'green',
+                        'colour': '#008000',
                         },
                     ]
                 }
