@@ -199,6 +199,8 @@ def add_worksheet(
             # optional series colour
             if 'colour' in series_rec:
                 series_dict['line'] = {'color': series_rec['colour']}
+                series_dict['fill'] = {'color': series_rec['colour']}
+                series_dict['border'] = {'color': series_rec['colour']}
 
             chart.add_series(series_dict)
             log_message(
@@ -467,9 +469,21 @@ field_dict = {
             'header_format' : 'general',
             'format' : 'str',
             },
+        'week' : {
+            'title' : 'Week',
+            'width' : 5,
+            'header_format' : 'general',
+            'format' : 'str',
+            },
         'day' : {
             'title' : 'Day',
             'width' : 12,
+            'header_format' : 'general',
+            'format' : 'str',
+            },
+        'weekday' : {
+            'title' : 'Weekday',
+            'width' : 8,
             'header_format' : 'general',
             'format' : 'str',
             },
@@ -553,6 +567,8 @@ add_worksheet(
 
 # aggregate dicts
 day_dict = {}
+weekday_dict = {}
+week_dict = {}
 month_dict = {}
 year_dict = {}
 hour_dict = {}
@@ -565,6 +581,8 @@ for ts in data_dict:
     day = rec['day']
     month = rec['month']
     year = rec['year']
+    week = rec['week']
+    weekday = rec['weekday']
 
     tariff_name = None
     tariff_rate = None
@@ -581,6 +599,26 @@ for ts in data_dict:
         day_dict[day]['import_cost'] = 0
         day_dict[day]['export_credit'] = 0
         day_dict[day]['rel_cost'] = 0
+
+    if not week in week_dict:
+        week_dict[week] = {}
+        week_dict[week]['week'] = week
+        week_dict[week]['import'] = 0
+        week_dict[week]['rel_import'] = 0
+        week_dict[week]['export'] = 0
+        week_dict[week]['import_cost'] = 0
+        week_dict[week]['export_credit'] = 0
+        week_dict[week]['rel_cost'] = 0
+
+    if not weekday in weekday_dict:
+        weekday_dict[weekday] = {}
+        weekday_dict[weekday]['weekday'] = weekday
+        weekday_dict[weekday]['import'] = 0
+        weekday_dict[weekday]['rel_import'] = 0
+        weekday_dict[weekday]['export'] = 0
+        weekday_dict[weekday]['import_cost'] = 0
+        weekday_dict[weekday]['export_credit'] = 0
+        weekday_dict[weekday]['rel_cost'] = 0
 
     if not month in month_dict:
         month_dict[month] = {}
@@ -645,6 +683,20 @@ for ts in data_dict:
     day_dict[day]['export_credit'] += rec['export_credit']
     day_dict[day]['rel_cost'] += rec['rel_cost']
 
+    weekday_dict[weekday]['import'] += rec['import']
+    weekday_dict[weekday]['rel_import'] += rec['rel_import']
+    weekday_dict[weekday]['export'] += rec['export']
+    weekday_dict[weekday]['import_cost'] += rec['import_cost']
+    weekday_dict[weekday]['export_credit'] += rec['export_credit']
+    weekday_dict[weekday]['rel_cost'] += rec['rel_cost']
+
+    week_dict[week]['import'] += rec['import']
+    week_dict[week]['rel_import'] += rec['rel_import']
+    week_dict[week]['export'] += rec['export']
+    week_dict[week]['import_cost'] += rec['import_cost']
+    week_dict[week]['export_credit'] += rec['export_credit']
+    week_dict[week]['rel_cost'] += rec['rel_cost']
+
     month_dict[month]['import'] += rec['import']
     month_dict[month]['rel_import'] += rec['rel_import']
     month_dict[month]['export'] += rec['export']
@@ -670,11 +722,15 @@ for ts in data_dict:
     if 'solar' in rec:
         if not 'solar' in day_dict:
             day_dict[day]['solar'] = 0
+            weekday_dict[weekday]['solar'] = 0
+            week_dict[week]['solar'] = 0
             month_dict[month]['solar'] = 0
             year_dict[year]['solar'] = 0
             hour_dict[hour]['solar'] = 0
 
         day_dict[day]['solar'] += rec['solar']
+        weekday_dict[weekday]['solar'] += rec['solar']
+        week_dict[week]['solar'] += rec['solar']
         month_dict[month]['solar'] += rec['solar']
         year_dict[year]['solar'] += rec['solar']
         hour_dict[hour]['solar'] += rec['solar']
@@ -682,11 +738,15 @@ for ts in data_dict:
     if 'consumed' in rec:
         if not 'consumed' in day_dict:
             day_dict[day]['consumed'] = 0
+            weekday_dict[weekday]['consumed'] = 0
+            week_dict[week]['consumed'] = 0
             month_dict[month]['consumed'] = 0
             year_dict[year]['consumed'] = 0
             hour_dict[hour]['consumed'] = 0
 
         day_dict[day]['consumed'] += rec['consumed']
+        weekday_dict[weekday]['consumed'] += rec['consumed']
+        week_dict[week]['consumed'] += rec['consumed']
         month_dict[month]['consumed'] += rec['consumed']
         year_dict[year]['consumed'] += rec['consumed']
         hour_dict[hour]['consumed'] += rec['consumed']
@@ -700,7 +760,7 @@ add_worksheet(
         day_dict,
         chart_list = [
             {
-                'title' : 'Day Relative Import',
+                'title' : 'Day Import',
                 'type' : 'column',
                 #'sub_type' : 'stacked',
                 'x_title' : 'Day',
@@ -708,14 +768,66 @@ add_worksheet(
                 'y_title' : 'kWh',
                 'series' : [
                     {
+                        'field': 'import',
+                        'colour': 'red',
+                        },
+                    {
+                        'field': 'export',
+                        'colour': 'orange',
+                        },
+                    {
                         'field': 'rel_import',
+                        'colour': 'green',
                         },
                     ]
                 },
             {
-                'title' : 'Day Relative Cost',
+                'title' : 'Day Cost',
                 'type' : 'column',
                 'x_title' : 'Day',
+                'x_rotation' : -45,
+                'y_title' : 'Euro',
+                'series' : [
+                    {
+                        'field': 'rel_cost',
+                        },
+                    ]
+                }
+            ]
+        )
+
+add_worksheet(
+        workbook,
+        'Week',
+        format_dict,
+        field_dict,
+        week_dict,
+        chart_list = [
+            {
+                'title' : 'Weekly Import',
+                'type' : 'column',
+                'x_title' : 'Week',
+                'x_rotation' : -45,
+                'y_title' : 'kWh',
+                'series' : [
+                    {
+                        'field': 'import',
+                        'colour': 'red',
+                        },
+                    {
+                        'field': 'export',
+                        'colour': 'orange',
+                        },
+                    {
+                        'field': 'rel_import',
+                        'colour': 'green',
+                        },
+                    ]
+                },
+            {
+                'title' : 'Weekly Cost',
+                'type' : 'column',
+                'x_title' : 'Week',
                 'x_rotation' : -45,
                 'y_title' : 'Euro',
                 'series' : [
@@ -732,7 +844,43 @@ add_worksheet(
         'Month',
         format_dict,
         field_dict,
-        month_dict)
+        month_dict,
+        chart_list = [
+            {
+                'title' : 'Monthly Import',
+                'type' : 'column',
+                'x_title' : 'Week',
+                'x_rotation' : -45,
+                'y_title' : 'kWh',
+                'series' : [
+                    {
+                        'field': 'import',
+                        'colour': 'red',
+                        },
+                    {
+                        'field': 'export',
+                        'colour': 'orange',
+                        },
+                    {
+                        'field': 'rel_import',
+                        'colour': 'green',
+                        },
+                    ]
+                },
+            {
+                'title' : 'Monthly Cost',
+                'type' : 'column',
+                'x_title' : 'Week',
+                'x_rotation' : -45,
+                'y_title' : 'Euro',
+                'series' : [
+                    {
+                        'field': 'rel_cost',
+                        },
+                    ]
+                }
+            ]
+        )
 
 add_worksheet(
         workbook,
@@ -743,24 +891,57 @@ add_worksheet(
 
 add_worksheet(
         workbook,
+        'Weekday',
+        format_dict,
+        field_dict,
+        weekday_dict,
+        chart_list = [
+            {
+                'title' : 'Weekday Import',
+                'type' : 'column',
+                'x_title' : 'Weekday',
+                'y_title' : 'kWh',
+                'series' : [
+                    {
+                        'field': 'rel_import',
+                        'colour': 'green',
+                        },
+                    ]
+                },
+            {
+                'title' : 'Weekday Cost',
+                'type' : 'column',
+                'x_title' : 'Weekday',
+                'y_title' : 'Euro',
+                'series' : [
+                    {
+                        'field': 'rel_cost',
+                        },
+                    ]
+                }
+            ])
+
+add_worksheet(
+        workbook,
         '24h',
         format_dict,
         field_dict,
         hour_dict,
         chart_list = [
             {
-                'title' : '24h Relative Import',
+                'title' : '24h Import',
                 'type' : 'column',
                 'x_title' : 'Hour',
                 'y_title' : 'kWh',
                 'series' : [
                     {
                         'field': 'rel_import',
+                        'colour': 'green',
                         },
                     ]
                 },
             {
-                'title' : '24h Relative Cost',
+                'title' : '24h Cost',
                 'type' : 'column',
                 'x_title' : 'Hour',
                 'y_title' : 'Euro',
@@ -777,6 +958,41 @@ add_worksheet(
         'Tariff',
         format_dict,
         field_dict,
-        tariff_dict)
+        tariff_dict,
+        chart_list = [
+            {
+                'title' : 'Tariff Totals',
+                'type' : 'column',
+                'x_title' : 'Tariff',
+                'y_title' : 'kWh',
+                'series' : [
+                    {
+                        'field': 'import',
+                        'colour': 'red',
+                        },
+                    {
+                        'field': 'export',
+                        'colour': 'green',
+                        },
+                    ]
+                },
+            {
+                'title' : 'Tariff Cost',
+                'type' : 'column',
+                'x_title' : 'Tariff',
+                'y_title' : 'Euro',
+                'series' : [
+                    {
+                        'field': 'import_cost',
+                        'colour': 'red',
+                        },
+                    {
+                        'field': 'export_credit',
+                        'colour': 'green',
+                        },
+                    ]
+                }
+            ]
+        )
 
 workbook.close()
