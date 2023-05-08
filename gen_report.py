@@ -202,6 +202,11 @@ def add_worksheet(
                 series_dict['fill'] = {'color': series_rec['colour']}
                 series_dict['border'] = {'color': series_rec['colour']}
 
+            if 'negative_colour' in series_rec:
+                series_dict['invert_if_negative'] = True
+                series_dict['invert_if_negative_color'] = series_rec['negative_colour']
+                print(series_dict)
+
             chart.add_series(series_dict)
             log_message(
                     0,
@@ -813,7 +818,7 @@ add_worksheet(
                 'series' : [
                     {
                         'field': 'import',
-                        'colour': '#C30000',
+                        'colour': '#800000',
                         },
                     {
                         'field': 'export',
@@ -857,7 +862,7 @@ add_worksheet(
                 'series' : [
                     {
                         'field': 'import',
-                        'colour': '#C30000',
+                        'colour': '#800000',
                         },
                     {
                         'field': 'export',
@@ -973,7 +978,7 @@ add_worksheet(
                 'series' : [
                     {
                         'field': 'import',
-                        'colour': '#C30000',
+                        'colour': '#800000',
                         },
                     {
                         'field': 'export',
@@ -989,7 +994,7 @@ add_worksheet(
                 'series' : [
                     {
                         'field': 'import_cost',
-                        'colour': '#C30000',
+                        'colour': '#800000',
                         },
                     {
                         'field': 'export_credit',
