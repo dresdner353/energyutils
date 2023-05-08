@@ -58,7 +58,7 @@ def output_results(
             'Writing to %s' % (
                 dest_jsonl_file)
             )
-    with open(dest_jsonl_file, "w") as f:
+    with open(dest_jsonl_file, 'w') as f:
         for key in sorted(data_dict.keys()):
             f.write(json.dumps(data_dict[key]) + '\n')
 
@@ -256,7 +256,7 @@ for i in range(0, backfill_days):
             data_dict[ts] = usage_rec
 
             usage_rec['ts'] = ts
-            usage_rec['datetime'] = ts_dt.strftime("%Y/%m/%d %H:%M:%S")
+            usage_rec['datetime'] = ts_dt.strftime('%Y/%m/%d %H:%M:%S')
             usage_rec['import'] = shelly_rec['consumption'] / 1000
             usage_rec['export'] = shelly_rec['reversed'] / 1000
 
@@ -271,6 +271,8 @@ for i in range(0, backfill_days):
                     ts_dt.month) 
             usage_rec['year'] = '%04d' %(
                     ts_dt.year)
+            usage_rec['weekday'] = ts_dt.strftime('%u %a')
+            usage_rec['week'] = ts_dt.strftime('%V')
 
         # merge in solar production
         for shelly_rec in solar_resp_dict['data']['history']:

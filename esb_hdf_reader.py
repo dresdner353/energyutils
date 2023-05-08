@@ -60,7 +60,7 @@ def output_results(
             'Writing to %s' % (
                 dest_jsonl_file)
             )
-    with open(dest_jsonl_file, "w") as f:
+    with open(dest_jsonl_file, 'w') as f:
         for key in sorted(data_dict.keys()):
             f.write(json.dumps(data_dict[key]) + '\n')
 
@@ -189,7 +189,7 @@ for esb_rec in reader:
         usage_rec = {}
         usage_dict[ts_ref] = usage_rec
         usage_rec['ts'] = ts_ref
-        usage_rec['datetime'] = dt_ref.strftime("%Y/%m/%d %H:%M:%S")
+        usage_rec['datetime'] = dt_ref.strftime('%Y/%m/%d %H:%M:%S')
         usage_rec['import'] = 0
         usage_rec['export'] = 0
 
@@ -204,6 +204,8 @@ for esb_rec in reader:
                 dt_ref.month) 
         usage_rec['year'] = '%04d' %(
                 dt_ref.year)
+        usage_rec['weekday'] = dt_ref.strftime('%u %a')
+        usage_rec['week'] = dt_ref.strftime('%V')
     else:
         # retrieve usage rec
         usage_rec = usage_dict[ts_ref]
