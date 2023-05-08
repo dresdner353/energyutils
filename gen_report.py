@@ -319,10 +319,15 @@ if interval_list:
             end_hh = int(fields[1])
             tariff_name = fields[2]
 
-            while start_hh != end_hh:
-                if tariff_name in tariff_dict:
-                    tarff_interval_dict[start_hh] = tariff_name
-                    start_hh = (start_hh + 1) % 24
+            if start_hh == end_hh:
+                # single xx:xx range (full 24 hours)
+                for i in range(0, 24):
+                    tarff_interval_dict[i] = tariff_name
+            else:
+                while start_hh != end_hh:
+                    if tariff_name in tariff_dict:
+                        tarff_interval_dict[start_hh] = tariff_name
+                        start_hh = (start_hh + 1) % 24
     log_message(
             verbose,
             'Tariff Intervals: %s' % (
