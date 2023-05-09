@@ -160,7 +160,6 @@ def add_worksheet(
         return
 
     for chart_rec in chart_list:
-        chartsheet = workbook.add_chartsheet(chart_rec['title'])
         chart_def = {
                     'type': chart_rec['type'],
                     }
@@ -184,6 +183,7 @@ def add_worksheet(
         if 'style' in chart_rec:
             chart.set_style(chart_rec['style'])
 
+        series_added = 0
         for series_rec in chart_rec['series']:
             # skip series if the source field is not present
             if not series_rec['field'] in data_field_set:
@@ -208,13 +208,13 @@ def add_worksheet(
                 print(series_dict)
 
             chart.add_series(series_dict)
-            log_message(
-                    0,
-                    'Add series %s' % (
-                        series_dict)
-                    )
+            series_added += 1
 
-        chartsheet.set_chart(chart)
+        # only add the chart and sheet if it has 1+ series
+        # added
+        if series_added > 0:
+            chartsheet = workbook.add_chartsheet(chart_rec['title'])
+            chartsheet.set_chart(chart)
 
     return
 
@@ -565,8 +565,16 @@ field_dict = {
             'header_format' : 'general',
             'format' : 'float',
             },
+        'self_consumed' : {
+            'title' : 'Self-Consumed (kWh)',
+            'width' : 15,
+            'header_format' : 'general',
+            'format' : 'float',
+            },
         }
 
+# All data worksheet
+# Every hour in the entire period
 add_worksheet(
         workbook,
         'All',
@@ -729,38 +737,81 @@ for ts in data_dict:
     hour_dict[hour]['rel_cost'] += rec['rel_cost']
     hour_dict[hour]['days'] += 1
 
-    if 'solar' in rec:
-        if not 'solar' in day_dict:
-            day_dict[day]['solar'] = 0
-            weekday_dict[weekday]['solar'] = 0
-            week_dict[week]['solar'] = 0
-            month_dict[month]['solar'] = 0
-            year_dict[year]['solar'] = 0
-            hour_dict[hour]['solar'] = 0
+    # solar, consumed and self-consumed properties
+    # present in a solar inverter or EM feed 
+    # but not in a smart meter (ESB) type feed
+    # This will detect the additional property
+    # and initialise that total per agg dict and then add on the
+    # values per encountered record
+    for extra_prop in ['solar', 'consumed', 'self_consumed']:
+        if extra_prop in rec:
+            for agg_dict_obj in [
+                    day_dict[day], 
+                    weekday_dict[weekday], 
+                    week_dict[week], 
+                    month_dict[month], 
+                    year_dict[year], 
+                    hour_dict[hour]
+                    ]:
+                if not extra_prop in agg_dict_obj:
+                    agg_dict_obj[extra_prop] = 0
 
-        day_dict[day]['solar'] += rec['solar']
-        weekday_dict[weekday]['solar'] += rec['solar']
-        week_dict[week]['solar'] += rec['solar']
-        month_dict[month]['solar'] += rec['solar']
-        year_dict[year]['solar'] += rec['solar']
-        hour_dict[hour]['solar'] += rec['solar']
+            day_dict[day][extra_prop] += rec[extra_prop]
+            weekday_dict[weekday][extra_prop] += rec[extra_prop]
+            week_dict[week][extra_prop] += rec[extra_prop]
+            month_dict[month][extra_prop] += rec[extra_prop]
+            year_dict[year][extra_prop] += rec[extra_prop]
+            hour_dict[hour][extra_prop] += rec[extra_prop]
 
-    if 'consumed' in rec:
-        if not 'consumed' in day_dict:
-            day_dict[day]['consumed'] = 0
-            weekday_dict[weekday]['consumed'] = 0
-            week_dict[week]['consumed'] = 0
-            month_dict[month]['consumed'] = 0
-            year_dict[year]['consumed'] = 0
-            hour_dict[hour]['consumed'] = 0
 
-        day_dict[day]['consumed'] += rec['consumed']
-        weekday_dict[weekday]['consumed'] += rec['consumed']
-        week_dict[week]['consumed'] += rec['consumed']
-        month_dict[month]['consumed'] += rec['consumed']
-        year_dict[year]['consumed'] += rec['consumed']
-        hour_dict[hour]['consumed'] += rec['consumed']
+# Aggregate worksheets
+consumption_series =  [
+        {
+            'field': 'consumed',
+            'colour': 'red',
+            },
+        {
+            'field': 'solar',
+            'colour': 'green',
+            },
+        {
+            'field': 'self_consumed',
+            'colour': 'blue',
+            },
+        ]
 
+import_series =  [
+        {
+            'field': 'import',
+            'colour': 'red',
+            },
+        {
+            'field': 'export',
+            'colour': 'green',
+            },
+        {
+            'field': 'rel_import',
+            'colour': 'blue',
+            },
+        ]
+
+cost_series = [
+        {
+            'field': 'rel_cost',
+            'colour': 'green',
+            },
+        ]
+
+tariff_cost_series = [
+        {
+            'field': 'import_cost',
+            'colour': 'red',
+            },
+        {
+            'field': 'export_credit',
+            'colour': 'green',
+            },
+        ]
 
 add_worksheet(
         workbook,
@@ -770,26 +821,20 @@ add_worksheet(
         day_dict,
         chart_list = [
             {
-                'title' : 'Day kWh',
+                'title' : 'Day Consumption',
                 'type' : 'column',
-                #'sub_type' : 'stacked',
                 'x_title' : 'Day',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
-                'series' : [
-                    {
-                        'field': 'import',
-                        'colour': '#C30000',
-                        },
-                    {
-                        'field': 'export',
-                        'colour': '#008000',
-                        },
-                    {
-                        'field': 'rel_import',
-                        'colour': '#008080',
-                        },
-                    ]
+                'series' : consumption_series,
+                },
+            {
+                'title' : 'Day Import',
+                'type' : 'column',
+                'x_title' : 'Day',
+                'x_rotation' : -45,
+                'y_title' : 'kWh',
+                'series' : import_series,
                 },
             {
                 'title' : 'Day Cost',
@@ -797,12 +842,7 @@ add_worksheet(
                 'x_title' : 'Day',
                 'x_rotation' : -45,
                 'y_title' : 'Euro',
-                'series' : [
-                    {
-                        'field': 'rel_cost',
-                        'colour': '#008000',
-                        },
-                    ]
+                'series' : cost_series,
                 }
             ]
         )
@@ -815,25 +855,20 @@ add_worksheet(
         week_dict,
         chart_list = [
             {
-                'title' : 'Weekly kWh',
+                'title' : 'Weekly Consumption',
                 'type' : 'column',
                 'x_title' : 'Week',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
-                'series' : [
-                    {
-                        'field': 'import',
-                        'colour': '#800000',
-                        },
-                    {
-                        'field': 'export',
-                        'colour': '#008000',
-                        },
-                    {
-                        'field': 'rel_import',
-                        'colour': '#008080',
-                        },
-                    ]
+                'series' : consumption_series,
+                },
+            {
+                'title' : 'Weekly Import',
+                'type' : 'column',
+                'x_title' : 'Week',
+                'x_rotation' : -45,
+                'y_title' : 'kWh',
+                'series' : import_series,
                 },
             {
                 'title' : 'Weekly Cost',
@@ -841,12 +876,7 @@ add_worksheet(
                 'x_title' : 'Week',
                 'x_rotation' : -45,
                 'y_title' : 'Euro',
-                'series' : [
-                    {
-                        'field': 'rel_cost',
-                        'colour': '#008000',
-                        },
-                    ]
+                'series' : cost_series,
                 }
             ]
         )
@@ -859,38 +889,28 @@ add_worksheet(
         month_dict,
         chart_list = [
             {
-                'title' : 'Monthly kWh',
+                'title' : 'Monthly Consumption',
                 'type' : 'column',
-                'x_title' : 'Week',
+                'x_title' : 'Month',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
-                'series' : [
-                    {
-                        'field': 'import',
-                        'colour': '#800000',
-                        },
-                    {
-                        'field': 'export',
-                        'colour': '#008000',
-                        },
-                    {
-                        'field': 'rel_import',
-                        'colour': '#008080',
-                        },
-                    ]
+                'series' : consumption_series,
+                },
+            {
+                'title' : 'Monthly Import',
+                'type' : 'column',
+                'x_title' : 'Month',
+                'x_rotation' : -45,
+                'y_title' : 'kWh',
+                'series' : import_series,
                 },
             {
                 'title' : 'Monthly Cost',
                 'type' : 'column',
-                'x_title' : 'Week',
+                'x_title' : 'Month',
                 'x_rotation' : -45,
                 'y_title' : 'Euro',
-                'series' : [
-                    {
-                        'field': 'rel_cost',
-                        'colour': '#008000',
-                        },
-                    ]
+                'series' : cost_series,
                 }
             ]
         )
@@ -910,30 +930,29 @@ add_worksheet(
         weekday_dict,
         chart_list = [
             {
-                'title' : 'Weekday kWh',
+                'title' : 'Weekday Consumption',
                 'type' : 'column',
                 'x_title' : 'Weekday',
                 'y_title' : 'kWh',
-                'series' : [
-                    {
-                        'field': 'rel_import',
-                        'colour': '#008080',
-                        },
-                    ]
+                'series' : consumption_series
+                },
+            {
+                'title' : 'Weekday Import',
+                'type' : 'column',
+                'x_title' : 'Weekday',
+                'x_rotation' : -45,
+                'y_title' : 'kWh',
+                'series' : import_series,
                 },
             {
                 'title' : 'Weekday Cost',
                 'type' : 'column',
                 'x_title' : 'Weekday',
                 'y_title' : 'Euro',
-                'series' : [
-                    {
-                        'field': 'rel_cost',
-                        'colour': '#008000',
-                        },
-                    ]
+                'series' : cost_series,
                 }
-            ])
+            ]
+        )
 
 add_worksheet(
         workbook,
@@ -943,28 +962,26 @@ add_worksheet(
         hour_dict,
         chart_list = [
             {
-                'title' : '24h kWh',
+                'title' : '24h Consumption',
                 'type' : 'column',
                 'x_title' : 'Hour',
                 'y_title' : 'kWh',
-                'series' : [
-                    {
-                        'field': 'rel_import',
-                        'colour': '#008080',
-                        },
-                    ]
+                'series' : consumption_series,
+                },
+            {
+                'title' : '24h Import',
+                'type' : 'column',
+                'x_title' : 'Hour',
+                'x_rotation' : -45,
+                'y_title' : 'kWh',
+                'series' : import_series,
                 },
             {
                 'title' : '24h Cost',
                 'type' : 'column',
                 'x_title' : 'Hour',
                 'y_title' : 'Euro',
-                'series' : [
-                    {
-                        'field': 'rel_cost',
-                        'colour': '#008000',
-                        },
-                    ]
+                'series' : cost_series,
                 }
             ])
 
@@ -976,36 +993,19 @@ add_worksheet(
         tariff_dict,
         chart_list = [
             {
-                'title' : 'Tariff Totals',
+                'title' : 'Tariff Import',
                 'type' : 'column',
                 'x_title' : 'Tariff',
+                'x_rotation' : -45,
                 'y_title' : 'kWh',
-                'series' : [
-                    {
-                        'field': 'import',
-                        'colour': '#800000',
-                        },
-                    {
-                        'field': 'export',
-                        'colour': '#008000',
-                        },
-                    ]
+                'series' : import_series,
                 },
             {
                 'title' : 'Tariff Cost',
                 'type' : 'column',
                 'x_title' : 'Tariff',
                 'y_title' : 'Euro',
-                'series' : [
-                    {
-                        'field': 'import_cost',
-                        'colour': '#800000',
-                        },
-                    {
-                        'field': 'export_credit',
-                        'colour': '#008000',
-                        },
-                    ]
+                'series' : tariff_cost_series,
                 }
             ]
         )
