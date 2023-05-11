@@ -565,8 +565,8 @@ field_dict = {
             'header_format' : 'general',
             'format' : 'float',
             },
-        'self_consumed' : {
-            'title' : 'Self-Consumed (kWh)',
+        'solar_consumed' : {
+            'title' : 'Solar-Consumed (kWh)',
             'width' : 15,
             'header_format' : 'general',
             'format' : 'float',
@@ -577,7 +577,7 @@ field_dict = {
 # Every hour in the entire period
 add_worksheet(
         workbook,
-        'All',
+        'Hour',
         format_dict,
         field_dict,
         data_dict)
@@ -743,7 +743,7 @@ for ts in data_dict:
     # This will detect the additional property
     # and initialise that total per agg dict and then add on the
     # values per encountered record
-    for extra_prop in ['solar', 'consumed', 'self_consumed']:
+    for extra_prop in ['solar', 'consumed', 'solar_consumed']:
         if extra_prop in rec:
             for agg_dict_obj in [
                     day_dict[day], 
@@ -767,28 +767,27 @@ for ts in data_dict:
 # Aggregate worksheets
 consumption_series =  [
         {
-            'field': 'consumed',
+            'field': 'import',
             'colour': 'red',
             },
         {
-            'field': 'solar',
+            'field': 'solar_consumed',
             'colour': 'green',
-            },
-        {
-            'field': 'self_consumed',
-            'colour': 'blue',
             },
         ]
 
 import_series =  [
         {
-            'field': 'import',
-            'colour': 'red',
-            },
-        {
-            'field': 'export',
+            'field': 'solar',
             'colour': 'green',
             },
+        {
+            'field': 'rel_import',
+            'colour': 'blue',
+            },
+        ]
+
+rel_import_series =  [
         {
             'field': 'rel_import',
             'colour': 'blue',
@@ -821,15 +820,16 @@ add_worksheet(
         day_dict,
         chart_list = [
             {
-                'title' : 'Day Consumption',
+                'title' : 'Daily Consumption',
                 'type' : 'column',
+                'sub_type' : 'stacked',
                 'x_title' : 'Day',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
                 'series' : consumption_series,
                 },
             {
-                'title' : 'Day Import',
+                'title' : 'Daily Import',
                 'type' : 'column',
                 'x_title' : 'Day',
                 'x_rotation' : -45,
@@ -837,7 +837,7 @@ add_worksheet(
                 'series' : import_series,
                 },
             {
-                'title' : 'Day Cost',
+                'title' : 'Daily Cost',
                 'type' : 'column',
                 'x_title' : 'Day',
                 'x_rotation' : -45,
@@ -857,6 +857,7 @@ add_worksheet(
             {
                 'title' : 'Weekly Consumption',
                 'type' : 'column',
+                'sub_type' : 'stacked',
                 'x_title' : 'Week',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
@@ -891,6 +892,7 @@ add_worksheet(
             {
                 'title' : 'Monthly Consumption',
                 'type' : 'column',
+                'sub_type' : 'stacked',
                 'x_title' : 'Month',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
@@ -932,6 +934,7 @@ add_worksheet(
             {
                 'title' : 'Weekday Consumption',
                 'type' : 'column',
+                'sub_type' : 'stacked',
                 'x_title' : 'Weekday',
                 'y_title' : 'kWh',
                 'series' : consumption_series
@@ -964,6 +967,7 @@ add_worksheet(
             {
                 'title' : '24h Consumption',
                 'type' : 'column',
+                'sub_type' : 'stacked',
                 'x_title' : 'Hour',
                 'y_title' : 'kWh',
                 'series' : consumption_series,
@@ -974,7 +978,7 @@ add_worksheet(
                 'x_title' : 'Hour',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
-                'series' : import_series,
+                'series' : rel_import_series,
                 },
             {
                 'title' : '24h Cost',
