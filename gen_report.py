@@ -401,11 +401,15 @@ for filename in os.listdir(idir):
             dt_hour = rec['hour']
             rec['import_cost'] = 0
             rec['export_credit'] = 0
+            rec['solar_consumed_saving'] = 0
             if dt_hour in tarff_interval_dict:
                 # calculate as kWh times kWh rate
                 rec['tariff_name'] = tarff_interval_dict[dt_hour]
                 rec['tariff_rate'] = tariff_dict[rec['tariff_name']]
                 rec['import_cost'] = rec['import'] * rec['tariff_rate']
+
+                if 'solar_consumed' in rec:
+                    rec['solar_credit'] = rec['solar_consumed'] * rec['tariff_rate']
 
             if fit_rate:
                 rec['export_credit'] = rec['export'] * fit_rate
@@ -528,6 +532,12 @@ field_dict = {
             'header_format' : 'general',
             'format' : 'float',
             },
+        'consumed' : {
+            'title' : 'Consumed (kWh)',
+            'width' : 15,
+            'header_format' : 'general',
+            'format' : 'float',
+            },
         'export' : {
             'title' : 'Export (kWh)',
             'width' : 15,
@@ -541,32 +551,32 @@ field_dict = {
             'format' : 'float',
             },
         'rel_import' : {
-            'title' : 'Rel Import (kWh)',
+            'title' : 'Relative Import (kWh)',
             'width' : 15,
             'header_format' : 'general',
             'format' : 'float',
             'field' : 'import'
             },
         'rel_cost' : {
-            'title' : 'Rel Cost',
+            'title' : 'Relative Cost',
             'width' : 15,
             'header_format' : 'general',
             'format' : 'float',
             },
         'solar' : {
-            'title' : 'Solar (kWh)',
-            'width' : 15,
-            'header_format' : 'general',
-            'format' : 'float',
-            },
-        'consumed' : {
-            'title' : 'Consumed (kWh)',
+            'title' : 'Solar Generation (kWh)',
             'width' : 15,
             'header_format' : 'general',
             'format' : 'float',
             },
         'solar_consumed' : {
-            'title' : 'Solar-Consumed (kWh)',
+            'title' : 'Solar Consumed (kWh)',
+            'width' : 15,
+            'header_format' : 'general',
+            'format' : 'float',
+            },
+        'solar_credit' : {
+            'title' : 'Solar Credit',
             'width' : 15,
             'header_format' : 'general',
             'format' : 'float',
@@ -743,7 +753,7 @@ for ts in data_dict:
     # This will detect the additional property
     # and initialise that total per agg dict and then add on the
     # values per encountered record
-    for extra_prop in ['solar', 'consumed', 'solar_consumed']:
+    for extra_prop in ['solar', 'consumed', 'solar_consumed', 'solar_credit']:
         if extra_prop in rec:
             for agg_dict_obj in [
                     day_dict[day], 
@@ -794,7 +804,22 @@ rel_import_series =  [
             },
         ]
 
-cost_series = [
+full_cost_series = [
+        {
+            'field': 'import_cost',
+            'colour': 'red',
+            },
+        {
+            'field': 'solar_credit',
+            'colour': 'green',
+            },
+        {
+            'field': 'export_credit',
+            'colour': 'blue',
+            },
+        ]
+
+rel_cost_series = [
         {
             'field': 'rel_cost',
             'colour': 'green',
@@ -807,8 +832,12 @@ tariff_cost_series = [
             'colour': 'red',
             },
         {
-            'field': 'export_credit',
+            'field': 'solar_credit',
             'colour': 'green',
+            },
+        {
+            'field': 'export_credit',
+            'colour': 'blue',
             },
         ]
 
@@ -842,8 +871,16 @@ add_worksheet(
                 'x_title' : 'Day',
                 'x_rotation' : -45,
                 'y_title' : 'Euro',
-                'series' : cost_series,
-                }
+                'series' : full_cost_series,
+                },
+            {
+                'title' : 'Daily Relative Cost',
+                'type' : 'column',
+                'x_title' : 'Day',
+                'x_rotation' : -45,
+                'y_title' : 'Euro',
+                'series' : rel_cost_series,
+                },
             ]
         )
 
@@ -877,8 +914,16 @@ add_worksheet(
                 'x_title' : 'Week',
                 'x_rotation' : -45,
                 'y_title' : 'Euro',
-                'series' : cost_series,
-                }
+                'series' : full_cost_series,
+                },
+            {
+                'title' : 'Weekly Relative Cost',
+                'type' : 'column',
+                'x_title' : 'Week',
+                'x_rotation' : -45,
+                'y_title' : 'Euro',
+                'series' : rel_cost_series,
+                },
             ]
         )
 
@@ -912,8 +957,16 @@ add_worksheet(
                 'x_title' : 'Month',
                 'x_rotation' : -45,
                 'y_title' : 'Euro',
-                'series' : cost_series,
-                }
+                'series' : full_cost_series,
+                },
+            {
+                'title' : 'Monthly Relative Cost',
+                'type' : 'column',
+                'x_title' : 'Month',
+                'x_rotation' : -45,
+                'y_title' : 'Euro',
+                'series' : rel_cost_series,
+                },
             ]
         )
 
@@ -951,9 +1004,17 @@ add_worksheet(
                 'title' : 'Weekday Cost',
                 'type' : 'column',
                 'x_title' : 'Weekday',
+                'x_rotation' : -45,
                 'y_title' : 'Euro',
-                'series' : cost_series,
-                }
+                'series' : full_cost_series,
+                },
+            {
+                'title' : 'Weekday Relative Cost',
+                'type' : 'column',
+                'x_title' : 'Weekday',
+                'y_title' : 'Euro',
+                'series' : rel_cost_series,
+                },
             ]
         )
 
@@ -984,9 +1045,17 @@ add_worksheet(
                 'title' : '24h Cost',
                 'type' : 'column',
                 'x_title' : 'Hour',
+                'x_rotation' : -45,
                 'y_title' : 'Euro',
-                'series' : cost_series,
-                }
+                'series' : full_cost_series,
+                },
+            {
+                'title' : '24h Relative Cost',
+                'type' : 'column',
+                'x_title' : 'Hour',
+                'y_title' : 'Euro',
+                'series' : rel_cost_series,
+                },
             ])
 
 add_worksheet(
@@ -1010,7 +1079,7 @@ add_worksheet(
                 'x_title' : 'Tariff',
                 'y_title' : 'Euro',
                 'series' : tariff_cost_series,
-                }
+                },
             ]
         )
 
