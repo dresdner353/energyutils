@@ -219,6 +219,53 @@ def add_worksheet(
     return
 
 
+def gen_aggregate_dict(
+        data_dict,
+        agg_field):
+
+    agg_dict = {}
+
+    # skipped fields
+    # some special cases and the aggregate 
+    # itself
+    field_skip_list = [
+            'ts', 
+            'datetime',
+            'hour',
+            'tariff_rate',
+            ]
+    field_skip_list.append(agg_field)
+
+
+    for ts in data_dict:
+        rec = data_dict[ts]
+
+        agg_value = rec[agg_field]
+
+        # initialise aggregate record
+        if not agg_value in agg_dict:
+            agg_dict[agg_value] = {}
+            agg_dict[agg_value][agg_field] = agg_value
+
+        # aggregate field values
+        for field in rec:
+            # skip certain fields
+            if field in field_skip_list:
+                continue
+
+            # skip any non-number fields
+            if not type(rec[field]) in [int, float]:
+                continue
+
+            if not field in agg_dict[agg_value]:
+                agg_dict[agg_value][field] = rec[field]
+            else:
+                agg_dict[agg_value][field] += rec[field]
+
+
+    return agg_dict
+
+
 # main()
 
 parser = argparse.ArgumentParser(
@@ -594,185 +641,13 @@ add_worksheet(
 
 
 # aggregate dicts
-day_dict = {}
-weekday_dict = {}
-week_dict = {}
-month_dict = {}
-year_dict = {}
-hour_dict = {}
-tariff_dict = {}
-
-for ts in data_dict:
-    rec = data_dict[ts]
-
-    hour = rec['hour']
-    day = rec['day']
-    month = rec['month']
-    year = rec['year']
-    week = rec['week']
-    weekday = rec['weekday']
-
-    tariff_name = None
-    tariff_rate = None
-    if 'tariff_name' in rec:
-        tariff_name = rec['tariff_name']
-        tariff_rate = rec['tariff_rate']
-
-    if not day in day_dict:
-        day_dict[day] = {}
-        day_dict[day]['day'] = day
-        day_dict[day]['import'] = 0
-        day_dict[day]['rel_import'] = 0
-        day_dict[day]['export'] = 0
-        day_dict[day]['import_cost'] = 0
-        day_dict[day]['export_credit'] = 0
-        day_dict[day]['rel_cost'] = 0
-
-    if not week in week_dict:
-        week_dict[week] = {}
-        week_dict[week]['week'] = week
-        week_dict[week]['import'] = 0
-        week_dict[week]['rel_import'] = 0
-        week_dict[week]['export'] = 0
-        week_dict[week]['import_cost'] = 0
-        week_dict[week]['export_credit'] = 0
-        week_dict[week]['rel_cost'] = 0
-
-    if not weekday in weekday_dict:
-        weekday_dict[weekday] = {}
-        weekday_dict[weekday]['weekday'] = weekday
-        weekday_dict[weekday]['import'] = 0
-        weekday_dict[weekday]['rel_import'] = 0
-        weekday_dict[weekday]['export'] = 0
-        weekday_dict[weekday]['import_cost'] = 0
-        weekday_dict[weekday]['export_credit'] = 0
-        weekday_dict[weekday]['rel_cost'] = 0
-
-    if not month in month_dict:
-        month_dict[month] = {}
-        month_dict[month]['month'] = month
-        month_dict[month]['import'] = 0
-        month_dict[month]['rel_import'] = 0
-        month_dict[month]['export'] = 0
-        month_dict[month]['import_cost'] = 0
-        month_dict[month]['export_credit'] = 0
-        month_dict[month]['rel_cost'] = 0
-
-    if not year in year_dict:
-        year_dict[year] = {}
-        year_dict[year]['year'] = year
-        year_dict[year]['import'] = 0
-        year_dict[year]['rel_import'] = 0
-        year_dict[year]['export'] = 0
-        year_dict[year]['import_cost'] = 0
-        year_dict[year]['export_credit'] = 0
-        year_dict[year]['rel_cost'] = 0
-
-    if not hour in hour_dict:
-        hour_dict[hour] = {}
-        hour_dict[hour]['hour'] = hour
-        hour_dict[hour]['import'] = 0
-        hour_dict[hour]['rel_import'] = 0
-        hour_dict[hour]['export'] = 0
-        hour_dict[hour]['import_cost'] = 0
-        hour_dict[hour]['export_credit'] = 0
-        hour_dict[hour]['days'] = 0
-        hour_dict[hour]['rel_cost'] = 0
-
-    if tariff_name:
-        if not tariff_name in tariff_dict:
-            tariff_dict[tariff_name] = {}
-            tariff_dict[tariff_name]['tariff_name'] = tariff_name
-            tariff_dict[tariff_name]['tariff_rate'] = tariff_rate
-            tariff_dict[tariff_name]['import'] = 0
-            tariff_dict[tariff_name]['import_cost'] = 0
-            tariff_dict[tariff_name]['export'] = 0 
-            tariff_dict[tariff_name]['export_credit'] = 0
-        tariff_dict[tariff_name]['import'] += rec['import']
-        tariff_dict[tariff_name]['import_cost'] += rec['import_cost']
-
-    if fit_rate:
-        if not 'FIT' in tariff_dict:
-            tariff_dict['FIT'] = {}
-            tariff_dict['FIT']['tariff_name'] = 'FIT'
-            tariff_dict['FIT']['tariff_rate'] = fit_rate
-            tariff_dict['FIT']['import'] = 0
-            tariff_dict['FIT']['import_cost'] = 0
-            tariff_dict['FIT']['export'] = 0
-            tariff_dict['FIT']['export_credit'] = 0
-
-        tariff_dict['FIT']['export'] += rec['export']
-        tariff_dict['FIT']['export_credit'] += rec['export_credit']
-
-    day_dict[day]['import'] += rec['import']
-    day_dict[day]['rel_import'] += rec['rel_import']
-    day_dict[day]['export'] += rec['export']
-    day_dict[day]['import_cost'] += rec['import_cost']
-    day_dict[day]['export_credit'] += rec['export_credit']
-    day_dict[day]['rel_cost'] += rec['rel_cost']
-
-    weekday_dict[weekday]['import'] += rec['import']
-    weekday_dict[weekday]['rel_import'] += rec['rel_import']
-    weekday_dict[weekday]['export'] += rec['export']
-    weekday_dict[weekday]['import_cost'] += rec['import_cost']
-    weekday_dict[weekday]['export_credit'] += rec['export_credit']
-    weekday_dict[weekday]['rel_cost'] += rec['rel_cost']
-
-    week_dict[week]['import'] += rec['import']
-    week_dict[week]['rel_import'] += rec['rel_import']
-    week_dict[week]['export'] += rec['export']
-    week_dict[week]['import_cost'] += rec['import_cost']
-    week_dict[week]['export_credit'] += rec['export_credit']
-    week_dict[week]['rel_cost'] += rec['rel_cost']
-
-    month_dict[month]['import'] += rec['import']
-    month_dict[month]['rel_import'] += rec['rel_import']
-    month_dict[month]['export'] += rec['export']
-    month_dict[month]['import_cost'] += rec['import_cost']
-    month_dict[month]['export_credit'] += rec['export_credit']
-    month_dict[month]['rel_cost'] += rec['rel_cost']
-
-    year_dict[year]['import'] += rec['import']
-    year_dict[year]['rel_import'] += rec['rel_import']
-    year_dict[year]['export'] += rec['export']
-    year_dict[year]['import_cost'] += rec['import_cost']
-    year_dict[year]['export_credit'] += rec['export_credit']
-    year_dict[year]['rel_cost'] += rec['rel_cost']
-
-    hour_dict[hour]['import'] += rec['import']
-    hour_dict[hour]['rel_import'] += rec['rel_import']
-    hour_dict[hour]['export'] += rec['export']
-    hour_dict[hour]['import_cost'] += rec['import_cost']
-    hour_dict[hour]['export_credit'] += rec['export_credit']
-    hour_dict[hour]['rel_cost'] += rec['rel_cost']
-    hour_dict[hour]['days'] += 1
-
-    # solar, consumed and self-consumed properties
-    # present in a solar inverter or EM feed 
-    # but not in a smart meter (ESB) type feed
-    # This will detect the additional property
-    # and initialise that total per agg dict and then add on the
-    # values per encountered record
-    for extra_prop in ['solar', 'consumed', 'solar_consumed', 'solar_credit']:
-        if extra_prop in rec:
-            for agg_dict_obj in [
-                    day_dict[day], 
-                    weekday_dict[weekday], 
-                    week_dict[week], 
-                    month_dict[month], 
-                    year_dict[year], 
-                    hour_dict[hour]
-                    ]:
-                if not extra_prop in agg_dict_obj:
-                    agg_dict_obj[extra_prop] = 0
-
-            day_dict[day][extra_prop] += rec[extra_prop]
-            weekday_dict[weekday][extra_prop] += rec[extra_prop]
-            week_dict[week][extra_prop] += rec[extra_prop]
-            month_dict[month][extra_prop] += rec[extra_prop]
-            year_dict[year][extra_prop] += rec[extra_prop]
-            hour_dict[hour][extra_prop] += rec[extra_prop]
-
+day_dict = gen_aggregate_dict(data_dict, 'day')
+weekday_dict = gen_aggregate_dict(data_dict, 'weekday')
+week_dict = gen_aggregate_dict(data_dict, 'week')
+month_dict = gen_aggregate_dict(data_dict, 'month')
+year_dict = gen_aggregate_dict(data_dict, 'year')
+hour_dict = gen_aggregate_dict(data_dict, 'hour')
+tariff_dict = gen_aggregate_dict(data_dict, 'tariff_name')
 
 # Aggregate worksheets
 consumption_series =  [
