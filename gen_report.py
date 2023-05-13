@@ -430,19 +430,23 @@ for filename in os.listdir(idir):
                 rec['ts'] > end_ts):
                 continue
 
-            data_dict[rec['ts']] = rec
+            # timestamp to UTC hour string
+            # YYYYMMDDHH
+            ts_dt = datetime.datetime.utcfromtimestamp(rec['ts'])
+            utc_hour = ts_dt.strftime(
+                    '%Y%m%d%H')
+
+            # Remove epoch timestamp 
+            # and replace with UTC text version
+            rec['utc_hour'] = utc_hour
+            data_dict[utc_hour] = rec
 
             # naive year datetime conversion
             # replaces existing year, month and day fields
-            ts_dt = datetime.datetime.strptime(
+            datetime_dt = datetime.datetime.strptime(
                     rec['datetime'], 
                     '%Y/%m/%d %H:%M:%S')
-            rec['datetime'] = ts_dt
-
-            ## # month and day over-rides with 
-            ## # locale-specific text versions
-            ## rec['month'] = ts_dt.strftime('%b %Y')
-            ## rec['day'] = ts_dt.strftime('%b %d %Y')
+            rec['datetime'] = datetime_dt
 
             # cost calculation based on hour
             dt_hour = rec['hour']
@@ -506,14 +510,20 @@ datetime_format.set_num_format('yyyy/mm/dd hh:mm:ss')
 format_dict['datetime'] = datetime_format
 
 field_dict = {
+        'utc_hour' : {
+            'title' : 'UTC Hour',
+            'width' : 12,
+            'header_format' : 'general',
+            'format' : 'str',
+            },
         'ts' : {
-            'title' : 'Timestamp',
+            'title' : 'Epoch Timestamp',
             'width' : 20,
             'header_format' : 'general',
             'format' : 'integer',
             },
         'datetime' : {
-            'title' : 'Date/Time',
+            'title' : 'Local Time',
             'width' : 20,
             'header_format' : 'general',
             'format' : 'datetime',
@@ -630,15 +640,6 @@ field_dict = {
             },
         }
 
-# All data worksheet
-# Every hour in the entire period
-add_worksheet(
-        workbook,
-        'Hour',
-        format_dict,
-        field_dict,
-        data_dict)
-
 
 # aggregate dicts
 day_dict = gen_aggregate_dict(data_dict, 'day')
@@ -715,6 +716,51 @@ tariff_cost_series = [
             'colour': 'blue',
             },
         ]
+
+
+add_worksheet(
+        workbook,
+        'Hour',
+        format_dict,
+        field_dict,
+        data_dict,
+        chart_list = [
+            {
+                'title' : 'Hourly Consumption',
+                'type' : 'column',
+                'sub_type' : 'stacked',
+                'x_title' : 'UTC Hour',
+                'x_rotation' : -45,
+                'y_title' : 'kWh',
+                'series' : consumption_series,
+                },
+            {
+                'title' : 'Hourly Import',
+                'type' : 'column',
+                'x_title' : 'UTC Hour',
+                'x_rotation' : -45,
+                'y_title' : 'kWh',
+                'series' : import_series,
+                },
+            {
+                'title' : 'Hourly Cost',
+                'type' : 'column',
+                'x_title' : 'UTC Hour',
+                'x_rotation' : -45,
+                'y_title' : 'Euro',
+                'series' : full_cost_series,
+                },
+            {
+                'title' : 'Hourly Relative Cost',
+                'type' : 'column',
+                'x_title' : 'UTC Hour',
+                'x_rotation' : -45,
+                'y_title' : 'Euro',
+                'series' : rel_cost_series,
+                },
+            ]
+        )
+
 
 add_worksheet(
         workbook,
