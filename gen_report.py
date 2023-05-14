@@ -706,7 +706,7 @@ add_worksheet(
                 'title' : 'Hourly Consumption',
                 'type' : 'column',
                 'sub_type' : 'stacked',
-                'x_title' : 'UTC Hour',
+                'x_title' : 'Hour',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
                 'series' : consumption_series,
@@ -714,7 +714,7 @@ add_worksheet(
             {
                 'title' : 'Hourly Import',
                 'type' : 'column',
-                'x_title' : 'UTC Hour',
+                'x_title' : 'Hour',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
                 'series' : import_series,
@@ -722,7 +722,7 @@ add_worksheet(
             {
                 'title' : 'Hourly Cost',
                 'type' : 'column',
-                'x_title' : 'UTC Hour',
+                'x_title' : 'Hour',
                 'x_rotation' : -45,
                 'y_title' : 'Euro',
                 'series' : full_cost_series,
@@ -730,7 +730,7 @@ add_worksheet(
             {
                 'title' : 'Hourly Relative Cost',
                 'type' : 'column',
-                'x_title' : 'UTC Hour',
+                'x_title' : 'Hour',
                 'x_rotation' : -45,
                 'y_title' : 'Euro',
                 'series' : rel_cost_series,
