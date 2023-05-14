@@ -57,13 +57,15 @@ def add_worksheet(
         data_dict,
         chart_list = None):
 
+    global verbose
+
     # nothing to do if no data sent
     if len(data_dict) == 0:
         return
 
     log_message(
             1,
-            'Adding worksheet %s (%d records)' % (
+            'Adding worksheet %s (%d rows)' % (
                 sheet_title,
                 len(data_dict)
                 )
@@ -224,12 +226,10 @@ def gen_aggregate_dict(
     # itself
     field_skip_list = [
             'ts', 
-            'datetime',
             'hour',
             'tariff_rate',
             ]
     field_skip_list.append(agg_field)
-
 
     for ts in data_dict:
         rec = data_dict[ts]
@@ -251,13 +251,156 @@ def gen_aggregate_dict(
             if not type(rec[field]) in [int, float]:
                 continue
 
+            # set to value on first encounter or 
+            # add to existing aggregate total
             if not field in agg_dict[agg_value]:
                 agg_dict[agg_value][field] = rec[field]
             else:
                 agg_dict[agg_value][field] += rec[field]
 
-
     return agg_dict
+
+
+def load_data(
+        idir,
+        start_date,
+        end_date,
+        tariff_list,
+        interval_list,
+        fit_rate):
+
+    global verbose
+
+    # start/end range
+    start_ts = 0
+    end_ts = 0
+    start_dt = None
+    end_dt = None
+    if start_date:
+        start_ts, start_dt = parse_range_time(
+                start_date,
+                timezone,
+                end = False)
+    
+    if end_date:
+        end_ts, end_dt = parse_range_time(
+                end_date,
+                timezone,
+                end = True)
+
+    # tariffs 
+    tariff_dict = {}
+    if tariff_list:
+        for tariff_str in tariff_list:
+            fields = tariff_str.split(':')
+            if len(fields) == 2:
+                tariff_dict[fields[0]] = float(fields[1])
+    
+        log_message(
+                verbose,
+                'Tariff Rates: %s' % (
+                    tariff_dict)
+                )
+    
+    # tariff intervals
+    tarff_interval_dict = {}
+    if interval_list:
+        for interval_str in interval_list:
+            fields = interval_str.split(':')
+            if len(fields) == 3:
+                start_hh = int(fields[0])
+                end_hh = int(fields[1])
+                tariff_name = fields[2]
+    
+                if start_hh == end_hh:
+                    # single xx:xx range (full 24 hours)
+                    for i in range(0, 24):
+                        tarff_interval_dict[i] = tariff_name
+                else:
+                    while start_hh != end_hh:
+                        if tariff_name in tariff_dict:
+                            tarff_interval_dict[start_hh] = tariff_name
+                            start_hh = (start_hh + 1) % 24
+        log_message(
+                verbose,
+                'Tariff Intervals: %s' % (
+                    tarff_interval_dict)
+                )
+    
+        if len(tarff_interval_dict) != 24:
+            log_message(
+                    1,
+                    'WARNING: Tariff interval data present for only %d/24 hours' % (
+                        len(tarff_interval_dict))   
+                    )
+
+    # load all data
+    data_dict = {}
+    file_count = 0
+    for filename in os.listdir(idir):
+        # only loading .jsonl files
+        if not filename.endswith('.jsonl'):
+            continue
+    
+        file_count += 1
+        full_path = '%s/%s' % (idir, filename)
+        with open(full_path) as fp:
+            for line in fp:
+                rec = json.loads(line)
+    
+                # skip records if out of range
+                # FIXME probably could also include skipping of 
+                # full files based on name
+                if (start_ts and 
+                    rec['ts'] < start_ts):
+                    continue
+    
+                if (end_ts and 
+                    rec['ts'] > end_ts):
+                    continue
+    
+                # naive datetime conversion
+                # into datetime object
+                datetime_dt = datetime.datetime.strptime(
+                        rec['datetime'], 
+                        '%Y/%m/%d %H:%M:%S')
+                # reformat back to YYYY-MM-DD HH
+                # to reduce to the hour it represents
+                rec['datetime'] = datetime_dt.strftime('%Y-%m-%d %H')
+    
+                # store keyed on datetime object
+                data_dict[rec['datetime']] = rec
+    
+                # cost calculation based on hour
+                dt_hour = rec['hour']
+                rec['import_cost'] = 0
+                rec['export_credit'] = 0
+                rec['solar_consumed_saving'] = 0
+                if dt_hour in tarff_interval_dict:
+                    # calculate as kWh times kWh rate
+                    rec['tariff_name'] = tarff_interval_dict[dt_hour]
+                    rec['tariff_rate'] = tariff_dict[rec['tariff_name']]
+                    rec['import_cost'] = rec['import'] * rec['tariff_rate']
+    
+                    if 'solar_consumed' in rec:
+                        rec['solar_credit'] = rec['solar_consumed'] * rec['tariff_rate']
+    
+                if fit_rate:
+                    rec['export_credit'] = rec['export'] * fit_rate
+    
+                # relative import/cost
+                rec['rel_import'] =  rec['import'] - rec['export']
+                rec['rel_cost'] =  rec['import_cost'] - rec['export_credit']
+    
+    log_message(
+            1,
+            'Loaded %d files, %d records' % (
+                file_count, 
+                len(data_dict)
+                )
+            )
+
+    return data_dict
 
 
 # main()
@@ -336,134 +479,13 @@ end_date = args['end']
 timezone = args['timezone']
 verbose = args['verbose']
 
-# tariffs 
-tariff_dict = {}
-if tariff_list:
-    for tariff_str in tariff_list:
-        fields = tariff_str.split(':')
-        if len(fields) == 2:
-            tariff_dict[fields[0]] = float(fields[1])
-
-    log_message(
-            verbose,
-            'Tariff Rates: %s' % (
-                tariff_dict)
-            )
-
-# tariff intervals
-tarff_interval_dict = {}
-if interval_list:
-    for interval_str in interval_list:
-        fields = interval_str.split(':')
-        if len(fields) == 3:
-            start_hh = int(fields[0])
-            end_hh = int(fields[1])
-            tariff_name = fields[2]
-
-            if start_hh == end_hh:
-                # single xx:xx range (full 24 hours)
-                for i in range(0, 24):
-                    tarff_interval_dict[i] = tariff_name
-            else:
-                while start_hh != end_hh:
-                    if tariff_name in tariff_dict:
-                        tarff_interval_dict[start_hh] = tariff_name
-                        start_hh = (start_hh + 1) % 24
-    log_message(
-            verbose,
-            'Tariff Intervals: %s' % (
-                tarff_interval_dict)
-            )
-
-    if len(tarff_interval_dict) != 24:
-        log_message(
-                1,
-                'WARNING: Tariff interval data present for only %d/24 hours' % (
-                    len(tarff_interval_dict))
-                )
-
-# start/end range
-start_ts = 0
-end_ts = 0
-start_dt = None
-end_dt = None
-if start_date:
-    start_ts, start_dt = parse_range_time(
-            start_date,
-            timezone,
-            end = False)
-
-if end_date:
-    end_ts, end_dt = parse_range_time(
-            end_date,
-            timezone,
-            end = True)
-
-# load all data
-data_dict = {}
-file_count = 0
-for filename in os.listdir(idir):
-    # only loading .jsonl files
-    if not filename.endswith('.jsonl'):
-        continue
-
-    file_count += 1
-    full_path = '%s/%s' % (idir, filename)
-    with open(full_path) as fp:
-        for line in fp:
-            rec = json.loads(line)
-
-            # skip records if out of range
-            # FIXME probably could also include skipping of 
-            # full files based on name
-            if (start_ts and 
-                rec['ts'] < start_ts):
-                continue
-
-            if (end_ts and 
-                rec['ts'] > end_ts):
-                continue
-
-            # naive datetime conversion
-            # into datetime object
-            datetime_dt = datetime.datetime.strptime(
-                    rec['datetime'], 
-                    '%Y/%m/%d %H:%M:%S')
-            # reformat back to YYYY-MM-DD HH
-            # to reduce to the hour it represents
-            rec['datetime'] = datetime_dt.strftime('%Y-%m-%d %H')
-
-            # store keyed on datetime object
-            data_dict[rec['datetime']] = rec
-
-            # cost calculation based on hour
-            dt_hour = rec['hour']
-            rec['import_cost'] = 0
-            rec['export_credit'] = 0
-            rec['solar_consumed_saving'] = 0
-            if dt_hour in tarff_interval_dict:
-                # calculate as kWh times kWh rate
-                rec['tariff_name'] = tarff_interval_dict[dt_hour]
-                rec['tariff_rate'] = tariff_dict[rec['tariff_name']]
-                rec['import_cost'] = rec['import'] * rec['tariff_rate']
-
-                if 'solar_consumed' in rec:
-                    rec['solar_credit'] = rec['solar_consumed'] * rec['tariff_rate']
-
-            if fit_rate:
-                rec['export_credit'] = rec['export'] * fit_rate
-
-            # relative import/cost
-            rec['rel_import'] =  rec['import'] - rec['export']
-            rec['rel_cost'] =  rec['import_cost'] - rec['export_credit']
-
-log_message(
-        1,
-        'Loaded %d files, %d records' % (
-            file_count, 
-            len(data_dict)
-            )
-        )
+data_dict = load_data(
+        idir,
+        start_date,
+        end_date,
+        tariff_list,
+        interval_list,
+        fit_rate)
 
 # XLSX
 workbook = xlsxwriter.Workbook(report_file_name)
