@@ -110,8 +110,10 @@ def add_worksheet(
                 field_rec['col'], 
                 field_rec['width'])
     
-    # Freeze top row
+    # Freeze top row and 
+    # set height to 2 rows
     worksheet.freeze_panes(1, 0)
+    worksheet.set_row(0, 30)
 
     # data incremental sort on key
     key_list = list(data_dict.keys())
@@ -127,15 +129,7 @@ def add_worksheet(
             field_rec = field_dict[field]
             if field in rec:
                 # write cell
-                if field_rec['format'] == 'datetime':
-                    value = rec[field]
-                    worksheet.write_datetime(
-                            row,
-                            field_rec['col'],
-                            value,
-                            format_dict[field_rec['format']])
-
-                elif field_rec['format'] == 'str':
+                if field_rec['format'] == 'str':
                     value = rec[field]
                     worksheet.write_string(
                             row,
@@ -430,23 +424,17 @@ for filename in os.listdir(idir):
                 rec['ts'] > end_ts):
                 continue
 
-            # timestamp to UTC hour string
-            # YYYYMMDDHH
-            ts_dt = datetime.datetime.utcfromtimestamp(rec['ts'])
-            utc_hour = ts_dt.strftime(
-                    '%Y%m%d%H')
-
-            # Remove epoch timestamp 
-            # and replace with UTC text version
-            rec['utc_hour'] = utc_hour
-            data_dict[utc_hour] = rec
-
-            # naive year datetime conversion
-            # replaces existing year, month and day fields
+            # naive datetime conversion
+            # into datetime object
             datetime_dt = datetime.datetime.strptime(
                     rec['datetime'], 
                     '%Y/%m/%d %H:%M:%S')
-            rec['datetime'] = datetime_dt
+            # reformat back to YYYY-MM-DD HH
+            # to reduce to the hour it represents
+            rec['datetime'] = datetime_dt.strftime('%Y-%m-%d %H')
+
+            # store keyed on datetime object
+            data_dict[rec['datetime']] = rec
 
             # cost calculation based on hour
             dt_hour = rec['hour']
@@ -482,160 +470,149 @@ workbook = xlsxwriter.Workbook(report_file_name)
 
 format_dict = {}
 
-general_label_format = workbook.add_format()
-general_label_format.set_text_wrap()
-general_label_format.set_bg_color('#C1C1C1')
-format_dict['general'] = general_label_format
+header_format = workbook.add_format()
+header_format.set_text_wrap()
+header_format.set_align('top')
+header_format.set_align('center')
+header_format.set_bg_color('#C1C1C1')
+format_dict['header'] = header_format
 
 str_format = workbook.add_format() 
 str_format.set_num_format('General') # text
 str_format.set_align('right')
-str_format.set_locked(True) 
 format_dict['str'] = str_format
 
 float_format = workbook.add_format() 
 # with commas and 3 decimal places
 float_format.set_num_format('#,##0.000') 
-float_format.set_locked(True) 
 format_dict['float'] = float_format
 
 int_format = workbook.add_format() 
 # no decimal places
 int_format.set_num_format('0') 
-int_format.set_locked(True) # read-only
 format_dict['integer'] = int_format
 
-datetime_format = workbook.add_format() 
-datetime_format.set_num_format('yyyy/mm/dd hh:mm:ss')
-format_dict['datetime'] = datetime_format
-
 field_dict = {
-        'utc_hour' : {
-            'title' : 'UTC Hour',
-            'width' : 12,
-            'header_format' : 'general',
+        'datetime' : {
+            'title' : 'Date',
+            'width' : 20,
+            'header_format' : 'header',
             'format' : 'str',
             },
         'ts' : {
-            'title' : 'Epoch Timestamp',
-            'width' : 20,
-            'header_format' : 'general',
+            'title' : 'Epoch',
+            'width' : 12,
+            'header_format' : 'header',
             'format' : 'integer',
-            },
-        'datetime' : {
-            'title' : 'Local Time',
-            'width' : 20,
-            'header_format' : 'general',
-            'format' : 'datetime',
             },
         'year' : {
             'title' : 'Year',
             'width' : 5,
-            'header_format' : 'general',
+            'header_format' : 'header',
             'format' : 'str',
             },
         'month' : {
             'title' : 'Month',
             'width' : 9,
-            'header_format' : 'general',
+            'header_format' : 'header',
             'format' : 'str',
             },
         'week' : {
             'title' : 'Week',
             'width' : 5,
-            'header_format' : 'general',
+            'header_format' : 'header',
             'format' : 'str',
             },
         'day' : {
             'title' : 'Day',
             'width' : 12,
-            'header_format' : 'general',
+            'header_format' : 'header',
             'format' : 'str',
             },
         'weekday' : {
             'title' : 'Weekday',
             'width' : 8,
-            'header_format' : 'general',
+            'header_format' : 'header',
             'format' : 'str',
             },
         'hour' : {
             'title' : 'Hour',
             'width' : 5,
-            'header_format' : 'general',
+            'header_format' : 'header',
             'format' : 'integer',
             },
         'tariff_name' : {
             'title' : 'Tariff',
             'width' : 12,
-            'header_format' : 'general',
+            'header_format' : 'header',
             'format' : 'str',
             },
         'tariff_rate' : {
             'title' : 'Rate',
             'width' : 12,
-            'header_format' : 'general',
+            'header_format' : 'header',
             'format' : 'float',
             },
         'import' : {
             'title' : 'Import (kWh)',
             'width' : 15,
-            'header_format' : 'general',
+            'header_format' : 'header',
             'format' : 'float',
             'field' : 'import'
             },
         'import_cost' : {
             'title' : 'Import Cost',
             'width' : 15,
-            'header_format' : 'general',
+            'header_format' : 'header',
             'format' : 'float',
             },
         'consumed' : {
             'title' : 'Consumed (kWh)',
             'width' : 15,
-            'header_format' : 'general',
+            'header_format' : 'header',
             'format' : 'float',
             },
         'export' : {
             'title' : 'Export (kWh)',
             'width' : 15,
-            'header_format' : 'general',
+            'header_format' : 'header',
             'format' : 'float',
             },
         'export_credit' : {
             'title' : 'Export Credit',
             'width' : 15,
-            'header_format' : 'general',
+            'header_format' : 'header',
             'format' : 'float',
             },
         'rel_import' : {
-            'title' : 'Relative Import (kWh)',
+            'title' : 'Rel Import (kWh)',
             'width' : 15,
-            'header_format' : 'general',
+            'header_format' : 'header',
             'format' : 'float',
             'field' : 'import'
             },
         'rel_cost' : {
-            'title' : 'Relative Cost',
+            'title' : 'Rel Cost',
             'width' : 15,
-            'header_format' : 'general',
+            'header_format' : 'header',
             'format' : 'float',
             },
         'solar' : {
             'title' : 'Solar Generation (kWh)',
             'width' : 15,
-            'header_format' : 'general',
+            'header_format' : 'header',
             'format' : 'float',
             },
         'solar_consumed' : {
             'title' : 'Solar Consumed (kWh)',
             'width' : 15,
-            'header_format' : 'general',
+            'header_format' : 'header',
             'format' : 'float',
             },
         'solar_credit' : {
             'title' : 'Solar Credit',
             'width' : 15,
-            'header_format' : 'general',
+            'header_format' : 'header',
             'format' : 'float',
             },
         }
