@@ -195,11 +195,11 @@ for esb_rec in reader:
 
         # aggregation keys
         usage_rec['hour'] = dt_ref.hour
-        usage_rec['day'] = '%04d%02d%02d' % (
+        usage_rec['day'] = '%04d-%02d-%02d' % (
                 dt_ref.year, 
                 dt_ref.month, 
                 dt_ref.day)
-        usage_rec['month'] = '%04d%02d' % (
+        usage_rec['month'] = '%04d-%02d' % (
                 dt_ref.year, 
                 dt_ref.month) 
         usage_rec['year'] = '%04d' %(
