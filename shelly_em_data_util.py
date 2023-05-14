@@ -262,11 +262,11 @@ for i in range(0, backfill_days):
 
             # aggregation keys
             usage_rec['hour'] = ts_dt.hour
-            usage_rec['day'] = '%04d%02d%02d' % (
+            usage_rec['day'] = '%04d-%02d-%02d' % (
                     ts_dt.year, 
                     ts_dt.month, 
                     ts_dt.day)
-            usage_rec['month'] = '%04d%02d' % (
+            usage_rec['month'] = '%04d-%02d' % (
                     ts_dt.year, 
                     ts_dt.month) 
             usage_rec['year'] = '%04d' %(
