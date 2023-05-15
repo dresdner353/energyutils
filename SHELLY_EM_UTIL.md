@@ -48,38 +48,23 @@ Notes:
         --host shelly-XX-eu.shelly.cloud \
         --id XXXXXXXXXXXX \
         --auth_key XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX \
+        --odir /path/to/somewhere \
         --days 10
 
-Mon May  1 12:29:30 2023 Getting data for 2023-04-30 00:00:00s
-Mon May  1 12:29:31 2023 Writing to /Users/cormac/.shellyemdata/20230430.jsonl
-Mon May  1 12:29:31 2023 Writing to /Users/cormac/.shellyemdata/20230430.csv
-Mon May  1 12:29:31 2023 Getting data for 2023-04-29 00:00:00s
-Mon May  1 12:29:31 2023 Writing to /Users/cormac/.shellyemdata/20230429.jsonl
-Mon May  1 12:29:31 2023 Writing to /Users/cormac/.shellyemdata/20230429.csv
-Mon May  1 12:29:31 2023 Getting data for 2023-04-28 00:00:00s
-Mon May  1 12:29:31 2023 Writing to /Users/cormac/.shellyemdata/20230428.jsonl
-Mon May  1 12:29:31 2023 Writing to /Users/cormac/.shellyemdata/20230428.csv
-Mon May  1 12:29:31 2023 Getting data for 2023-04-27 00:00:00s
-Mon May  1 12:29:32 2023 Writing to /Users/cormac/.shellyemdata/20230427.jsonl
-Mon May  1 12:29:32 2023 Writing to /Users/cormac/.shellyemdata/20230427.csv
-Mon May  1 12:29:32 2023 Getting data for 2023-04-26 00:00:00s
-Mon May  1 12:29:32 2023 Writing to /Users/cormac/.shellyemdata/20230426.jsonl
-Mon May  1 12:29:32 2023 Writing to /Users/cormac/.shellyemdata/20230426.csv
-Mon May  1 12:29:32 2023 Getting data for 2023-04-25 00:00:00s
-Mon May  1 12:29:33 2023 Writing to /Users/cormac/.shellyemdata/20230425.jsonl
-Mon May  1 12:29:33 2023 Writing to /Users/cormac/.shellyemdata/20230425.csv
-Mon May  1 12:29:33 2023 Getting data for 2023-04-24 00:00:00s
-Mon May  1 12:29:33 2023 Writing to /Users/cormac/.shellyemdata/20230424.jsonl
-Mon May  1 12:29:33 2023 Writing to /Users/cormac/.shellyemdata/20230424.csv
-Mon May  1 12:29:33 2023 Getting data for 2023-04-23 00:00:00s
-Mon May  1 12:29:34 2023 Writing to /Users/cormac/.shellyemdata/20230423.jsonl
-Mon May  1 12:29:34 2023 Writing to /Users/cormac/.shellyemdata/20230423.csv
-Mon May  1 12:29:34 2023 Getting data for 2023-04-22 00:00:00s
-Mon May  1 12:29:34 2023 Writing to /Users/cormac/.shellyemdata/20230422.jsonl
-Mon May  1 12:29:34 2023 Writing to /Users/cormac/.shellyemdata/20230422.csv
-Mon May  1 12:29:34 2023 Getting data for 2023-04-21 00:00:00s
-Mon May  1 12:29:35 2023 Writing to /Users/cormac/.shellyemdata/20230421.jsonl
-Mon May  1 12:29:35 2023 Writing to /Users/cormac/.shellyemdata/20230421.csv
+......
+Mon May 15 19:17:29 2023 Getting data for 2023-03-23 00:00:00
+Mon May 15 19:17:30 2023 Writing to /path/to/somewhere/2023-03-23.jsonl
+Mon May 15 19:17:30 2023 Writing to /path/to/somewhere/2023-03-23.csv
+Mon May 15 19:17:30 2023 Getting data for 2023-03-22 00:00:00
+Mon May 15 19:17:30 2023 Writing to /path/to/somewhere/2023-03-22.jsonl
+Mon May 15 19:17:30 2023 Writing to /path/to/somewhere/2023-03-22.csv
+Mon May 15 19:17:30 2023 Getting data for 2023-03-21 00:00:00
+Mon May 15 19:17:30 2023 Writing to /path/to/somewhere/2023-03-21.jsonl
+Mon May 15 19:17:30 2023 Writing to /path/to/somewhere/2023-03-21.csv
+Mon May 15 19:17:30 2023 Getting data for 2023-03-20 00:00:00
+Mon May 15 19:17:31 2023 Writing to /path/to/somewhere/2023-03-20.jsonl
+Mon May 15 19:17:31 2023 Writing to /path/to/somewhere/2023-03-20.csv
+......
 ```
 
 ## Sample Files
@@ -87,79 +72,57 @@ Each generated file contains hourly data for an entire day. Both JSONL and CSV v
 
 ### Example JSONL File
 ```json
-{"ts": 1682204400, "datetime": "2023/04/23 00:00:00", "import": 0.2204, "export": 0.0000, "hour": 0, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.2204}
-{"ts": 1682208000, "datetime": "2023/04/23 01:00:00", "import": 0.5702, "export": 0.0000, "hour": 1, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.5702}
-{"ts": 1682211600, "datetime": "2023/04/23 02:00:00", "import": 0.2022, "export": 0.0000, "hour": 2, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.2022}
-{"ts": 1682215200, "datetime": "2023/04/23 03:00:00", "import": 0.7248, "export": 0.0000, "hour": 3, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.7248}
-{"ts": 1682218800, "datetime": "2023/04/23 04:00:00", "import": 0.2424, "export": 0.0000, "hour": 4, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.2424}
-{"ts": 1682222400, "datetime": "2023/04/23 05:00:00", "import": 0.1822, "export": 0.0000, "hour": 5, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.1822}
-{"ts": 1682226000, "datetime": "2023/04/23 06:00:00", "import": 0.1910, "export": 0.0000, "hour": 6, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.1910}
-{"ts": 1682229600, "datetime": "2023/04/23 07:00:00", "import": 0.1883, "export": 0.0000, "hour": 7, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.1883}
-{"ts": 1682233200, "datetime": "2023/04/23 08:00:00", "import": 0.2155, "export": 0.0000, "hour": 8, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.2155}
-{"ts": 1682236800, "datetime": "2023/04/23 09:00:00", "import": 0.4580, "export": 0.0000, "hour": 9, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.4580}
-{"ts": 1682240400, "datetime": "2023/04/23 10:00:00", "import": 0.2347, "export": 0.0000, "hour": 10, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.2347}
-{"ts": 1682244000, "datetime": "2023/04/23 11:00:00", "import": 0.2378, "export": 0.0000, "hour": 11, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.2378}
-{"ts": 1682247600, "datetime": "2023/04/23 12:00:00", "import": 0.3397, "export": 0.0000, "hour": 12, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.3397}
-{"ts": 1682251200, "datetime": "2023/04/23 13:00:00", "import": 0.5761, "export": 0.0000, "hour": 13, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.5761}
-{"ts": 1682254800, "datetime": "2023/04/23 14:00:00", "import": 0.6475, "export": 0.0000, "hour": 14, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.6475}
-{"ts": 1682258400, "datetime": "2023/04/23 15:00:00", "import": 0.5648, "export": 0.0000, "hour": 15, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.5648}
-{"ts": 1682262000, "datetime": "2023/04/23 16:00:00", "import": 0.5572, "export": 0.0000, "hour": 16, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.5572}
-{"ts": 1682265600, "datetime": "2023/04/23 17:00:00", "import": 0.5142, "export": 0.0000, "hour": 17, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.5142}
-{"ts": 1682269200, "datetime": "2023/04/23 18:00:00", "import": 0.4518, "export": 0.0000, "hour": 18, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.4518}
-{"ts": 1682272800, "datetime": "2023/04/23 19:00:00", "import": 0.4121, "export": 0.0000, "hour": 19, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.4121}
-{"ts": 1682276400, "datetime": "2023/04/23 20:00:00", "import": 0.7231, "export": 0.0000, "hour": 20, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.7231}
-{"ts": 1682280000, "datetime": "2023/04/23 21:00:00", "import": 0.5967, "export": 0.0000, "hour": 21, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.5967}
-{"ts": 1682283600, "datetime": "2023/04/23 22:00:00", "import": 0.5816, "export": 0.0000, "hour": 22, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.5816}
-{"ts": 1682287200, "datetime": "2023/04/23 23:00:00", "import": 0.4998, "export": 0.0000, "hour": 23, "day": "20230423", "month": "202304", "year": "2023", "solar": 0.0000, "consumed": 0.4998}
+{"ts": 1679184000, "datetime": "2023/03/19 00:00:00", "import": 0.0000, "export": 0.0000, "hour": 0, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679187600, "datetime": "2023/03/19 01:00:00", "import": 0.0000, "export": 0.0000, "hour": 1, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679191200, "datetime": "2023/03/19 02:00:00", "import": 0.0000, "export": 0.0000, "hour": 2, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679194800, "datetime": "2023/03/19 03:00:00", "import": 0.0000, "export": 0.0000, "hour": 3, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679198400, "datetime": "2023/03/19 04:00:00", "import": 0.0000, "export": 0.0000, "hour": 4, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679202000, "datetime": "2023/03/19 05:00:00", "import": 0.0000, "export": 0.0000, "hour": 5, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679205600, "datetime": "2023/03/19 06:00:00", "import": 0.0000, "export": 0.0000, "hour": 6, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679209200, "datetime": "2023/03/19 07:00:00", "import": 0.0000, "export": 0.0000, "hour": 7, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679212800, "datetime": "2023/03/19 08:00:00", "import": 0.0000, "export": 0.0000, "hour": 8, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679216400, "datetime": "2023/03/19 09:00:00", "import": 0.0000, "export": 0.0000, "hour": 9, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679220000, "datetime": "2023/03/19 10:00:00", "import": 0.0000, "export": 0.0000, "hour": 10, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679223600, "datetime": "2023/03/19 11:00:00", "import": 0.0000, "export": 0.0000, "hour": 11, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679227200, "datetime": "2023/03/19 12:00:00", "import": 0.0000, "export": 0.0000, "hour": 12, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679230800, "datetime": "2023/03/19 13:00:00", "import": 0.0000, "export": 0.0000, "hour": 13, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679234400, "datetime": "2023/03/19 14:00:00", "import": 0.0000, "export": 0.0000, "hour": 14, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679238000, "datetime": "2023/03/19 15:00:00", "import": 0.0000, "export": 0.0000, "hour": 15, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679241600, "datetime": "2023/03/19 16:00:00", "import": 0.0000, "export": 0.0000, "hour": 16, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679245200, "datetime": "2023/03/19 17:00:00", "import": 0.0000, "export": 0.0000, "hour": 17, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679248800, "datetime": "2023/03/19 18:00:00", "import": 0.0000, "export": 0.0000, "hour": 18, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679252400, "datetime": "2023/03/19 19:00:00", "import": 0.0000, "export": 0.0000, "hour": 19, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679256000, "datetime": "2023/03/19 20:00:00", "import": 0.0000, "export": 0.0000, "hour": 20, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679259600, "datetime": "2023/03/19 21:00:00", "import": 0.0000, "export": 0.0000, "hour": 21, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679263200, "datetime": "2023/03/19 22:00:00", "import": 0.0000, "export": 0.0000, "hour": 22, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
+{"ts": 1679266800, "datetime": "2023/03/19 23:00:00", "import": 0.0000, "export": 0.0000, "hour": 23, "day": "2023-03-19", "month": "2023-03", "year": "2023", "weekday": "7 Sun", "week": "11", "solar": 0.0000, "consumed": 0.0000, "solar_consumed": 0.0000}
 ```
 
 ### Example CSV File
 ```csv
-consumed,datetime,day,export,hour,import,month,solar,ts,year
-0.22,2023/04/23 00:00:00,20230423,0.0,0,0.22,202304,0.0,1682204400,2023
-0.57,2023/04/23 01:00:00,20230423,0.0,1,0.57,202304,0.0,1682208000,2023
-0.202,2023/04/23 02:00:00,20230423,0.0,2,0.202,202304,0.0,1682211600,2023
-0.725,2023/04/23 03:00:00,20230423,0.0,3,0.725,202304,0.0,1682215200,2023
-0.242,2023/04/23 04:00:00,20230423,0.0,4,0.242,202304,0.0,1682218800,2023
-0.182,2023/04/23 05:00:00,20230423,0.0,5,0.182,202304,0.0,1682222400,2023
-0.191,2023/04/23 06:00:00,20230423,0.0,6,0.191,202304,0.0,1682226000,2023
-0.188,2023/04/23 07:00:00,20230423,0.0,7,0.188,202304,0.0,1682229600,2023
-0.215,2023/04/23 08:00:00,20230423,0.0,8,0.215,202304,0.0,1682233200,2023
-0.458,2023/04/23 09:00:00,20230423,0.0,9,0.458,202304,0.0,1682236800,2023
-0.235,2023/04/23 10:00:00,20230423,0.0,10,0.235,202304,0.0,1682240400,2023
-0.238,2023/04/23 11:00:00,20230423,0.0,11,0.238,202304,0.0,1682244000,2023
-0.34,2023/04/23 12:00:00,20230423,0.0,12,0.34,202304,0.0,1682247600,2023
-0.576,2023/04/23 13:00:00,20230423,0.0,13,0.576,202304,0.0,1682251200,2023
-0.648,2023/04/23 14:00:00,20230423,0.0,14,0.648,202304,0.0,1682254800,2023
-0.565,2023/04/23 15:00:00,20230423,0.0,15,0.565,202304,0.0,1682258400,2023
-0.557,2023/04/23 16:00:00,20230423,0.0,16,0.557,202304,0.0,1682262000,2023
-0.514,2023/04/23 17:00:00,20230423,0.0,17,0.514,202304,0.0,1682265600,2023
-0.452,2023/04/23 18:00:00,20230423,0.0,18,0.452,202304,0.0,1682269200,2023
-0.412,2023/04/23 19:00:00,20230423,0.0,19,0.412,202304,0.0,1682272800,2023
-0.723,2023/04/23 20:00:00,20230423,0.0,20,0.723,202304,0.0,1682276400,2023
-0.597,2023/04/23 21:00:00,20230423,0.0,21,0.597,202304,0.0,1682280000,2023
-0.582,2023/04/23 22:00:00,20230423,0.0,22,0.582,202304,0.0,1682283600,2023
-0.5,2023/04/23 23:00:00,20230423,0.0,23,0.5,202304,0.0,1682287200,2023
+consumed,datetime,day,export,hour,import,month,solar,solar_consumed,ts,week,weekday,year
+0.0,2023/03/19 00:00:00,2023-03-19,0.0,0,0.0,2023-03,0.0,0.0,1679184000,11,7 Sun,2023
+0.0,2023/03/19 01:00:00,2023-03-19,0.0,1,0.0,2023-03,0.0,0.0,1679187600,11,7 Sun,2023
+0.0,2023/03/19 02:00:00,2023-03-19,0.0,2,0.0,2023-03,0.0,0.0,1679191200,11,7 Sun,2023
+0.0,2023/03/19 03:00:00,2023-03-19,0.0,3,0.0,2023-03,0.0,0.0,1679194800,11,7 Sun,2023
+0.0,2023/03/19 04:00:00,2023-03-19,0.0,4,0.0,2023-03,0.0,0.0,1679198400,11,7 Sun,2023
+0.0,2023/03/19 05:00:00,2023-03-19,0.0,5,0.0,2023-03,0.0,0.0,1679202000,11,7 Sun,2023
+0.0,2023/03/19 06:00:00,2023-03-19,0.0,6,0.0,2023-03,0.0,0.0,1679205600,11,7 Sun,2023
+0.0,2023/03/19 07:00:00,2023-03-19,0.0,7,0.0,2023-03,0.0,0.0,1679209200,11,7 Sun,2023
+0.0,2023/03/19 08:00:00,2023-03-19,0.0,8,0.0,2023-03,0.0,0.0,1679212800,11,7 Sun,2023
+0.0,2023/03/19 09:00:00,2023-03-19,0.0,9,0.0,2023-03,0.0,0.0,1679216400,11,7 Sun,2023
+0.0,2023/03/19 10:00:00,2023-03-19,0.0,10,0.0,2023-03,0.0,0.0,1679220000,11,7 Sun,2023
+0.0,2023/03/19 11:00:00,2023-03-19,0.0,11,0.0,2023-03,0.0,0.0,1679223600,11,7 Sun,2023
+0.0,2023/03/19 12:00:00,2023-03-19,0.0,12,0.0,2023-03,0.0,0.0,1679227200,11,7 Sun,2023
+0.0,2023/03/19 13:00:00,2023-03-19,0.0,13,0.0,2023-03,0.0,0.0,1679230800,11,7 Sun,2023
+0.0,2023/03/19 14:00:00,2023-03-19,0.0,14,0.0,2023-03,0.0,0.0,1679234400,11,7 Sun,2023
+0.0,2023/03/19 15:00:00,2023-03-19,0.0,15,0.0,2023-03,0.0,0.0,1679238000,11,7 Sun,2023
+0.0,2023/03/19 16:00:00,2023-03-19,0.0,16,0.0,2023-03,0.0,0.0,1679241600,11,7 Sun,2023
+0.0,2023/03/19 17:00:00,2023-03-19,0.0,17,0.0,2023-03,0.0,0.0,1679245200,11,7 Sun,2023
+0.0,2023/03/19 18:00:00,2023-03-19,0.0,18,0.0,2023-03,0.0,0.0,1679248800,11,7 Sun,2023
+0.0,2023/03/19 19:00:00,2023-03-19,0.0,19,0.0,2023-03,0.0,0.0,1679252400,11,7 Sun,2023
+0.0,2023/03/19 20:00:00,2023-03-19,0.0,20,0.0,2023-03,0.0,0.0,1679256000,11,7 Sun,2023
+0.0,2023/03/19 21:00:00,2023-03-19,0.0,21,0.0,2023-03,0.0,0.0,1679259600,11,7 Sun,2023
+0.0,2023/03/19 22:00:00,2023-03-19,0.0,22,0.0,2023-03,0.0,0.0,1679263200,11,7 Sun,2023
+0.0,2023/03/19 23:00:00,2023-03-19,0.0,23,0.0,2023-03,0.0,0.0,1679266800,11,7 Sun,2023
 ```
-
-### Field Descriptions
-* ts   
-The EPOCH timestamp of the start of the consumption hour
-* datetime   
-A string datetime in YYYY/MM/DD HH:MM:SS in local time. 
-* hour
-Hour of given day 0-23
-* day
-Day in YYYYMMDD format
-* month
-Month in YYYYMM format
-* year
-Year in YYYY format
-* import   
-Import kWh units
-* export   
-Export kWh units
-* solar   
-Solar kWh units
-* consumed   
-Consumed kWh units

@@ -39,11 +39,14 @@ python3  energyutils/gen_report.py \
              --tariff_rate Day:0.4241 Night:0.2092 Boost:0.1228 \
              --tariff_interval 08:23:Day 23:02:Night 02:04:Boost 04:08:Night \
              --fit_rate 0.21 \
-Mon May  1 16:25:57 2023 Loaded 140 files, 3311 records
-Mon May  1 16:25:57 2023 Adding worksheet All (3311 records)
-Mon May  1 16:25:57 2023 Adding worksheet Day (140 records)
-Mon May  1 16:25:57 2023 Adding worksheet Month (5 records)
-Mon May  1 16:25:57 2023 Adding worksheet Year (2 records)
-Mon May  1 16:25:57 2023 Adding worksheet 24h (24 records)
-Mon May  1 16:25:57 2023 Adding worksheet Tariff (4 records)
+
+Mon May 15 19:23:28 2023 Loaded 60 files, 1439 records
+Mon May 15 19:23:28 2023 Adding worksheet Hour (1439 rows)
+Mon May 15 19:23:28 2023 Adding worksheet Day (60 rows)
+Mon May 15 19:23:28 2023 Adding worksheet Week (9 rows)
+Mon May 15 19:23:28 2023 Adding worksheet Month (3 rows)
+Mon May 15 19:23:28 2023 Adding worksheet Year (1 rows)
+Mon May 15 19:23:28 2023 Adding worksheet Weekday (7 rows)
+Mon May 15 19:23:28 2023 Adding worksheet 24h (24 rows)
+Mon May 15 19:23:28 2023 Adding worksheet Tariff (3 rows)
 ```
