@@ -195,7 +195,7 @@ for i in range(0, backfill_days):
     params['date_from'] = date_from
 
     # local jsonl file
-    dest_file_prefix = '%04d%02d%02d' % (
+    dest_file_prefix = '%04d-%02d-%02d' % (
             date_ref.year, 
             date_ref.month, 
             date_ref.day) 
@@ -208,7 +208,7 @@ for i in range(0, backfill_days):
     if not os.path.exists(dest_jsonl_file):
         log_message(
                 1,
-                'Getting data for %ss' % (
+                'Getting data for %s' % (
                     date_from
                     )
                 )
