@@ -5,6 +5,7 @@ import time
 import datetime
 import dateutil.parser
 import zoneinfo
+import sys
 import xlsxwriter
 
 
@@ -489,6 +490,24 @@ data_dict = load_data(
 
 # XLSX
 workbook = xlsxwriter.Workbook(report_file_name)
+
+# try to reconstruct the command line 
+# options to capture in the properties
+cmdline_str = 'Invoke options:\n'
+for arg in sys.argv:
+    if arg.startswith('--'):
+        cmdline_str += '\n'
+    cmdline_str += ' ' + arg
+
+workbook.set_properties(
+    {
+        'title': 'Energy Usage Report',
+        'subject': 'Python-generated Excel report based on energy usage data',
+        'keywords': 'python energy solar report',
+        'author': 'https://github.com/dresdner353/energyutils',
+        'comments': cmdline_str
+    }
+)
 
 format_dict = {}
 
