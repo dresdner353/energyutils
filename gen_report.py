@@ -235,6 +235,11 @@ def gen_aggregate_dict(
     for ts in data_dict:
         rec = data_dict[ts]
 
+        # skip records that do not have 
+        # the aggregate field
+        if not agg_field in rec:
+            continue
+
         agg_value = rec[agg_field]
 
         # initialise aggregate record
@@ -374,24 +379,32 @@ def load_data(
     
                 # cost calculation based on hour
                 dt_hour = rec['hour']
-                rec['import_cost'] = 0
-                rec['export_credit'] = 0
-                rec['solar_consumed_saving'] = 0
+
+                # relative import
+                # initial calc is import - export
+                rec['rel_import'] =  rec['import'] - rec['export'] 
+    
+                # Import Tariff
                 if dt_hour in tarff_interval_dict:
-                    # calculate as kWh times kWh rate
                     rec['tariff_name'] = tarff_interval_dict[dt_hour]
                     rec['tariff_rate'] = tariff_dict[rec['tariff_name']]
                     rec['import_cost'] = rec['import'] * rec['tariff_rate']
-    
+                    rec['rel_cost'] = rec['import_cost']
+
+                    # FIT (export_credit)
+                    # calculates the credit and export and 
+                    # adjusts relative cost to match
+                    if fit_rate:
+                        rec['export_credit'] = rec['export'] * fit_rate
+                        rec['rel_cost'] -= rec['export_credit'] 
+
+                    # Solar credit (saving) based on consumed units against
+                    # effective import tariff
+                    # Also reduces relative import and cost accordingly
                     if 'solar_consumed' in rec:
                         rec['solar_credit'] = rec['solar_consumed'] * rec['tariff_rate']
-    
-                if fit_rate:
-                    rec['export_credit'] = rec['export'] * fit_rate
-    
-                # relative import/cost
-                rec['rel_import'] =  rec['import'] - rec['export']
-                rec['rel_cost'] =  rec['import_cost'] - rec['export_credit']
+                        rec['rel_import'] -= rec['solar_consumed']
+                        rec['rel_cost'] -= rec['solar_credit']
     
     log_message(
             1,
