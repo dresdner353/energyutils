@@ -118,6 +118,9 @@ def add_worksheet(
     worksheet.freeze_panes(1, 0)
     worksheet.set_row(0, 30)
 
+    # Enable Auto Filter across all columns
+    worksheet.autofilter(0, 0, 0, len(header_fields) - 1)  
+
     # data incremental sort on key
     key_list = list(data_dict.keys())
     key_list.sort()
