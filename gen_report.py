@@ -231,7 +231,6 @@ def gen_aggregate_dict(
     field_skip_list = [
             'ts', 
             'hour',
-            'standing_rate',
             'tariff_rate',
             'export_rate',
             ]
@@ -398,8 +397,8 @@ def load_data(
                     rec['rel_cost'] = rec['import_cost']
 
                     if standing_rate:
-                        rec['standing_rate'] = standing_rate
-                        rec['rel_cost'] += rec['standing_rate']
+                        rec['standing_cost'] = standing_rate
+                        rec['rel_cost'] += rec['standing_cost']
 
                     # FIT (export_credit)
                     # calculates the credit and export and 
@@ -488,7 +487,7 @@ parser.add_argument(
 
 parser.add_argument(
         '--standing_rate', 
-        help = 'Standing Charge rate per hour', 
+        help = 'Standing Charge (cost per hour)', 
         type = float,
         required = False
         )
@@ -615,8 +614,8 @@ field_dict = {
             'header_format' : 'header',
             'format' : 'integer',
             },
-        'standing_rate' : {
-            'title' : 'Standing Rate',
+        'standing_cost' : {
+            'title' : 'Standing Cost',
             'width' : 12,
             'header_format' : 'header',
             'format' : 'float',
