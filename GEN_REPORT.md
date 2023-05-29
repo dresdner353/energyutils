@@ -1,6 +1,6 @@
 # Report Generator Utility
 
-The report generator script generates an XLSX file from a directory of YYYYMMDD.jsonl files.
+The report generator script generates an XLSX file from a directory of YYYY-MM-DD.jsonl files.
 
 THIS IS A WORK IN PROGRESS
 
