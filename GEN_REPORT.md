@@ -21,6 +21,8 @@ optional arguments:
   --tariff_interval TARIFF_INTERVAL [TARIFF_INTERVAL ...]
                         Time Interval for Tariff <HH:HH:Tariff Name> <HH:HH:Tariff Name> ...
   --fit_rate FIT_RATE   FIT Rate rate/kWh
+  --standing_rate STANDING_RATE
+                        Standing Charge rate per hour
   --verbose             Enable verbose output
 ```
 Notes:
@@ -29,6 +31,7 @@ Notes:
 * Electricity tariffs can be set using the --tariff_rate option and provided multiple times per separate tariff
 * Tariff intervals are defined using the --tariff_interval option that sets the start and end hour and maps to the named tariff rate
 * A FIT rate for microgen export may be set using the --fit_rate
+* A standing charge may be set via the standing_rate option. Note however that this value is the cost per hour. So divide any annual or monthly values accordingly to get the per hour equivalent.
 
 
 ## Example Run
