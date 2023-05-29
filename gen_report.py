@@ -231,7 +231,9 @@ def gen_aggregate_dict(
     field_skip_list = [
             'ts', 
             'hour',
+            'standing_rate',
             'tariff_rate',
+            'export_rate',
             ]
     field_skip_list.append(agg_field)
 
@@ -274,6 +276,7 @@ def load_data(
         idir,
         start_date,
         end_date,
+        standing_rate,
         tariff_list,
         interval_list,
         fit_rate):
@@ -387,17 +390,22 @@ def load_data(
                 # initial calc is import - export
                 rec['rel_import'] =  rec['import'] - rec['export'] 
     
-                # Import Tariff
+                # Import Tariff and charging rates
                 if dt_hour in tarff_interval_dict:
                     rec['tariff_name'] = tarff_interval_dict[dt_hour]
                     rec['tariff_rate'] = tariff_dict[rec['tariff_name']]
                     rec['import_cost'] = rec['import'] * rec['tariff_rate']
                     rec['rel_cost'] = rec['import_cost']
 
+                    if standing_rate:
+                        rec['standing_rate'] = standing_rate
+                        rec['rel_cost'] += rec['standing_rate']
+
                     # FIT (export_credit)
                     # calculates the credit and export and 
                     # adjusts relative cost to match
                     if fit_rate:
+                        rec['export_rate'] = fit_rate
                         rec['export_credit'] = rec['export'] * fit_rate
                         rec['rel_cost'] -= rec['export_credit'] 
 
@@ -479,6 +487,13 @@ parser.add_argument(
         )
 
 parser.add_argument(
+        '--standing_rate', 
+        help = 'Standing Charge rate per hour', 
+        type = float,
+        required = False
+        )
+
+parser.add_argument(
         '--verbose', 
         help = 'Enable verbose output', 
         action = 'store_true'
@@ -490,6 +505,7 @@ report_file_name = args['file']
 tariff_list = args['tariff_rate']
 interval_list = args['tariff_interval']
 fit_rate = args['fit_rate']
+standing_rate = args['standing_rate']
 idir = args['idir']
 start_date = args['start']
 end_date = args['end']
@@ -500,6 +516,7 @@ data_dict = load_data(
         idir,
         start_date,
         end_date,
+        standing_rate,
         tariff_list,
         interval_list,
         fit_rate)
@@ -598,14 +615,20 @@ field_dict = {
             'header_format' : 'header',
             'format' : 'integer',
             },
+        'standing_rate' : {
+            'title' : 'Standing Rate',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'float',
+            },
         'tariff_name' : {
-            'title' : 'Tariff',
+            'title' : 'Import Tariff',
             'width' : 12,
             'header_format' : 'header',
             'format' : 'str',
             },
         'tariff_rate' : {
-            'title' : 'Rate',
+            'title' : 'Import Rate',
             'width' : 12,
             'header_format' : 'header',
             'format' : 'float',
@@ -626,6 +649,12 @@ field_dict = {
         'consumed' : {
             'title' : 'Consumed (kWh)',
             'width' : 15,
+            'header_format' : 'header',
+            'format' : 'float',
+            },
+        'export_rate' : {
+            'title' : 'Export Rate',
+            'width' : 12,
             'header_format' : 'header',
             'format' : 'float',
             },
