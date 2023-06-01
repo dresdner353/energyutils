@@ -207,6 +207,7 @@ for esb_rec in reader:
         usage_rec['ts'] = ts_ref
         usage_rec['datetime'] = dt_ref.strftime('%Y/%m/%d %H:%M:%S')
         usage_rec['import'] = 0
+        usage_rec['consumed'] = 0
         usage_rec['export'] = 0
 
         # aggregation keys
@@ -230,6 +231,8 @@ for esb_rec in reader:
     if esb_rec['type'] == 'Active Import Interval (kW)':
         # append 30-min usage value / 2 
         usage_rec['import'] += float(esb_rec['value']) / 2
+        # align consumed to current value
+        usage_rec['consumed'] = usage_rec['import']
 
     if esb_rec['type'] == 'Active Export Interval (kW)':
         # append 30-min usage value / 2 
