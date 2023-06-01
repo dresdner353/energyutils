@@ -43,6 +43,7 @@ def parse_time(
 
 def output_results(
         odir,
+        output_format,
         data_dict,
         prefix,
         decimal_places):
@@ -51,40 +52,42 @@ def output_results(
     if len(data_dict) == 0:
         return
 
-    # JSONL File
-    dest_jsonl_file = '%s/%s.jsonl' % (odir, prefix)
-    log_message(
-            1,
-            'Writing to %s' % (
-                dest_jsonl_file)
-            )
-    with open(dest_jsonl_file, 'w') as f:
-        for key in sorted(data_dict.keys()):
-            f.write(json.dumps(data_dict[key]) + '\n')
+    if output_format in ['json', 'both']:
+        # JSONL File
+        dest_jsonl_file = '%s/%s.jsonl' % (odir, prefix)
+        log_message(
+                1,
+                'Writing to %s' % (
+                    dest_jsonl_file)
+                )
+        with open(dest_jsonl_file, 'w') as f:
+            for key in sorted(data_dict.keys()):
+                f.write(json.dumps(data_dict[key]) + '\n')
 
-    # CSV File
-    first_key = list(data_dict.keys())[0]
-    first_rec = data_dict[first_key]
-    field_list = list(first_rec.keys())
-    field_list.sort()
-    dest_csv_file = '%s/%s.csv' % (odir, prefix)
-    log_message(
-            1,
-            'Writing to %s' % (
-                dest_csv_file)
-            )
-    with open(dest_csv_file, 'w') as f:
-        writer = csv.DictWriter(
-                f, 
-                fieldnames = field_list)
-        writer.writeheader()
+    if output_format in ['csv', 'both']:
+        # CSV File
+        first_key = list(data_dict.keys())[0]
+        first_rec = data_dict[first_key]
+        field_list = list(first_rec.keys())
+        field_list.sort()
+        dest_csv_file = '%s/%s.csv' % (odir, prefix)
+        log_message(
+                1,
+                'Writing to %s' % (
+                    dest_csv_file)
+                )
+        with open(dest_csv_file, 'w') as f:
+            writer = csv.DictWriter(
+                    f, 
+                    fieldnames = field_list)
+            writer.writeheader()
 
-        for key in sorted(data_dict.keys()):
-            data_rec = data_dict[key]
-            for field in data_rec:
-                if type(data_rec[field]) == float:
-                    data_rec[field] = round(data_rec[field], decimal_places)
-            writer.writerow(data_rec)
+            for key in sorted(data_dict.keys()):
+                data_rec = data_dict[key]
+                for field in data_rec:
+                    if type(data_rec[field]) == float:
+                        data_rec[field] = round(data_rec[field], decimal_places)
+                writer.writerow(data_rec)
 
     return
 
@@ -110,6 +113,18 @@ parser.add_argument(
         help = 'Output Directory for generated files', 
         default = default_odir,
         required = False
+        )
+
+parser.add_argument(
+        '--format', 
+        help = 'Output Format', 
+        required = False,
+        choices = [
+            'json', 
+            'csv', 
+            'both'
+            ],
+        default = 'json'
         )
 
 parser.add_argument(
@@ -156,6 +171,7 @@ args = vars(parser.parse_args())
 api_host = args['host']
 backfill_days = args['days']
 odir = args['odir']
+output_format = args['format']
 device_id = args['id']
 auth_key = args['auth_key']
 incl_today = args['incl_today']
@@ -289,6 +305,7 @@ for i in range(0, backfill_days):
 
         output_results(
                 odir,
+                output_format,
                 data_dict,
                 dest_file_prefix,
                 decimal_places)
