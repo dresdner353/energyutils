@@ -24,6 +24,8 @@ optional arguments:
   -h, --help            show this help message and exit
   --host HOST           Shelly API Host
   --odir ODIR           Output Directory for generated files
+  --format {json,csv,both}
+                        Output Format
   --days DAYS           Backfill in days (def 30)
   --id ID               Device ID
   --auth_key AUTH_KEY   API Auth Key
@@ -36,6 +38,7 @@ Notes:
 * The API host is set by the --host arg. 
 * The --id option sets the device ID to query
 * The output directory is set by --odir but this also defaults to ~/.shellyemdata
+* The --format option controls output via JSON, CSV or both variants. JSON is output by default
 * The --days option sets the number of full days to retrieve since yesterday
    - Data for any given day is only retrieved when the target YYYYMMDD_hour.jsonl file is not present in the output directory
    - So retrieval acts incrementally, only pulling data for days you do not already have. 
@@ -54,16 +57,12 @@ Notes:
 ......
 Mon May 15 19:17:29 2023 Getting data for 2023-03-23 00:00:00
 Mon May 15 19:17:30 2023 Writing to /path/to/somewhere/2023-03-23.jsonl
-Mon May 15 19:17:30 2023 Writing to /path/to/somewhere/2023-03-23.csv
 Mon May 15 19:17:30 2023 Getting data for 2023-03-22 00:00:00
 Mon May 15 19:17:30 2023 Writing to /path/to/somewhere/2023-03-22.jsonl
-Mon May 15 19:17:30 2023 Writing to /path/to/somewhere/2023-03-22.csv
 Mon May 15 19:17:30 2023 Getting data for 2023-03-21 00:00:00
 Mon May 15 19:17:30 2023 Writing to /path/to/somewhere/2023-03-21.jsonl
-Mon May 15 19:17:30 2023 Writing to /path/to/somewhere/2023-03-21.csv
 Mon May 15 19:17:30 2023 Getting data for 2023-03-20 00:00:00
 Mon May 15 19:17:31 2023 Writing to /path/to/somewhere/2023-03-20.jsonl
-Mon May 15 19:17:31 2023 Writing to /path/to/somewhere/2023-03-20.csv
 ......
 ```
 

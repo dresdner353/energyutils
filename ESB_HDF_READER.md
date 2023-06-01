@@ -15,6 +15,9 @@ optional arguments:
   -h, --help            show this help message and exit
   --file FILE           ESB HDF file
   --odir ODIR           Output Directory
+  --format {json,csv,both}
+                        Output Format
+  --timezone TIMEZONE   Timezone
   --timezone TIMEZONE   Timezone
   --decimal_places DECIMAL_PLACES
                         Decimal Places (def:4)
@@ -25,6 +28,7 @@ optional arguments:
 Notes:
 * The script is run and pointed at a HDF file as downloaded from the ESB (--file file.csv)
 * The output directory is set to control where the script dumps all generated JSONL and CSV files (--odir <dir>)
+* The --format option controls output via JSON, CSV or both variants. JSON is output by default
 * Timezone can be asserted with the --timezone option. By default, this is set to Europe/Dublin. The ESB HDF data comes in local Europe/Dublin timezone. So this option should not be required.
 * Decimal places can be controlled using the --decimal_places option and this defaults to 4. This only affects data written to the CSV files.
 
@@ -37,25 +41,15 @@ python3 energyutils/esb_hdf_reader.py \
 
 Mon May  1 12:39:51 2023 Parsed 3125 hourly records from /Users/cormac/work/energyutils/HDF_example.csv
 Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-18.jsonl
-Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-18.csv
 Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-17.jsonl
-Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-17.csv
 Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-16.jsonl
-Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-16.csv
 Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-15.jsonl
-Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-15.csv
 Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-14.jsonl
-Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-14.csv
 Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-13.jsonl
-Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-13.csv
 Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-12.jsonl
-Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-12.csv
 Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-11.jsonl
-Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-11.csv
 Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-10.jsonl
-Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-10.csv
 Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-09.jsonl
-Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-09.csv
 Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-08.jsonl
 .........
 .........
