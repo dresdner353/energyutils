@@ -133,27 +133,36 @@ def add_worksheet(
 
         for field in header_fields:
             field_rec = field_dict[field]
-            if field in rec:
-                # write cell
-                if field_rec['format'] == 'str':
+            # write string
+            if field_rec['format'] == 'str':
+                # use present value or empty string
+                if field in rec:
                     value = rec[field]
-                    worksheet.write_string(
-                            row,
-                            field_rec['col'],
-                            value,
-                            format_dict[field_rec['format']])
-    
-                elif field_rec['format'] in ['integer', 'float']:
-                    value = rec[field]
-                    worksheet.write_number(
-                            row,
-                            field_rec['col'],
-                            value,
-                            format_dict[field_rec['format']])
                 else:
-                    # unknown field format
-                    # skipped
-                    pass
+                    value = ''
+
+                worksheet.write_string(
+                        row,
+                        field_rec['col'],
+                        value,
+                        format_dict[field_rec['format']])
+    
+            # write number
+            elif field_rec['format'] in ['integer', 'float']:
+                if field in rec:
+                    value = rec[field]
+                else:
+                    value = 0
+
+                worksheet.write_number(
+                        row,
+                        field_rec['col'],
+                        value,
+                        format_dict[field_rec['format']])
+            else:
+                # unknown field format
+                # skipped
+                pass
 
     # Charts
     if not chart_list:
