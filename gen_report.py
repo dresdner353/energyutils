@@ -623,12 +623,7 @@ field_dict = {
             'header_format' : 'header',
             'format' : 'integer',
             },
-        'standing_cost' : {
-            'title' : 'Standing Cost',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'float',
-            },
+
         'tariff_name' : {
             'title' : 'Import Tariff',
             'width' : 12,
@@ -637,6 +632,12 @@ field_dict = {
             },
         'tariff_rate' : {
             'title' : 'Import Rate',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'float',
+            },
+        'standing_cost' : {
+            'title' : 'Standing Cost',
             'width' : 12,
             'header_format' : 'header',
             'format' : 'float',
