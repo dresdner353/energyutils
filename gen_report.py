@@ -745,13 +745,6 @@ import_series =  [
             },
         ]
 
-rel_import_series =  [
-        {
-            'field': 'rel_import',
-            'colour': 'blue',
-            },
-        ]
-
 full_cost_series = [
         {
             'field': 'import_cost',
@@ -1032,7 +1025,7 @@ add_worksheet(
                 'x_title' : 'Hour',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
-                'series' : rel_import_series,
+                'series' : import_series,
                 },
             {
                 'title' : '24h Cost',
@@ -1062,7 +1055,6 @@ add_worksheet(
                 'title' : 'Tariff Import',
                 'type' : 'column',
                 'x_title' : 'Tariff',
-                'x_rotation' : -45,
                 'y_title' : 'kWh',
                 'series' : import_series,
                 },
