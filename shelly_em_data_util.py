@@ -288,7 +288,7 @@ for i in range(0, backfill_days):
             usage_rec['year'] = '%04d' %(
                     ts_dt.year)
             usage_rec['weekday'] = ts_dt.strftime('%u %a')
-            usage_rec['week'] = ts_dt.strftime('%V')
+            usage_rec['week'] = ts_dt.strftime('%Y-%W')
 
         # merge in solar production
         for shelly_rec in solar_resp_dict['data']['history']:

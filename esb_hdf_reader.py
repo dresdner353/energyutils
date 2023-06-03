@@ -222,7 +222,7 @@ for esb_rec in reader:
         usage_rec['year'] = '%04d' %(
                 dt_ref.year)
         usage_rec['weekday'] = dt_ref.strftime('%u %a')
-        usage_rec['week'] = dt_ref.strftime('%V')
+        usage_rec['week'] = dt_ref.strftime('%Y-%W')
     else:
         # retrieve usage rec
         usage_rec = usage_dict[ts_ref]
