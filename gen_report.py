@@ -595,13 +595,13 @@ field_dict = {
             },
         'month' : {
             'title' : 'Month',
-            'width' : 9,
+            'width' : 8,
             'header_format' : 'header',
             'format' : 'str',
             },
         'week' : {
             'title' : 'Week',
-            'width' : 5,
+            'width' : 8,
             'header_format' : 'header',
             'format' : 'str',
             },
