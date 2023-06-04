@@ -214,7 +214,6 @@ def add_worksheet(
             if 'negative_colour' in series_rec:
                 series_dict['invert_if_negative'] = True
                 series_dict['invert_if_negative_color'] = series_rec['negative_colour']
-                print(series_dict)
 
             chart.add_series(series_dict)
             series_added += 1
@@ -326,33 +325,81 @@ def load_data(
     tarff_interval_dict = {}
     if interval_list:
         for interval_str in interval_list:
+
+            # D-D:HH-HH:Tariff_Name
+            # First Day range is optional
             fields = interval_str.split(':')
-            if len(fields) == 3:
-                start_hh = int(fields[0])
-                end_hh = int(fields[1])
+
+            if len(fields) == 2:
+                # no day range specified
+                hour_fields = fields[0].split('-')
+                start_hh = int(hour_fields[0])
+                end_hh = int(hour_fields[1])
+                tariff_name = fields[1]
+                days = [1,2,3,4,5,6,7]
+
+            elif len(fields) == 3:
+                # day range specified
+                day_fields = fields[0].split('-')
+                start_day = int(day_fields[0])
+                end_day = int(day_fields[1])
+
+                # populate days list from specified range
+                days = []
+                for day in range(1, 8):
+                    if (day >= start_day and 
+                        day <= end_day):
+                        days.append(day)
+
+                hour_fields = fields[1].split('-')
+                start_hh = int(hour_fields[0])
+                end_hh = int(hour_fields[1])
                 tariff_name = fields[2]
-    
+
+            else:
+                # ignore mal-formed entries
+                # FIXME needs more advanced error handling
+                continue
+
+            for day in days:
+                # Initialise day
+                if not day in tarff_interval_dict:
+                    tarff_interval_dict[day] = {}
+
                 if start_hh == end_hh:
                     # single xx:xx range (full 24 hours)
                     for i in range(0, 24):
-                        tarff_interval_dict[i] = tariff_name
+                        tarff_interval_dict[day][i] = tariff_name
                 else:
-                    while start_hh != end_hh:
+                    hh = start_hh
+                    while hh != end_hh:
                         if tariff_name in tariff_dict:
-                            tarff_interval_dict[start_hh] = tariff_name
-                            start_hh = (start_hh + 1) % 24
+                            tarff_interval_dict[day][hh] = tariff_name
+                            hh = (hh + 1) % 24
         log_message(
                 verbose,
                 'Tariff Intervals: %s' % (
-                    tarff_interval_dict)
+                    json.dumps(
+                        tarff_interval_dict, 
+                        indent = 4)
+                    )
                 )
     
-        if len(tarff_interval_dict) != 24:
-            log_message(
-                    1,
-                    'WARNING: Tariff interval data present for only %d/24 hours' % (
-                        len(tarff_interval_dict))   
-                    )
+        for day in [1,2,3,4,5,6,7]:
+            if not day in tarff_interval_dict:
+                log_message(
+                        1,
+                        'WARNING: Tariff interval data not present for day %d' % (
+                            day)   
+                        )
+        for day in tarff_interval_dict.keys():
+            if len(tarff_interval_dict[day]) != 24:
+                log_message(
+                        1,
+                        'WARNING: Tariff interval data present for only %d/24 hours in day %d' % (
+                            len(tarff_interval_dict[day]),
+                            day)   
+                        )
 
     # load all data
     data_dict = {}
@@ -391,7 +438,10 @@ def load_data(
                 # store keyed on datetime object
                 data_dict[rec['datetime']] = rec
     
-                # cost calculation based on hour
+                # cost calculation based on week day number and hour
+                # weekday is formatted as '<num> <local name>'
+                # so we plit on whitespace and get int() of first field
+                dt_weekday = int(rec['weekday'].split(' ')[0])
                 dt_hour = rec['hour']
 
                 # relative import
@@ -399,8 +449,9 @@ def load_data(
                 rec['rel_import'] =  rec['import'] - rec['export'] 
     
                 # Import Tariff and charging rates
-                if dt_hour in tarff_interval_dict:
-                    rec['tariff_name'] = tarff_interval_dict[dt_hour]
+                if (dt_weekday in tarff_interval_dict and 
+                    dt_hour in tarff_interval_dict[dt_weekday]):
+                    rec['tariff_name'] = tarff_interval_dict[dt_weekday][dt_hour]
                     rec['tariff_rate'] = tariff_dict[rec['tariff_name']]
                     rec['import_cost'] = rec['import'] * rec['tariff_rate']
                     rec['rel_cost'] = rec['import_cost']
@@ -482,7 +533,7 @@ parser.add_argument(
 
 parser.add_argument(
         '--tariff_interval', 
-        help = 'Time Interval for Tariff <HH:HH:Tariff Name> <HH:HH:Tariff Name> ...', 
+        help = 'Time Interval for Tariff <[D-D:]HH-HH:Tariff Name> <[D-D:]HH-HH:Tariff Name> ...', 
         nargs = '+',
         required = False
         )
@@ -565,8 +616,8 @@ str_format.set_align('right')
 format_dict['str'] = str_format
 
 float_format = workbook.add_format() 
-# with commas and 3 decimal places
-float_format.set_num_format('#,##0.000') 
+# with commas and 4 decimal places
+float_format.set_num_format('#,##0.0000') 
 format_dict['float'] = float_format
 
 int_format = workbook.add_format() 
