@@ -36,10 +36,10 @@ Notes:
 ## Example Call (using the included example file)
 ```
 python3 energyutils/esb_hdf_reader.py \
-            --file energyutils/HDF_example.csv \
+            --file energyutils/sample_data/HDF_example.csv \
             --odir Desktop/esb_data
 
-Mon May  1 12:39:51 2023 Parsed 3125 hourly records from /Users/cormac/work/energyutils/HDF_example.csv
+Mon May  1 12:39:51 2023 Parsed 3125 hourly records from /Users/cormac/work/energyutils/sample_data/HDF_example.csv
 Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-18.jsonl
 Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-17.jsonl
 Mon May  1 12:39:51 2023 Writing to Desktop/esb_data/2023-04-16.jsonl
@@ -89,7 +89,7 @@ Each generated file contains hourly data for an entire day. Both JSONL and CSV v
 {"ts": 1675033200, "datetime": "2023/01/29 23:00:00", "import": 0.4575, "export": 0.0000, "hour": 23, "day": "2023-01-29", "month": "2023-01", "year": "2023", "weekday": "7 Sun", "week": "2023-04"}
 ```
 
-### Example CSV File
+### Example CSV File (only generated with --format csv)
 ```csv
 datetime,day,export,hour,import,month,ts,week,weekday,year
 2023/01/29 00:00:00,2023-01-29,0.0,0,0.428,2023-01,1674950400,2023-04,7 Sun,2023
