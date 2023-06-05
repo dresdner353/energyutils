@@ -571,6 +571,13 @@ end_date = args['end']
 timezone = args['timezone']
 verbose = args['verbose']
 
+log_message(
+        1,
+        'Generating report %s' % (
+            report_file_name
+            )
+        )
+
 data_dict = load_data(
         idir,
         start_date,
