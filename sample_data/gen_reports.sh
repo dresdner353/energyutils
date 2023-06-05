@@ -102,3 +102,27 @@ python3 ${GEN_REPORT_SCRIPT} \
     --tariff_interval 08-23:Day 23-08:Night 02-05:EV 1-5:17-19:Peak \
     --standing_rate 0.0478 \
     --fit_rate 0.185
+
+python3 ${GEN_REPORT_SCRIPT} \
+    --idir ${HDF_DATA} \
+    --file sse_report_boost.xlsx \
+    --tariff_rate Day:0.4830 Night:0.2735 Peak:0.6492 Boost:0.1055 \
+    --tariff_interval 08-23:Day 23-08:Night 02-05:Boost 17-19:Peak \
+    --standing_rate 0.0349 \
+    --fit_rate 0.24
+
+python3 ${GEN_REPORT_SCRIPT} \
+    --idir ${HDF_DATA} \
+    --file energia_report_smart.xlsx \
+    --tariff_rate Day:0.4576 Night:0.2450 Peak:0.4794 \
+    --tariff_interval 08-23:Day 23-08:Night 17-19:Peak \
+    --standing_rate 0.0270 \
+    --fit_rate 0.24
+
+python3 ${GEN_REPORT_SCRIPT} \
+    --idir ${HDF_DATA} \
+    --file energia_report_ev.xlsx \
+    --tariff_rate Day:0.5262 Night:0.2817 Peak:0.5753 EV:0.1264 \
+    --tariff_interval 08-23:Day 23-08:Night 02-06:EV 17-19:Peak \
+    --standing_rate 0.0270 \
+    --fit_rate 0.18
