@@ -17,6 +17,14 @@ python3 ${GEN_REPORT_SCRIPT} \
 
 python3 ${GEN_REPORT_SCRIPT} \
     --idir ${HDF_DATA} \
+    --file EI/ei_report_electricplus.xlsx \
+    --tariff_rate Day:0.4451 Night:0.2339 Peak:0.4746 \
+    --tariff_interval 08-23:Day 23-08:Night 17-19:Peak \
+    --standing_rate 0.0346 \
+    --fit_rate 0.21 
+
+python3 ${GEN_REPORT_SCRIPT} \
+    --idir ${HDF_DATA} \
     --file EI/ei_report_dualplus.xlsx \
     --tariff_rate Day:0.4310 Night:0.2265 Peak:0.4596 \
     --tariff_interval 08-23:Day 23-08:Night 17-19:Peak \
