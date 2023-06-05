@@ -126,3 +126,43 @@ python3 ${GEN_REPORT_SCRIPT} \
     --tariff_interval 08-23:Day 23-08:Night 02-06:EV 17-19:Peak \
     --standing_rate 0.0270 \
     --fit_rate 0.18
+
+python3 ${GEN_REPORT_SCRIPT} \
+    --idir ${HDF_DATA} \
+    --file flogas_report_smart.xlsx \
+    --tariff_rate Day:0.3680 Night:0.2868 Peak:0.4352 \
+    --tariff_interval 08-23:Day 23-08:Night 17-19:Peak \
+    --standing_rate 0.0387 \
+    --fit_rate 0.20
+
+python3 ${GEN_REPORT_SCRIPT} \
+    --idir ${HDF_DATA} \
+    --file pinergy_report_work_from_home.xlsx \
+    --tariff_rate Work:0.3263 Peak:0.4662 \
+    --tariff_interval 09-17:Work 17-09:Peak \
+    --standing_rate 0.0324 \
+    --fit_rate 0.21
+
+python3 ${GEN_REPORT_SCRIPT} \
+    --idir ${HDF_DATA} \
+    --file pinergy_report_family_time.xlsx \
+    --tariff_rate Evening:0.2797 Peak:0.4662 \
+    --tariff_interval 19-00:Evening 00-19:Peak \
+    --standing_rate 0.0324 \
+    --fit_rate 0.21
+
+python3 ${GEN_REPORT_SCRIPT} \
+    --idir ${HDF_DATA} \
+    --file pinergy_report_ev.xlsx \
+    --tariff_rate EV:0.0692 Peak:0.4662 \
+    --tariff_interval 02-05:EV 05-02:Peak \
+    --standing_rate 0.0324 \
+    --fit_rate 0.21
+
+python3 ${GEN_REPORT_SCRIPT} \
+    --idir ${HDF_DATA} \
+    --file pinergy_report_standard_smart.xlsx \
+    --tariff_rate Day:0.4646 Night:0.3546 Peak:0.4992 \
+    --tariff_interval 08-23:Day 23-08:Night 17-19:Peak \
+    --standing_rate 0.0324 \
+    --fit_rate 0.21
