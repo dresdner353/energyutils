@@ -18,7 +18,6 @@ optional arguments:
   --format {json,csv,both}
                         Output Format
   --timezone TIMEZONE   Timezone
-  --timezone TIMEZONE   Timezone
   --decimal_places DECIMAL_PLACES
                         Decimal Places (def:4)
   --verbose             Enable verbose output
