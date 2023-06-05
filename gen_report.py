@@ -682,6 +682,12 @@ field_dict = {
             'format' : 'integer',
             },
 
+        'standing_cost' : {
+            'title' : 'Standing Cost',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'float',
+            },
         'tariff_name' : {
             'title' : 'Import Tariff',
             'width' : 12,
@@ -694,12 +700,7 @@ field_dict = {
             'header_format' : 'header',
             'format' : 'float',
             },
-        'standing_cost' : {
-            'title' : 'Standing Cost',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'float',
-            },
+
         'import' : {
             'title' : 'Import (kWh)',
             'width' : 15,
@@ -713,8 +714,21 @@ field_dict = {
             'header_format' : 'header',
             'format' : 'float',
             },
-        'consumed' : {
-            'title' : 'Consumed (kWh)',
+
+        'solar' : {
+            'title' : 'Solar Generation (kWh)',
+            'width' : 15,
+            'header_format' : 'header',
+            'format' : 'float',
+            },
+        'solar_consumed' : {
+            'title' : 'Solar Consumed (kWh)',
+            'width' : 15,
+            'header_format' : 'header',
+            'format' : 'float',
+            },
+        'solar_credit' : {
+            'title' : 'Solar Credit',
             'width' : 15,
             'header_format' : 'header',
             'format' : 'float',
@@ -737,6 +751,14 @@ field_dict = {
             'header_format' : 'header',
             'format' : 'float',
             },
+
+        'consumed' : {
+            'title' : 'Consumed (kWh)',
+            'width' : 15,
+            'header_format' : 'header',
+            'format' : 'float',
+            },
+
         'rel_import' : {
             'title' : 'Rel Import (kWh)',
             'width' : 15,
@@ -746,24 +768,6 @@ field_dict = {
             },
         'rel_cost' : {
             'title' : 'Rel Cost',
-            'width' : 15,
-            'header_format' : 'header',
-            'format' : 'float',
-            },
-        'solar' : {
-            'title' : 'Solar Generation (kWh)',
-            'width' : 15,
-            'header_format' : 'header',
-            'format' : 'float',
-            },
-        'solar_consumed' : {
-            'title' : 'Solar Consumed (kWh)',
-            'width' : 15,
-            'header_format' : 'header',
-            'format' : 'float',
-            },
-        'solar_credit' : {
-            'title' : 'Solar Credit',
             'width' : 15,
             'header_format' : 'header',
             'format' : 'float',
