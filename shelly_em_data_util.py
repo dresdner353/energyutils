@@ -300,8 +300,8 @@ for i in range(0, backfill_days):
 
             usage_rec = data_dict[ts]
             usage_rec['solar'] = shelly_rec['consumption'] / 1000
-            usage_rec['consumed'] = usage_rec['import'] + usage_rec['solar'] - usage_rec['export']
             usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
+            usage_rec['consumed'] = usage_rec['import'] + usage_rec['solar_consumed']
 
         output_results(
                 odir,
