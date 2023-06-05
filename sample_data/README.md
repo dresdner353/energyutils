@@ -4,3 +4,5 @@ This directory contains sample data (HDF_example.csv) from an ESB smart meter. I
 
 Each report applies pricing details from a particular providers plan. Note that the numbers used may be out of date and should be checked.
 
+You could copy your ESB HDF file over the HDF_example.csv and then run gen_reports.sh to regenerate all reports and obtain a price model for you usage against each plan.
+
