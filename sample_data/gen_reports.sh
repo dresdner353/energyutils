@@ -20,6 +20,14 @@ python3 ${GEN_REPORT_SCRIPT} \
 
 python3 ${GEN_REPORT_SCRIPT} \
     --idir ${HDF_DATA} \
+    --file ${REPORTS}/ei_report_nightsaver.xlsx \
+    --tariff_rate Day:0.4230 Night:0.2280 \
+    --tariff_interval 09-00:Day 00-09:Night \
+    --standing_rate 0.0453 \
+    --fit_rate 0.21 
+
+python3 ${GEN_REPORT_SCRIPT} \
+    --idir ${HDF_DATA} \
     --file ${REPORTS}/ei_report_electricplus.xlsx \
     --tariff_rate Day:0.4451 Night:0.2339 Peak:0.4746 \
     --tariff_interval 08-23:Day 23-08:Night 17-19:Peak \
@@ -120,6 +128,22 @@ python3 ${GEN_REPORT_SCRIPT} \
     --tariff_rate Day:0.4830 Night:0.2735 Peak:0.6492 Boost:0.1055 \
     --tariff_interval 08-23:Day 23-08:Night 02-05:Boost 17-19:Peak \
     --standing_rate 0.0349 \
+    --fit_rate 0.24
+
+python3 ${GEN_REPORT_SCRIPT} \
+    --idir ${HDF_DATA} \
+    --file ${REPORTS}/sse_report_smart.xlsx \
+    --tariff_rate Day:0.4532 Night:0.2940 Peak:0.5727 \
+    --tariff_interval 08-23:Day 23-08:Night 17-19:Peak \
+    --standing_rate 0.0275 \
+    --fit_rate 0.24
+
+python3 ${GEN_REPORT_SCRIPT} \
+    --idir ${HDF_DATA} \
+    --file ${REPORTS}/sse_report_nightsaver.xlsx \
+    --tariff_rate Day:0.4434 Night:0.2752 \
+    --tariff_interval 09-00:Day 00-09:Night \
+    --standing_rate 0.0353 \
     --fit_rate 0.24
 
 python3 ${GEN_REPORT_SCRIPT} \
