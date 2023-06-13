@@ -50,9 +50,9 @@ optional arguments:
 ## Notes
 * There is no DC-DC loss factor considered here for now. So a kWh stolen from export is assumed to get into the simulated battery as a kwH. In reality there will need to be a loss factor added here. 
 * For each hour: 
-  - The first step performed is to steal export if export exists and the simulated battery has capacity to take on more charge. 
-  - Then the import for the same hour is checked and offset from the battery storage. 
-  - So this gives a best possible outcome in favour of the battery per hour by acting as if all the export happened before all the import took place. 
+  - The first step performed is to steal availble export if the simulated battery has capacity to take a charge. 
+  - Then the import for the same hour is checked and offset from existing battery storage. 
+  - So this gives a best possible outcome in favour of the battery on a per hour basis by acting as if all the export happened before all the import took place. 
 * The hour to hour simulation will inherit any existing charge from the previous hour. 
   - Therefore as the daytime passes and export drops to 0, the remaining battery charge will continue to be drawn down to offset any import that took place. 
   - This will continue until the battery reaches the min charge or we roll into the next day and export starts to occur again charing the battery
