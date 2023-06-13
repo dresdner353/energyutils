@@ -55,7 +55,7 @@ optional arguments:
   - So this gives a best possible outcome in favour of the battery on a per hour basis by acting as if all the export happened before all the import took place. 
 * The hour to hour simulation will inherit any existing charge from the previous hour. 
   - Therefore as the daytime passes and export drops to 0, the remaining battery charge will continue to be drawn down to offset any import that took place. 
-  - This will continue until the battery reaches the min charge or we roll into the next day and export starts to occur again charing the battery
+  - This will continue until the battery reaches the min charge or we roll into the next day and export starts to occur again charging the battery
 
 
 ## Example Run
