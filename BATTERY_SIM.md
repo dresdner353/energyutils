@@ -11,7 +11,7 @@ Cost reports may then be generated from the scrubbed data set to provide accurat
 usage: battery_sim.py [-h] --idir IDIR --odir ODIR [--start START] [--end END]
                       [--timezone TIMEZONE] --battery_capacity BATTERY_CAPACITY 
                       --max_charge_percent 1-100 
-                      --min_discharge_percent 1-100
+                      --min_charge_percent 1-100
                       --charge_rate CHARGE_RATE 
                       --discharge_rate DISCHARGE_RATE
                       [--discharge_bypass_interval DISCHARGE_BYPASS_INTERVAL]
@@ -32,8 +32,8 @@ optional arguments:
                         Battery Capacity (kWh)
   --max_charge_percent 
                         Battery Max Charge Percentage (1..100)
-  --min_discharge_percent 
-                        Battery Min Discharge Percentage (1..100)
+  --min_charge_percent 
+                        Battery Min Charge Percentage (1..100)
   --charge_rate CHARGE_RATE
                         Battery Charge Rate (kWh/hour)
   --discharge_rate DISCHARGE_RATE
@@ -65,7 +65,7 @@ python3 battery_sim.py \
             --odir /tmp  \
             --battery_capacity 10 \
             --max_charge_percent 95 \
-            --min_discharge_percent 5 \
+            --min_charge_percent 5 \
             --charge_rate 2 \
             --discharge_rate 2 \
             --discharge_bypass_interval 02-05

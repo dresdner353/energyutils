@@ -190,8 +190,8 @@ parser.add_argument(
         )
 
 parser.add_argument(
-        '--min_discharge_percent', 
-        help = 'Battery Min Discharge Percentage (1..100)', 
+        '--min_charge_percent', 
+        help = 'Battery Min Charge Percentage (1..100)', 
         type = int,
         choices = range(1, 101),
         required = True
@@ -249,7 +249,7 @@ end_date = args['end']
 timezone = args['timezone']
 battery_capacity = args['battery_capacity']
 max_charge_percent = args['max_charge_percent']
-min_discharge_percent = args['min_discharge_percent']
+min_charge_percent = args['min_charge_percent']
 charge_rate = args['charge_rate']
 discharge_rate = args['discharge_rate']
 discharge_bypass_interval = args['discharge_bypass_interval']
@@ -314,7 +314,7 @@ for key in key_list:
     discharge_amount = 0
     if not rec['hour'] in discharge_bypass_set:
         # determine how much charge we have to use
-        available_discharge_capacity = current_battery_storage - (battery_capacity * min_discharge_percent/100)
+        available_discharge_capacity = current_battery_storage - (battery_capacity * min_charge_percent/100)
         if available_discharge_capacity < 0:
             available_discharge_capacity = 0
 
