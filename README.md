@@ -6,4 +6,5 @@ Specific Guides:
 * [ESB HDF Reader (Ireland)](./ESB_HDF_READER.md)  
 * [Shelly EM Utility](./SHELLY_EM_UTIL.md)  
 * [Report Generator Utility](./GEN_REPORT.md)  
+* [Battery Simulator](./BATTERY_SIM.md)  
 * more to come.. 
