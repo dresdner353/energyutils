@@ -241,6 +241,8 @@ def gen_aggregate_dict(
             'hour',
             'tariff_rate',
             'export_rate',
+            'battery_storage',
+            'battery_capacity',
             ]
     field_skip_list.append(agg_field)
 
@@ -724,6 +726,32 @@ field_dict = {
             'header_format' : 'header',
             'format' : 'float',
             },
+
+        'battery_charge' : {
+            'title' : 'Battery Charge (kWh)',
+            'width' : 15,
+            'header_format' : 'header',
+            'format' : 'float',
+            },
+        'battery_discharge' : {
+            'title' : 'Battery Discharge (kWh)',
+            'width' : 15,
+            'header_format' : 'header',
+            'format' : 'float',
+            },
+        'battery_storage' : {
+            'title' : 'Battery Storage (kWh)',
+            'width' : 15,
+            'header_format' : 'header',
+            'format' : 'float',
+            },
+        'battery_capacity' : {
+            'title' : 'Battery Capacity (%)',
+            'width' : 15,
+            'header_format' : 'header',
+            'format' : 'integer',
+            },
+
         'solar_consumed' : {
             'title' : 'Solar Consumed (kWh)',
             'width' : 15,
@@ -847,6 +875,30 @@ tariff_cost_series = [
             },
         ]
 
+battery_charging_series = [
+        {
+            'field': 'battery_charge',
+            'colour': 'red',
+            },
+        {
+            'field': 'battery_discharge',
+            'colour': 'green',
+            },
+        ]
+
+battery_storage_series = [
+        {
+            'field': 'battery_storage',
+            'colour': 'blue',
+            },
+        ]
+
+battery_capacity_series = [
+        {
+            'field': 'battery_capacity',
+            'colour': 'blue',
+            },
+        ]
 
 add_worksheet(
         workbook,
@@ -871,6 +923,30 @@ add_worksheet(
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
                 'series' : import_series,
+                },
+            {
+                'title' : 'Hourly Battery Charging',
+                'type' : 'column',
+                'x_title' : 'Hour',
+                'x_rotation' : -45,
+                'y_title' : 'kWh',
+                'series' : battery_charging_series,
+                },
+            {
+                'title' : 'Hourly Battery Storage',
+                'type' : 'column',
+                'x_title' : 'Hour',
+                'x_rotation' : -45,
+                'y_title' : 'kWh',
+                'series' : battery_storage_series,
+                },
+            {
+                'title' : 'Hourly Battery Capacity',
+                'type' : 'column',
+                'x_title' : 'Hour',
+                'x_rotation' : -45,
+                'y_title' : '% Full',
+                'series' : battery_capacity_series,
                 },
             {
                 'title' : 'Hourly Cost',
@@ -917,6 +993,14 @@ add_worksheet(
                 'series' : import_series,
                 },
             {
+                'title' : 'Daily Charging',
+                'type' : 'column',
+                'x_title' : 'Day',
+                'x_rotation' : -45,
+                'y_title' : 'kWh',
+                'series' : battery_charging_series,
+                },
+            {
                 'title' : 'Daily Cost',
                 'type' : 'column',
                 'x_title' : 'Day',
@@ -960,6 +1044,14 @@ add_worksheet(
                 'series' : import_series,
                 },
             {
+                'title' : 'Weekly Charging',
+                'type' : 'column',
+                'x_title' : 'Week',
+                'x_rotation' : -45,
+                'y_title' : 'kWh',
+                'series' : battery_charging_series,
+                },
+            {
                 'title' : 'Weekly Cost',
                 'type' : 'column',
                 'x_title' : 'Week',
@@ -1001,6 +1093,14 @@ add_worksheet(
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
                 'series' : import_series,
+                },
+            {
+                'title' : 'Monthly Charging',
+                'type' : 'column',
+                'x_title' : 'Month',
+                'x_rotation' : -45,
+                'y_title' : 'kWh',
+                'series' : battery_charging_series,
                 },
             {
                 'title' : 'Monthly Cost',
@@ -1052,6 +1152,14 @@ add_worksheet(
                 'series' : import_series,
                 },
             {
+                'title' : 'Weekday Charging',
+                'type' : 'column',
+                'x_title' : 'Weekday',
+                'x_rotation' : -45,
+                'y_title' : 'kWh',
+                'series' : battery_charging_series,
+                },
+            {
                 'title' : 'Weekday Cost',
                 'type' : 'column',
                 'x_title' : 'Weekday',
@@ -1093,6 +1201,14 @@ add_worksheet(
                 'series' : import_series,
                 },
             {
+                'title' : '24h Charging',
+                'type' : 'column',
+                'x_title' : 'Hour',
+                'x_rotation' : -45,
+                'y_title' : 'kWh',
+                'series' : battery_charging_series,
+                },
+            {
                 'title' : '24h Cost',
                 'type' : 'column',
                 'x_title' : 'Hour',
@@ -1122,6 +1238,13 @@ add_worksheet(
                 'x_title' : 'Tariff',
                 'y_title' : 'kWh',
                 'series' : import_series,
+                },
+            {
+                'title' : 'Tariff Charging',
+                'type' : 'column',
+                'x_title' : 'Tariff',
+                'y_title' : 'kWh',
+                'series' : battery_charging_series,
                 },
             {
                 'title' : 'Tariff Cost',

@@ -2,8 +2,6 @@
 
 The report generator script generates an XLSX file from a directory of YYYY-MM-DD.jsonl files.
 
-THIS IS A WORK IN PROGRESS
-
 ## Usage
 ```
 usage: gen_report.py [-h] --file FILE --idir IDIR [--start START] [--end END]
