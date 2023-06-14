@@ -49,6 +49,7 @@ optional arguments:
 
 ## Notes
 * There is no DC-DC loss factor considered here for now. So a kWh stolen from export is assumed to get into the simulated battery as a kwH. In reality there will need to be a loss factor added here. 
+* No grid shift support yet but this will be needed to properly represent an optimised battery scenario.
 * For each hour: 
   - The first step performed is to steal availble export if the simulated battery has capacity to take a charge. 
   - Then the import for the same hour is checked and offset from existing battery storage. 
