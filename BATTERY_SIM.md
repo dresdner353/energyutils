@@ -57,12 +57,16 @@ optional arguments:
 * The hour to hour simulation will inherit any existing charge from the previous hour. 
   - Therefore as the daytime passes and export drops to 0, the remaining battery charge will continue to be drawn down to offset any import that took place. 
   - This will continue until the battery reaches the min charge or we roll into the next day and export starts to occur again charging the battery
-* As each hourly record is modified the following additonal fields are added:
-  - battery_charge.. the kWh charge added in that hour (reducing export)
-  - battery_discharge.. the kWh discharge used in that hour (reducing import)
+* As each hourly record is processed the following fields are changed:
+  - export is reduced by any amount charged to the battery
+  - import is reduced by any amount discharged from the battery
+* The following fields are added:
+  - battery_charge.. the kWh charge added in that hour 
+  - battery_discharge.. the kWh discharge used in that hour 
   - battery_storage.. the remaining kWh stored in the battery
   - battery_capacity.. the battery capacity (percentage) remaining
 * Those additional fields are then used in the gen_report.py script to produce additional charts in relation to battery charge
+* The reduced export and import fields will also impact costing in the new report
 
 
 ## Example Run
