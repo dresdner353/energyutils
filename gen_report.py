@@ -458,6 +458,7 @@ def load_data(
                     rec['tariff_rate'] = tariff_dict[rec['tariff_name']]
                     rec['import_cost'] = rec['import'] * rec['tariff_rate']
                     rec['rel_cost'] = rec['import_cost']
+                    rec['savings'] = 0
 
                     if standing_rate:
                         rec['standing_cost'] = standing_rate
@@ -470,6 +471,7 @@ def load_data(
                         rec['export_rate'] = fit_rate
                         rec['export_credit'] = rec['export'] * fit_rate
                         rec['rel_cost'] -= rec['export_credit'] 
+                        rec['savings'] += rec['export_credit'] 
 
                     # Solar credit (saving) based on consumed units against
                     # effective import tariff
@@ -478,6 +480,7 @@ def load_data(
                         rec['solar_credit'] = rec['solar_consumed'] * rec['tariff_rate']
                         rec['rel_import'] -= rec['solar_consumed']
                         rec['rel_cost'] -= rec['solar_credit']
+                        rec['savings'] += rec['solar_credit'] 
     
     log_message(
             1,
@@ -797,6 +800,12 @@ field_dict = {
             'format' : 'float',
             'field' : 'import'
             },
+        'savings' : {
+            'title' : 'Savings',
+            'width' : 15,
+            'header_format' : 'header',
+            'format' : 'float',
+            },
         'rel_cost' : {
             'title' : 'Rel Cost',
             'width' : 15,
@@ -851,6 +860,10 @@ full_cost_series = [
             'field': 'export_credit',
             'colour': 'blue',
             },
+        {
+            'field': 'savings',
+            'colour': 'purple',
+            },
         ]
 
 rel_cost_series = [
@@ -872,6 +885,10 @@ tariff_cost_series = [
         {
             'field': 'export_credit',
             'colour': 'blue',
+            },
+        {
+            'field': 'savings',
+            'colour': 'purple',
             },
         ]
 
