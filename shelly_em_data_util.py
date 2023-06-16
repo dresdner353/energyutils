@@ -154,6 +154,12 @@ parser.add_argument(
         )
 
 parser.add_argument(
+        '--force_download', 
+        help = 'Force download data (even if already present)', 
+        action = 'store_true'
+        )
+
+parser.add_argument(
         '--decimal_places', 
         help = 'Decimal Places (def:3)', 
         type = int,
@@ -175,6 +181,7 @@ output_format = args['format']
 device_id = args['id']
 auth_key = args['auth_key']
 incl_today = args['incl_today']
+force_download = args['force_download']
 decimal_places = args['decimal_places']
 gv_verbose = args['verbose']
 
@@ -221,7 +228,9 @@ for i in range(0, backfill_days):
             dest_file_prefix) 
 
     # skip if already present
-    if not os.path.exists(dest_jsonl_file):
+    # unless forced
+    if (force_download or 
+        not os.path.exists(dest_jsonl_file)):
         log_message(
                 1,
                 'Getting data for %s' % (
