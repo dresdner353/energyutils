@@ -849,6 +849,10 @@ solar_series =  [
             'field': 'export',
             'colour': 'blue',
             },
+        {
+            'field': 'rel_import',
+            'colour': 'orange',
+            },
         ]
 
 full_cost_series = [
