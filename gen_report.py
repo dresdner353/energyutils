@@ -476,9 +476,12 @@ def load_data(
                     # Solar credit (saving) based on consumed units against
                     # effective import tariff
                     # Also reduces relative import and cost accordingly
+                    # bill_rel_cost is added here then to show the bill value
+                    # without the solar credit adjustment as the bill never knows about solar self-use
                     if 'solar_consumed' in rec:
                         rec['solar_credit'] = rec['solar_consumed'] * rec['tariff_rate']
                         rec['rel_import'] -= rec['solar_consumed']
+                        rec['bill_rel_cost'] = rec['rel_cost']
                         rec['rel_cost'] -= rec['solar_credit']
                         rec['savings'] += rec['solar_credit'] 
     
@@ -800,14 +803,20 @@ field_dict = {
             'format' : 'float',
             'field' : 'import'
             },
+        'savings' : {
+            'title' : 'Savings',
+            'width' : 15,
+            'header_format' : 'header',
+            'format' : 'float',
+            },
         'rel_cost' : {
             'title' : 'Relative Cost',
             'width' : 15,
             'header_format' : 'header',
             'format' : 'float',
             },
-        'savings' : {
-            'title' : 'Savings',
+        'bill_rel_cost' : {
+            'title' : 'Relative Bill Cost',
             'width' : 15,
             'header_format' : 'header',
             'format' : 'float',
@@ -874,6 +883,10 @@ rel_cost_series = [
         {
             'field': 'rel_cost',
             'colour': 'green',
+            },
+        {
+            'field': 'bill_rel_cost',
+            'colour': 'blue',
             },
         ]
 
