@@ -20,6 +20,7 @@ optional arguments:
   --start START         Calculation Start Date (YYYYMMDD)
   --end END             Calculation End Date (YYYYMMDD)
   --timezone TIMEZONE   Timezone
+  --currency CURRENCY   Currency Sumbol (def:€)
   --tariff_rate TARIFF_RATE [TARIFF_RATE ...]
                         kwh Tariff <NAME:rate/kWh> <NAME:rate/kWh> ...
   --tariff_interval TARIFF_INTERVAL [TARIFF_INTERVAL ...]
