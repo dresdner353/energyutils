@@ -879,6 +879,9 @@ hour_dict = gen_aggregate_dict(data_dict, 'hour')
 tariff_dict = gen_aggregate_dict(data_dict, 'tariff_name')
 
 # Aggregate worksheets
+
+cost_label = 'Cost (%s)' % (currency_symbol)
+
 consumption_series =  [
         {
             'field': 'import',
@@ -1035,7 +1038,7 @@ add_worksheet(
                 'type' : 'column',
                 'x_title' : 'Hour',
                 'x_rotation' : -45,
-                'y_title' : 'Euro',
+                'y_title' : cost_label,
                 'series' : full_cost_series,
                 },
             {
@@ -1043,7 +1046,7 @@ add_worksheet(
                 'type' : 'column',
                 'x_title' : 'Hour',
                 'x_rotation' : -45,
-                'y_title' : 'Euro',
+                'y_title' : cost_label,
                 'series' : rel_cost_series,
                 },
             {
@@ -1051,7 +1054,7 @@ add_worksheet(
                 'type' : 'column',
                 'x_title' : 'Hour',
                 'x_rotation' : -45,
-                'y_title' : 'Euro',
+                'y_title' : cost_label,
                 'series' : savings_series,
                 },
             ]
@@ -1095,7 +1098,7 @@ add_worksheet(
                 'type' : 'column',
                 'x_title' : 'Day',
                 'x_rotation' : -45,
-                'y_title' : 'Euro',
+                'y_title' : cost_label,
                 'series' : full_cost_series,
                 },
             {
@@ -1103,7 +1106,7 @@ add_worksheet(
                 'type' : 'column',
                 'x_title' : 'Day',
                 'x_rotation' : -45,
-                'y_title' : 'Euro',
+                'y_title' : cost_label,
                 'series' : rel_cost_series,
                 },
             {
@@ -1111,7 +1114,7 @@ add_worksheet(
                 'type' : 'column',
                 'x_title' : 'Day',
                 'x_rotation' : -45,
-                'y_title' : 'Euro',
+                'y_title' : cost_label,
                 'series' : savings_series,
                 },
             ]
@@ -1154,7 +1157,7 @@ add_worksheet(
                 'type' : 'column',
                 'x_title' : 'Week',
                 'x_rotation' : -45,
-                'y_title' : 'Euro',
+                'y_title' : cost_label,
                 'series' : full_cost_series,
                 },
             {
@@ -1162,7 +1165,7 @@ add_worksheet(
                 'type' : 'column',
                 'x_title' : 'Week',
                 'x_rotation' : -45,
-                'y_title' : 'Euro',
+                'y_title' : cost_label,
                 'series' : rel_cost_series,
                 },
             {
@@ -1170,7 +1173,7 @@ add_worksheet(
                 'type' : 'column',
                 'x_title' : 'Week',
                 'x_rotation' : -45,
-                'y_title' : 'Euro',
+                'y_title' : cost_label,
                 'series' : savings_series,
                 },
             ]
@@ -1213,7 +1216,7 @@ add_worksheet(
                 'type' : 'column',
                 'x_title' : 'Month',
                 'x_rotation' : -45,
-                'y_title' : 'Euro',
+                'y_title' : cost_label,
                 'series' : full_cost_series,
                 },
             {
@@ -1221,7 +1224,7 @@ add_worksheet(
                 'type' : 'column',
                 'x_title' : 'Month',
                 'x_rotation' : -45,
-                'y_title' : 'Euro',
+                'y_title' : cost_label,
                 'series' : rel_cost_series,
                 },
             {
@@ -1229,7 +1232,7 @@ add_worksheet(
                 'type' : 'column',
                 'x_title' : 'Month',
                 'x_rotation' : -45,
-                'y_title' : 'Euro',
+                'y_title' : cost_label,
                 'series' : savings_series,
                 },
             ]
@@ -1278,14 +1281,14 @@ add_worksheet(
                 'type' : 'column',
                 'x_title' : 'Weekday',
                 'x_rotation' : -45,
-                'y_title' : 'Euro',
+                'y_title' : cost_label,
                 'series' : full_cost_series,
                 },
             {
                 'title' : 'Weekday Relative Cost',
                 'type' : 'column',
                 'x_title' : 'Weekday',
-                'y_title' : 'Euro',
+                'y_title' : cost_label,
                 'series' : rel_cost_series,
                 },
             {
@@ -1293,7 +1296,7 @@ add_worksheet(
                 'type' : 'column',
                 'x_title' : 'Weekday',
                 'x_rotation' : -45,
-                'y_title' : 'Euro',
+                'y_title' : cost_label,
                 'series' : savings_series,
                 },
             ]
@@ -1335,14 +1338,14 @@ add_worksheet(
                 'type' : 'column',
                 'x_title' : 'Hour',
                 'x_rotation' : -45,
-                'y_title' : 'Euro',
+                'y_title' : cost_label,
                 'series' : full_cost_series,
                 },
             {
                 'title' : '24h Relative Cost',
                 'type' : 'column',
                 'x_title' : 'Hour',
-                'y_title' : 'Euro',
+                'y_title' : cost_label,
                 'series' : rel_cost_series,
                 },
             {
@@ -1350,7 +1353,7 @@ add_worksheet(
                 'type' : 'column',
                 'x_title' : 'Hour',
                 'x_rotation' : -45,
-                'y_title' : 'Euro',
+                'y_title' : cost_label,
                 'series' : savings_series,
                 },
             ])
@@ -1380,7 +1383,7 @@ add_worksheet(
                 'title' : 'Tariff Cost',
                 'type' : 'column',
                 'x_title' : 'Tariff',
-                'y_title' : 'Euro',
+                'y_title' : cost_label,
                 'series' : tariff_cost_series,
                 },
             {
@@ -1388,7 +1391,7 @@ add_worksheet(
                 'type' : 'column',
                 'x_title' : 'Tariff',
                 'x_rotation' : -45,
-                'y_title' : 'Euro',
+                'y_title' : cost_label,
                 'series' : savings_series,
                 },
             ]
