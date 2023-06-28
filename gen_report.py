@@ -148,7 +148,7 @@ def add_worksheet(
                         format_dict[field_rec['format']])
     
             # write number
-            elif field_rec['format'] in ['integer', 'float']:
+            elif field_rec['format'] in ['integer', 'float', 'currency_4dp', 'currency_2dp', 'kwh']:
                 if field in rec:
                     value = rec[field]
                 else:
@@ -239,6 +239,7 @@ def gen_aggregate_dict(
     field_skip_list = [
             'ts', 
             'hour',
+            'standing_rate',
             'tariff_rate',
             'export_rate',
             'battery_storage',
@@ -461,6 +462,10 @@ def load_data(
                     rec['savings'] = 0
 
                     if standing_rate:
+                        # both fields same value here
+                        # but standing_cost will live on in aggregations
+                        # rate only appears in hour record
+                        rec['standing_rate'] = standing_rate
                         rec['standing_cost'] = standing_rate
                         rec['rel_cost'] += rec['standing_cost']
 
@@ -534,6 +539,13 @@ parser.add_argument(
         )
 
 parser.add_argument(
+        '--currency', 
+        help = 'Currency Sumbol (def:€)', 
+        default = '€',
+        required = False
+        )
+
+parser.add_argument(
         '--tariff_rate', 
         help = 'kwh Tariff <NAME:rate/kWh> <NAME:rate/kWh> ...', 
         nargs = '+',
@@ -556,7 +568,7 @@ parser.add_argument(
 
 parser.add_argument(
         '--standing_rate', 
-        help = 'Standing Charge (cost per hour)', 
+        help = 'Standing Rate (cost per hour)', 
         type = float,
         required = False
         )
@@ -578,6 +590,7 @@ idir = args['idir']
 start_date = args['start']
 end_date = args['end']
 timezone = args['timezone']
+currency_symbol = args['currency']
 verbose = args['verbose']
 
 log_message(
@@ -642,10 +655,35 @@ int_format = workbook.add_format()
 int_format.set_num_format('0') 
 format_dict['integer'] = int_format
 
+kwh_format = workbook.add_format() 
+# with commas and 4 decimal places
+kwh_format.set_num_format('#,##0.0000 "kWh"') 
+format_dict['kwh'] = kwh_format
+
+currency_4dp_format = workbook.add_format() 
+# with currency symbol, commas and 4 decimal places
+currency_4dp_format.set_num_format(
+        '%s#,##0.0000;-%s#,##0.0000' % (
+            currency_symbol,
+            currency_symbol
+            )
+        ) 
+format_dict['currency_4dp'] = currency_4dp_format
+
+currency_2dp_format = workbook.add_format() 
+# with currency symbol, commas and 2 decimal places
+currency_2dp_format.set_num_format(
+        '%s#,##0.00;-%s#,##0.00' % (
+            currency_symbol,
+            currency_symbol
+            )
+        ) 
+format_dict['currency_2dp'] = currency_2dp_format
+
 field_dict = {
         'datetime' : {
             'title' : 'Date',
-            'width' : 20,
+            'width' : 15,
             'header_format' : 'header',
             'format' : 'str',
             },
@@ -675,7 +713,7 @@ field_dict = {
             },
         'day' : {
             'title' : 'Day',
-            'width' : 12,
+            'width' : 10,
             'header_format' : 'header',
             'format' : 'str',
             },
@@ -702,124 +740,131 @@ field_dict = {
             'title' : 'Import Rate',
             'width' : 12,
             'header_format' : 'header',
-            'format' : 'float',
+            'format' : 'currency_4dp',
+            },
+
+        'standing_rate' : {
+            'title' : 'Standing Rate',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'currency_4dp',
             },
 
         'standing_cost' : {
             'title' : 'Standing Cost',
             'width' : 12,
             'header_format' : 'header',
-            'format' : 'float',
+            'format' : 'currency_2dp',
             },
 
         'import' : {
-            'title' : 'Import (kWh)',
-            'width' : 15,
+            'title' : 'Import',
+            'width' : 12,
             'header_format' : 'header',
-            'format' : 'float',
+            'format' : 'kwh',
             'field' : 'import'
             },
         'import_cost' : {
             'title' : 'Import Cost',
-            'width' : 15,
+            'width' : 12,
             'header_format' : 'header',
-            'format' : 'float',
+            'format' : 'currency_2dp',
             },
 
         'solar' : {
-            'title' : 'Solar Generation (kWh)',
-            'width' : 15,
+            'title' : 'Solar Generation',
+            'width' : 12,
             'header_format' : 'header',
-            'format' : 'float',
+            'format' : 'kwh',
             },
 
         'battery_charge' : {
-            'title' : 'Battery Charge (kWh)',
-            'width' : 15,
+            'title' : 'Battery Charge',
+            'width' : 12,
             'header_format' : 'header',
-            'format' : 'float',
+            'format' : 'kwh',
             },
         'battery_discharge' : {
-            'title' : 'Battery Discharge (kWh)',
-            'width' : 15,
+            'title' : 'Battery Discharge',
+            'width' : 12,
             'header_format' : 'header',
-            'format' : 'float',
+            'format' : 'kwh',
             },
         'battery_storage' : {
-            'title' : 'Battery Storage (kWh)',
-            'width' : 15,
+            'title' : 'Battery Storage',
+            'width' : 12,
             'header_format' : 'header',
-            'format' : 'float',
+            'format' : 'kwh',
             },
         'battery_capacity' : {
             'title' : 'Battery Capacity (%)',
-            'width' : 15,
+            'width' : 12,
             'header_format' : 'header',
             'format' : 'integer',
             },
 
         'solar_consumed' : {
-            'title' : 'Solar Consumed (kWh)',
-            'width' : 15,
+            'title' : 'Solar Consumed',
+            'width' : 12,
             'header_format' : 'header',
-            'format' : 'float',
+            'format' : 'kwh',
             },
         'solar_credit' : {
             'title' : 'Solar Credit',
-            'width' : 15,
+            'width' : 12,
             'header_format' : 'header',
-            'format' : 'float',
+            'format' : 'currency_2dp',
             },
         'export_rate' : {
             'title' : 'Export Rate',
             'width' : 12,
             'header_format' : 'header',
-            'format' : 'float',
+            'format' : 'currency_2dp',
             },
         'export' : {
-            'title' : 'Export (kWh)',
-            'width' : 15,
+            'title' : 'Export',
+            'width' : 12,
             'header_format' : 'header',
-            'format' : 'float',
+            'format' : 'kwh',
             },
         'export_credit' : {
             'title' : 'Export Credit',
-            'width' : 15,
+            'width' : 12,
             'header_format' : 'header',
-            'format' : 'float',
+            'format' : 'currency_2dp',
             },
 
         'consumed' : {
-            'title' : 'Consumed (kWh)',
-            'width' : 15,
+            'title' : 'Consumed',
+            'width' : 12,
             'header_format' : 'header',
-            'format' : 'float',
+            'format' : 'kwh',
             },
 
         'rel_import' : {
-            'title' : 'Relative Import (kWh)',
-            'width' : 15,
+            'title' : 'Relative Import',
+            'width' : 12,
             'header_format' : 'header',
-            'format' : 'float',
+            'format' : 'kwh',
             'field' : 'import'
             },
         'savings' : {
             'title' : 'Savings',
-            'width' : 15,
+            'width' : 12,
             'header_format' : 'header',
-            'format' : 'float',
+            'format' : 'currency_2dp',
             },
         'rel_cost' : {
             'title' : 'Relative Cost',
-            'width' : 15,
+            'width' : 12,
             'header_format' : 'header',
-            'format' : 'float',
+            'format' : 'currency_2dp',
             },
         'bill_rel_cost' : {
             'title' : 'Relative Bill Cost',
-            'width' : 15,
+            'width' : 12,
             'header_format' : 'header',
-            'format' : 'float',
+            'format' : 'currency_2dp',
             },
         }
 
