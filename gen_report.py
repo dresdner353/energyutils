@@ -656,8 +656,8 @@ int_format.set_num_format('0')
 format_dict['integer'] = int_format
 
 kwh_format = workbook.add_format() 
-# with commas and 4 decimal places
-kwh_format.set_num_format('#,##0.0000 "kWh"') 
+# with commas and 2 decimal places
+kwh_format.set_num_format('#,##0.00 "kWh"') 
 format_dict['kwh'] = kwh_format
 
 currency_4dp_format = workbook.add_format() 
