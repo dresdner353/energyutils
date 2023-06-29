@@ -458,7 +458,7 @@ def load_data(
                     rec['tariff_name'] = tarff_interval_dict[dt_weekday][dt_hour]
                     rec['tariff_rate'] = tariff_dict[rec['tariff_name']]
                     rec['import_cost'] = rec['import'] * rec['tariff_rate']
-                    rec['rel_cost'] = rec['import_cost']
+                    rec['bill_amount'] = rec['import_cost']
                     rec['savings'] = 0
 
                     if standing_rate:
@@ -467,7 +467,7 @@ def load_data(
                         # rate only appears in hour record
                         rec['standing_rate'] = standing_rate
                         rec['standing_cost'] = standing_rate
-                        rec['rel_cost'] += rec['standing_cost']
+                        rec['bill_amount'] += rec['standing_cost']
 
                     # FIT (export_credit)
                     # calculates the credit and export and 
@@ -475,19 +475,16 @@ def load_data(
                     if fit_rate:
                         rec['export_rate'] = fit_rate
                         rec['export_credit'] = rec['export'] * fit_rate
-                        rec['rel_cost'] -= rec['export_credit'] 
+                        rec['bill_amount'] -= rec['export_credit'] 
                         rec['savings'] += rec['export_credit'] 
 
                     # Solar credit (saving) based on consumed units against
                     # effective import tariff
                     # Also reduces relative import and cost accordingly
-                    # bill_rel_cost is added here then to show the bill value
-                    # without the solar credit adjustment as the bill never knows about solar self-use
+                    # solar credit is never offset against bill_amount
                     if 'solar_consumed' in rec:
                         rec['solar_credit'] = rec['solar_consumed'] * rec['tariff_rate']
                         rec['rel_import'] -= rec['solar_consumed']
-                        rec['bill_rel_cost'] = rec['rel_cost']
-                        rec['rel_cost'] -= rec['solar_credit']
                         rec['savings'] += rec['solar_credit'] 
     
     log_message(
@@ -854,14 +851,8 @@ field_dict = {
             'header_format' : 'header',
             'format' : 'currency_2dp',
             },
-        'rel_cost' : {
-            'title' : 'Relative Cost',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'currency_2dp',
-            },
-        'bill_rel_cost' : {
-            'title' : 'Relative Bill Cost',
+        'bill_amount' : {
+            'title' : 'Bill Amount',
             'width' : 12,
             'header_format' : 'header',
             'format' : 'currency_2dp',
@@ -919,14 +910,10 @@ full_cost_series = [
             },
         ]
 
-rel_cost_series = [
+bill_series = [
         {
-            'field': 'rel_cost',
+            'field': 'bill_amount',
             'colour': 'green',
-            },
-        {
-            'field': 'bill_rel_cost',
-            'colour': 'blue',
             },
         ]
 
@@ -1035,12 +1022,12 @@ add_worksheet(
                 'series' : full_cost_series,
                 },
             {
-                'title' : 'Hourly Relative Cost',
+                'title' : 'Hourly Bill',
                 'type' : 'column',
                 'x_title' : 'Hour',
                 'x_rotation' : -45,
                 'y_title' : cost_label,
-                'series' : rel_cost_series,
+                'series' : bill_series,
                 },
             {
                 'title' : 'Hourly Savings',
@@ -1096,12 +1083,12 @@ add_worksheet(
                 'series' : full_cost_series,
                 },
             {
-                'title' : 'Daily Relative Cost',
+                'title' : 'Daily Bill',
                 'type' : 'column',
                 'x_title' : 'Day',
                 'x_rotation' : -45,
                 'y_title' : cost_label,
-                'series' : rel_cost_series,
+                'series' : bill_series,
                 },
             {
                 'title' : 'Daily Savings',
@@ -1156,12 +1143,12 @@ add_worksheet(
                 'series' : full_cost_series,
                 },
             {
-                'title' : 'Weekly Relative Cost',
+                'title' : 'Weekly Bill',
                 'type' : 'column',
                 'x_title' : 'Week',
                 'x_rotation' : -45,
                 'y_title' : cost_label,
-                'series' : rel_cost_series,
+                'series' : bill_series,
                 },
             {
                 'title' : 'Weekly Savings',
@@ -1216,12 +1203,12 @@ add_worksheet(
                 'series' : full_cost_series,
                 },
             {
-                'title' : 'Monthly Relative Cost',
+                'title' : 'Monthly Bill',
                 'type' : 'column',
                 'x_title' : 'Month',
                 'x_rotation' : -45,
                 'y_title' : cost_label,
-                'series' : rel_cost_series,
+                'series' : bill_series,
                 },
             {
                 'title' : 'Monthly Savings',
@@ -1282,11 +1269,11 @@ add_worksheet(
                 'series' : full_cost_series,
                 },
             {
-                'title' : 'Weekday Relative Cost',
+                'title' : 'Weekday Bill',
                 'type' : 'column',
                 'x_title' : 'Weekday',
                 'y_title' : cost_label,
-                'series' : rel_cost_series,
+                'series' : bill_series,
                 },
             {
                 'title' : 'Weekday Savings',
@@ -1340,11 +1327,11 @@ add_worksheet(
                 'series' : full_cost_series,
                 },
             {
-                'title' : '24h Relative Cost',
+                'title' : '24h Bill',
                 'type' : 'column',
                 'x_title' : 'Hour',
                 'y_title' : cost_label,
-                'series' : rel_cost_series,
+                'series' : bill_series,
                 },
             {
                 'title' : '24h Savings',
