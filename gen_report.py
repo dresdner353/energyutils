@@ -882,7 +882,7 @@ tariff_dict = gen_aggregate_dict(data_dict, 'tariff_name')
 
 cost_label = 'Cost (%s)' % (currency_symbol)
 
-consumption_series =  [
+power_series =  [
         {
             'field': 'import',
             'colour': 'red',
@@ -891,24 +891,16 @@ consumption_series =  [
             'field': 'solar_consumed',
             'colour': 'green',
             },
-        ]
-
-solar_series =  [
-        {
-            'field': 'solar',
-            'colour': 'green',
-            },
-        {
-            'field': 'solar_consumed',
-            'colour': 'cyan',
-            },
         {
             'field': 'export',
             'colour': 'blue',
             },
+        ]
+
+rel_import_series =  [
         {
             'field': 'rel_import',
-            'colour': 'orange',
+            'colour': 'blue',
             },
         ]
 
@@ -993,21 +985,21 @@ add_worksheet(
         data_dict,
         chart_list = [
             {
-                'title' : 'Hourly Consumption',
+                'title' : 'Hourly Power',
                 'type' : 'column',
                 'sub_type' : 'stacked',
                 'x_title' : 'Hour',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
-                'series' : consumption_series,
+                'series' : power_series,
                 },
             {
-                'title' : 'Hourly Solar',
+                'title' : 'Hourly Relative Import',
                 'type' : 'column',
                 'x_title' : 'Hour',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
-                'series' : solar_series,
+                'series' : rel_import_series,
                 },
             {
                 'title' : 'Hourly Battery Charging',
@@ -1036,6 +1028,7 @@ add_worksheet(
             {
                 'title' : 'Hourly Cost',
                 'type' : 'column',
+                'sub_type' : 'stacked',
                 'x_title' : 'Hour',
                 'x_rotation' : -45,
                 'y_title' : cost_label,
@@ -1069,21 +1062,21 @@ add_worksheet(
         day_dict,
         chart_list = [
             {
-                'title' : 'Daily Consumption',
+                'title' : 'Daily Power',
                 'type' : 'column',
                 'sub_type' : 'stacked',
                 'x_title' : 'Day',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
-                'series' : consumption_series,
+                'series' : power_series,
                 },
             {
-                'title' : 'Daily Solar',
+                'title' : 'Daily Relative Import',
                 'type' : 'column',
                 'x_title' : 'Day',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
-                'series' : solar_series,
+                'series' : rel_import_series,
                 },
             {
                 'title' : 'Daily Charging',
@@ -1096,6 +1089,7 @@ add_worksheet(
             {
                 'title' : 'Daily Cost',
                 'type' : 'column',
+                'sub_type' : 'stacked',
                 'x_title' : 'Day',
                 'x_rotation' : -45,
                 'y_title' : cost_label,
@@ -1128,21 +1122,21 @@ add_worksheet(
         week_dict,
         chart_list = [
             {
-                'title' : 'Weekly Consumption',
+                'title' : 'Weekly Power',
                 'type' : 'column',
                 'sub_type' : 'stacked',
                 'x_title' : 'Week',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
-                'series' : consumption_series,
+                'series' : power_series,
                 },
             {
-                'title' : 'Weekly Solar',
+                'title' : 'Weekly Relative Import',
                 'type' : 'column',
                 'x_title' : 'Week',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
-                'series' : solar_series,
+                'series' : rel_import_series,
                 },
             {
                 'title' : 'Weekly Charging',
@@ -1155,6 +1149,7 @@ add_worksheet(
             {
                 'title' : 'Weekly Cost',
                 'type' : 'column',
+                'sub_type' : 'stacked',
                 'x_title' : 'Week',
                 'x_rotation' : -45,
                 'y_title' : cost_label,
@@ -1187,21 +1182,21 @@ add_worksheet(
         month_dict,
         chart_list = [
             {
-                'title' : 'Monthly Consumption',
+                'title' : 'Monthly Power',
                 'type' : 'column',
                 'sub_type' : 'stacked',
                 'x_title' : 'Month',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
-                'series' : consumption_series,
+                'series' : power_series,
                 },
             {
-                'title' : 'Monthly Solar',
+                'title' : 'Monthly Relative Import',
                 'type' : 'column',
                 'x_title' : 'Month',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
-                'series' : solar_series,
+                'series' : rel_import_series,
                 },
             {
                 'title' : 'Monthly Charging',
@@ -1214,6 +1209,7 @@ add_worksheet(
             {
                 'title' : 'Monthly Cost',
                 'type' : 'column',
+                'sub_type' : 'stacked',
                 'x_title' : 'Month',
                 'x_rotation' : -45,
                 'y_title' : cost_label,
@@ -1253,20 +1249,20 @@ add_worksheet(
         weekday_dict,
         chart_list = [
             {
-                'title' : 'Weekday Consumption',
+                'title' : 'Weekday Power',
                 'type' : 'column',
                 'sub_type' : 'stacked',
                 'x_title' : 'Weekday',
                 'y_title' : 'kWh',
-                'series' : consumption_series
+                'series' : power_series
                 },
             {
-                'title' : 'Weekday Solar',
+                'title' : 'Weekday Relative Import',
                 'type' : 'column',
                 'x_title' : 'Weekday',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
-                'series' : solar_series,
+                'series' : rel_import_series,
                 },
             {
                 'title' : 'Weekday Charging',
@@ -1279,6 +1275,7 @@ add_worksheet(
             {
                 'title' : 'Weekday Cost',
                 'type' : 'column',
+                'sub_type' : 'stacked',
                 'x_title' : 'Weekday',
                 'x_rotation' : -45,
                 'y_title' : cost_label,
@@ -1310,20 +1307,20 @@ add_worksheet(
         hour_dict,
         chart_list = [
             {
-                'title' : '24h Consumption',
+                'title' : '24h Power',
                 'type' : 'column',
                 'sub_type' : 'stacked',
                 'x_title' : 'Hour',
                 'y_title' : 'kWh',
-                'series' : consumption_series,
+                'series' : power_series,
                 },
             {
-                'title' : '24h Solar',
+                'title' : '24h Relative Import',
                 'type' : 'column',
                 'x_title' : 'Hour',
                 'x_rotation' : -45,
                 'y_title' : 'kWh',
-                'series' : solar_series,
+                'series' : rel_import_series,
                 },
             {
                 'title' : '24h Charging',
@@ -1336,6 +1333,7 @@ add_worksheet(
             {
                 'title' : '24h Cost',
                 'type' : 'column',
+                'sub_type' : 'stacked',
                 'x_title' : 'Hour',
                 'x_rotation' : -45,
                 'y_title' : cost_label,
@@ -1366,11 +1364,11 @@ add_worksheet(
         tariff_dict,
         chart_list = [
             {
-                'title' : 'Tariff Solar',
+                'title' : 'Tariff Relative Import',
                 'type' : 'column',
                 'x_title' : 'Tariff',
                 'y_title' : 'kWh',
-                'series' : solar_series,
+                'series' : rel_import_series,
                 },
             {
                 'title' : 'Tariff Charging',
