@@ -29,7 +29,8 @@ optional arguments:
   --days DAYS           Backfill in days (def 30)
   --id ID               Device ID
   --auth_key AUTH_KEY   API Auth Key
-  --incl_today          Request data for current incomplete day
+  --force_download      Force download data (even if already present)
+  --incl_today          Request data for current incomplete day and all of yesterday
   --decimal_places DECIMAL_PLACES
                         Decimal Places (def:3)
   --verbose             Enable verbose output
@@ -43,7 +44,8 @@ Notes:
    - Data for any given day is only retrieved when the target YYYYMMDD_hour.jsonl file is not present in the output directory
    - So retrieval acts incrementally, only pulling data for days you do not already have. 
 * The --auth_key is the API key you retrieved from your account
-* The --incl_today option can be added to additionally request data for the current incomplete day. Normally the latest daya retrieved is yesterday
+* The --force_download option will force download data for any specified day in the defined range even if the data file is already present. Normal behaviour is to only pull down data for days that were not previously retrieved
+* The --incl_today option can be added to retrieve partial data for today and all of yesterday. Normal download only starts from yesterday. This option also force retrieves data for these two days specifically, overwriting any previously downloaded data.
 
 ## Example Run
 ```
