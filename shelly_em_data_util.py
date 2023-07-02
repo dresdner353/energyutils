@@ -148,14 +148,14 @@ parser.add_argument(
         )
 
 parser.add_argument(
-        '--incl_today', 
-        help = 'Request data for current incomplete day', 
+        '--force_download', 
+        help = 'Force download data (even if already present)', 
         action = 'store_true'
         )
 
 parser.add_argument(
-        '--force_download', 
-        help = 'Force download data (even if already present)', 
+        '--incl_today', 
+        help = 'Request data for current incomplete day and all of yesterday', 
         action = 'store_true'
         )
 
@@ -203,7 +203,11 @@ params['auth_key'] = auth_key
 params['date_range'] = 'day'
 
 # date reference for retrieval
-date_ref = datetime.datetime.today()
+today = datetime.datetime.today()
+yesterday = today - datetime.timedelta(days = 1)
+
+# Set first day to retrieve
+date_ref = today
 if not incl_today:
     # start at yesterday
    date_ref = date_ref - datetime.timedelta(days = 1)
@@ -227,10 +231,15 @@ for i in range(0, backfill_days):
             odir,
             dest_file_prefix) 
 
-    # skip if already present
-    # unless forced
+    # Download only if:
+    # * forced
+    # * the file does not exist
+    # * the incl_today option is set and the ref day is today 
+    #   or yesterday
     if (force_download or 
-        not os.path.exists(dest_jsonl_file)):
+        not os.path.exists(dest_jsonl_file) or
+        (incl_today and 
+         date_ref in [today, yesterday])):
         log_message(
                 1,
                 'Getting data for %s' % (
