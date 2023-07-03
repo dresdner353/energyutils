@@ -30,6 +30,8 @@ optional arguments:
   --standing_rate STANDING_RATE
                         Standing Charge (cost per hour)
   --verbose             Enable verbose output
+  --reports [{hour,day,week,month,year,weekday,24h,tariff} ...]
+                        Reports to generate
 ```
 Notes:
 * The script is run and pointed at a directory of input files (YYYYMMDD.jsonl)
@@ -40,6 +42,7 @@ Notes:
   - 6-7:08-23:Weekend ... Between Saturday(6) and Sunday(7), 8am-11pm, Weekend tariff applies 
 * A FIT rate for microgen export may be set using the --fit_rate
 * A standing charge may be set via the --standing_rate option. Note however that this value is the cost per hour. So divide any annual or monthly values accordingly to get the per hour equivalent.
+* The --reports option can be used to limit the set of generated reports to a desired subset of values. Multiple reports may be sepcified one after the other and in the order they should be written to the XLSX file. By default all reports are generated.
 
 
 ## Example Run
