@@ -499,6 +499,16 @@ def load_data(
 
 
 # main()
+report_choices = [
+            'hour', 
+            'day', 
+            'week',
+            'month',
+            'year',
+            'weekday',
+            '24h',
+            'tariff',
+            ]
 
 parser = argparse.ArgumentParser(
         description = 'Energy Data Report Generator'
@@ -576,6 +586,14 @@ parser.add_argument(
         action = 'store_true'
         )
 
+parser.add_argument(
+        '--reports', 
+        help = 'Reports to generate', 
+        required = False,
+        nargs = '*',
+        choices = report_choices,
+        default = report_choices
+        )
 
 args = vars(parser.parse_args())
 report_file_name = args['file']
@@ -588,6 +606,7 @@ start_date = args['start']
 end_date = args['end']
 timezone = args['timezone']
 currency_symbol = args['currency']
+report_list = args['reports']
 verbose = args['verbose']
 
 log_message(
@@ -964,422 +983,484 @@ battery_capacity_series = [
             },
         ]
 
-add_worksheet(
-        workbook,
-        'Hour',
-        format_dict,
-        field_dict,
-        data_dict,
-        chart_list = [
+for report in report_list:
+    if report == 'hour':
+        add_worksheet(
+                workbook,
+                'Hour',
+                format_dict,
+                field_dict,
+                data_dict,
+                chart_list = [
+                    {
+                        'title' : 'Hourly Power',
+                        'type' : 'column',
+                        'sub_type' : 'stacked',
+                        'x_title' : 'Hour',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : power_series,
+                        },
+                    {
+                        'title' : 'Hourly Relative Import',
+                        'type' : 'column',
+                        'x_title' : 'Hour',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : rel_import_series,
+                        },
+                    {
+                        'title' : 'Hourly Battery Charging',
+                        'type' : 'column',
+                        'x_title' : 'Hour',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : battery_charging_series,
+                        },
+                    {
+                        'title' : 'Hourly Battery Storage',
+                        'type' : 'column',
+                        'x_title' : 'Hour',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : battery_storage_series,
+                        },
+                    {
+                        'title' : 'Hourly Battery Capacity',
+                        'type' : 'column',
+                        'x_title' : 'Hour',
+                        'x_rotation' : -45,
+                        'y_title' : '% Full',
+                        'series' : battery_capacity_series,
+                        },
+                    {
+                        'title' : 'Hourly Cost',
+                        'type' : 'column',
+                        'sub_type' : 'stacked',
+                        'x_title' : 'Hour',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : full_cost_series,
+                        },
             {
-                'title' : 'Hourly Power',
-                'type' : 'column',
-                'sub_type' : 'stacked',
-                'x_title' : 'Hour',
-                'x_rotation' : -45,
-                'y_title' : 'kWh',
-                'series' : power_series,
-                },
+                    'title' : 'Hourly Bill',
+                    'type' : 'column',
+                    'x_title' : 'Hour',
+                    'x_rotation' : -45,
+                    'y_title' : cost_label,
+                    'series' : bill_series,
+                    },
             {
-                'title' : 'Hourly Relative Import',
-                'type' : 'column',
-                'x_title' : 'Hour',
-                'x_rotation' : -45,
-                'y_title' : 'kWh',
-                'series' : rel_import_series,
-                },
-            {
-                'title' : 'Hourly Battery Charging',
-                'type' : 'column',
-                'x_title' : 'Hour',
-                'x_rotation' : -45,
-                'y_title' : 'kWh',
-                'series' : battery_charging_series,
-                },
-            {
-                'title' : 'Hourly Battery Storage',
-                'type' : 'column',
-                'x_title' : 'Hour',
-                'x_rotation' : -45,
-                'y_title' : 'kWh',
-                'series' : battery_storage_series,
-                },
-            {
-                'title' : 'Hourly Battery Capacity',
-                'type' : 'column',
-                'x_title' : 'Hour',
-                'x_rotation' : -45,
-                'y_title' : '% Full',
-                'series' : battery_capacity_series,
-                },
-            {
-                'title' : 'Hourly Cost',
-                'type' : 'column',
-                'sub_type' : 'stacked',
-                'x_title' : 'Hour',
-                'x_rotation' : -45,
-                'y_title' : cost_label,
-                'series' : full_cost_series,
-                },
-            {
-                'title' : 'Hourly Bill',
-                'type' : 'column',
-                'x_title' : 'Hour',
-                'x_rotation' : -45,
-                'y_title' : cost_label,
-                'series' : bill_series,
-                },
-            {
-                'title' : 'Hourly Savings',
-                'type' : 'column',
-                'x_title' : 'Hour',
-                'x_rotation' : -45,
-                'y_title' : cost_label,
-                'series' : savings_series,
-                },
+                    'title' : 'Hourly Savings',
+                    'type' : 'column',
+                    'x_title' : 'Hour',
+                    'x_rotation' : -45,
+                    'y_title' : cost_label,
+                    'series' : savings_series,
+                    },
             ]
         )
 
 
-add_worksheet(
-        workbook,
-        'Day',
-        format_dict,
-        field_dict,
-        day_dict,
-        chart_list = [
-            {
-                'title' : 'Daily Power',
-                'type' : 'column',
-                'sub_type' : 'stacked',
-                'x_title' : 'Day',
-                'x_rotation' : -45,
-                'y_title' : 'kWh',
-                'series' : power_series,
-                },
-            {
-                'title' : 'Daily Relative Import',
-                'type' : 'column',
-                'x_title' : 'Day',
-                'x_rotation' : -45,
-                'y_title' : 'kWh',
-                'series' : rel_import_series,
-                },
-            {
-                'title' : 'Daily Charging',
-                'type' : 'column',
-                'x_title' : 'Day',
-                'x_rotation' : -45,
-                'y_title' : 'kWh',
-                'series' : battery_charging_series,
-                },
-            {
-                'title' : 'Daily Cost',
-                'type' : 'column',
-                'sub_type' : 'stacked',
-                'x_title' : 'Day',
-                'x_rotation' : -45,
-                'y_title' : cost_label,
-                'series' : full_cost_series,
-                },
-            {
-                'title' : 'Daily Bill',
-                'type' : 'column',
-                'x_title' : 'Day',
-                'x_rotation' : -45,
-                'y_title' : cost_label,
-                'series' : bill_series,
-                },
-            {
-                'title' : 'Daily Savings',
-                'type' : 'column',
-                'x_title' : 'Day',
-                'x_rotation' : -45,
-                'y_title' : cost_label,
-                'series' : savings_series,
-                },
+    if report == 'day':
+        add_worksheet(
+                workbook,
+                'Day',
+                format_dict,
+                field_dict,
+                day_dict,
+                chart_list = [
+                    {
+                        'title' : 'Daily Power',
+                        'type' : 'column',
+                        'sub_type' : 'stacked',
+                        'x_title' : 'Day',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : power_series,
+                        },
+                    {
+                        'title' : 'Daily Relative Import',
+                        'type' : 'column',
+                        'x_title' : 'Day',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : rel_import_series,
+                        },
+                    {
+                        'title' : 'Daily Charging',
+                        'type' : 'column',
+                        'x_title' : 'Day',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : battery_charging_series,
+                        },
+                    {
+                        'title' : 'Daily Cost',
+                        'type' : 'column',
+                        'sub_type' : 'stacked',
+                        'x_title' : 'Day',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : full_cost_series,
+                        },
+                    {
+                        'title' : 'Daily Bill',
+                        'type' : 'column',
+                        'x_title' : 'Day',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : bill_series,
+                        },
+                    {
+                        'title' : 'Daily Savings',
+                        'type' : 'column',
+                        'x_title' : 'Day',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : savings_series,
+                        },
             ]
         )
 
-add_worksheet(
-        workbook,
-        'Week',
-        format_dict,
-        field_dict,
-        week_dict,
-        chart_list = [
-            {
-                'title' : 'Weekly Power',
-                'type' : 'column',
-                'sub_type' : 'stacked',
-                'x_title' : 'Week',
-                'x_rotation' : -45,
-                'y_title' : 'kWh',
-                'series' : power_series,
-                },
-            {
-                'title' : 'Weekly Relative Import',
-                'type' : 'column',
-                'x_title' : 'Week',
-                'x_rotation' : -45,
-                'y_title' : 'kWh',
-                'series' : rel_import_series,
-                },
-            {
-                'title' : 'Weekly Charging',
-                'type' : 'column',
-                'x_title' : 'Week',
-                'x_rotation' : -45,
-                'y_title' : 'kWh',
-                'series' : battery_charging_series,
-                },
-            {
-                'title' : 'Weekly Cost',
-                'type' : 'column',
-                'sub_type' : 'stacked',
-                'x_title' : 'Week',
-                'x_rotation' : -45,
-                'y_title' : cost_label,
-                'series' : full_cost_series,
-                },
-            {
-                'title' : 'Weekly Bill',
-                'type' : 'column',
-                'x_title' : 'Week',
-                'x_rotation' : -45,
-                'y_title' : cost_label,
-                'series' : bill_series,
-                },
-            {
-                'title' : 'Weekly Savings',
-                'type' : 'column',
-                'x_title' : 'Week',
-                'x_rotation' : -45,
-                'y_title' : cost_label,
-                'series' : savings_series,
-                },
+    if report == 'week':
+        add_worksheet(
+                workbook,
+                'Week',
+                format_dict,
+                field_dict,
+                week_dict,
+                chart_list = [
+                    {
+                        'title' : 'Weekly Power',
+                        'type' : 'column',
+                        'sub_type' : 'stacked',
+                        'x_title' : 'Week',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : power_series,
+                        },
+                    {
+                        'title' : 'Weekly Relative Import',
+                        'type' : 'column',
+                        'x_title' : 'Week',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : rel_import_series,
+                        },
+                    {
+                        'title' : 'Weekly Charging',
+                        'type' : 'column',
+                        'x_title' : 'Week',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : battery_charging_series,
+                        },
+                    {
+                        'title' : 'Weekly Cost',
+                        'type' : 'column',
+                        'sub_type' : 'stacked',
+                        'x_title' : 'Week',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : full_cost_series,
+                        },
+                    {
+                        'title' : 'Weekly Bill',
+                        'type' : 'column',
+                        'x_title' : 'Week',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : bill_series,
+                        },
+                    {
+                        'title' : 'Weekly Savings',
+                        'type' : 'column',
+                        'x_title' : 'Week',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : savings_series,
+                        },
             ]
         )
 
-add_worksheet(
-        workbook,
-        'Month',
-        format_dict,
-        field_dict,
-        month_dict,
-        chart_list = [
-            {
-                'title' : 'Monthly Power',
-                'type' : 'column',
-                'sub_type' : 'stacked',
-                'x_title' : 'Month',
-                'x_rotation' : -45,
-                'y_title' : 'kWh',
-                'series' : power_series,
-                },
-            {
-                'title' : 'Monthly Relative Import',
-                'type' : 'column',
-                'x_title' : 'Month',
-                'x_rotation' : -45,
-                'y_title' : 'kWh',
-                'series' : rel_import_series,
-                },
-            {
-                'title' : 'Monthly Charging',
-                'type' : 'column',
-                'x_title' : 'Month',
-                'x_rotation' : -45,
-                'y_title' : 'kWh',
-                'series' : battery_charging_series,
-                },
-            {
-                'title' : 'Monthly Cost',
-                'type' : 'column',
-                'sub_type' : 'stacked',
-                'x_title' : 'Month',
-                'x_rotation' : -45,
-                'y_title' : cost_label,
-                'series' : full_cost_series,
-                },
-            {
-                'title' : 'Monthly Bill',
-                'type' : 'column',
-                'x_title' : 'Month',
-                'x_rotation' : -45,
-                'y_title' : cost_label,
-                'series' : bill_series,
-                },
-            {
-                'title' : 'Monthly Savings',
-                'type' : 'column',
-                'x_title' : 'Month',
-                'x_rotation' : -45,
-                'y_title' : cost_label,
-                'series' : savings_series,
-                },
+    if report == 'month':
+        add_worksheet(
+                workbook,
+                'Month',
+                format_dict,
+                field_dict,
+                month_dict,
+                chart_list = [
+                    {
+                        'title' : 'Monthly Power',
+                        'type' : 'column',
+                        'sub_type' : 'stacked',
+                        'x_title' : 'Month',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : power_series,
+                        },
+                    {
+                        'title' : 'Monthly Relative Import',
+                        'type' : 'column',
+                        'x_title' : 'Month',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : rel_import_series,
+                        },
+                    {
+                        'title' : 'Monthly Charging',
+                        'type' : 'column',
+                        'x_title' : 'Month',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : battery_charging_series,
+                        },
+                    {
+                        'title' : 'Monthly Cost',
+                        'type' : 'column',
+                        'sub_type' : 'stacked',
+                        'x_title' : 'Month',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : full_cost_series,
+                        },
+                    {
+                        'title' : 'Monthly Bill',
+                        'type' : 'column',
+                        'x_title' : 'Month',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : bill_series,
+                        },
+                    {
+                        'title' : 'Monthly Savings',
+                        'type' : 'column',
+                        'x_title' : 'Month',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : savings_series,
+                        },
             ]
         )
 
-add_worksheet(
-        workbook,
-        'Year',
-        format_dict,
-        field_dict,
-        year_dict)
-
-add_worksheet(
-        workbook,
-        'Weekday',
-        format_dict,
-        field_dict,
-        weekday_dict,
-        chart_list = [
-            {
-                'title' : 'Weekday Power',
-                'type' : 'column',
-                'sub_type' : 'stacked',
-                'x_title' : 'Weekday',
-                'y_title' : 'kWh',
-                'series' : power_series
-                },
-            {
-                'title' : 'Weekday Relative Import',
-                'type' : 'column',
-                'x_title' : 'Weekday',
-                'x_rotation' : -45,
-                'y_title' : 'kWh',
-                'series' : rel_import_series,
-                },
-            {
-                'title' : 'Weekday Charging',
-                'type' : 'column',
-                'x_title' : 'Weekday',
-                'x_rotation' : -45,
-                'y_title' : 'kWh',
-                'series' : battery_charging_series,
-                },
-            {
-                'title' : 'Weekday Cost',
-                'type' : 'column',
-                'sub_type' : 'stacked',
-                'x_title' : 'Weekday',
-                'x_rotation' : -45,
-                'y_title' : cost_label,
-                'series' : full_cost_series,
-                },
-            {
-                'title' : 'Weekday Bill',
-                'type' : 'column',
-                'x_title' : 'Weekday',
-                'y_title' : cost_label,
-                'series' : bill_series,
-                },
-            {
-                'title' : 'Weekday Savings',
-                'type' : 'column',
-                'x_title' : 'Weekday',
-                'x_rotation' : -45,
-                'y_title' : cost_label,
-                'series' : savings_series,
-                },
+    if report == 'year':
+        add_worksheet(
+                workbook,
+                'Year',
+                format_dict,
+                field_dict,
+                year_dict,
+                chart_list = [
+                    {
+                        'title' : 'Yearly Power',
+                        'type' : 'column',
+                        'sub_type' : 'stacked',
+                        'x_title' : 'Year',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : power_series,
+                        },
+                    {
+                        'title' : 'Yearly Relative Import',
+                        'type' : 'column',
+                        'x_title' : 'Year',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : rel_import_series,
+                        },
+                    {
+                        'title' : 'Yearly Charging',
+                        'type' : 'column',
+                        'x_title' : 'Year',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : battery_charging_series,
+                        },
+                    {
+                        'title' : 'Yearly Cost',
+                        'type' : 'column',
+                        'sub_type' : 'stacked',
+                        'x_title' : 'Year',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : full_cost_series,
+                        },
+                    {
+                        'title' : 'Yearly Bill',
+                        'type' : 'column',
+                        'x_title' : 'Year',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : bill_series,
+                        },
+                    {
+                        'title' : 'Yearly Savings',
+                        'type' : 'column',
+                        'x_title' : 'Year',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : savings_series,
+                        },
             ]
         )
 
-add_worksheet(
-        workbook,
-        '24h',
-        format_dict,
-        field_dict,
-        hour_dict,
-        chart_list = [
-            {
-                'title' : '24h Power',
-                'type' : 'column',
-                'sub_type' : 'stacked',
-                'x_title' : 'Hour',
-                'y_title' : 'kWh',
-                'series' : power_series,
-                },
-            {
-                'title' : '24h Relative Import',
-                'type' : 'column',
-                'x_title' : 'Hour',
-                'x_rotation' : -45,
-                'y_title' : 'kWh',
-                'series' : rel_import_series,
-                },
-            {
-                'title' : '24h Charging',
-                'type' : 'column',
-                'x_title' : 'Hour',
-                'x_rotation' : -45,
-                'y_title' : 'kWh',
-                'series' : battery_charging_series,
-                },
-            {
-                'title' : '24h Cost',
-                'type' : 'column',
-                'sub_type' : 'stacked',
-                'x_title' : 'Hour',
-                'x_rotation' : -45,
-                'y_title' : cost_label,
-                'series' : full_cost_series,
-                },
-            {
-                'title' : '24h Bill',
-                'type' : 'column',
-                'x_title' : 'Hour',
-                'y_title' : cost_label,
-                'series' : bill_series,
-                },
-            {
-                'title' : '24h Savings',
-                'type' : 'column',
-                'x_title' : 'Hour',
-                'x_rotation' : -45,
-                'y_title' : cost_label,
-                'series' : savings_series,
-                },
-            ])
-
-add_worksheet(
-        workbook,
-        'Tariff',
-        format_dict,
-        field_dict,
-        tariff_dict,
-        chart_list = [
-            {
-                'title' : 'Tariff Relative Import',
-                'type' : 'column',
-                'x_title' : 'Tariff',
-                'y_title' : 'kWh',
-                'series' : rel_import_series,
-                },
-            {
-                'title' : 'Tariff Charging',
-                'type' : 'column',
-                'x_title' : 'Tariff',
-                'y_title' : 'kWh',
-                'series' : battery_charging_series,
-                },
-            {
-                'title' : 'Tariff Cost',
-                'type' : 'column',
-                'x_title' : 'Tariff',
-                'y_title' : cost_label,
-                'series' : tariff_cost_series,
-                },
-            {
-                'title' : 'Tariff Savings',
-                'type' : 'column',
-                'x_title' : 'Tariff',
-                'x_rotation' : -45,
-                'y_title' : cost_label,
-                'series' : savings_series,
-                },
-            ]
+    if report == 'weekday':
+        add_worksheet(
+                workbook,
+                'Weekday',
+                format_dict,
+                field_dict,
+                weekday_dict,
+                chart_list = [
+                    {
+                        'title' : 'Weekday Power',
+                        'type' : 'column',
+                        'sub_type' : 'stacked',
+                        'x_title' : 'Weekday',
+                        'y_title' : 'kWh',
+                        'series' : power_series
+                        },
+                    {
+                        'title' : 'Weekday Relative Import',
+                        'type' : 'column',
+                        'x_title' : 'Weekday',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : rel_import_series,
+                        },
+                    {
+                        'title' : 'Weekday Charging',
+                        'type' : 'column',
+                        'x_title' : 'Weekday',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : battery_charging_series,
+                        },
+                    {
+                        'title' : 'Weekday Cost',
+                        'type' : 'column',
+                        'sub_type' : 'stacked',
+                        'x_title' : 'Weekday',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : full_cost_series,
+                        },
+                    {
+                        'title' : 'Weekday Bill',
+                        'type' : 'column',
+                        'x_title' : 'Weekday',
+                        'y_title' : cost_label,
+                        'series' : bill_series,
+                        },
+                    {
+                        'title' : 'Weekday Savings',
+                        'type' : 'column',
+                        'x_title' : 'Weekday',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : savings_series,
+                        },
+                    ]
         )
+
+    if report == '24h':
+        add_worksheet(
+                workbook,
+                '24h',
+                format_dict,
+                field_dict,
+                hour_dict,
+                chart_list = [
+                    {
+                        'title' : '24h Power',
+                        'type' : 'column',
+                        'sub_type' : 'stacked',
+                        'x_title' : 'Hour',
+                        'y_title' : 'kWh',
+                        'series' : power_series,
+                        },
+                    {
+                        'title' : '24h Relative Import',
+                        'type' : 'column',
+                        'x_title' : 'Hour',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : rel_import_series,
+                        },
+                    {
+                        'title' : '24h Charging',
+                        'type' : 'column',
+                        'x_title' : 'Hour',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : battery_charging_series,
+                        },
+                    {
+                        'title' : '24h Cost',
+                        'type' : 'column',
+                        'sub_type' : 'stacked',
+                        'x_title' : 'Hour',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : full_cost_series,
+                        },
+                    {
+                        'title' : '24h Bill',
+                        'type' : 'column',
+                        'x_title' : 'Hour',
+                        'y_title' : cost_label,
+                        'series' : bill_series,
+                        },
+                    {
+                        'title' : '24h Savings',
+                        'type' : 'column',
+                        'x_title' : 'Hour',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : savings_series,
+                        },
+                    ])
+
+    if report == 'tariff':
+        add_worksheet(
+                workbook,
+                'Tariff',
+                format_dict,
+                field_dict,
+                tariff_dict,
+                chart_list = [
+                    {
+                        'title' : 'Tariff Relative Import',
+                        'type' : 'column',
+                        'x_title' : 'Tariff',
+                        'y_title' : 'kWh',
+                        'series' : rel_import_series,
+                        },
+                    {
+                        'title' : 'Tariff Charging',
+                        'type' : 'column',
+                        'x_title' : 'Tariff',
+                        'y_title' : 'kWh',
+                        'series' : battery_charging_series,
+                        },
+                    {
+                        'title' : 'Tariff Cost',
+                        'type' : 'column',
+                        'x_title' : 'Tariff',
+                        'y_title' : cost_label,
+                        'series' : tariff_cost_series,
+                        },
+                    {
+                        'title' : 'Tariff Savings',
+                        'type' : 'column',
+                        'x_title' : 'Tariff',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : savings_series,
+                        },
+                    ]
+                )
 
 workbook.close()
