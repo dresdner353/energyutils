@@ -1,6 +1,6 @@
 # Report Generator Utility
 
-The report generator script generates an XLSX file from a directory of YYYY-MM-DD.jsonl files.
+The report generator script generates an Excel file from a directory of YYYY-MM-DD.jsonl files. Multiple charts are inserted into the generated Excel file based on the selected reports. Each report includes a data sheet with its related numbers. Then a series of charts are inserted to graph that data in a veriety of ways. 
 
 ## Usage
 ```
@@ -10,6 +10,7 @@ usage: gen_report.py [-h] --file FILE --idir IDIR [--start START] [--end END]
                      [--tariff_interval TARIFF_INTERVAL [TARIFF_INTERVAL ...]]
                      [--fit_rate FIT_RATE] [--standing_rate STANDING_RATE]
                      [--verbose]
+                     [--reports [ ... ]
 
 Energy Data Report Generator
 
@@ -42,7 +43,7 @@ Notes:
   - 6-7:08-23:Weekend ... Between Saturday(6) and Sunday(7), 8am-11pm, Weekend tariff applies 
 * A FIT rate for microgen export may be set using the --fit_rate
 * A standing charge may be set via the --standing_rate option. Note however that this value is the cost per hour. So divide any annual or monthly values accordingly to get the per hour equivalent.
-* The --reports option can be used to limit the set of generated reports to a desired subset of values. Multiple reports may be sepcified one after the other and in the order they should be written to the XLSX file. By default all reports are generated.
+* The --reports option can be used to limit the set of generated reports to a desired subset of values. Multiple reports may be specified one after the other and in the order they should be written to the XLSX file. By default all reports are generated.
 
 
 ## Example Run
