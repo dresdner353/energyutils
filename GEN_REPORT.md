@@ -1,6 +1,6 @@
 # Report Generator Utility
 
-The report generator script generates an Excel file from a directory of YYYY-MM-DD.jsonl files. Multiple charts are inserted into the generated Excel file based on the selected reports. Each report includes a data sheet with its related numbers. Then a series of charts are inserted to graph that data in a veriety of ways. 
+The report generator script generates an Excel file from a directory of YYYY-MM-DD.jsonl files. Multiple charts are inserted into the generated Excel file based on the selected reports. Each report includes a data sheet with its related numbers. Then a series of charts are inserted to graph that data. 
 
 ## Usage
 ```
