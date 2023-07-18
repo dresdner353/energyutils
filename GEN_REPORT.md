@@ -76,6 +76,63 @@ Some examples here of the kind of data generated in the Excel files.
 
 ### Hourly Data
 The lowest level of tracking is per hour. Data extracted from ESB HDF files will show the import, export and related costs, rates and credits. If the data is based on inverter or energy monitoring, then addiitonal solar fields will be present for generation and self consumption. 
-![Hour Data](./screenshots/hour.png)
-![Hour Data](./screenshots/hour_power.png)
 
+![Hour Data](./screenshots/hour.png)
+
+![Hour Power](./screenshots/hour_power.png)
+
+### Daily Data
+Daily data represents the aggregation of hourly records into totals per day. The charts then show the same daily representation of this aggregation. 
+
+![Day Data](./screenshots/day.png)
+
+![Day Power](./screenshots/day_power.png)
+
+![Day Relative Import](./screenshots/day_rel_import.png)
+
+![Day Cost](./screenshots/day_cost.png)
+
+![Day Savings](./screenshots/day_savings.png)
+
+![Day Bill](./screenshots/day_bill.png)
+
+### Weekly Data
+Weekly data represents the same aggregation principle but by week. 
+
+![Week Data](./screenshots/week.png)
+
+![Week Power](./screenshots/week_power.png)
+
+![Week Relative Import](./screenshots/week_rel_import.png)
+
+![Week Cost](./screenshots/week_cost.png)
+
+![Week Savings](./screenshots/week_savings.png)
+
+![Week Bill](./screenshots/week_bill.png)
+
+### Monthly Data
+Monthly data represents the same aggregation principle but by month. 
+
+![Month Data](./screenshots/month.png)
+
+![Month Power](./screenshots/month_power.png)
+
+![Month Relative Import](./screenshots/month_rel_import.png)
+
+![Month Cost](./screenshots/month_cost.png)
+
+![Month Savings](./screenshots/month_savings.png)
+
+![Month Bill](./screenshots/month_bill.png)
+
+### Tariff Data
+Tariff data represents the same aggregation principle but by specific tariff. 
+
+![Tariff Data](./screenshots/tariff.png)
+
+![Tariff Relative Import](./screenshots/tariff_rel_import.png)
+
+![Tariff Cost](./screenshots/tariff_cost.png)
+
+![Tariff Savings](./screenshots/tariff_savings.png)
