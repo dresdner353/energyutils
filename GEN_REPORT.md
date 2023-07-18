@@ -70,3 +70,12 @@ Sun Jun  4 23:00:47 2023 Adding worksheet 24h (24 rows)
 Sun Jun  4 23:00:47 2023 Adding worksheet Tariff (3 rows)
 
 ```
+
+## Example Reports
+Some examples here of the kind of data generated in the Excel files.
+
+### Hourly Data
+The lowest level of tracking is per hour. Data extracted from ESB HDF files will show the import, export and related costs, rates and credits. If the data is based on inverter or energy monitoring, then addiitonal solar fields will be present for generation and self consumption. 
+![Hour Data](./screenshots/hour.png)
+![Hour Data](./screenshots/hour_power.png)
+
