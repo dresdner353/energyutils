@@ -168,6 +168,11 @@ def add_worksheet(
     if not chart_list:
         return
 
+    # charts positioned underneath data
+    # vertically stacked
+    chart_col = 0
+    chart_row = row + 2
+
     for chart_rec in chart_list:
         chart_def = {
                     'type': chart_rec['type'],
@@ -177,7 +182,7 @@ def add_worksheet(
         chart = workbook.add_chart(chart_def)
 
         chart.set_title({'name': chart_rec['title']})
-        chart.set_size({'width': 1920, 'height': 1080})
+        chart.set_size({'width': 1024, 'height': 768})
 
         x_axis_def = {'name': chart_rec['x_title']}
         if 'x_rotation' in chart_rec:
@@ -221,8 +226,14 @@ def add_worksheet(
         # only add the chart and sheet if it has 1+ series
         # added
         if series_added > 0:
-            chartsheet = workbook.add_chartsheet(chart_rec['title'])
-            chartsheet.set_chart(chart)
+            worksheet.insert_chart(
+                    chart_row,
+                    chart_col,
+                    chart)
+
+            # next chart 30 lines later
+            # roughly matches pixel height of chart
+            chart_row += 30
 
     return
 
