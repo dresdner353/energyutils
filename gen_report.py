@@ -231,9 +231,9 @@ def add_worksheet(
                     chart_col,
                     chart)
 
-            # next chart 30 lines later
-            # roughly matches pixel height of chart
-            chart_row += 30
+            # next chart 40 lines later
+            # comfortable gap between charts
+            chart_row += 40
 
     return
 
