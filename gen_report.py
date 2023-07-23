@@ -459,7 +459,6 @@ def load_data(
                     rec['tariff_rate'] = tariff_dict[rec['tariff_name']]
                     rec['import_cost'] = rec['import'] * rec['tariff_rate']
                     rec['bill_amount'] = rec['import_cost']
-                    rec['savings'] = 0
 
                     if standing_rate:
                         # both fields same value here
@@ -476,16 +475,18 @@ def load_data(
                         rec['export_rate'] = fit_rate
                         rec['export_credit'] = rec['export'] * fit_rate
                         rec['bill_amount'] -= rec['export_credit'] 
-                        rec['savings'] += rec['export_credit'] 
 
-                    # Solar credit (saving) based on consumed units against
-                    # effective import tariff
-                    # Also reduces relative import and cost accordingly
-                    # solar credit is never offset against bill_amount
+                    # Solar Self-consumption
+                    # Solar credit is calculated based on the aplicable tariff
+                    # for ther given hour (import costs we avoided).
+                    # Relative import is further offset by this self-consumption.
+                    # Savings is then calculated as the sum of solar and export
+                    # credit
                     if 'solar_consumed' in rec:
                         rec['solar_credit'] = rec['solar_consumed'] * rec['tariff_rate']
                         rec['rel_import'] -= rec['solar_consumed']
-                        rec['savings'] += rec['solar_credit'] 
+                        if fit_rate:
+                            rec['savings'] = rec['solar_credit'] + rec['export_credit'] 
     
     log_message(
             1,
