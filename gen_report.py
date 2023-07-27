@@ -926,7 +926,7 @@ rel_import_series =  [
             },
         ]
 
-full_cost_series = [
+value_series = [
         {
             'field': 'import_cost',
             'colour': 'red',
@@ -944,18 +944,15 @@ full_cost_series = [
 bill_series = [
         {
             'field': 'bill_amount',
-            'colour': 'green',
+            'colour': 'red',
             },
-        ]
-
-savings_series = [
         {
             'field': 'savings',
             'colour': 'green',
             },
         ]
 
-tariff_cost_series = [
+tariff_value_series = [
         {
             'field': 'import_cost',
             'colour': 'red',
@@ -1005,6 +1002,14 @@ for report in report_list:
                 data_dict,
                 chart_list = [
                     {
+                        'title' : 'Hourly Bill',
+                        'type' : 'column',
+                        'x_title' : 'Hour',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : bill_series,
+                    },
+                    {
                         'title' : 'Hourly Power',
                         'type' : 'column',
                         'sub_type' : 'stacked',
@@ -1046,30 +1051,15 @@ for report in report_list:
                         'series' : battery_capacity_series,
                         },
                     {
-                        'title' : 'Hourly Cost',
+                        'title' : 'Hourly Value',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Hour',
                         'x_rotation' : -45,
                         'y_title' : cost_label,
-                        'series' : full_cost_series,
+                        'series' : value_series,
                         },
-            {
-                    'title' : 'Hourly Bill',
-                    'type' : 'column',
-                    'x_title' : 'Hour',
-                    'x_rotation' : -45,
-                    'y_title' : cost_label,
-                    'series' : bill_series,
-                    },
-            {
-                    'title' : 'Hourly Savings',
-                    'type' : 'column',
-                    'x_title' : 'Hour',
-                    'x_rotation' : -45,
-                    'y_title' : cost_label,
-                    'series' : savings_series,
-                    },
+
             ]
         )
 
@@ -1082,6 +1072,14 @@ for report in report_list:
                 field_dict,
                 day_dict,
                 chart_list = [
+                    {
+                        'title' : 'Daily Bill',
+                        'type' : 'column',
+                        'x_title' : 'Day',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : bill_series,
+                        },
                     {
                         'title' : 'Daily Power',
                         'type' : 'column',
@@ -1108,30 +1106,15 @@ for report in report_list:
                         'series' : battery_charging_series,
                         },
                     {
-                        'title' : 'Daily Cost',
+                        'title' : 'Daily Value',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Day',
                         'x_rotation' : -45,
                         'y_title' : cost_label,
-                        'series' : full_cost_series,
+                        'series' : value_series,
                         },
-                    {
-                        'title' : 'Daily Bill',
-                        'type' : 'column',
-                        'x_title' : 'Day',
-                        'x_rotation' : -45,
-                        'y_title' : cost_label,
-                        'series' : bill_series,
-                        },
-                    {
-                        'title' : 'Daily Savings',
-                        'type' : 'column',
-                        'x_title' : 'Day',
-                        'x_rotation' : -45,
-                        'y_title' : cost_label,
-                        'series' : savings_series,
-                        },
+
             ]
         )
 
@@ -1143,6 +1126,14 @@ for report in report_list:
                 field_dict,
                 week_dict,
                 chart_list = [
+                    {
+                        'title' : 'Weekly Bill',
+                        'type' : 'column',
+                        'x_title' : 'Week',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : bill_series,
+                        },
                     {
                         'title' : 'Weekly Power',
                         'type' : 'column',
@@ -1169,30 +1160,15 @@ for report in report_list:
                         'series' : battery_charging_series,
                         },
                     {
-                        'title' : 'Weekly Cost',
+                        'title' : 'Weekly Value',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Week',
                         'x_rotation' : -45,
                         'y_title' : cost_label,
-                        'series' : full_cost_series,
+                        'series' : value_series,
                         },
-                    {
-                        'title' : 'Weekly Bill',
-                        'type' : 'column',
-                        'x_title' : 'Week',
-                        'x_rotation' : -45,
-                        'y_title' : cost_label,
-                        'series' : bill_series,
-                        },
-                    {
-                        'title' : 'Weekly Savings',
-                        'type' : 'column',
-                        'x_title' : 'Week',
-                        'x_rotation' : -45,
-                        'y_title' : cost_label,
-                        'series' : savings_series,
-                        },
+
             ]
         )
 
@@ -1204,6 +1180,14 @@ for report in report_list:
                 field_dict,
                 month_dict,
                 chart_list = [
+                    {
+                        'title' : 'Monthly Bill',
+                        'type' : 'column',
+                        'x_title' : 'Month',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : bill_series,
+                        },
                     {
                         'title' : 'Monthly Power',
                         'type' : 'column',
@@ -1230,30 +1214,15 @@ for report in report_list:
                         'series' : battery_charging_series,
                         },
                     {
-                        'title' : 'Monthly Cost',
+                        'title' : 'Monthly Value',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Month',
                         'x_rotation' : -45,
                         'y_title' : cost_label,
-                        'series' : full_cost_series,
+                        'series' : value_series,
                         },
-                    {
-                        'title' : 'Monthly Bill',
-                        'type' : 'column',
-                        'x_title' : 'Month',
-                        'x_rotation' : -45,
-                        'y_title' : cost_label,
-                        'series' : bill_series,
-                        },
-                    {
-                        'title' : 'Monthly Savings',
-                        'type' : 'column',
-                        'x_title' : 'Month',
-                        'x_rotation' : -45,
-                        'y_title' : cost_label,
-                        'series' : savings_series,
-                        },
+
             ]
         )
 
@@ -1265,6 +1234,14 @@ for report in report_list:
                 field_dict,
                 year_dict,
                 chart_list = [
+                    {
+                        'title' : 'Yearly Bill',
+                        'type' : 'column',
+                        'x_title' : 'Year',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : bill_series,
+                        },
                     {
                         'title' : 'Yearly Power',
                         'type' : 'column',
@@ -1291,30 +1268,15 @@ for report in report_list:
                         'series' : battery_charging_series,
                         },
                     {
-                        'title' : 'Yearly Cost',
+                        'title' : 'Yearly Value',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Year',
                         'x_rotation' : -45,
                         'y_title' : cost_label,
-                        'series' : full_cost_series,
+                        'series' : value_series,
                         },
-                    {
-                        'title' : 'Yearly Bill',
-                        'type' : 'column',
-                        'x_title' : 'Year',
-                        'x_rotation' : -45,
-                        'y_title' : cost_label,
-                        'series' : bill_series,
-                        },
-                    {
-                        'title' : 'Yearly Savings',
-                        'type' : 'column',
-                        'x_title' : 'Year',
-                        'x_rotation' : -45,
-                        'y_title' : cost_label,
-                        'series' : savings_series,
-                        },
+
             ]
         )
 
@@ -1326,6 +1288,13 @@ for report in report_list:
                 field_dict,
                 weekday_dict,
                 chart_list = [
+                    {
+                        'title' : 'Weekday Bill',
+                        'type' : 'column',
+                        'x_title' : 'Weekday',
+                        'y_title' : cost_label,
+                        'series' : bill_series,
+                        },
                     {
                         'title' : 'Weekday Power',
                         'type' : 'column',
@@ -1351,29 +1320,15 @@ for report in report_list:
                         'series' : battery_charging_series,
                         },
                     {
-                        'title' : 'Weekday Cost',
+                        'title' : 'Weekday Value',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Weekday',
                         'x_rotation' : -45,
                         'y_title' : cost_label,
-                        'series' : full_cost_series,
+                        'series' : value_series,
                         },
-                    {
-                        'title' : 'Weekday Bill',
-                        'type' : 'column',
-                        'x_title' : 'Weekday',
-                        'y_title' : cost_label,
-                        'series' : bill_series,
-                        },
-                    {
-                        'title' : 'Weekday Savings',
-                        'type' : 'column',
-                        'x_title' : 'Weekday',
-                        'x_rotation' : -45,
-                        'y_title' : cost_label,
-                        'series' : savings_series,
-                        },
+
                     ]
         )
 
@@ -1385,6 +1340,13 @@ for report in report_list:
                 field_dict,
                 hour_dict,
                 chart_list = [
+                    {
+                        'title' : '24h Bill',
+                        'type' : 'column',
+                        'x_title' : 'Hour',
+                        'y_title' : cost_label,
+                        'series' : bill_series,
+                        },
                     {
                         'title' : '24h Power',
                         'type' : 'column',
@@ -1410,29 +1372,15 @@ for report in report_list:
                         'series' : battery_charging_series,
                         },
                     {
-                        'title' : '24h Cost',
+                        'title' : '24h Value',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Hour',
                         'x_rotation' : -45,
                         'y_title' : cost_label,
-                        'series' : full_cost_series,
+                        'series' : value_series,
                         },
-                    {
-                        'title' : '24h Bill',
-                        'type' : 'column',
-                        'x_title' : 'Hour',
-                        'y_title' : cost_label,
-                        'series' : bill_series,
-                        },
-                    {
-                        'title' : '24h Savings',
-                        'type' : 'column',
-                        'x_title' : 'Hour',
-                        'x_rotation' : -45,
-                        'y_title' : cost_label,
-                        'series' : savings_series,
-                        },
+
                     ])
 
     if report == 'tariff':
@@ -1443,6 +1391,14 @@ for report in report_list:
                 field_dict,
                 tariff_dict,
                 chart_list = [
+                    {
+                        'title' : 'Tariff Bill',
+                        'type' : 'column',
+                        'x_title' : 'Tariff',
+                        'x_rotation' : -45,
+                        'y_title' : cost_label,
+                        'series' : bill_series,
+                        },
                     {
                         'title' : 'Tariff Relative Import',
                         'type' : 'column',
@@ -1458,19 +1414,11 @@ for report in report_list:
                         'series' : battery_charging_series,
                         },
                     {
-                        'title' : 'Tariff Cost',
+                        'title' : 'Tariff Value',
                         'type' : 'column',
                         'x_title' : 'Tariff',
                         'y_title' : cost_label,
-                        'series' : tariff_cost_series,
-                        },
-                    {
-                        'title' : 'Tariff Savings',
-                        'type' : 'column',
-                        'x_title' : 'Tariff',
-                        'x_rotation' : -45,
-                        'y_title' : cost_label,
-                        'series' : savings_series,
+                        'series' : tariff_value_series,
                         },
                     ]
                 )
