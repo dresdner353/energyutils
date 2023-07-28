@@ -40,6 +40,15 @@ python3 ${GEN_REPORT_SCRIPT} \
 
 python3 ${GEN_REPORT_SCRIPT} \
     --idir ${HDF_DATA} \
+    --file ${REPORTS_DIR}/ei_report_electricboost_rural.xlsx \
+    --reports ${REPORTS} \
+    --tariff_rate Day:0.4368 Night:0.2155 Boost:0.1265 \
+    --tariff_interval 08-23:Day 23-08:Night 02-04:Boost \
+    --standing_rate 0.0552 \
+    --fit_rate 0.21 
+
+python3 ${GEN_REPORT_SCRIPT} \
+    --idir ${HDF_DATA} \
     --file ${REPORTS_DIR}/ei_report_dualplus.xlsx \
     --reports ${REPORTS} \
     --tariff_rate Day:0.4310 Night:0.2265 Peak:0.4596 \
@@ -133,6 +142,15 @@ python3 ${GEN_REPORT_SCRIPT} \
     --file ${REPORTS_DIR}/bge_report_ev.xlsx \
     --reports ${REPORTS} \
     --tariff_rate Day:0.4803 Night:0.3622 Peak:0.6697 EV:0.1224 \
+    --tariff_interval 08-23:Day 23-08:Night 02-05:EV 1-5:17-19:Peak \
+    --standing_rate 0.0478 \
+    --fit_rate 0.185
+
+python3 ${GEN_REPORT_SCRIPT} \
+    --idir ${HDF_DATA} \
+    --file ${REPORTS_DIR}/bge_report_ev_rural.xlsx \
+    --reports ${REPORTS} \
+    --tariff_rate Day:0.4322 Night:0.3260 Peak:0.6027 EV:0.1102 \
     --tariff_interval 08-23:Day 23-08:Night 02-05:EV 1-5:17-19:Peak \
     --standing_rate 0.0478 \
     --fit_rate 0.185
