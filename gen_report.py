@@ -512,14 +512,14 @@ def load_data(
 
 # main()
 report_choices = [
-            'hour', 
-            'day', 
-            'week',
-            'month',
             'year',
+            'month',
+            'week',
+            'day', 
+            'hour', 
+            'tariff',
             'weekday',
             '24h',
-            'tariff',
             ]
 
 parser = argparse.ArgumentParser(
