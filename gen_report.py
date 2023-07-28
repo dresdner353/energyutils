@@ -245,7 +245,7 @@ def gen_aggregate_dict(
     agg_dict = {}
 
     # skipped fields
-    # some special cases and the aggregate 
+    # some special numeric cases and the aggregate 
     # itself
     field_skip_list = [
             'ts', 
