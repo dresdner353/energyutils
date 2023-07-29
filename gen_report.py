@@ -281,8 +281,6 @@ def gen_aggregate_dict(
         agg_field_index = time_hierarchy_list.index(agg_field)
         field_skip_list += time_hierarchy_list[:agg_field_index]
 
-
-
     for ts in data_dict:
         rec = data_dict[ts]
 
