@@ -56,6 +56,7 @@ def add_worksheet(
         format_dict,
         field_dict,
         data_dict,
+        first_field,
         chart_list = None):
 
     global verbose
@@ -75,8 +76,11 @@ def add_worksheet(
 
     # Headers
     # key list taken from from dict original 
-    # construction order
+    # construction order and first field is then 
+    # located to front
     header_fields = list(field_dict.keys())
+    header_fields.remove(first_field)
+    header_fields.insert(0, first_field)
 
     # build set of fields present in data dict
     data_field_set = set()
@@ -245,18 +249,39 @@ def gen_aggregate_dict(
     agg_dict = {}
 
     # skipped fields
-    # some special numeric cases and the aggregate 
-    # itself
+    # These fields should not be aggregated
+    # The main aggregation field is also added in here
     field_skip_list = [
+            'datetime', 
             'ts', 
+            'weekday',
             'hour',
-            'standing_rate',
+            'tariff_name',
             'tariff_rate',
+            'standing_rate',
             'export_rate',
             'battery_storage',
             'battery_capacity',
             ]
     field_skip_list.append(agg_field)
+
+    # time hierarchy list
+    # if aggregating on day, we preserve the week, month and year
+    # but an aggregation on month preserves only year as week and 
+    # day have no role to play in a monthly aggregation
+    # if the aggregation field is not in this list, all 
+    # these fields are removed
+    time_hierarchy_list = ['day', 'week', 'month', 'year']
+    if agg_field not in time_hierarchy_list:
+        # skip all these fields
+        field_skip_list += time_hierarchy_list
+    else:
+        # find location in list and skip all fields 
+        # up to that location
+        agg_field_index = time_hierarchy_list.index(agg_field)
+        field_skip_list += time_hierarchy_list[:agg_field_index]
+
+
 
     for ts in data_dict:
         rec = data_dict[ts]
@@ -269,26 +294,30 @@ def gen_aggregate_dict(
         agg_value = rec[agg_field]
 
         # initialise aggregate record
+        # and assign aggregate field with its value
         if not agg_value in agg_dict:
             agg_dict[agg_value] = {}
             agg_dict[agg_value][agg_field] = agg_value
 
-        # aggregate field values
+        # perform aggregation
         for field in rec:
-            # skip certain fields
+            # skip fields
             if field in field_skip_list:
                 continue
 
-            # skip any non-number fields
-            if not type(rec[field]) in [int, float]:
-                continue
-
-            # set to value on first encounter or 
-            # add to existing aggregate total
-            if not field in agg_dict[agg_value]:
+            # string aggregation
+            # we simply overwrite the value
+            if type(rec[field]) == str:
                 agg_dict[agg_value][field] = rec[field]
-            else:
-                agg_dict[agg_value][field] += rec[field]
+
+            # numeric aggreegations
+            if type(rec[field]) in [int, float]:
+                # set to value on first encounter or 
+                # add to existing aggregate total
+                if not field in agg_dict[agg_value]:
+                    agg_dict[agg_value][field] = rec[field]
+                else:
+                    agg_dict[agg_value][field] += rec[field]
 
     return agg_dict
 
@@ -1000,6 +1029,7 @@ for report in report_list:
                 format_dict,
                 field_dict,
                 data_dict,
+                'datetime',
                 chart_list = [
                     {
                         'title' : 'Hourly Bill',
@@ -1071,6 +1101,7 @@ for report in report_list:
                 format_dict,
                 field_dict,
                 day_dict,
+                'day',
                 chart_list = [
                     {
                         'title' : 'Daily Bill',
@@ -1125,6 +1156,7 @@ for report in report_list:
                 format_dict,
                 field_dict,
                 week_dict,
+                'week',
                 chart_list = [
                     {
                         'title' : 'Weekly Bill',
@@ -1179,6 +1211,7 @@ for report in report_list:
                 format_dict,
                 field_dict,
                 month_dict,
+                'month',
                 chart_list = [
                     {
                         'title' : 'Monthly Bill',
@@ -1233,6 +1266,7 @@ for report in report_list:
                 format_dict,
                 field_dict,
                 year_dict,
+                'year',
                 chart_list = [
                     {
                         'title' : 'Yearly Bill',
@@ -1287,6 +1321,7 @@ for report in report_list:
                 format_dict,
                 field_dict,
                 weekday_dict,
+                'weekday',
                 chart_list = [
                     {
                         'title' : 'Weekday Bill',
@@ -1339,6 +1374,7 @@ for report in report_list:
                 format_dict,
                 field_dict,
                 hour_dict,
+                'hour',
                 chart_list = [
                     {
                         'title' : '24h Bill',
@@ -1390,6 +1426,7 @@ for report in report_list:
                 format_dict,
                 field_dict,
                 tariff_dict,
+                'tariff_name',
                 chart_list = [
                     {
                         'title' : 'Tariff Bill',
