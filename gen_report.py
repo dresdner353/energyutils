@@ -122,12 +122,47 @@ def add_worksheet(
     worksheet.freeze_panes(1, 0)
     worksheet.set_row(0, 40)
 
-    # Enable Auto Filter across all columns
-    worksheet.autofilter(0, 0, 0, len(header_fields) - 1)  
-
     # data incremental sort on key
     key_list = list(data_dict.keys())
     key_list.sort()
+
+    # Enable Auto Filter across all columns
+    worksheet.autofilter(0, 0, 0, len(header_fields) - 1)  
+
+    # Default auto-filtered state
+    # certain first_field values 
+    # will trigger a defauly auto-filter
+    # to try and reduce the displayed value set
+    filtered_field = None
+    default_filter_dict = {
+            'datetime' : 'day',
+            'day' : 'month',
+            'week' : 'year',
+            'month' : 'year',
+            }
+
+    if first_field in default_filter_dict:
+        # determine the name of the field to filter
+        # and its related column
+        filtered_field = default_filter_dict[first_field]
+        filtered_field_rec = field_dict[filtered_field]
+        filter_col = filtered_field_rec['col']
+
+        # get the last record in the data dict
+        # and take its value for the filtered field
+        # This will give us the current day, month, year etc
+        last_data_key = key_list[-1]
+        last_data_rec = data_dict[last_data_key]
+        filter_value = last_data_rec[filtered_field]
+
+        # populate the filter list with the 
+        # filter value
+        # Note: This sets up the filter 
+        # but the rows are not hidden
+        # see further on
+        worksheet.filter_column_list(
+                filter_col,
+                [filter_value])
     
     # Populate Rows in sorted order
     row = 0
@@ -167,6 +202,13 @@ def add_worksheet(
                 # unknown field format
                 # skipped
                 pass
+
+        # auto-hide row for filtered scenario
+        # applies only if the given row's filtered field value
+        # does not match the filter
+        if (filtered_field and 
+            rec[filtered_field] != filter_value):
+            worksheet.set_row(row, options={"hidden": True})
 
     # Charts
     if not chart_list:
