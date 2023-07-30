@@ -1072,7 +1072,7 @@ for report in report_list:
                 'datetime',
                 chart_list = [
                     {
-                        'title' : 'Hourly Bill',
+                        'title' : 'Bill Calculations',
                         'type' : 'column',
                         'x_title' : 'Hour',
                         'x_rotation' : -45,
@@ -1080,7 +1080,7 @@ for report in report_list:
                         'series' : bill_series,
                     },
                     {
-                        'title' : 'Hourly Power',
+                        'title' : 'Power Distribution',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Hour',
@@ -1089,7 +1089,7 @@ for report in report_list:
                         'series' : power_series,
                         },
                     {
-                        'title' : 'Hourly Relative Import',
+                        'title' : 'Relative Import (kWh)',
                         'type' : 'column',
                         'x_title' : 'Hour',
                         'x_rotation' : -45,
@@ -1097,7 +1097,7 @@ for report in report_list:
                         'series' : rel_import_series,
                         },
                     {
-                        'title' : 'Hourly Battery Charging',
+                        'title' : 'Battery Charging',
                         'type' : 'column',
                         'x_title' : 'Hour',
                         'x_rotation' : -45,
@@ -1105,7 +1105,7 @@ for report in report_list:
                         'series' : battery_charging_series,
                         },
                     {
-                        'title' : 'Hourly Battery Storage',
+                        'title' : 'Battery Storage',
                         'type' : 'column',
                         'x_title' : 'Hour',
                         'x_rotation' : -45,
@@ -1113,7 +1113,7 @@ for report in report_list:
                         'series' : battery_storage_series,
                         },
                     {
-                        'title' : 'Hourly Battery Capacity',
+                        'title' : 'Battery Capacity',
                         'type' : 'column',
                         'x_title' : 'Hour',
                         'x_rotation' : -45,
@@ -1121,7 +1121,7 @@ for report in report_list:
                         'series' : battery_capacity_series,
                         },
                     {
-                        'title' : 'Hourly Value',
+                        'title' : 'Power Value',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Hour',
@@ -1144,7 +1144,7 @@ for report in report_list:
                 'day',
                 chart_list = [
                     {
-                        'title' : 'Daily Bill',
+                        'title' : 'Bill Calculations',
                         'type' : 'column',
                         'x_title' : 'Day',
                         'x_rotation' : -45,
@@ -1152,7 +1152,7 @@ for report in report_list:
                         'series' : bill_series,
                         },
                     {
-                        'title' : 'Daily Power',
+                        'title' : 'Power Distribution',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Day',
@@ -1161,7 +1161,7 @@ for report in report_list:
                         'series' : power_series,
                         },
                     {
-                        'title' : 'Daily Relative Import',
+                        'title' : 'Relative Import (kWh)',
                         'type' : 'column',
                         'x_title' : 'Day',
                         'x_rotation' : -45,
@@ -1169,7 +1169,7 @@ for report in report_list:
                         'series' : rel_import_series,
                         },
                     {
-                        'title' : 'Daily Charging',
+                        'title' : 'Charging',
                         'type' : 'column',
                         'x_title' : 'Day',
                         'x_rotation' : -45,
@@ -1177,7 +1177,7 @@ for report in report_list:
                         'series' : battery_charging_series,
                         },
                     {
-                        'title' : 'Daily Value',
+                        'title' : 'Power Value',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Day',
@@ -1199,7 +1199,7 @@ for report in report_list:
                 'week',
                 chart_list = [
                     {
-                        'title' : 'Weekly Bill',
+                        'title' : 'Bill Calculations',
                         'type' : 'column',
                         'x_title' : 'Week',
                         'x_rotation' : -45,
@@ -1207,7 +1207,7 @@ for report in report_list:
                         'series' : bill_series,
                         },
                     {
-                        'title' : 'Weekly Power',
+                        'title' : 'Power Distribution',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Week',
@@ -1216,7 +1216,7 @@ for report in report_list:
                         'series' : power_series,
                         },
                     {
-                        'title' : 'Weekly Relative Import',
+                        'title' : 'Relative Import (kWh)',
                         'type' : 'column',
                         'x_title' : 'Week',
                         'x_rotation' : -45,
@@ -1224,7 +1224,7 @@ for report in report_list:
                         'series' : rel_import_series,
                         },
                     {
-                        'title' : 'Weekly Charging',
+                        'title' : 'Charging',
                         'type' : 'column',
                         'x_title' : 'Week',
                         'x_rotation' : -45,
@@ -1232,7 +1232,7 @@ for report in report_list:
                         'series' : battery_charging_series,
                         },
                     {
-                        'title' : 'Weekly Value',
+                        'title' : 'Power Value',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Week',
@@ -1254,7 +1254,7 @@ for report in report_list:
                 'month',
                 chart_list = [
                     {
-                        'title' : 'Monthly Bill',
+                        'title' : 'Bill Calculations',
                         'type' : 'column',
                         'x_title' : 'Month',
                         'x_rotation' : -45,
@@ -1262,7 +1262,7 @@ for report in report_list:
                         'series' : bill_series,
                         },
                     {
-                        'title' : 'Monthly Power',
+                        'title' : 'Power Distribution',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Month',
@@ -1271,7 +1271,7 @@ for report in report_list:
                         'series' : power_series,
                         },
                     {
-                        'title' : 'Monthly Relative Import',
+                        'title' : 'Relative Import (kWh)',
                         'type' : 'column',
                         'x_title' : 'Month',
                         'x_rotation' : -45,
@@ -1279,7 +1279,7 @@ for report in report_list:
                         'series' : rel_import_series,
                         },
                     {
-                        'title' : 'Monthly Charging',
+                        'title' : 'Charging',
                         'type' : 'column',
                         'x_title' : 'Month',
                         'x_rotation' : -45,
@@ -1287,7 +1287,7 @@ for report in report_list:
                         'series' : battery_charging_series,
                         },
                     {
-                        'title' : 'Monthly Value',
+                        'title' : 'Power Value',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Month',
@@ -1309,7 +1309,7 @@ for report in report_list:
                 'year',
                 chart_list = [
                     {
-                        'title' : 'Yearly Bill',
+                        'title' : 'Bill Calculations',
                         'type' : 'column',
                         'x_title' : 'Year',
                         'x_rotation' : -45,
@@ -1317,7 +1317,7 @@ for report in report_list:
                         'series' : bill_series,
                         },
                     {
-                        'title' : 'Yearly Power',
+                        'title' : 'Power Distribution',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Year',
@@ -1326,7 +1326,7 @@ for report in report_list:
                         'series' : power_series,
                         },
                     {
-                        'title' : 'Yearly Relative Import',
+                        'title' : 'Relative Import (kWh)',
                         'type' : 'column',
                         'x_title' : 'Year',
                         'x_rotation' : -45,
@@ -1334,7 +1334,7 @@ for report in report_list:
                         'series' : rel_import_series,
                         },
                     {
-                        'title' : 'Yearly Charging',
+                        'title' : 'Charging',
                         'type' : 'column',
                         'x_title' : 'Year',
                         'x_rotation' : -45,
@@ -1342,7 +1342,7 @@ for report in report_list:
                         'series' : battery_charging_series,
                         },
                     {
-                        'title' : 'Yearly Value',
+                        'title' : 'Power Value',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Year',
@@ -1364,14 +1364,14 @@ for report in report_list:
                 'weekday',
                 chart_list = [
                     {
-                        'title' : 'Weekday Bill',
+                        'title' : 'Bill Calculations',
                         'type' : 'column',
                         'x_title' : 'Weekday',
                         'y_title' : cost_label,
                         'series' : bill_series,
                         },
                     {
-                        'title' : 'Weekday Power',
+                        'title' : 'Power Distribution',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Weekday',
@@ -1379,7 +1379,7 @@ for report in report_list:
                         'series' : power_series
                         },
                     {
-                        'title' : 'Weekday Relative Import',
+                        'title' : 'Relative Import (kWh)',
                         'type' : 'column',
                         'x_title' : 'Weekday',
                         'x_rotation' : -45,
@@ -1387,7 +1387,7 @@ for report in report_list:
                         'series' : rel_import_series,
                         },
                     {
-                        'title' : 'Weekday Charging',
+                        'title' : 'Charging',
                         'type' : 'column',
                         'x_title' : 'Weekday',
                         'x_rotation' : -45,
@@ -1395,7 +1395,7 @@ for report in report_list:
                         'series' : battery_charging_series,
                         },
                     {
-                        'title' : 'Weekday Value',
+                        'title' : 'Power Value',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Weekday',
@@ -1417,14 +1417,14 @@ for report in report_list:
                 'hour',
                 chart_list = [
                     {
-                        'title' : '24h Bill',
+                        'title' : 'Bill Calculations',
                         'type' : 'column',
                         'x_title' : 'Hour',
                         'y_title' : cost_label,
                         'series' : bill_series,
                         },
                     {
-                        'title' : '24h Power',
+                        'title' : 'Power Distribution',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Hour',
@@ -1432,7 +1432,7 @@ for report in report_list:
                         'series' : power_series,
                         },
                     {
-                        'title' : '24h Relative Import',
+                        'title' : 'Relative Import (kWh)',
                         'type' : 'column',
                         'x_title' : 'Hour',
                         'x_rotation' : -45,
@@ -1440,7 +1440,7 @@ for report in report_list:
                         'series' : rel_import_series,
                         },
                     {
-                        'title' : '24h Charging',
+                        'title' : 'Charging',
                         'type' : 'column',
                         'x_title' : 'Hour',
                         'x_rotation' : -45,
@@ -1448,7 +1448,7 @@ for report in report_list:
                         'series' : battery_charging_series,
                         },
                     {
-                        'title' : '24h Value',
+                        'title' : 'Power Value',
                         'type' : 'column',
                         'sub_type' : 'stacked',
                         'x_title' : 'Hour',
@@ -1469,7 +1469,7 @@ for report in report_list:
                 'tariff_name',
                 chart_list = [
                     {
-                        'title' : 'Tariff Bill',
+                        'title' : 'Bill Calculations',
                         'type' : 'column',
                         'x_title' : 'Tariff',
                         'x_rotation' : -45,
@@ -1477,21 +1477,21 @@ for report in report_list:
                         'series' : bill_series,
                         },
                     {
-                        'title' : 'Tariff Relative Import',
+                        'title' : 'Relative Import (kWh)',
                         'type' : 'column',
                         'x_title' : 'Tariff',
                         'y_title' : 'kWh',
                         'series' : rel_import_series,
                         },
                     {
-                        'title' : 'Tariff Charging',
+                        'title' : 'Charging',
                         'type' : 'column',
                         'x_title' : 'Tariff',
                         'y_title' : 'kWh',
                         'series' : battery_charging_series,
                         },
                     {
-                        'title' : 'Tariff Value',
+                        'title' : 'Power Value',
                         'type' : 'column',
                         'x_title' : 'Tariff',
                         'y_title' : cost_label,
