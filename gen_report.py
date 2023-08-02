@@ -187,7 +187,13 @@ def add_worksheet(
                         format_dict[field_rec['format']])
     
             # write number
-            elif field_rec['format'] in ['integer', 'float', 'currency_4dp', 'currency_2dp', 'kwh']:
+            elif field_rec['format'] in [
+                    'integer', 
+                    'float', 
+                    'currency_4dp', 
+                    'currency_2dp', 
+                    'percent', 
+                    'kwh']:
                 if field in rec:
                     value = rec[field]
                 else:
@@ -304,6 +310,7 @@ def gen_aggregate_dict(
             'export_rate',
             'battery_storage',
             'battery_capacity',
+            'savings_percent',
             ]
     field_skip_list.append(agg_field)
 
@@ -358,6 +365,16 @@ def gen_aggregate_dict(
                     agg_dict[agg_value][field] = rec[field]
                 else:
                     agg_dict[agg_value][field] += rec[field]
+
+    # derived fields
+    for agg_value in agg_dict:
+        agg_rec = agg_dict[agg_value]
+        # savings %
+        if ('savings' in agg_rec and 
+            'bill_amount' in agg_rec):
+            original_bill_value = agg_rec['bill_amount'] + agg_rec['savings']
+            savings_percent = (agg_rec['savings'] / original_bill_value)
+            agg_rec['savings_percent'] = savings_percent
 
     return agg_dict
 
@@ -757,6 +774,10 @@ kwh_format = workbook.add_format()
 kwh_format.set_num_format('#,##0.00 "kWh"') 
 format_dict['kwh'] = kwh_format
 
+percent_format = workbook.add_format() 
+percent_format.set_num_format('0.0%') 
+format_dict['percent'] = percent_format
+
 currency_4dp_format = workbook.add_format() 
 # with currency symbol, commas and 4 decimal places
 currency_4dp_format.set_num_format(
@@ -950,6 +971,12 @@ field_dict = {
             'width' : 12,
             'header_format' : 'header',
             'format' : 'currency_2dp',
+            },
+        'savings_percent' : {
+            'title' : 'Savings %',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'percent',
             },
         'bill_amount' : {
             'title' : 'Bill Amount',
