@@ -211,6 +211,15 @@ python3 ${GEN_REPORT_SCRIPT} \
 
 python3 ${GEN_REPORT_SCRIPT} \
     --idir ${HDF_DATA} \
+    --file ${REPORTS_DIR}/flogas_report_community.xlsx \
+    --reports ${REPORTS} \
+    --tariff_rate 24h:0.2999 \
+    --tariff_interval 00-00:24h \
+    --standing_rate 0.0346 \
+    --fit_rate 0.24
+
+python3 ${GEN_REPORT_SCRIPT} \
+    --idir ${HDF_DATA} \
     --file ${REPORTS_DIR}/pinergy_report_work_from_home.xlsx \
     --reports ${REPORTS} \
     --tariff_rate Work:0.3263 Peak:0.4662 \
