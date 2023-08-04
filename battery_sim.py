@@ -137,6 +137,29 @@ def output_results(
     return
 
 
+def gen_time_interval_set(
+        interval_range):
+
+    interval_set = set()
+
+    if interval_range:
+        fields = interval_range.split('-')
+        start_hh = int(fields[0])
+        end_hh = int(fields[1])
+        
+        if start_hh == end_hh:
+            # single xx:xx range (full 24 hours)
+            for i in range(0, 24):
+                interval_set.add(i)
+        else:
+            hh = start_hh
+            while hh != end_hh:
+                interval_set.add(hh)
+                hh = (hh + 1) % 24
+
+    return interval_set
+
+
 # main()
 
 parser = argparse.ArgumentParser(
@@ -212,10 +235,26 @@ parser.add_argument(
         )
 
 parser.add_argument(
+        '--charge_loss_percent', 
+        help = 'Charge Loss Percentage (1..100) def:!5', 
+        type = int,
+        choices = range(1, 101),
+        default = 15,
+        required = False
+        )
+
+parser.add_argument(
         '--discharge_bypass_interval', 
         help = 'Time Interval for Discharge Bypass <HH-HH>', 
         required = False,
-        default = '00-00'
+        default = None
+        )
+
+parser.add_argument(
+        '--grid_shift_interval', 
+        help = 'Time Interval for Grid Charging <HH-HH>', 
+        required = False,
+        default = None
         )
 
 parser.add_argument(
@@ -252,7 +291,9 @@ max_charge_percent = args['max_charge_percent']
 min_charge_percent = args['min_charge_percent']
 charge_rate = args['charge_rate']
 discharge_rate = args['discharge_rate']
+charge_loss_percent = args['charge_loss_percent']
 discharge_bypass_interval = args['discharge_bypass_interval']
+grid_shift_interval = args['grid_shift_interval']
 export_charge_boundary = args['export_charge_boundary']
 decimal_places = args['decimal_places']
 verbose = args['verbose']
@@ -263,37 +304,31 @@ data_dict = load_data(
         end_date,
         timezone)
 
-fields = discharge_bypass_interval.split('-')
-discharge_bypass_start_hh = int(fields[0])
-discharge_bypass_end_hh = int(fields[1])
-discharge_bypass_set = set()
-
-if discharge_bypass_start_hh == discharge_bypass_end_hh:
-    # single xx:xx range (full 24 hours)
-    for i in range(0, 24):
-        discharge_bypass_set.add(i)
-else:
-    hh = discharge_bypass_start_hh
-    while hh != discharge_bypass_end_hh:
-        discharge_bypass_set.add(hh)
-        hh = (hh + 1) % 24
+discharge_bypass_set = gen_time_interval_set(discharge_bypass_interval)
+grid_shift_set = gen_time_interval_set(grid_shift_interval)
 
 current_battery_storage = 0
 overall_charge_total = 0
 overall_discharge_total = 0
 
+# factor to convert battery storage into the equivalent
+# of grid or solar draw
+# we multiple what we want to store in the battery by this value
+battery_to_ac_factor = 1 + (charge_loss_percent / 100)
+ac_to_battery_factor = (100 - charge_loss_percent) / 100 
+
 max_charge_capacity = battery_capacity * max_charge_percent/100
 
-# scan data to model battery
+# scan data to simulate battery
 key_list = list(data_dict.keys())
 key_list.sort()
 
 for key in key_list:
     rec = data_dict[key]
 
-    # charge only applies when export reaches min boundary
+    # solar charge only applies when export reaches min boundary
     # helps avoid invalid phantom charges overnight
-    charge_amount = 0
+    solar_charge_amount = 0
     if rec['export'] >= export_charge_boundary:
         # determine how much storage space we have 
         available_charge_capacity = max_charge_capacity - current_battery_storage
@@ -302,13 +337,34 @@ for key in key_list:
         # the min of charge rate and available capacity
         max_charge_amount = min(available_charge_capacity, charge_rate)
 
-        # determine actual charge amount
-        charge_amount = min(rec['export'], max_charge_amount)
+        # loss conversions
+        adjusted_charge_amount = max_charge_amount * battery_to_ac_factor
+        solar_divert_amount = min(rec['export'], adjusted_charge_amount)
+        solar_charge_amount = solar_divert_amount * ac_to_battery_factor
 
         # Reduce export and charge battery
-        current_battery_storage += charge_amount
-        rec['export'] -= charge_amount
-        overall_charge_total += charge_amount
+        current_battery_storage += solar_charge_amount
+        rec['export'] -= solar_divert_amount
+        overall_charge_total += solar_charge_amount
+
+    # grid shift charge
+    grid_charge_amount = 0
+    if rec['hour'] in grid_shift_set:
+        # determine how much storage space we have 
+        available_charge_capacity = max_charge_capacity - current_battery_storage
+
+        # determine what can be charged
+        # the min of charge rate and available capacity
+        max_charge_amount = min(available_charge_capacity, charge_rate)
+
+        # loss conversions
+        adjusted_charge_amount = max_charge_amount * battery_to_ac_factor
+
+        # charge battery from grid
+        grid_charge_amount = max_charge_amount
+        current_battery_storage += grid_charge_amount
+        rec['import'] += adjusted_charge_amount
+        overall_charge_total += grid_charge_amount
 
     # discharge is conditional to time of day
     discharge_amount = 0
@@ -331,16 +387,17 @@ for key in key_list:
         overall_discharge_total += discharge_amount
 
     # record activity and charge status in record
-    rec['battery_charge'] = charge_amount
+    rec['battery_solar_charge'] = solar_charge_amount
+    rec['battery_grid_charge'] = grid_charge_amount
     rec['battery_discharge'] = discharge_amount
     rec['battery_storage'] = current_battery_storage
     rec['battery_capacity'] = round(current_battery_storage / battery_capacity * 100)
 
     log_message(
             verbose,
-            '%s exp:-%.2fkWh imp:-%.2fkWh batt:%.2fkWh (%d%%)' % (
+            '%s charge:+%.2fkWh discharge:-%.2fkWh batt:%.2fkWh (%d%%)' % (
                 rec['datetime'],
-                rec['battery_charge'],
+                solar_charge_amount + grid_charge_amount,
                 rec['battery_discharge'],
                 rec['battery_storage'],
                 rec['battery_capacity']
