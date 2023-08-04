@@ -896,8 +896,14 @@ field_dict = {
             'format' : 'kwh',
             },
 
-        'battery_charge' : {
-            'title' : 'Battery Charge',
+        'battery_solar_charge' : {
+            'title' : 'Battery Solar Charge',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'kwh',
+            },
+        'battery_grid_charge' : {
+            'title' : 'Battery Grid Charge',
             'width' : 12,
             'header_format' : 'header',
             'format' : 'kwh',
@@ -1065,12 +1071,16 @@ tariff_value_series = [
 
 battery_charging_series = [
         {
-            'field': 'battery_charge',
+            'field': 'battery_grid_charge',
             'colour': 'red',
             },
         {
-            'field': 'battery_discharge',
+            'field': 'battery_solar_charge',
             'colour': 'green',
+            },
+        {
+            'field': 'battery_discharge',
+            'colour': 'blue',
             },
         ]
 
