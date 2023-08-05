@@ -364,6 +364,7 @@ for key in key_list:
         grid_charge_amount = max_charge_amount
         current_battery_storage += grid_charge_amount
         rec['import'] += adjusted_charge_amount
+        rec['consumed'] = rec['import']
         overall_charge_total += grid_charge_amount
 
     # discharge is conditional to time of day
