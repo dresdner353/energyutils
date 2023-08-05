@@ -38,8 +38,12 @@ optional arguments:
                         Battery Charge Rate (kWh/hour)
   --discharge_rate DISCHARGE_RATE
                         Battery Discharge Rate (kWh/hour)
+  --charge_loss_percent CHARGE_LOSS_PERCENT
+                        Charge Loss Percentage (1..100) def:15
   --discharge_bypass_interval DISCHARGE_BYPASS_INTERVAL
                         Time Interval for Discharge Bypass <HH-HH>
+  --grid_shift_interval GRID_SHIFT_INTERVAL
+                        Time Interval for Grid Charging <HH-HH>
   --export_charge_boundary EXPORT_CHARGE_BOUNDARY
                         Min Export required for charging (kWh/hour)
   --decimal_places DECIMAL_PLACES
@@ -48,8 +52,6 @@ optional arguments:
 ```
 
 ## Notes
-* There is no DC-DC loss factor considered here for now. So a kWh stolen from export is assumed to get into the simulated battery as a kwH. In reality there will need to be a loss factor added here. 
-* No grid shift support yet but this will be needed to properly represent an optimised battery scenario.
 * For each hour: 
   - The first step performed is to steal availble export if the simulated battery has capacity to take a charge. 
   - Then the import for the same hour is checked and offset from existing battery storage. 
@@ -79,7 +81,8 @@ python3 battery_sim.py \
             --min_charge_percent 5 \
             --charge_rate 2 \
             --discharge_rate 2 \
-            --discharge_bypass_interval 02-05
+            --discharge_bypass_interval 02-08 \
+            --grid_shift_interval 02-04
 
 Tue Jun 13 18:33:21 2023 Loaded 75 files, 1776 records
 Tue Jun 13 18:33:21 2023 Writing to /tmp/2023-01-26.jsonl
@@ -107,5 +110,5 @@ Tue Jun 13 18:33:21 2023 Final battery state.. charge:9.45kWh (94%) ovl_charge:8
 Notes:
 * Battery capacity set to 10 kWh, with a min and max charge capacity set to 5% and 95%
 * The battery can charge at max 2kWh/hour and discharge as the same 2kWh/hour rate
-* Discharge is disabled between 2-5AM (allows for EV rates where discharge may not be desired)
-* After the sweep was complete, the simulated battery still had 9.45kWh (94%) left and had charged a total of 84.08kWh (8 full cycles) and discharged a total of 74.63kWh.
+* Discharge is disabled between 2-8AM 
+* Grid shift is set to charge the battery between hours 2-4AM
