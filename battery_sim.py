@@ -258,6 +258,13 @@ parser.add_argument(
         )
 
 parser.add_argument(
+        '--fit_discharge_interval', 
+        help = 'Time Interval for FIT discharge <HH-HH>', 
+        required = False,
+        default = None
+        )
+
+parser.add_argument(
         '--export_charge_boundary', 
         help = 'Min Export required for charging (kWh/hour)', 
         type = float,
@@ -294,6 +301,7 @@ discharge_rate = args['discharge_rate']
 charge_loss_percent = args['charge_loss_percent']
 discharge_bypass_interval = args['discharge_bypass_interval']
 grid_shift_interval = args['grid_shift_interval']
+fit_discharge_interval = args['fit_discharge_interval']
 export_charge_boundary = args['export_charge_boundary']
 decimal_places = args['decimal_places']
 verbose = args['verbose']
@@ -306,6 +314,7 @@ data_dict = load_data(
 
 discharge_bypass_set = gen_time_interval_set(discharge_bypass_interval)
 grid_shift_set = gen_time_interval_set(grid_shift_interval)
+fit_discharge_set = gen_time_interval_set(fit_discharge_interval)
 
 current_battery_storage = 0
 overall_charge_total = 0
@@ -386,6 +395,21 @@ for key in key_list:
         rec['import'] -= discharge_amount
         rec['consumed'] = rec['import']
         overall_discharge_total += discharge_amount
+
+    # FIT discharge 
+    if rec['hour'] in fit_discharge_set:
+        # determine how much charge we have to use
+        available_discharge_capacity = current_battery_storage - (battery_capacity * min_charge_percent/100)
+        if available_discharge_capacity < 0:
+            available_discharge_capacity = 0
+
+        # determine discharge
+        max_discharge_amount = min(available_discharge_capacity, discharge_rate)
+
+        # Discharge battery and increase export
+        current_battery_storage -= max_discharge_amount
+        rec['export'] += max_discharge_amount
+        overall_discharge_total += max_discharge_amount
 
     # record activity and charge status in record
     rec['battery_solar_charge'] = solar_charge_amount
