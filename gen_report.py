@@ -357,7 +357,7 @@ def gen_aggregate_dict(
             if type(rec[field]) == str:
                 agg_dict[agg_value][field] = rec[field]
 
-            # numeric aggreegations
+            # numeric aggregations
             if type(rec[field]) in [int, float]:
                 # set to value on first encounter or 
                 # add to existing aggregate total
