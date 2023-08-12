@@ -238,7 +238,7 @@ parser.add_argument(
         '--charge_loss_percent', 
         help = 'Charge Loss Percentage (1..100) def:15', 
         type = int,
-        choices = range(1, 101),
+        choices = range(0, 101),
         default = 15,
         required = False
         )
