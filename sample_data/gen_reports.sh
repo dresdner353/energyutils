@@ -22,6 +22,15 @@ python3 ${GEN_REPORT_SCRIPT} \
 
 python3 ${GEN_REPORT_SCRIPT} \
     --idir ${HDF_DATA} \
+    --file ${REPORTS_DIR}/ei_report_dualplus_24h.xlsx \
+    --reports ${REPORTS} \
+    --tariff_rate 24h:0.3959 \
+    --tariff_interval 00-00:24h \
+    --standing_rate 0.0346 \
+    --fit_rate 0.21 
+
+python3 ${GEN_REPORT_SCRIPT} \
+    --idir ${HDF_DATA} \
     --file ${REPORTS_DIR}/ei_report_nightsaver.xlsx \
     --reports ${REPORTS} \
     --tariff_rate Day:0.4230 Night:0.2280 \
