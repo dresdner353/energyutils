@@ -131,7 +131,7 @@ def add_worksheet(
 
     # Default auto-filtered state
     # certain first_field values 
-    # will trigger a defauly auto-filter
+    # will trigger a default auto-filter
     # to try and reduce the displayed value set
     filtered_field = None
     default_filter_dict = {
