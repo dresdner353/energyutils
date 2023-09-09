@@ -23,6 +23,7 @@ REM Example 24h report
     --standing_rate 0.0346 ^
     --fit_rate 0.21 
 
+
 REM Example Smart report
 %PYTHON% %GEN_REPORT_SCRIPT% ^
     --idir %HDF_DATA% ^
@@ -43,5 +44,19 @@ REM Example EV report
     --tariff_interval 08-23:Day 23-08:Night 02-04:Boost ^
     --standing_rate 0.0453 ^
     --fit_rate 0.21 
+
+
+
+REM Example Complex plan with free days
+%PYTHON% %GEN_REPORT_SCRIPT% ^
+    --idir %HDF_DATA% ^
+    --file esb_report_free_sun.xlsx ^
+    --reports %REPORTS% ^
+    --tariff_rate Day:0.5094 Night:0.3743 Peak:0.6223 Free:0 ^
+    --tariff_interval 08-23:Day 23-08:Night 17-19:Peak 7-7:09-17:Free ^
+    --standing_rate 0.0321 ^
+    --fit_rate 0.21 
+
+
 
 pause
