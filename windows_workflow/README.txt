@@ -1,5 +1,14 @@
 Steps to get your ESB report generating on Microsoft Windows:
 
+* Download The energyutils codebase
+----------------------------------------------------------------------------
+- Browse to https://github.com/dresdner353/energyutils 
+- From there, look for the green Code button, click it and select the download ZIP file 
+- In Windows explorer, right-click and "extract all" files (as you might do with a zip file usually). 
+  But do not double-click to open it as that will not work correctly. 
+- Navigate to a folder called "windows_workflow" and open the README.txt file (it's actually this very file you are reading now)
+
+
 * Install Python3
 ----------------------------------------------------------------------------
 Launch the Microsoft Store and search for python3. 
@@ -8,7 +17,7 @@ Install by clicking the "Get" button
 
 * Run initial setup script
 ----------------------------------------------------------------------------
-In this folder, double-click the batch script called "init_setup".
+In the windows_workflow folder, double-click the batch script called "init_setup".
 
 Note:You may be warned about this as being an unknown program and feel free to 
 virus scan etc. But depending on your virus scanner etc, you may have to 
