@@ -1,4 +1,4 @@
-Steps to get your ESB report generating:
+Steps to get your ESB report generating on Microsoft Windows:
 
 * Install Python3
 ----------------------------------------------------------------------------
