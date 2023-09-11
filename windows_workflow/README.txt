@@ -14,6 +14,9 @@ Steps to get your ESB report generating on Microsoft Windows:
 Launch the Microsoft Store and search for python3. 
 Install by clicking the "Get" button
 
+Note: You need python 3.9 or later. At the time of writing, the version Microsoft had 
+listed was 3.11
+
 
 * Run initial setup script
 ----------------------------------------------------------------------------
