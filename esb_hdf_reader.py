@@ -43,6 +43,33 @@ def parse_esb_time(
     return time_stamp, dt
 
 
+def get_hours_in_day(
+        datetime_str,
+        timezone):
+
+    # naive parse of our datetime field
+    dt = datetime.datetime.strptime(datetime_str, '%Y/%m/%d %H:%M:%S')
+
+    # assert local timezone
+    dt = dt.replace(tzinfo = zoneinfo.ZoneInfo(timezone))
+
+    # reset to current day midnight
+    # and get dt for the next day 
+    dt_midnight = dt.replace(
+            hour = 0,
+            minute = 0,
+            second = 0,
+            )
+    dt_next_midnight = dt_midnight + datetime.timedelta(days = 1)
+
+    # to epoch second timestamps and subtract
+    # and get number of local hours in day
+    daylen_secs = int(dt_next_midnight.timestamp()) - int(dt_midnight.timestamp())
+    daylen_hours = daylen_secs / 3600
+
+    return daylen_hours
+
+
 def output_results(
         odir,
         output_format,
@@ -234,6 +261,7 @@ for esb_rec in reader:
         # align consumed to current value
         usage_rec['consumed'] = usage_rec['import']
 
+    # Export
     if esb_rec['type'] == 'Active Export Interval (kW)':
         # append 30-min usage value / 2 
         usage_rec['export'] += float(esb_rec['value']) / 2
@@ -255,6 +283,35 @@ for ts in usage_dict:
         day_dict[day] = {}
 
     day_dict[day][ts] = usage_rec
+
+# Check for full 24h coverage per day
+# purging incomplete days
+for day in list(day_dict.keys()):
+    # get datetime of first item in dict
+    # actual one we pick does not matter
+    # we need to then determine how long that day
+    # is in hours
+    first_ts = next(iter(day_dict[day]))
+    first_datetime = day_dict[day][first_ts]['datetime']
+    expected_day_hours = get_hours_in_day(
+            first_datetime,
+            timezone)
+
+    # then check how many hours we actually have tracked
+    tracked_hours = len(day_dict[day])
+
+    # purge if the tracked does not match the expected
+    if tracked_hours != expected_day_hours:
+        log_message(
+                1,
+                'Purging incompete day %s.. %d/%d hours present' % (
+                    day,
+                    tracked_hours,
+                    expected_day_hours
+                    )
+                )
+        del day_dict[day]
+
 
 # JSON encoder force decimal places to 3
 class RoundingFloat(float):
