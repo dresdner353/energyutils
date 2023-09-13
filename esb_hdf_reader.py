@@ -63,9 +63,16 @@ def get_hours_in_day(
     dt_next_midnight = dt_midnight + datetime.timedelta(days = 1)
 
     # to epoch second timestamps and subtract
-    # and get number of local hours in day
+    # and get actual number of local hours in day
     daylen_secs = int(dt_next_midnight.timestamp()) - int(dt_midnight.timestamp())
     daylen_hours = daylen_secs / 3600
+
+    # set to min of 24 and calculated hours
+    # A winter DST adjustment day will have 25
+    # hours because of the rollback. 
+    # But ESB data reports that extra hour as one time
+    # so we will only see 24 hours reported
+    daylen_hours = min(24, daylen_hours)
 
     return daylen_hours
 
