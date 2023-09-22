@@ -8,16 +8,19 @@ Cost reports may then be generated from the scrubbed data set to provide accurat
 
 ## Usage
 ```
+
 usage: battery_sim.py [-h] --idir IDIR --odir ODIR [--start START] [--end END]
-                      [--timezone TIMEZONE] --battery_capacity BATTERY_CAPACITY 
-                      --max_charge_percent 1-100 
-                      --min_charge_percent 1-100
-                      --charge_rate CHARGE_RATE 
-                      --discharge_rate DISCHARGE_RATE
+                      [--timezone TIMEZONE] --battery_capacity
+                      BATTERY_CAPACITY --max_charge_percent
+                      --min_charge_percent
+                      --charge_rate CHARGE_RATE --discharge_rate
+                      DISCHARGE_RATE
+                      [--charge_loss_percent]
                       [--discharge_bypass_interval DISCHARGE_BYPASS_INTERVAL]
+                      [--grid_shift_interval GRID_SHIFT_INTERVAL]
+                      [--fit_discharge_interval FIT_DISCHARGE_INTERVAL]
                       [--export_charge_boundary EXPORT_CHARGE_BOUNDARY]
-                      [--decimal_places DECIMAL_PLACES] 
-                      [--verbose]
+                      [--decimal_places DECIMAL_PLACES] [--verbose]
 
 Battery Simulator
 
@@ -30,25 +33,30 @@ optional arguments:
   --timezone TIMEZONE   Timezone
   --battery_capacity BATTERY_CAPACITY
                         Battery Capacity (kWh)
-  --max_charge_percent 
+  --max_charge_percent 1-100
                         Battery Max Charge Percentage (1..100)
-  --min_charge_percent 
+  --min_charge_percent 1-100
                         Battery Min Charge Percentage (1..100)
   --charge_rate CHARGE_RATE
                         Battery Charge Rate (kWh/hour)
   --discharge_rate DISCHARGE_RATE
                         Battery Discharge Rate (kWh/hour)
-  --charge_loss_percent CHARGE_LOSS_PERCENT
+  --charge_loss_percent 0-100
                         Charge Loss Percentage (1..100) def:15
   --discharge_bypass_interval DISCHARGE_BYPASS_INTERVAL
                         Time Interval for Discharge Bypass <HH-HH>
   --grid_shift_interval GRID_SHIFT_INTERVAL
                         Time Interval for Grid Charging <HH-HH>
+  --fit_discharge_interval FIT_DISCHARGE_INTERVAL
+                        Time Interval for FIT discharge <HH-HH>
   --export_charge_boundary EXPORT_CHARGE_BOUNDARY
                         Min Export required for charging (kWh/hour)
   --decimal_places DECIMAL_PLACES
                         Decimal Places (def:4)
   --verbose             Enable verbose output
+
+
+
 ```
 
 ## Notes
