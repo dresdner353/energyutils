@@ -311,6 +311,8 @@ def gen_aggregate_dict(
             'battery_storage',
             'battery_capacity',
             'savings_percent',
+            'solar_consumed_percent',
+            'export_percent',
             ]
     field_skip_list.append(agg_field)
 
@@ -369,12 +371,21 @@ def gen_aggregate_dict(
     # derived fields
     for agg_value in agg_dict:
         agg_rec = agg_dict[agg_value]
+
         # savings %
         if ('savings' in agg_rec and 
             'bill_amount' in agg_rec):
             original_bill_value = agg_rec['bill_amount'] + agg_rec['savings']
             savings_percent = (agg_rec['savings'] / original_bill_value)
             agg_rec['savings_percent'] = savings_percent
+
+        # solar consumed/export %
+        if 'solar_consumed' in agg_rec:
+            agg_rec['solar_consumed_percent'] = 0
+            agg_rec['export_percent'] = 0
+            if agg_rec['solar'] > 0:
+                agg_rec['solar_consumed_percent'] = agg_rec['solar_consumed'] / agg_rec['solar']
+                agg_rec['export_percent'] = agg_rec['export'] / agg_rec['solar']
 
     return agg_dict
 
@@ -580,8 +591,15 @@ def load_data(
                     # Savings is then calculated as the sum of solar and export
                     # credit
                     if 'solar_consumed' in rec:
+                        rec['solar_consumed_percent'] = 0
+                        rec['export_percent'] = 0
+                        if rec['solar'] > 0:
+                            rec['solar_consumed_percent'] = rec['solar_consumed'] / rec['solar']
+                            rec['export_percent'] = rec['export'] / rec['solar']
+
                         rec['solar_credit'] = rec['solar_consumed'] * rec['tariff_rate']
                         rec['rel_import'] -= rec['solar_consumed']
+
                         if fit_rate:
                             rec['savings'] = rec['solar_credit'] + rec['export_credit'] 
     
@@ -933,6 +951,12 @@ field_dict = {
             'header_format' : 'header',
             'format' : 'kwh',
             },
+        'solar_consumed_percent' : {
+            'title' : 'Solar Consumed %',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'percent',
+            },
         'solar_credit' : {
             'title' : 'Solar Credit',
             'width' : 12,
@@ -950,6 +974,12 @@ field_dict = {
             'width' : 12,
             'header_format' : 'header',
             'format' : 'kwh',
+            },
+        'export_percent' : {
+            'title' : 'Export %',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'percent',
             },
         'export_credit' : {
             'title' : 'Export Credit',
