@@ -6,7 +6,6 @@ import time
 import datetime
 import dateutil.parser
 import zoneinfo
-import csv
 
 
 def log_message(
