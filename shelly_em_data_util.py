@@ -79,10 +79,14 @@ def get_day_data(
             odir,
             dest_file_prefix) 
 
-    # Download bypass
+    # default behaviour is to report 
+    # as a standard download
+    download_context = 'Downloading'
+
+    # Check if the target file exists
     if os.path.exists(dest_jsonl_file):
         # file already exists.. only download if partial
-        # property present
+        # property present in first record
 
         # get first record
         fp = open(dest_jsonl_file)
@@ -94,10 +98,15 @@ def get_day_data(
         if not 'partial' in rec:
             return
 
+        # Present as an update of 
+        # a peviously incomplete file
+        download_context = 'Updating'
+
     log_message(
             1,
-            'Getting data for %s' % (
-                date_from
+            '%s %s' % (
+                download_context,
+                dest_jsonl_file
                 )
             )
 
@@ -184,11 +193,6 @@ def get_day_data(
         return
 
     # write JSONL File
-    log_message(
-            1,
-            'Writing to %s' % (
-                dest_jsonl_file)
-            )
     with open(dest_jsonl_file, 'w') as f:
         for key in sorted(data_dict.keys()):
             f.write(json.dumps(data_dict[key]) + '\n')
