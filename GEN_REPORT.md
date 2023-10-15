@@ -30,6 +30,8 @@ optional arguments:
   --fit_rate FIT_RATE   FIT Rate rate/kWh
   --standing_rate STANDING_RATE
                         Standing Charge (cost per hour)
+  --annual_standing_charge ANNUAL_STANDING_CHARGE
+                        Annual Standing Charge (cost per year)
   --verbose             Enable verbose output
   --reports [{hour,day,week,month,year,weekday,24h,tariff} ...]
                         Reports to generate
@@ -42,7 +44,8 @@ Notes:
   - 17-19:Peak ... 7 days a week between 5pm and 7pm, the Peak tariff applies
   - 6-7:08-23:Weekend ... Between Saturday(6) and Sunday(7), 8am-11pm, Weekend tariff applies 
 * A FIT rate for microgen export may be set using the --fit_rate
-* A standing charge may be set via the --standing_rate option. Note however that this value is the cost per hour. So divide any annual or monthly values accordingly to get the per hour equivalent.
+* A hourly standing charge may be set via the --standing_rate option.
+* Alternatively use the --annual_standing_charge option to specify the standing charge as a yearly total.
 * The --reports option can be used to limit the set of generated reports to a desired subset of values. Multiple reports may be specified one after the other and in the order they should be written to the XLSX file. By default all reports are generated.
 
 
