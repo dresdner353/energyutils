@@ -35,7 +35,7 @@ optional arguments:
                         Reports to generate
 ```
 Notes:
-* The script is run and pointed at a directory of input files (YYYYMMDD.jsonl)
+* The script is run and pointed at a directory of input files (YYYY-MM-DD.jsonl)
 * The output file is the destination Excel (.xlsx) file
 * Electricity tariffs can be set using the --tariff_rate option and provided multiple times per separate tariff
 * Tariff intervals are defined using the --tariff_interval option that sets the optional day range (numbered 1-7), start/end hours and tariff name
