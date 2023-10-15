@@ -64,11 +64,6 @@ def get_day_data(
             )
     params['date_from'] = date_from
 
-    # date reference for retrieval of current 
-    # day to allow us record partial scenarios
-    # note this is a date and not a datetime
-    today = datetime.date.today()
-
     # local jsonl file
     dest_file_prefix = '%04d-%02d-%02d' % (
             date_ref.year, 
@@ -142,10 +137,13 @@ def get_day_data(
 
     # populate consumption records
     data_dict = {}
+    partial_data = False
     for shelly_rec in grid_resp_dict['history']:
         # skip any missing records
+        # and note partial data scenario
         if ('missing' in shelly_rec and 
             shelly_rec['missing']):
+            partial_data = True
             continue
 
         # contruct local usage rec
@@ -162,10 +160,6 @@ def get_day_data(
         usage_rec['datetime'] = ts_dt.strftime('%Y/%m/%d %H:%M:%S')
         usage_rec['import'] = shelly_rec['consumption'] / 1000
         usage_rec['export'] = shelly_rec['reversed'] / 1000
-
-        # partial day if today
-        if date_ref == today:
-            usage_rec['partial'] = True
 
         # aggregation keys
         usage_rec['hour'] = ts_dt.hour
@@ -184,8 +178,10 @@ def get_day_data(
     # merge in solar production
     for shelly_rec in solar_resp_dict['history']:
         # skip any missing records
+        # and note partial data scenario
         if ('missing' in shelly_rec and 
             shelly_rec['missing']):
+            partial_data = True
             continue
 
         # epoch timestamp from shelly API local time 
@@ -201,6 +197,12 @@ def get_day_data(
     # no data, nothing to do
     if len(data_dict) == 0:
         return
+
+    # mark all records partial
+    # if we had encountered missing data
+    if partial_data:
+        for key in data_dict.keys():
+            data_dict[key]['partial'] = True
 
     # write JSONL File
     with open(dest_jsonl_file, 'w') as f:
