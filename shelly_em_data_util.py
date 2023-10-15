@@ -50,7 +50,7 @@ def get_day_data(
     global gv_verbose
 
     # API URL and params
-    shelly_cloud_url = 'https://%s/statistics/emeter/consumption' % (api_host)
+    shelly_cloud_url = 'https://%s/v2/statistics/power-consumption/em-1p' % (api_host)
     params = {}
     params['id'] = device_id
     params['auth_key'] = auth_key
@@ -112,7 +112,7 @@ def get_day_data(
 
     # channel 0 (grid consumption and return)
     params['channel'] = 0
-    resp = requests.post(
+    resp = requests.get(
             shelly_cloud_url, 
             data = params)
     grid_resp_dict = resp.json()
@@ -127,7 +127,7 @@ def get_day_data(
 
     # channel 1 (solar production)
     params['channel'] = 1
-    resp = requests.post(
+    resp = requests.get(
             shelly_cloud_url, 
             data = params)
     solar_resp_dict = resp.json()
@@ -142,13 +142,19 @@ def get_day_data(
 
     # populate consumption records
     data_dict = {}
-    for shelly_rec in grid_resp_dict['data']['history']:
+    for shelly_rec in grid_resp_dict['history']:
+        # skip any missing records
+        if ('missing' in shelly_rec and 
+            shelly_rec['missing']):
+            continue
+
+        # contruct local usage rec
         usage_rec = {}
 
         # epoch timestamp from shelly API local time 
         ts, ts_dt = parse_time(
                 shelly_rec['datetime'],
-                grid_resp_dict['data']['timezone'])
+                grid_resp_dict['timezone'])
 
         data_dict[ts] = usage_rec
 
@@ -176,12 +182,16 @@ def get_day_data(
         usage_rec['week'] = ts_dt.strftime('%Y-%W')
 
     # merge in solar production
-    for shelly_rec in solar_resp_dict['data']['history']:
+    for shelly_rec in solar_resp_dict['history']:
+        # skip any missing records
+        if ('missing' in shelly_rec and 
+            shelly_rec['missing']):
+            continue
 
         # epoch timestamp from shelly API local time 
         ts, ts_dt = parse_time(
                 shelly_rec['datetime'],
-                grid_resp_dict['data']['timezone'])
+                grid_resp_dict['timezone'])
 
         usage_rec = data_dict[ts]
         usage_rec['solar'] = shelly_rec['consumption'] / 1000
