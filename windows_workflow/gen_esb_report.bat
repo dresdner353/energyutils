@@ -46,6 +46,15 @@ REM Example EV report
     --standing_rate 0.0453 ^
     --fit_rate 0.21 
 
+REM Another Smart Plan new rates
+%PYTHON% %GEN_REPORT_SCRIPT% ^
+    --idir %HDF_DATA% ^
+    --file energia_report_smart2.xlsx ^
+    --reports %REPORTS% ^
+    --tariff_rate Day:0.3660 Night:0.1960 Peak:0.3836 ^
+    --tariff_interval 00-23:Day 23-08:Night 17-19:Peak ^
+    --annual_standing_charge 238.62 ^
+    --fit_rate 0.24
 
 
 REM Example Complex plan with free days
