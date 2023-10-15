@@ -697,6 +697,13 @@ parser.add_argument(
         )
 
 parser.add_argument(
+        '--annual_standing_charge', 
+        help = 'Annual Standing Charge (cost per year)', 
+        type = float,
+        required = False
+        )
+
+parser.add_argument(
         '--verbose', 
         help = 'Enable verbose output', 
         action = 'store_true'
@@ -717,6 +724,7 @@ tariff_list = args['tariff_rate']
 interval_list = args['tariff_interval']
 fit_rate = args['fit_rate']
 standing_rate = args['standing_rate']
+annual_standing_charge = args['annual_standing_charge']
 idir = args['idir']
 start_date = args['start']
 end_date = args['end']
@@ -724,6 +732,11 @@ timezone = args['timezone']
 currency_symbol = args['currency']
 report_list = args['reports']
 verbose = args['verbose']
+
+# annual standing charge conversion
+# from year to hourly rate
+if annual_standing_charge:
+    standing_rate = annual_standing_charge / (365 * 24)
 
 log_message(
         1,
