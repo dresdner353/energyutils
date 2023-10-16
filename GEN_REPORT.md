@@ -78,5 +78,5 @@ Sun Jun  4 23:00:47 2023 Adding worksheet Tariff (3 rows)
 ## Example Reports
 Some examples here of the kind of data generated in the Excel files.
 
-* ![ESB Report (Import/Export Only)](./sample_reports/esb_report.xlsx)
-* ![Shelly Report (Import, Export & Solar)](./sample_reports/shelly_report.xlsx)
+* [ESB Report (Import/Export Only)](./sample_reports/esb_report.xlsx)
+* [Shelly Report (Import, Export & Solar)](./sample_reports/shelly_report.xlsx)
