@@ -347,6 +347,10 @@ def gen_aggregate_dict(
         if not agg_value in agg_dict:
             agg_dict[agg_value] = {}
             agg_dict[agg_value][agg_field] = agg_value
+            agg_dict[agg_value]['hours'] = 0
+
+        # count record
+        agg_dict[agg_value]['hours'] += 1
 
         # perform aggregation
         for field in rec:
@@ -874,6 +878,12 @@ field_dict = {
             },
         'hour' : {
             'title' : 'Hour',
+            'width' : 5,
+            'header_format' : 'header',
+            'format' : 'integer',
+            },
+        'hours' : {
+            'title' : 'Hours',
             'width' : 5,
             'header_format' : 'header',
             'format' : 'integer',
