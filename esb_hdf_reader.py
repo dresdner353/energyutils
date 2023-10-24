@@ -187,9 +187,9 @@ def process_esb_hdf_file(
     
         day_dict[day][ts] = usage_rec
     
-    # Check for full 24h and time salot coverage per day
+    # Check for full 24h coverage per day
     # purging incomplete days
-    purged_day_list = []
+    purged_day_dict = {}
     for day in list(day_dict.keys()):
         # get datetime of first item in dict
         # actual one we pick does not matter
@@ -208,7 +208,11 @@ def process_esb_hdf_file(
         # total
         if tracked_hours != expected_day_hours:
             del day_dict[day]
-            purged_day_list.append(day)
+
+            # track the purge context as tracked/expected string
+            # in dict
+            purge_context = '%d/%d' % (tracked_hours, expected_day_hours)
+            purged_day_dict[day] = purge_context
     
     # dump to files
     for day in day_dict:
@@ -223,12 +227,12 @@ def process_esb_hdf_file(
             for key in sorted(day_dict[day].keys()):
                 f.write(json.dumps(day_dict[day][key]) + '\n')
 
-    if len(purged_day_list) > 0:
+    if len(purged_day_dict) > 0:
         log_message(
                 1,
                 'Purged %d incompete days.. %s' % (
-                    len(purged_day_list),
-                    purged_day_list
+                    len(purged_day_dict),
+                    purged_day_dict
                     )
                 )
 
