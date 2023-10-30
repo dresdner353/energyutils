@@ -146,34 +146,46 @@ def get_day_data(
             partial_data = True
             continue
 
-        # contruct local usage rec
-        usage_rec = {}
-
         # epoch timestamp from shelly API local time 
         ts, ts_dt = parse_time(
                 shelly_rec['datetime'],
                 grid_resp_dict['timezone'])
 
-        data_dict[ts] = usage_rec
+        # pull existing rec from dict or create 
+        # new one. Most of the time its a new one we create
+        # But for DST roll-back (winter), we see a repeat of 
+        # data for the same hour
+        if ts in data_dict:
+            usage_rec = data_dict[ts]
+        else:
+            usage_rec = {}
+            usage_rec['import'] = 0
+            usage_rec['export'] = 0
+            usage_rec['solar'] = 0
+            usage_rec['ts'] = ts
+            usage_rec['datetime'] = ts_dt.strftime('%Y/%m/%d %H:%M:%S')
 
-        usage_rec['ts'] = ts
-        usage_rec['datetime'] = ts_dt.strftime('%Y/%m/%d %H:%M:%S')
-        usage_rec['import'] = shelly_rec['consumption'] / 1000
-        usage_rec['export'] = shelly_rec['reversed'] / 1000
+            # ts and aggregation keys
+            usage_rec['hour'] = ts_dt.hour
+            usage_rec['day'] = '%04d-%02d-%02d' % (
+                    ts_dt.year, 
+                    ts_dt.month, 
+                    ts_dt.day)
+            usage_rec['month'] = '%04d-%02d' % (
+                    ts_dt.year, 
+                    ts_dt.month) 
+            usage_rec['year'] = '%04d' %(
+                    ts_dt.year)
+            usage_rec['weekday'] = ts_dt.strftime('%u %a')
+            usage_rec['week'] = ts_dt.strftime('%Y-%W')
 
-        # aggregation keys
-        usage_rec['hour'] = ts_dt.hour
-        usage_rec['day'] = '%04d-%02d-%02d' % (
-                ts_dt.year, 
-                ts_dt.month, 
-                ts_dt.day)
-        usage_rec['month'] = '%04d-%02d' % (
-                ts_dt.year, 
-                ts_dt.month) 
-        usage_rec['year'] = '%04d' %(
-                ts_dt.year)
-        usage_rec['weekday'] = ts_dt.strftime('%u %a')
-        usage_rec['week'] = ts_dt.strftime('%Y-%W')
+            # store in dict
+            data_dict[ts] = usage_rec
+
+        # add on usage for given time period
+        # works with repeat hours in DST rollback
+        usage_rec['import'] += shelly_rec['consumption'] / 1000
+        usage_rec['export'] += shelly_rec['reversed'] / 1000
 
     # merge in solar production
     for shelly_rec in solar_resp_dict['history']:
@@ -189,8 +201,13 @@ def get_day_data(
                 shelly_rec['datetime'],
                 grid_resp_dict['timezone'])
 
+        # retrieve usage rec from dict and 
+        # add on solar generation
+        # works with repeat hours in DST rollback
         usage_rec = data_dict[ts]
-        usage_rec['solar'] = shelly_rec['consumption'] / 1000
+        usage_rec['solar'] += shelly_rec['consumption'] / 1000
+
+        # generate/re-generate the consumed fields
         usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
         usage_rec['consumed'] = usage_rec['import'] + usage_rec['solar_consumed']
 
@@ -269,9 +286,9 @@ device_id = args['id']
 auth_key = args['auth_key']
 gv_verbose = args['verbose']
 
-# JSON encoder force decimal places to 4
+# JSON encoder force decimal places to 5
 class RoundingFloat(float):
-    __repr__ = staticmethod(lambda x: format(x, '.4f'))
+    __repr__ = staticmethod(lambda x: format(x, '.5f'))
 
 json.encoder.c_make_encoder = None
 json.encoder.float = RoundingFloat
