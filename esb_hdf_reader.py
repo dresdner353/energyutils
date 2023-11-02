@@ -80,7 +80,8 @@ def get_hours_in_day(
 def process_esb_hdf_file(
         hdf_file,
         timezone,
-        odir):
+        odir,
+        partial_days):
 
     # ESB HDF Parse
     fields = [
@@ -205,8 +206,9 @@ def process_esb_hdf_file(
         tracked_hours = len(day_dict[day])
     
         # purge if the tracked hours do not match the expected
-        # total
-        if tracked_hours != expected_day_hours:
+        # total. The partial_days option over-rides this
+        if (not partial_days and 
+            tracked_hours != expected_day_hours):
             del day_dict[day]
 
             # track the purge context as tracked/expected string
@@ -262,6 +264,12 @@ parser.add_argument(
         )
 
 parser.add_argument(
+        '--partial_days', 
+        help = 'Include incomplete partial days (skipped by default)', 
+        action = 'store_true'
+        )
+
+parser.add_argument(
         '--verbose', 
         help = 'Enable verbose output', 
         action = 'store_true'
@@ -271,6 +279,7 @@ args = vars(parser.parse_args())
 hdf_file = args['file']
 odir = args['odir']
 timezone = args['timezone']
+partial_days = args['partial_days']
 verbose = args['verbose']
 
 # JSON encoder force decimal places to 4
@@ -283,4 +292,5 @@ json.encoder.float = RoundingFloat
 process_esb_hdf_file(
         hdf_file,
         timezone,
-        odir)
+        odir,
+        partial_days)
