@@ -67,7 +67,7 @@ python3 ${GEN_REPORT_SCRIPT} \
     --file esb_report.xlsx \
     --tariff_rate Day:0.4320 Night:0.2086 Boost:0.1225 \
     --tariff_interval 08-23:Day 23-08:Night 02-04:Boost \
-    --standing_rate 0.0453 \
+    --annual_standing_charge 396 \
     --fit_rate 0.21 
 
 That shell command invokes the report generator to generate an Excel file called esb_report.xlsx
@@ -88,9 +88,7 @@ For example:
 
 The above defines a Free tariff of 0. Then this tariff is applied only on Sunday between 9-5pm 
 
-Lastly, the --standing_rate value is the per-hour standing charge in Euro. So if you have an annual
-standing charge of 396 Euro. Then divide by 365 and again by 24 to get that to a value for a single 
-hour
+Lastly, the --annual_standing_charge value is yearly standing charge. 
 
 See:
 https://github.com/dresdner353/energyutils/blob/main/GEN_REPORT.md

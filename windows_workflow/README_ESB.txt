@@ -62,7 +62,7 @@ REM Example EV report
     --reports %REPORTS% ^
     --tariff_rate Day:0.4320 Night:0.2086 Boost:0.1225 ^
     --tariff_interval 08-23:Day 23-08:Night 02-04:Boost ^
-    --standing_rate 0.0453 ^
+    --annual_standing_charge 396 ^
     --fit_rate 0.21 
 
 
@@ -78,9 +78,11 @@ are the Boost tariff. You can also optionally prefix this with a day range 1-7 t
 for specific days. There is an example at the bottom of that file showing a plan that uses a free tariff
 between 9 and 5pm on Sundays.
 
-Lastly, the --standing_rate value is the per-hour standing charge in Euro. So if you have an annual
-standing charge of 396 Euro. Then divide by 365 and again by 24 to get that to a value for a single 
-hour
+Lastly, the --annual_standing_charge value is yearly standing charge. 
+
+See:
+https://github.com/dresdner353/energyutils/blob/main/GEN_REPORT.md
+for full documentation on the options available for this tool.
 
 The whole point of this is to allow you customise the pricing to match your desired plan. The cost calculations
 then shown will closely match the actual costs you would be incurring. The only gap these calculations would 

@@ -5,7 +5,7 @@ HDF_FILE='esb_hdf.csv'
 HDF_DATA='hdf_data'
 ESB_SCRIPT=../esb_hdf_reader.py
 GEN_REPORT_SCRIPT=../gen_report.py
-REPORTS=day week month year hour tariff 24h weekday
+REPORTS='day week month year hour tariff 24h weekday'
 
 mkdir -p "${HDF_DATA}"
 rm -f "${HDF_DATA}"/*
@@ -22,6 +22,6 @@ python3 ${GEN_REPORT_SCRIPT} \
     --reports ${REPORTS} \
     --tariff_rate Day:0.4320 Night:0.2086 Boost:0.1225 \
     --tariff_interval 08-23:Day 23-08:Night 02-04:Boost \
-    --standing_rate 0.0453 \
+    --annual_standing_charge 396 \
     --fit_rate 0.21 
 

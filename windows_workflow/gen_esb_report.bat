@@ -21,7 +21,7 @@ REM Example 24h report
     --reports %REPORTS% ^
     --tariff_rate 24h:0.4327 ^
     --tariff_interval 00-00:24h ^
-    --standing_rate 0.0346 ^
+    --annual_standing_charge 303 ^
     --fit_rate 0.21 
 
 
@@ -32,7 +32,7 @@ REM Example Smart report
     --reports %REPORTS% ^
     --tariff_rate Day:0.4310 Night:0.2265 Peak:0.4596 ^
     --tariff_interval 08-23:Day 23-08:Night 17-19:Peak ^
-    --standing_rate 0.0346 ^
+    --annual_standing_charge 303 ^
     --fit_rate 0.21 
 
 
@@ -43,7 +43,7 @@ REM Example EV report
     --reports %REPORTS% ^
     --tariff_rate Day:0.4320 Night:0.2086 Boost:0.1225 ^
     --tariff_interval 08-23:Day 23-08:Night 02-04:Boost ^
-    --standing_rate 0.0453 ^
+    --annual_standing_charge 396 ^
     --fit_rate 0.21 
 
 REM Another Smart Plan new rates
@@ -64,7 +64,7 @@ REM Example Complex plan with free days
     --reports %REPORTS% ^
     --tariff_rate Day:0.5094 Night:0.3743 Peak:0.6223 Free:0 ^
     --tariff_interval 08-23:Day 23-08:Night 17-19:Peak 7-7:09-17:Free ^
-    --standing_rate 0.0321 ^
+    --annual_standing_charge 281 ^
     --fit_rate 0.21 
 
 
