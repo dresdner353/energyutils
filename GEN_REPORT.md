@@ -5,12 +5,13 @@ The report generator script generates an Excel file from a directory of YYYY-MM-
 ## Usage
 ```
 usage: gen_report.py [-h] --file FILE --idir IDIR [--start START] [--end END]
-                     [--timezone TIMEZONE]
+                     [--timezone TIMEZONE] [--currency CURRENCY]
                      [--tariff_rate TARIFF_RATE [TARIFF_RATE ...]]
                      [--tariff_interval TARIFF_INTERVAL [TARIFF_INTERVAL ...]]
                      [--fit_rate FIT_RATE] [--standing_rate STANDING_RATE]
+                     [--annual_standing_charge ANNUAL_STANDING_CHARGE]
                      [--verbose]
-                     [--reports [ ... ]
+                     [--reports [{year,month,week,day,hour,tariff,weekday,24h} ...]]
 
 Energy Data Report Generator
 
@@ -29,12 +30,13 @@ optional arguments:
                         <[D-D:]HH-HH:Tariff Name> ...
   --fit_rate FIT_RATE   FIT Rate rate/kWh
   --standing_rate STANDING_RATE
-                        Standing Charge (cost per hour)
+                        Standing Rate (cost per hour)
   --annual_standing_charge ANNUAL_STANDING_CHARGE
                         Annual Standing Charge (cost per year)
   --verbose             Enable verbose output
-  --reports [{hour,day,week,month,year,weekday,24h,tariff} ...]
+  --reports [{year,month,week,day,hour,tariff,weekday,24h} ...]
                         Reports to generate
+
 ```
 Notes:
 * The script is run and pointed at a directory of input files (YYYY-MM-DD.jsonl)
