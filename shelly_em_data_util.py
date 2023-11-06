@@ -75,8 +75,8 @@ def get_day_data(
             dest_file_prefix) 
 
     # default behaviour is to report 
-    # as a standard download
-    download_context = 'Downloading'
+    # as a standard write
+    write_context = 'Writing'
 
     # Check if the target file exists
     if os.path.exists(dest_jsonl_file):
@@ -95,15 +95,7 @@ def get_day_data(
 
         # Present as an update of 
         # a peviously incomplete file
-        download_context = 'Updating'
-
-    log_message(
-            1,
-            '%s %s' % (
-                download_context,
-                dest_jsonl_file
-                )
-            )
+        write_context = 'Updating'
 
     # channel 0 (grid consumption and return)
     params['channel'] = 0
@@ -222,6 +214,13 @@ def get_day_data(
             data_dict[key]['partial'] = True
 
     # write JSONL File
+    log_message(
+            1,
+            '%s %s' % (
+                write_context,
+                dest_jsonl_file
+                )
+            )
     with open(dest_jsonl_file, 'w') as f:
         for key in sorted(data_dict.keys()):
             f.write(json.dumps(data_dict[key]) + '\n')
