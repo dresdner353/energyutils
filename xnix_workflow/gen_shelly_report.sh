@@ -28,6 +28,6 @@ python3 ${GEN_REPORT_SCRIPT} \
     --reports ${REPORTS} \
     --tariff_rate Day:0.4320 Night:0.2086 Boost:0.1225 \
     --tariff_interval 08-23:Day 23-08:Night 02-04:Boost \
-    --standing_rate 0.0453 \
+    --annual_standing_charge 396 \
     --fit_rate 0.21 
 
