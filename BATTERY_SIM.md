@@ -42,7 +42,7 @@ optional arguments:
   --discharge_rate DISCHARGE_RATE
                         Battery Discharge Rate (kWh/hour)
   --charge_loss_percent 0-100
-                        Charge Loss Percentage (1..100) def:15
+                        Charge Loss Percentage (1..100) def:10
   --discharge_bypass_interval DISCHARGE_BYPASS_INTERVAL
                         Time Interval for Discharge Bypass <HH-HH>
   --grid_shift_interval GRID_SHIFT_INTERVAL
