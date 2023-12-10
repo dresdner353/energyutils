@@ -893,7 +893,7 @@ def web_server():
     global gv_config_dict
 
     # engine config
-    prod = 0
+    prod = 1
     if prod:
         cherrypy.config.update(
                 {
