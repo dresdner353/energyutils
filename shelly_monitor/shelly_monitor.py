@@ -858,8 +858,19 @@ def web_server():
     cherrypy.server.socket_host = '0.0.0.0'
     cherrypy.server.socket_port = gv_config_dict['web']['port']
 
+    # /images (for favicon)
+    images_dir = '%s/images' % (
+            os.path.dirname(os.path.realpath(__file__))
+            )
+
     # / dashboard
-    dash_conf = {}
+    dash_conf = {
+            '/favicon.png':
+            {
+                'tools.staticfile.on': True,
+                'tools.staticfile.filename': '%s/favicon.png' % (images_dir)
+                }
+            }
     cherrypy.tree.mount(dash_handler(), '/', dash_conf)
 
     # /data dashboard
