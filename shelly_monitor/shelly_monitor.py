@@ -26,40 +26,59 @@ gv_config_file = '%s/config.json' % (
 # tracked device and API data
 gv_data_dict = {}
 gv_data_dict['last_updated'] = time.asctime()
-gv_data_dict['import'] = 0
-gv_data_dict['solar'] = 0
-gv_data_dict['solar_consumed'] = 0
-gv_data_dict['export'] = 0
-gv_data_dict['consumed'] = 0
 
+# day, month and year records
 gv_data_dict['day'] = []
 gv_data_dict['month'] = []
 gv_data_dict['year'] = []
 
-gv_data_dict['today_import'] = 0
-gv_data_dict['today_solar'] = 0
-gv_data_dict['today_solar_consumed'] = 0
-gv_data_dict['today_export'] = 0
+# metrics
+gv_data_dict['metrics'] = {}
+gv_data_dict['metrics']['live'] = {}
+gv_data_dict['metrics']['live']['import'] = 0
+gv_data_dict['metrics']['live']['solar'] = 0
+gv_data_dict['metrics']['live']['solar_consumed'] = 0
+gv_data_dict['metrics']['live']['export'] = 0
+gv_data_dict['metrics']['live']['consumed'] = 0
 
-gv_data_dict['yesterday_import'] = 0
-gv_data_dict['yesterday_solar'] = 0
-gv_data_dict['yesterday_solar_consumed'] = 0
-gv_data_dict['yesterday_export'] = 0
+gv_data_dict['metrics']['today'] = {}
+gv_data_dict['metrics']['today']['import'] = 0
+gv_data_dict['metrics']['today']['solar'] = 0
+gv_data_dict['metrics']['today']['solar_consumed'] = 0
+gv_data_dict['metrics']['today']['export'] = 0
+gv_data_dict['metrics']['today']['consumed'] = 0
 
-gv_data_dict['month_import'] = 0
-gv_data_dict['month_solar'] = 0
-gv_data_dict['month_solar_consumed'] = 0
-gv_data_dict['month_export'] = 0
+gv_data_dict['metrics']['yesterday'] = {}
+gv_data_dict['metrics']['yesterday']['import'] = 0
+gv_data_dict['metrics']['yesterday']['solar'] = 0
+gv_data_dict['metrics']['yesterday']['solar_consumed'] = 0
+gv_data_dict['metrics']['yesterday']['export'] = 0
+gv_data_dict['metrics']['yesterday']['consumed'] = 0
 
-gv_data_dict['last_month_import'] = 0
-gv_data_dict['last_month_solar'] = 0
-gv_data_dict['last_month_solar_consumed'] = 0
-gv_data_dict['last_month_export'] = 0
+gv_data_dict['metrics']['this_month'] = {}
+gv_data_dict['metrics']['this_month']['import'] = 0
+gv_data_dict['metrics']['this_month']['solar'] = 0
+gv_data_dict['metrics']['this_month']['solar_consumed'] = 0
+gv_data_dict['metrics']['this_month']['export'] = 0
+gv_data_dict['metrics']['this_month']['consumed'] = 0
 
-gv_data_dict['year_import'] = 0
-gv_data_dict['year_solar'] = 0
-gv_data_dict['year_solar_consumed'] = 0
-gv_data_dict['year_export'] = 0
+gv_data_dict['metrics']['last_month'] = {}
+gv_data_dict['metrics']['last_month']['import'] = 0
+gv_data_dict['metrics']['last_month']['solar'] = 0
+gv_data_dict['metrics']['last_month']['solar_consumed'] = 0
+gv_data_dict['metrics']['last_month']['export'] = 0
+gv_data_dict['metrics']['last_month']['consumed'] = 0
+
+gv_data_dict['metrics']['this_year'] = {}
+gv_data_dict['metrics']['this_year']['import'] = 0
+gv_data_dict['metrics']['this_year']['solar'] = 0
+gv_data_dict['metrics']['this_year']['solar_consumed'] = 0
+gv_data_dict['metrics']['this_year']['export'] = 0
+gv_data_dict['metrics']['this_year']['consumed'] = 0
+
+# dashboard config
+gv_data_dict['dashboard'] = {}
+gv_data_dict['dashboard']['donut_chart_source'] = 'live'
 
 def log_message(
         verbose,
@@ -100,6 +119,10 @@ def set_default_config():
     json_config['simulation']['fake_live_data'] = False
 
     # dashboard
+    json_config['dashboard'] = {}
+    json_config['dashboard']['donut_chart_source'] = 'live'
+
+    # shelly
     json_config['shelly'] = {}
     json_config['shelly']['api_host'] = ''
     json_config['shelly']['auth_key'] = ''
@@ -162,6 +185,8 @@ def config_agent():
                 gv_config_dict = json_config
                 last_check = config_last_modified
                 gv_verbose = gv_config_dict['logging']['verbose']
+
+                gv_data_dict['dashboard']['donut_chart_source'] = gv_config_dict['dashboard']['donut_chart_source']
 
         time.sleep(10)
 
@@ -421,6 +446,7 @@ def cloud_api_agent():
                             )
                         )
                 gv_data_dict['day'] = day_data
+                gv_data_dict['last_updated'] = time.asctime()
         
         if now >= month_ts:
             # last 30 days
@@ -457,20 +483,23 @@ def cloud_api_agent():
                             )
                         )
                 gv_data_dict['month'] = month_data
+                gv_data_dict['last_updated'] = time.asctime()
 
                 # take todays totals from last recorded day in month
                 today_rec = month_data[-1]
-                gv_data_dict['today_import'] = today_rec['import']
-                gv_data_dict['today_solar'] = today_rec['solar']
-                gv_data_dict['today_solar_consumed'] = today_rec['solar_consumed']
-                gv_data_dict['today_export'] = today_rec['export']
+                gv_data_dict['metrics']['today']['import'] = today_rec['import']
+                gv_data_dict['metrics']['today']['solar'] = today_rec['solar']
+                gv_data_dict['metrics']['today']['solar_consumed'] = today_rec['solar_consumed']
+                gv_data_dict['metrics']['today']['export'] = today_rec['export']
+                gv_data_dict['metrics']['today']['consumed'] = today_rec['import'] +  today_rec['solar_consumed']
 
                 if len(month_data) >= 2:
                     yesterday_rec = month_data[-2]
-                    gv_data_dict['yesterday_import'] = yesterday_rec['import']
-                    gv_data_dict['yesterday_solar'] = yesterday_rec['solar']
-                    gv_data_dict['yesterday_solar_consumed'] = yesterday_rec['solar_consumed']
-                    gv_data_dict['yesterday_export'] = yesterday_rec['export']
+                    gv_data_dict['metrics']['yesterday']['import'] = yesterday_rec['import']
+                    gv_data_dict['metrics']['yesterday']['solar'] = yesterday_rec['solar']
+                    gv_data_dict['metrics']['yesterday']['solar_consumed'] = yesterday_rec['solar_consumed']
+                    gv_data_dict['metrics']['yesterday']['export'] = yesterday_rec['export']
+                    gv_data_dict['metrics']['yesterday']['consumed'] = yesterday_rec['import'] + yesterday_rec['solar_consumed']
 
         if now >= year_ts:
             # last several months or so
@@ -505,39 +534,44 @@ def cloud_api_agent():
                             )
                         )
                 gv_data_dict['year'] = year_data
+                gv_data_dict['last_updated'] = time.asctime()
 
                 # take months totals from last recorded month in year
                 month_rec = year_data[-1]
-                gv_data_dict['month_import'] = month_rec['import']
-                gv_data_dict['month_solar'] = month_rec['solar']
-                gv_data_dict['month_solar_consumed'] = month_rec['solar_consumed']
-                gv_data_dict['month_export'] = month_rec['export']
+                gv_data_dict['metrics']['this_month']['import'] = month_rec['import']
+                gv_data_dict['metrics']['this_month']['solar'] = month_rec['solar']
+                gv_data_dict['metrics']['this_month']['solar_consumed'] = month_rec['solar_consumed']
+                gv_data_dict['metrics']['this_month']['export'] = month_rec['export']
+                gv_data_dict['metrics']['this_month']['consumed'] = month_rec['import'] + month_rec['solar_consumed']
 
                 if len(year_data) >= 2:
                     last_month_rec = year_data[-2]
-                    gv_data_dict['last_month_import'] = last_month_rec['import']
-                    gv_data_dict['last_month_solar'] = last_month_rec['solar']
-                    gv_data_dict['last_month_solar_consumed'] = last_month_rec['solar_consumed']
-                    gv_data_dict['last_month_export'] = last_month_rec['export']
+                    gv_data_dict['metrics']['last_month']['import'] = last_month_rec['import']
+                    gv_data_dict['metrics']['last_month']['solar'] = last_month_rec['solar']
+                    gv_data_dict['metrics']['last_month']['solar_consumed'] = last_month_rec['solar_consumed']
+                    gv_data_dict['metrics']['last_month']['export'] = last_month_rec['export']
+                    gv_data_dict['metrics']['last_month']['consumed'] = last_month_rec['import'] + last_month_rec['solar_consumed']
 
                 # this year
                 # add all month records for last referenced year
                 this_year = month_rec['year']
 
                 # reset
-                gv_data_dict['year_import'] = 0
-                gv_data_dict['year_solar'] = 0
-                gv_data_dict['year_solar_consumed'] = 0
-                gv_data_dict['year_export'] = 0
+                gv_data_dict['metrics']['this_year']['import'] = 0
+                gv_data_dict['metrics']['this_year']['solar'] = 0
+                gv_data_dict['metrics']['this_year']['solar_consumed'] = 0
+                gv_data_dict['metrics']['this_year']['export'] = 0
+                gv_data_dict['metrics']['this_year']['consumed'] = 0
 
                 for month_rec in year_data:
                     if month_rec['year'] != this_year:
                         continue
 
-                    gv_data_dict['year_import'] += month_rec['import']
-                    gv_data_dict['year_solar'] += month_rec['solar']
-                    gv_data_dict['year_solar_consumed'] += month_rec['solar_consumed']
-                    gv_data_dict['year_export'] += month_rec['export']
+                    gv_data_dict['metrics']['this_year']['import'] += month_rec['import']
+                    gv_data_dict['metrics']['this_year']['solar'] += month_rec['solar']
+                    gv_data_dict['metrics']['this_year']['solar_consumed'] += month_rec['solar_consumed']
+                    gv_data_dict['metrics']['this_year']['export'] += month_rec['export']
+                    gv_data_dict['metrics']['this_year']['consumed'] += month_rec['import'] + month_rec['solar_consumed']
 
 
     return
@@ -566,6 +600,13 @@ def device_api_agent():
             log_message(
                     1,
                     "Device Host is not configured.. skipping "
+                    )
+            continue
+
+        if  gv_data_dict['dashboard']['donut_chart_source'] != 'live':
+            log_message(
+                    1,
+                    "Dashboard not configured for live usage.. skipping "
                     )
             continue
 
@@ -614,27 +655,27 @@ def device_api_agent():
                 grid = random.randint(0, 4) + 0.555
 
         if grid >= 0:
-            gv_data_dict['import'] = grid
-            gv_data_dict['export'] = 0
+            gv_data_dict['metrics']['live']['import'] = grid
+            gv_data_dict['metrics']['live']['export'] = 0
         else:
-            gv_data_dict['import'] = 0
-            gv_data_dict['export'] = grid * -1
+            gv_data_dict['metrics']['live']['import'] = 0
+            gv_data_dict['metrics']['live']['export'] = grid * -1
 
         if solar >= 0.010:
-            gv_data_dict['solar'] = solar
+            gv_data_dict['metrics']['live']['solar'] = solar
         else:
-            gv_data_dict['solar'] = 0
+            gv_data_dict['metrics']['live']['solar'] = 0
 
-        gv_data_dict['solar_consumed'] = gv_data_dict['solar'] - gv_data_dict['export']
-        gv_data_dict['consumed'] = gv_data_dict['import'] + gv_data_dict['solar_consumed'] 
+        gv_data_dict['metrics']['live']['solar_consumed'] = gv_data_dict['metrics']['live']['solar'] - gv_data_dict['metrics']['live']['export']
+        gv_data_dict['metrics']['live']['consumed'] = gv_data_dict['metrics']['live']['import'] + gv_data_dict['metrics']['live']['solar_consumed'] 
 
         log_message(
                 1,
                 "Shelly Device: import:%f export:%f solar:%f consumed:%f" % (
-                    gv_data_dict['import'],
-                    gv_data_dict['export'],
-                    gv_data_dict['solar'],
-                    gv_data_dict['consumed'],
+                    gv_data_dict['metrics']['live']['import'],
+                    gv_data_dict['metrics']['live']['export'],
+                    gv_data_dict['metrics']['live']['solar'],
+                    gv_data_dict['metrics']['live']['consumed'],
                     )
                 )
         gv_data_dict['last_updated'] = time.asctime()
@@ -740,9 +781,12 @@ def build_admin_web_page():
             'checked' if gv_config_dict['logging']['verbose'] else '')
 
     admin_page_str = admin_page_str.replace(
-            '__fake_live_data__checked', 
-            'checked' if gv_config_dict['simulation']['fake_live_data'] else '')
+            '__donut_source_live_checked__', 
+            'checked' if gv_config_dict['dashboard']['donut_chart_source'] == 'live' else '')
 
+    admin_page_str = admin_page_str.replace(
+            '__fake_live_data_checked__', 
+            'checked' if gv_config_dict['simulation']['fake_live_data'] else '')
 
     return admin_page_str
 
@@ -760,6 +804,7 @@ class admin_handler(object):
             shelly_device_password = None,
             logging = None,
             verbose_logging = None,
+            donut_source_live = None,
             fake_live_data = None,
             ):
 
@@ -803,6 +848,11 @@ class admin_handler(object):
                 gv_config_dict['logging']['verbose'] = True
             else:
                 gv_config_dict['logging']['verbose'] = False
+
+            if donut_source_live:
+                gv_config_dict['dashboard']['donut_chart_source'] = 'live'
+            else:
+                gv_config_dict['dashboard']['donut_chart_source'] = 'inverter'
 
             if fake_live_data:
                 gv_config_dict['simulation']['fake_live_data'] = True

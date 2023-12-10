@@ -88,72 +88,86 @@
                 // reset error count
                 refresh_error_count = 0
 
-                // live values in kWh 
-                // to 3 idecimal places
-                $("#import").html(data_dict.import.toFixed(3));
-                if (data_dict.import > 0) {
+                // set live metrics source
+                // live or from today
+                if (data_dict.dashboard.donut_chart_source == "live") {
+                    metrics_source = data_dict.metrics.live;
+                    metrics_unit = ' kW';
+                    $("#donut_source").html("(Live)");
+                    $("#metric_table_today").show();
+                }
+                else {
+                    metrics_source = data_dict.metrics.today;
+                    metrics_unit = ' kWh';
+                    $("#donut_source").html("(Today)");
+                    $("#metric_table_today").hide();
+                }
+
+                // values to 3 idecimal places
+                $("#import").html(metrics_source.import.toFixed(3) + metrics_unit);
+                if (metrics_source.import > 0) {
                     $("#import").css("color", "#CC0000");
                 }
                 else {
                     $("#import").css("color", "#028A0F");
                 }
 
-                $("#solar").html(data_dict.solar.toFixed(3));
-                if (data_dict.solar > 0) {
+                $("#solar").html(metrics_source.solar.toFixed(3) + metrics_unit);
+                if (metrics_source.solar > 0) {
                     $("#solar").css("color", "#DDDD00");
                 }
                 else {
                     $("#solar").css("color", "white");
                 }
 
-                $("#export").html(data_dict.export.toFixed(3));
-                if (data_dict.export > 0) {
+                $("#export").html(metrics_source.export.toFixed(3) + metrics_unit);
+                if (metrics_source.export > 0) {
                     $("#export").css("color", "#0096FF");
                 }
                 else {
                     $("#export").css("color", "white");
                 }
 
-                $("#solar_consumed").html(data_dict.solar_consumed.toFixed(3));
-                if (data_dict.solar_consumed > 0) {
+                $("#solar_consumed").html(metrics_source.solar_consumed.toFixed(3) + metrics_unit);
+                if (metrics_source.solar_consumed > 0) {
                     $("#solar_consumed").css("color", "#028A0F");
                 }
                 else {
                     $("#solar_consumed").css("color", "white");
                 }
 
-                $("#consumed").html(data_dict.consumed.toFixed(3));
-                if (data_dict.import <= 0) {
+                $("#consumed").html(metrics_source.consumed.toFixed(3) + metrics_unit);
+                if (metrics_source.import <= 0) {
                     $("#consumed").css("color", "#028A0F");
                 }
                 else {
                     $("#consumed").css("color", "white");
                 }
 
-                $("#today_import").html(data_dict.today_import.toFixed(2));
-                $("#today_solar").html(data_dict.today_solar.toFixed(2));
-                $("#today_solar_consumed").html(data_dict.today_solar_consumed.toFixed(2));
-                $("#today_export").html(data_dict.today_export.toFixed(2));
+                $("#today_import").html(data_dict.metrics.today.import.toFixed(3));
+                $("#today_solar").html(data_dict.metrics.today.solar.toFixed(3));
+                $("#today_solar_consumed").html(data_dict.metrics.today.solar_consumed.toFixed(3));
+                $("#today_export").html(data_dict.metrics.today.export.toFixed(3));
 
-                $("#yesterday_import").html(data_dict.yesterday_import.toFixed(2));
-                $("#yesterday_solar").html(data_dict.yesterday_solar.toFixed(2));
-                $("#yesterday_solar_consumed").html(data_dict.yesterday_solar_consumed.toFixed(2));
-                $("#yesterday_export").html(data_dict.yesterday_export.toFixed(2));
+                $("#yesterday_import").html(data_dict.metrics.yesterday.import.toFixed(3));
+                $("#yesterday_solar").html(data_dict.metrics.yesterday.solar.toFixed(3));
+                $("#yesterday_solar_consumed").html(data_dict.metrics.yesterday.solar_consumed.toFixed(3));
+                $("#yesterday_export").html(data_dict.metrics.yesterday.export.toFixed(3));
 
-                $("#month_import").html(data_dict.month_import.toFixed(2));
-                $("#month_solar").html(data_dict.month_solar.toFixed(2));
-                $("#month_solar_consumed").html(data_dict.month_solar_consumed.toFixed(2));
-                $("#month_export").html(data_dict.month_export.toFixed(2));
+                $("#month_import").html(data_dict.metrics.this_month.import.toFixed(2));
+                $("#month_solar").html(data_dict.metrics.this_month.solar.toFixed(2));
+                $("#month_solar_consumed").html(data_dict.metrics.this_month.solar_consumed.toFixed(2));
+                $("#month_export").html(data_dict.metrics.this_month.export.toFixed(2));
 
-                $("#last_month_import").html(data_dict.last_month_import.toFixed(2));
-                $("#last_month_solar").html(data_dict.last_month_solar.toFixed(2));
-                $("#last_month_solar_consumed").html(data_dict.last_month_solar_consumed.toFixed(2));
-                $("#last_month_export").html(data_dict.last_month_export.toFixed(2));
+                $("#last_month_import").html(data_dict.metrics.last_month.import.toFixed(2));
+                $("#last_month_solar").html(data_dict.metrics.last_month.solar.toFixed(2));
+                $("#last_month_solar_consumed").html(data_dict.metrics.last_month.solar_consumed.toFixed(2));
+                $("#last_month_export").html(data_dict.metrics.last_month.export.toFixed(2));
 
-                $("#year_import").html(data_dict.year_import.toFixed(0));
-                $("#year_solar").html(data_dict.year_solar.toFixed(0));
-                $("#year_solar_consumed").html(data_dict.year_solar_consumed.toFixed(0));
-                $("#year_export").html(data_dict.year_export.toFixed(0));
+                $("#year_import").html(data_dict.metrics.this_year.import.toFixed(0));
+                $("#year_solar").html(data_dict.metrics.this_year.solar.toFixed(0));
+                $("#year_solar_consumed").html(data_dict.metrics.this_year.solar_consumed.toFixed(0));
+                $("#year_export").html(data_dict.metrics.this_year.export.toFixed(0));
 
                 $("#last_updated").html(data_dict.last_updated);
 
@@ -184,7 +198,7 @@
         }
 
         // chart globals to avoid memory growth
-        var live_chart;
+        var donut_chart;
         var day_chart;
         var month_chart;
         var year_chart;
@@ -192,24 +206,33 @@
         function draw_charts() {
 
             var chart_height = (window.innerHeight - 100) / 3;
-            var live_chart_height = window.innerHeight * 0.4
+            var donut_chart_height = window.innerHeight * 0.4
 
             // live power distribution 
 
-            if (live_chart == undefined) {
+            if (donut_chart == undefined) {
                 // first time creation
-                live_chart = new google.visualization.PieChart(document.getElementById('live_chart'));
+                donut_chart = new google.visualization.PieChart(document.getElementById('donut_chart'));
             }
             else {
                 // wipe existing data
-                live_chart.clearChart();
+                donut_chart.clearChart();
+            }
+
+            // set live metrics source
+            // live or from today
+            if (data_dict.dashboard.donut_chart_source == "live") {
+                metrics_source = data_dict.metrics.live;
+            }
+            else {
+                metrics_source = data_dict.metrics.today;
             }
 
             // power distribution values 
             // scaled to watts (does not work on > 1 values)
-            var grid_import = data_dict.import * 1000
-            var solar_consumed = data_dict.solar_consumed * 1000
-            var solar_export = data_dict.export * 1000
+            var grid_import = metrics_source.import * 1000
+            var solar_consumed = metrics_source.solar_consumed * 1000
+            var solar_export = metrics_source.export * 1000
 
             var live_data = google.visualization.arrayToDataTable([
                 ['Source', 'kWh'],
@@ -221,7 +244,7 @@
             var options = {
                 colors: ['#CC0000', '#028A0F','#0096FF'],
                 pieHole: 0.4,
-                height: live_chart_height,
+                height: donut_chart_height,
                 chartArea:{
                     top:10,
                     bottom:40,
@@ -244,7 +267,7 @@
                 backgroundColor: { fill:'transparent' },
             };
 
-            live_chart.draw(live_data, options);
+            donut_chart.draw(live_data, options);
 
             // day
             if (data_dict.day.length > 0) {
@@ -472,8 +495,8 @@
                             <!--
                             <span id="window_width"></span> x <span id="window_height"></span>
                             -->
-                            <h4 class="card-title">Production & Consumption</h4>
-                            <div id="live_chart"></div>
+                            <h4 class="card-title">Production & Consumption <span id="donut_source"></span></h4>
+                            <div id="donut_chart"></div>
                         </center>
                     </div>
                 </div>
@@ -486,7 +509,7 @@
                             <div class="card-transparent text-center mt-4">
                                 <div class="card-body">
                                     <h2 class="card-title">
-                                        <span id="import">0</span> kW
+                                        <span id="import">0</span>
                                     </h2>
                                     <h6 class="card-title">Grid Import</h6>
                                 </div>
@@ -501,7 +524,7 @@
                             <div class="card-transparent text-center mt-4">
                                 <div class="card-body">
                                     <h2 class="card-title">
-                                        <span id="solar">0</span> kW
+                                        <span id="solar">0</span>
                                     </h2>
                                     <h6 class="card-title">Solar Production</h6>
                                 </div>
@@ -512,7 +535,7 @@
                             <div class="card-transparent text-center mt-4">
                                 <div class="card-body">
                                     <h2 class="card-title">
-                                        <span id="solar_consumed">0</span> kW
+                                        <span id="solar_consumed">0</span>
                                     </h2>
                                     <h6 class="card-title">Solar Consumption</h6>
                                 </div>
@@ -523,7 +546,7 @@
                             <div class="card-transparent text-center mt-4">
                                 <div class="card-body">
                                     <h2 class="card-title">
-                                        <span id="consumed">0</span> kW
+                                        <span id="consumed">0</span>
                                     </h2>
                                     <h6 class="card-title">Total Consumption</h6>
                                 </div>
@@ -534,7 +557,7 @@
                             <div class="card-transparent text-center mt-4">
                                 <div class="card-body">
                                     <h2 class="card-title">
-                                        <span id="export">0</span> kW
+                                        <span id="export">0</span>
                                     </h2>
                                     <h6 class="card-title">Solar Export</h6>
                                 </div>
@@ -554,48 +577,48 @@
                         <table class="table table-dark table-striped mt-2">
                             <thead>
                                 <tr>
-                                    <th scope="col">Period</th>
-                                    <th scope="col">Import</th>
-                                    <th scope="col">Production</th>
-                                    <th scope="col">Consumption</th>
-                                    <th scope="col">Export</th>
+                                    <th scope="col" class="text-start">Period</th>
+                                    <th scope="col" class="text-end">Import</th>
+                                    <th scope="col" class="text-end">Production</th>
+                                    <th scope="col" class="text-end">Consumption</th>
+                                    <th scope="col" class="text-end">Export</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
+                                <tr id="metric_table_today">
                                     <td scope="row">Today</th>
-                                    <td id="today_import"></td>
-                                    <td id="today_solar"></td>
-                                    <td id="today_solar_consumed"></td>
-                                    <td id="today_export"></td>
+                                    <td id="today_import" align="right"></td>
+                                    <td id="today_solar" align="right"></td>
+                                    <td id="today_solar_consumed" align="right"></td>
+                                    <td id="today_export" align="right"></td>
                                 </tr>
                                 <tr>
                                     <td scope="row">Yesterday</th>
-                                    <td id="yesterday_import"></td>
-                                    <td id="yesterday_solar"></td>
-                                    <td id="yesterday_solar_consumed"></td>
-                                    <td id="yesterday_export"></td>
+                                    <td id="yesterday_import" align="right"></td>
+                                    <td id="yesterday_solar" align="right"></td>
+                                    <td id="yesterday_solar_consumed" align="right"></td>
+                                    <td id="yesterday_export" align="right"></td>
                                 </tr>
                                 <tr>
                                     <td scope="row">This Month</th>
-                                    <td id="month_import"></td>
-                                    <td id="month_solar"></td>
-                                    <td id="month_solar_consumed"></td>
-                                    <td id="month_export"></td>
+                                    <td id="month_import" align="right"></td>
+                                    <td id="month_solar" align="right"></td>
+                                    <td id="month_solar_consumed" align="right"></td>
+                                    <td id="month_export" align="right"></td>
                                 </tr>
                                 <tr>
                                     <td scope="row">Last Month</th>
-                                    <td id="last_month_import"></td>
-                                    <td id="last_month_solar"></td>
-                                    <td id="last_month_solar_consumed"></td>
-                                    <td id="last_month_export"></td>
+                                    <td id="last_month_import" align="right"></td>
+                                    <td id="last_month_solar" align="right"></td>
+                                    <td id="last_month_solar_consumed" align="right"></td>
+                                    <td id="last_month_export" align="right"></td>
                                 </tr>
                                 <tr>
                                     <td scope="row">This Year</th>
-                                    <td id="year_import"></td>
-                                    <td id="year_solar"></td>
-                                    <td id="year_solar_consumed"></td>
-                                    <td id="year_export"></td>
+                                    <td id="year_import" align="right"></td>
+                                    <td id="year_solar" align="right"></td>
+                                    <td id="year_solar_consumed" align="right"></td>
+                                    <td id="year_export" align="right"></td>
                                 </tr>
                             </tbody>
                         </table>
