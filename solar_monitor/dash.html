@@ -186,26 +186,10 @@
                 if (window.innerWidth < 1500 || window.innerHeight < 1080) {
                     $("#live_donut_chart").hide();
                     $("#today_donut_chart").hide();
-                    $("#live_spacer_col").hide();
-                    $("#live_consumed_col").hide();
-                    $('#live_metric_grid').removeClass("row-cols-3");
-                    $('#live_metric_grid').addClass("row-cols-2");
-                    $("#today_spacer_col").hide();
-                    $("#today_consumed_col").hide();
-                    $('#today_metric_grid').removeClass("row-cols-3");
-                    $('#today_metric_grid').addClass("row-cols-2");
                 }
                 else {
                     $("#live_donut_chart").show();
                     $("#today_donut_chart").show();
-                    $("#live_spacer_col").show();
-                    $("#live_consumed_col").show();
-                    $('#live_metric_grid').removeClass("row-cols-2");
-                    $('#live_metric_grid').addClass("row-cols-3");
-                    $("#today_spacer_col").show();
-                    $("#today_consumed_col").show();
-                    $('#today_metric_grid').removeClass("row-cols-2");
-                    $('#today_metric_grid').addClass("row-cols-3");
                 }
 
                 draw_charts();
@@ -533,29 +517,25 @@
 
                 <!-- live metric cards -->
                 <div class="container text-white text-center">
-                    <div id="live_metric_grid" class="row row-cols-3">
+                    <div id="live_metric_grid" class="row row-cols-2">
 
                         <div class="col">
                             <div class="card-transparent text-center mt-1">
                                 <div class="card-body">
-                                    <h2 class="card-title">
+                                    <h1 class="card-title">
                                         <span id="live_import">0</span>
-                                    </h2>
+                                    </h1>
                                     <h6 class="card-title">Grid Import</h6>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- spacer col -->
-                        <div class="col" id="live_spacer_col">
-                        </div>
-
                         <div class="col">
                             <div class="card-transparent text-center mt-1">
                                 <div class="card-body">
-                                    <h2 class="card-title">
+                                    <h1 class="card-title">
                                         <span id="live_solar">0</span>
-                                    </h2>
+                                    </h1>
                                     <h6 class="card-title">PV Yield</h6>
                                 </div>
                             </div>
@@ -564,21 +544,10 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-2">
                                 <div class="card-body">
-                                    <h2 class="card-title">
+                                    <h1 class="card-title">
                                         <span id="live_solar_consumed">0</span>
-                                    </h2>
+                                    </h1>
                                     <h6 class="card-title">PV Consumption</h6>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col" id="live_consumed_col">
-                            <div class="card-transparent text-center mt-2">
-                                <div class="card-body">
-                                    <h2 class="card-title">
-                                        <span id="live_consumed">0</span>
-                                    </h2>
-                                    <h6 class="card-title">Total Consumption</h6>
                                 </div>
                             </div>
                         </div>
@@ -586,9 +555,9 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-2">
                                 <div class="card-body">
-                                    <h2 class="card-title">
+                                    <h1 class="card-title">
                                         <span id="live_export">0</span>
-                                    </h2>
+                                    </h1>
                                     <h6 class="card-title">PV Export</h6>
                                 </div>
                             </div>
@@ -614,29 +583,25 @@
 
                 <!-- today metric cards -->
                 <div class="container text-white text-center">
-                    <div id="today_metric_grid" class="row row-cols-3">
+                    <div id="today_metric_grid" class="row row-cols-2">
 
                         <div class="col">
                             <div class="card-transparent text-center mt-1">
                                 <div class="card-body">
-                                    <h2 class="card-title">
+                                    <h1 class="card-title">
                                         <span id="today_import">0</span>
-                                    </h2>
+                                    </h1>
                                     <h6 class="card-title">Grid Import</h6>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- spacer col -->
-                        <div class="col" id="today_spacer_col">
-                        </div>
-
                         <div class="col">
                             <div class="card-transparent text-center mt-1">
                                 <div class="card-body">
-                                    <h2 class="card-title">
+                                    <h1 class="card-title">
                                         <span id="today_solar">0</span>
-                                    </h2>
+                                    </h1>
                                     <h6 class="card-title">PV Yield</h6>
                                 </div>
                             </div>
@@ -645,21 +610,10 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-2">
                                 <div class="card-body">
-                                    <h2 class="card-title">
+                                    <h1 class="card-title">
                                         <span id="today_solar_consumed">0</span>
-                                    </h2>
+                                    </h1>
                                     <h6 class="card-title">PV Consumption</h6>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col" id="today_consumed_col">
-                            <div class="card-transparent text-center mt-2">
-                                <div class="card-body">
-                                    <h2 class="card-title">
-                                        <span id="today_consumed">0</span>
-                                    </h2>
-                                    <h6 class="card-title">Total Consumption</h6>
                                 </div>
                             </div>
                         </div>
@@ -667,9 +621,9 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-2">
                                 <div class="card-body">
-                                    <h2 class="card-title">
+                                    <h1 class="card-title">
                                         <span id="today_export">0</span>
-                                    </h2>
+                                    </h1>
                                     <h6 class="card-title">PV Export</h6>
                                 </div>
                             </div>
