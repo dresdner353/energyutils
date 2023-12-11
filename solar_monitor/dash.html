@@ -184,6 +184,8 @@
                 $("#window_width").html(window.innerWidth);
                 $("#window_height").html(window.innerHeight);
                 if (window.innerWidth < 1500 || window.innerHeight < 1080) {
+                    $("#live_donut_chart").hide();
+                    $("#today_donut_chart").hide();
                     $("#live_spacer_col").hide();
                     $("#live_consumed_col").hide();
                     $('#live_metric_grid').removeClass("row-cols-3");
@@ -194,6 +196,8 @@
                     $('#today_metric_grid').addClass("row-cols-2");
                 }
                 else {
+                    $("#live_donut_chart").show();
+                    $("#today_donut_chart").show();
                     $("#live_spacer_col").show();
                     $("#live_consumed_col").show();
                     $('#live_metric_grid').removeClass("row-cols-2");
@@ -518,7 +522,7 @@
                 <div class="card-transparent text-white text-center">
                     <div class="card-body text-center">
                         <center>
-                            <!--
+                            <!-- debugging output for window height/width
                             <span id="window_width"></span> x <span id="window_height"></span>
                             -->
                             <h4 class="card-title">Power Distribution (Live)</h4>
@@ -532,7 +536,7 @@
                     <div id="live_metric_grid" class="row row-cols-3">
 
                         <div class="col">
-                            <div class="card-transparent text-center mt-0">
+                            <div class="card-transparent text-center mt-1">
                                 <div class="card-body">
                                     <h2 class="card-title">
                                         <span id="live_import">0</span>
@@ -547,7 +551,7 @@
                         </div>
 
                         <div class="col">
-                            <div class="card-transparent text-center mt-0">
+                            <div class="card-transparent text-center mt-1">
                                 <div class="card-body">
                                     <h2 class="card-title">
                                         <span id="live_solar">0</span>
@@ -613,7 +617,7 @@
                     <div id="today_metric_grid" class="row row-cols-3">
 
                         <div class="col">
-                            <div class="card-transparent text-center mt-0">
+                            <div class="card-transparent text-center mt-1">
                                 <div class="card-body">
                                     <h2 class="card-title">
                                         <span id="today_import">0</span>
@@ -628,7 +632,7 @@
                         </div>
 
                         <div class="col">
-                            <div class="card-transparent text-center mt-0">
+                            <div class="card-transparent text-center mt-1">
                                 <div class="card-body">
                                     <h2 class="card-title">
                                         <span id="today_solar">0</span>
