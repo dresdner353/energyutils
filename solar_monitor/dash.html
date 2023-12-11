@@ -90,11 +90,9 @@
 
                 live_source = data_dict.metrics.live;
                 today_source = data_dict.metrics.today;
-                live_metrics_unit = ' kW';
-                today_metrics_unit = ' kWh';
 
                 // live values to 3 decimal places
-                $("#live_import").html(live_source.import.toFixed(3) + live_metrics_unit);
+                $("#live_import").html(live_source.import.toFixed(3));
                 if (live_source.import > 0) {
                     $("#live_import").css("color", "#CC0000");
                 }
@@ -102,7 +100,7 @@
                     $("#live_import").css("color", "#028A0F");
                 }
 
-                $("#live_solar").html(live_source.solar.toFixed(3) + live_metrics_unit);
+                $("#live_solar").html(live_source.solar.toFixed(3));
                 if (live_source.solar > 0) {
                     $("#live_solar").css("color", "#DDDD00");
                 }
@@ -110,7 +108,7 @@
                     $("#live_solar").css("color", "white");
                 }
 
-                $("#live_export").html(live_source.export.toFixed(3) + live_metrics_unit);
+                $("#live_export").html(live_source.export.toFixed(3));
                 if (live_source.export > 0) {
                     $("#live_export").css("color", "#0096FF");
                 }
@@ -118,7 +116,7 @@
                     $("#live_export").css("color", "white");
                 }
 
-                $("#live_solar_consumed").html(live_source.solar_consumed.toFixed(3) + live_metrics_unit);
+                $("#live_solar_consumed").html(live_source.solar_consumed.toFixed(3));
                 if (live_source.solar_consumed > 0) {
                     $("#live_solar_consumed").css("color", "#028A0F");
                 }
@@ -126,7 +124,7 @@
                     $("#live_solar_consumed").css("color", "white");
                 }
 
-                $("#live_consumed").html(live_source.consumed.toFixed(3) + live_metrics_unit);
+                $("#live_consumed").html(live_source.consumed.toFixed(3));
                 if (live_source.import <= 0) {
                     $("#live_consumed").css("color", "#028A0F");
                 }
@@ -135,7 +133,7 @@
                 }
 
                 // today values to 3 decimal places
-                $("#today_import").html(today_source.import.toFixed(3) + today_metrics_unit);
+                $("#today_import").html(today_source.import.toFixed(3));
                 if (today_source.import > 0) {
                     $("#today_import").css("color", "#CC0000");
                 }
@@ -143,7 +141,7 @@
                     $("#today_import").css("color", "#028A0F");
                 }
 
-                $("#today_solar").html(today_source.solar.toFixed(3) + today_metrics_unit);
+                $("#today_solar").html(today_source.solar.toFixed(3));
                 if (today_source.solar > 0) {
                     $("#today_solar").css("color", "#DDDD00");
                 }
@@ -151,7 +149,7 @@
                     $("#today_solar").css("color", "white");
                 }
 
-                $("#today_export").html(today_source.export.toFixed(3) + today_metrics_unit);
+                $("#today_export").html(today_source.export.toFixed(3));
                 if (today_source.export > 0) {
                     $("#today_export").css("color", "#0096FF");
                 }
@@ -159,7 +157,7 @@
                     $("#today_export").css("color", "white");
                 }
 
-                $("#today_solar_consumed").html(today_source.solar_consumed.toFixed(3) + today_metrics_unit);
+                $("#today_solar_consumed").html(today_source.solar_consumed.toFixed(3));
                 if (today_source.solar_consumed > 0) {
                     $("#today_solar_consumed").css("color", "#028A0F");
                 }
@@ -167,7 +165,7 @@
                     $("#today_solar_consumed").css("color", "white");
                 }
 
-                $("#today_consumed").html(today_source.consumed.toFixed(3) + today_metrics_unit);
+                $("#today_consumed").html(today_source.consumed.toFixed(3));
                 if (today_source.import <= 0) {
                     $("#today_consumed").css("color", "#028A0F");
                 }
@@ -509,7 +507,7 @@
                             <!-- debugging output for window height/width
                             <span id="window_width"></span> x <span id="window_height"></span>
                             -->
-                            <h4 class="card-title">Power Distribution (Live)</h4>
+                            <h4 class="card-title">Live Power Distribution (kW)</h4>
                             <div id="live_donut_chart"></div>
                         </center>
                     </div>
@@ -575,7 +573,7 @@
                             <!--
                             <span id="window_width"></span> x <span id="window_height"></span>
                             -->
-                            <h4 class="card-title">Power Distribution (Today)</h4>
+                            <h4 class="card-title">Todays Power Distribution (kWh)</h4>
                             <div id="today_donut_chart"></div>
                         </center>
                     </div>
