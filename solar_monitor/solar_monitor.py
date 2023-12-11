@@ -76,9 +76,6 @@ gv_data_dict['metrics']['this_year']['solar_consumed'] = 0
 gv_data_dict['metrics']['this_year']['export'] = 0
 gv_data_dict['metrics']['this_year']['consumed'] = 0
 
-# dashboard config
-gv_data_dict['dashboard'] = {}
-gv_data_dict['dashboard']['donut_chart_source'] = 'live'
 
 def log_message(
         verbose,
@@ -117,10 +114,6 @@ def set_default_config():
     # simulation
     json_config['simulation'] = {}
     json_config['simulation']['fake_live_data'] = False
-
-    # dashboard
-    json_config['dashboard'] = {}
-    json_config['dashboard']['donut_chart_source'] = 'live'
 
     # shelly
     json_config['shelly'] = {}
@@ -185,8 +178,6 @@ def config_agent():
                 gv_config_dict = json_config
                 last_check = config_last_modified
                 gv_verbose = gv_config_dict['logging']['verbose']
-
-                gv_data_dict['dashboard']['donut_chart_source'] = gv_config_dict['dashboard']['donut_chart_source']
 
         time.sleep(10)
 
@@ -603,13 +594,6 @@ def device_api_agent():
                     )
             continue
 
-        if  gv_data_dict['dashboard']['donut_chart_source'] != 'live':
-            log_message(
-                    1,
-                    "Dashboard not configured for live usage.. skipping "
-                    )
-            continue
-
         try:
             log_message(
                     1,
@@ -781,10 +765,6 @@ def build_admin_web_page():
             'checked' if gv_config_dict['logging']['verbose'] else '')
 
     admin_page_str = admin_page_str.replace(
-            '__donut_source_live_checked__', 
-            'checked' if gv_config_dict['dashboard']['donut_chart_source'] == 'live' else '')
-
-    admin_page_str = admin_page_str.replace(
             '__fake_live_data_checked__', 
             'checked' if gv_config_dict['simulation']['fake_live_data'] else '')
 
@@ -848,11 +828,6 @@ class admin_handler(object):
                 gv_config_dict['logging']['verbose'] = True
             else:
                 gv_config_dict['logging']['verbose'] = False
-
-            if donut_source_live:
-                gv_config_dict['dashboard']['donut_chart_source'] = 'live'
-            else:
-                gv_config_dict['dashboard']['donut_chart_source'] = 'inverter'
 
             if fake_live_data:
                 gv_config_dict['simulation']['fake_live_data'] = True
