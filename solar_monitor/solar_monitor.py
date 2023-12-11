@@ -25,7 +25,7 @@ gv_config_file = '%s/config.json' % (
 
 # tracked device and API data
 gv_data_dict = {}
-gv_data_dict['last_updated'] = time.asctime()
+gv_data_dict['last_updated'] = ''
 
 # day, month and year records
 gv_data_dict['day'] = []
