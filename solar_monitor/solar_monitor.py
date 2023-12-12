@@ -386,8 +386,13 @@ def cloud_api_agent():
     year_ts = 0
     day_ts = 0
 
+    # initial sleep is 0 
+    # and will be 60s thereafter
+    sleep_interval = 0
+
     while True:
-        time.sleep(10)
+        time.sleep(sleep_interval)
+        sleep_interval = 60
 
         log_message(
                 1,
@@ -579,8 +584,13 @@ def device_api_agent():
             "Device API Agent started"
             )
 
+    # initial sleep is 0 
+    # and will be 5s thereafter
+    sleep_interval = 0
+
     while True:
-        time.sleep(10)
+        time.sleep(sleep_interval)
+        sleep_interval = 5
 
         device_url = 'http://%s/status' % (gv_config_dict['shelly']['device_host'])
         basic =  requests.auth.HTTPBasicAuth(
@@ -684,9 +694,6 @@ def build_dash_web_page(refresh_interval = 5000):
     dash_file = open(dash_filename, "r")
     dash_page_str = dash_file.read()
     dash_file.close()
-
-    dash_page_str = dash_page_str.replace('__TITLE__', 'Solar Monitor')
-    dash_page_str = dash_page_str.replace('__RELOAD__', '10000')
 
     return dash_page_str
 

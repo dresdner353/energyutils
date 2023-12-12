@@ -44,7 +44,7 @@
            font-size: 2vw;
        }
     </style>
-    <title>__TITLE__</title>
+    <title>Solar Monitor</title>
 
     <script>
 
@@ -68,7 +68,7 @@
         // standard refresh timer 
         // normal refresh timer when window is
         // in focus
-        var standard_refresh_timer = setInterval(refresh_data, __RELOAD__);
+        var standard_refresh_timer = setInterval(refresh_data, 5000);
 
         // hide dashboard initially
         $( document ).ready(function() {
@@ -81,7 +81,7 @@
         $(window).focus(function() {
             clearInterval(standard_refresh_timer);
             refresh_data();
-            standard_refresh_timer = setInterval(refresh_data, __RELOAD__);
+            standard_refresh_timer = setInterval(refresh_data, 5000);
         }).blur(function() {
             clearInterval(standard_refresh_timer);
         });
