@@ -13,23 +13,23 @@
             background-color: #202332; 
         }
         .metric-value-white{
-            font-size: 3vw;
+            font-size: 2.5vw;
             color: white;
         }
         .metric-value-yellow{
-            font-size: 3vw;
+            font-size: 2.5vw;
             color: #DDDD00;
         }
         .metric-value-red{
-            font-size: 3vw;
+            font-size: 2.5vw;
             color: #CC0000;
         }
         .metric-value-green{
-            font-size: 3vw;
+            font-size: 2.5vw;
             color: 028A0F;
         }
         .metric-value-blue{
-            font-size: 3vw;
+            font-size: 2.5vw;
             color: #0096FF;
         }
         .metric-unit{
@@ -222,7 +222,7 @@
 
         function draw_charts() {
 
-            var chart_height = (window.innerHeight - 120) / 3;
+            var chart_height = (window.innerHeight - 130) / 3;
             var donut_chart_height = chart_height;
 
             // live power distribution 
@@ -239,13 +239,13 @@
             }
 
             // donut options (shared)
-            var options = {
+            var donut_options = {
                 colors: ['#CC0000', '#028A0F','#0096FF'],
                 pieHole: 0.4,
                 height: donut_chart_height,
                 chartArea:{
                     top:10,
-                    bottom:40,
+                    bottom:30,
                     left:0,
                     right:0,
                 },
@@ -297,8 +297,48 @@
             ]);
 
             // draw
-            live_donut_chart.draw(live_data, options);
-            today_donut_chart.draw(today_data, options);
+            live_donut_chart.draw(live_data, donut_options);
+            today_donut_chart.draw(today_data, donut_options);
+
+            var bar_chart_options = {
+                colors: ['#CC0000', '#DDDD00','#028A0F','#0096FF'],
+                hAxis: {
+                    title: 'Hour',
+                    titleTextStyle: {
+                        color: 'gray'
+                    },
+                    textStyle: {
+                        color: 'gray'
+                    },
+                },
+                vAxis: {
+                    title: 'kwH',
+                    titleTextStyle: {
+                        color: 'gray'
+                    },
+                    textStyle: {
+                        color: 'gray'
+                    },
+                },
+                chartArea:{
+                    top:30,
+                    left:60,
+                    right:20,
+                },
+                isStacked: true,
+                height: chart_height,
+                legend: { 
+                    position: 'top', 
+                    textStyle: {
+                        color: 'gray'
+                    },
+                },
+                titleTextStyle: {
+                    fontSize: 18,
+                    color: '#FFFFFF'
+                },
+                backgroundColor: { fill:'transparent' },
+            };
 
             // day
             if (data_dict.day.length > 0) {
@@ -326,47 +366,7 @@
                     ]);
                 }
 
-                var options = {
-                    colors: ['#CC0000', '#DDDD00','#028A0F','#0096FF'],
-                    hAxis: {
-                        title: 'Hour',
-                        titleTextStyle: {
-                            color: 'gray'
-                        },
-                        textStyle: {
-                            color: 'gray'
-                        },
-                    },
-                    vAxis: {
-                        title: 'kwH',
-                        titleTextStyle: {
-                            color: 'gray'
-                        },
-                        textStyle: {
-                            color: 'gray'
-                        },
-                    },
-                    chartArea:{
-                        top:30,
-                        left:60,
-                        right:20,
-                    },
-                    isStacked: true,
-                    height: chart_height,
-                    legend: { 
-                        position: 'top', 
-                        textStyle: {
-                            color: 'gray'
-                        },
-                    },
-                    titleTextStyle: {
-                        fontSize: 18,
-                        color: '#FFFFFF'
-                    },
-                    backgroundColor: { fill:'transparent' },
-                };
-
-                day_chart.draw(day_data, options);
+                day_chart.draw(day_data, bar_chart_options);
             }
 
             // month 
@@ -395,47 +395,7 @@
                     ]);
                 }
 
-                var options = {
-                    colors: ['#CC0000', '#DDDD00','#028A0F','#0096FF'],
-                    hAxis: {
-                        title: 'Day',
-                        titleTextStyle: {
-                            color: 'gray'
-                        },
-                        textStyle: {
-                            color: 'gray'
-                        },
-                    },
-                    vAxis: {
-                        title: 'kwH',
-                        titleTextStyle: {
-                            color: 'gray'
-                        },
-                        textStyle: {
-                            color: 'gray'
-                        },
-                    },
-                    chartArea:{
-                        top:30,
-                        left:60,
-                        right:20,
-                    },
-                    isStacked: true,
-                    height:chart_height,
-                    legend: { 
-                        position: 'top', 
-                        textStyle: {
-                            color: 'gray'
-                        },
-                    },
-                    titleTextStyle: {
-                        fontSize: 18,
-                        color: '#FFFFFF'
-                    },
-                    backgroundColor: { fill:'transparent' },
-                };
-
-                month_chart.draw(month_data, options);
+                month_chart.draw(month_data, bar_chart_options);
             }
 
             // year
@@ -464,47 +424,7 @@
                     ]);
                 }
 
-                var options = {
-                    colors: ['#CC0000', '#DDDD00','#028A0F','#0096FF'],
-                    hAxis: {
-                        title: 'Month',
-                        titleTextStyle: {
-                            color: 'gray'
-                        },
-                        textStyle: {
-                            color: 'gray'
-                        },
-                    },
-                    vAxis: {
-                        title: 'kwH',
-                        titleTextStyle: {
-                            color: 'gray'
-                        },
-                        textStyle: {
-                            color: 'gray'
-                        },
-                    },
-                    chartArea:{
-                        top:30,
-                        left:60,
-                        right:20,
-                    },
-                    isStacked: true,
-                    height:chart_height,
-                    legend: { 
-                        position: 'top', 
-                        textStyle: {
-                            color: 'gray'
-                        },
-                    },
-                    titleTextStyle: {
-                        fontSize: 18,
-                        color: '#FFFFFF'
-                    },
-                    backgroundColor: { fill:'transparent' },
-                };
-
-                year_chart.draw(year_data, options);
+                year_chart.draw(year_data, bar_chart_options);
             }
         }
 
@@ -635,6 +555,15 @@
                 </div>
                 <!-- today metric cards -->
 
+                <!-- last updated footer -->
+                <div class="row">
+                    <div class="col">
+                        <h6 class="card-title mt-2" style="color:white;">
+                            Updated: <span id="last_updated"></span>
+                        </h6>
+                    </div>
+                </div>
+
             </div>
             <!-- end Left column for live usage and metrics -->
 
@@ -661,14 +590,6 @@
                     </div>
                 </div>
 
-                <!-- last updated footer -->
-                <div class="row">
-                    <div class="col-12">
-                        <h6 class="card-title mt-0" style="color:white;">
-                            Updated: <span id="last_updated"></span>
-                        </h6>
-                    </div>
-                </div>
 
             </div>
             <!-- Right column for day, month and year graphs -->
