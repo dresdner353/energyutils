@@ -12,27 +12,24 @@
             height: 200px;
             background-color: #202332; 
         }
-        .table-striped{
-            font-size: 20px;
-        }
         .metric-value-white{
-            font-size: 40pt;
+            font-size: 3vw;
             color: white;
         }
         .metric-value-yellow{
-            font-size: 40pt;
+            font-size: 3vw;
             color: #DDDD00;
         }
         .metric-value-red{
-            font-size: 40pt;
+            font-size: 3vw;
             color: #CC0000;
         }
         .metric-value-green{
-            font-size: 40pt;
+            font-size: 3vw;
             color: 028A0F;
         }
         .metric-value-blue{
-            font-size: 40pt;
+            font-size: 3vw;
             color: #0096FF;
         }
         .metric-unit{
@@ -44,7 +41,7 @@
             pointer-events: none 
         }
        .material-icons.metric { 
-           font-size: 40px;
+           font-size: 2vw;
        }
     </style>
     <title>__TITLE__</title>
@@ -556,7 +553,7 @@
                     <div id="live_metric_grid" class="row row-cols-2">
 
                         <div class="col">
-                            <div class="card-transparent text-center mt-1">
+                            <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
                                     <span class="material-icons metric">login</span>
                                     <span id="live_import" style="metric-value-white">0</span><span style="metric-unit"> kW</span>
@@ -565,7 +562,7 @@
                         </div>
 
                         <div class="col">
-                            <div class="card-transparent text-center mt-1">
+                            <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
                                     <span class="material-icons metric">solar_power</span>
                                     <span id="live_solar" style="metric-value-white">0</span><span style="metric-unit"> kW</span>
@@ -574,7 +571,7 @@
                         </div>
 
                         <div class="col">
-                            <div class="card-transparent text-center mt-2">
+                            <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
                                     <span class="material-icons metric">electrical_services</span>
                                     <span id="live_solar_consumed" style="metric-value-white">0</span><span style="metric-unit"> kW</span>
@@ -583,7 +580,7 @@
                         </div>
 
                         <div class="col">
-                            <div class="card-transparent text-center mt-2">
+                            <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
                                     <span class="material-icons metric">logout</span>
                                     <span id="live_export" style="metric-value-white">0</span><span style="metric-unit"> kW</span>
@@ -614,7 +611,7 @@
                     <div id="today_metric_grid" class="row row-cols-2">
 
                         <div class="col">
-                            <div class="card-transparent text-center mt-1">
+                            <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
                                     <span class="material-icons metric">login</span>
                                     <span id="today_import" style="metric-value-white">0</span><span style="metric-unit"> kWh</span>
@@ -623,7 +620,7 @@
                         </div>
 
                         <div class="col">
-                            <div class="card-transparent text-center mt-1">
+                            <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
                                     <span class="material-icons metric">solar_power</span>
                                     <span id="today_solar" style="metric-value-white">0</span><span style="metric-unit"> kWh</span>
@@ -632,7 +629,7 @@
                         </div>
 
                         <div class="col">
-                            <div class="card-transparent text-center mt-2">
+                            <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
                                     <span class="material-icons metric">electrical_services</span>
                                     <span id="today_solar_consumed" style="metric-value-white">0</span><span style="metric-unit"> kWh</span>
@@ -641,7 +638,7 @@
                         </div>
 
                         <div class="col">
-                            <div class="card-transparent text-center mt-2">
+                            <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
                                     <span class="material-icons metric">logout</span>
                                     <span id="today_export" style="metric-value-white">0</span><span style="metric-unit"> kWh</span>
@@ -680,20 +677,18 @@
                     </div>
                 </div>
 
+                <!-- last updated footer -->
+                <div class="row">
+                    <div class="col-12">
+                        <h6 class="card-title mt-0" style="color:white;">
+                            Updated: <span id="last_updated"></span>
+                        </h6>
+                    </div>
+                </div>
+
             </div>
             <!-- Right column for day, month and year graphs -->
 
         </div>
-        <div class="row mt-0">
-            <!-- last updated footer -->
-            <div class="row">
-                <div class="col-12">
-                    <h6 class="card-title mt-0" style="color:white;">
-                        Updated: <span id="last_updated"></span>
-                    </h6>
-                </div>
-            </div>
-        </div>
-
     </div>
 </body>
