@@ -15,54 +15,135 @@
         <div id="dashboard" class="container-fluid">
             <h2>Solar Monitor Settings</h2>
             <div class="row">
-                <div class="col-6">
+                <div class="col-7">
 
-                    <div class="form-floating mb-3">
-                        <input value="__shelly_api_host__" class="form-control" id="shelly_api_host" name="shelly_api_host" placeholder="shelly-XX-eu.shelly.cloud">
-                        <label for="shelly_api_host">Shelly Cloud API Hostname</label>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Shelly Config</h5>
+
+                            <div class="form-floating mb-3">
+                                <input value="__shelly_auth_key__" class="form-control" id="shelly_auth_key" name="shelly_auth_key" placeholder="XXXXXXXX">
+                                <label for="shelly_auth_key">Shelly Cloud Authentication Key</label>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-floating mb-3">
+                                        <input value="__shelly_api_host__" class="form-control" id="shelly_api_host" name="shelly_api_host" placeholder="shelly-XX-eu.shelly.cloud">
+                                        <label for="shelly_api_host">Shelly Cloud API Hostname</label>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input value="__shelly_device_id__" class="form-control" id="shelly_device_id" name="shelly_device_id" placeholder="xxxxxxxx">
+                                        <label for="shelly_device_id">Shelly EM Device ID</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-floating mb-3">
+                                        <input value="__shelly_device_host__" class="form-control" id="shelly_device_host" name="shelly_device_host" placeholder="shellyem-xxxxxxxxxx.local">
+                                        <label for="shelly_device_id">Shelly EM Device Hostname/IP</label>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input value="__shelly_device_username__" class="form-control" id="shelly_device_username" name="shelly_device_username" placeholder="username">
+                                        <label for="shelly_device_username">Shelly EM Device Username</label>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input value="__shelly_device_password__" type="password" class="form-control" id="shelly_device_password" name="shelly_device_password" placeholder="password">
+                                        <label for="shelly_device_password">Shelly EM Device Password</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Donut Chart Series</h5>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="donut_import" name="donut_import" __donut_import_checked__>
+                                        <label class="form-check-label" for="donut_import">Grid Import</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="donut_consumed" name="donut_consumed" __donut_consumed_checked__>
+                                        <label class="form-check-label" for="donut_consumed">Total Consumption</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="donut_solar" name="donut_solar" __donut_solar_checked__>
+                                        <label class="form-check-label" for="donut_solar">PV Yield</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="donut_solar_consumed" name="donut_solar_consumed" __donut_solar_consumed_checked__>
+                                        <label class="form-check-label" for="donut_solar_consumed">PV Consumption</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="donut_export" name="donut_export" __donut_export_checked__>
+                                        <label class="form-check-label" for="donut_export">PV Export</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Bar Chart Series</h5>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="bar_chart_import" name="bar_chart_import" __bar_chart_import_checked__>
+                                        <label class="form-check-label" for="bar_chart_import">Grid Import</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="bar_chart_consumed" name="bar_chart_consumed" __bar_chart_consumed_checked__>
+                                        <label class="form-check-label" for="bar_chart_consumed">Total Consumption</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="bar_chart_solar" name="bar_chart_solar" __bar_chart_solar_checked__>
+                                        <label class="form-check-label" for="bar_chart_solar">PV Yield</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="bar_chart_solar_consumed" name="bar_chart_solar_consumed" __bar_chart_solar_consumed_checked__>
+                                        <label class="form-check-label" for="bar_chart_solar_consumed">PV Consumption</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="bar_chart_export" name="bar_chart_export" __bar_chart_export_checked__>
+                                        <label class="form-check-label" for="bar_chart_export">PV Export</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Misc</h5>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="logging" name="logging" __logging_checked__>
+                                        <label class="form-check-label" for="logging">Enable Logging</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="verbose_logging" name="verbose_logging"__verbose_logging_checked__>
+                                        <label class="form-check-label" for="verbose_logging">Verbose Logging</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="fake_live_data" name="fake_live_data" __fake_live_data_checked__>
+                                        <label class="form-check-label" for="fake_live_data">Simulate Live Solar Data</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-floating mb-3">
-                        <input value="__shelly_auth_key__" class="form-control" id="shelly_auth_key" name="shelly_auth_key" placeholder="XXXXXXXX">
-                        <label for="shelly_auth_key">Shelly Cloud Authentication Key</label>
-                    </div>
-
-                    <div class="form-floating mb-3">
-                        <input value="__shelly_device_id__" class="form-control" id="shelly_device_id" name="shelly_device_id" placeholder="xxxxxxxx">
-                        <label for="shelly_device_id">Shelly EM Device ID</label>
-                    </div>
-
-                    <div class="form-floating mb-3">
-                        <input value="__shelly_device_host__" class="form-control" id="shelly_device_host" name="shelly_device_host" placeholder="shellyem-xxxxxxxxxx.local">
-                        <label for="shelly_device_id">Shelly EM Device Hostname/IP</label>
-                    </div>
-
-                    <div class="form-floating mb-3">
-                        <input value="__shelly_device_username__" class="form-control" id="shelly_device_username" name="shelly_device_username" placeholder="username">
-                        <label for="shelly_device_username">Shelly EM Device Username</label>
-                    </div>
-
-                    <div class="form-floating mb-3">
-                        <input value="__shelly_device_password__" type="password" class="form-control" id="shelly_device_password" name="shelly_device_password" placeholder="password">
-                        <label for="shelly_device_password">Shelly EM Device Password</label>
-                    </div>
-
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" role="switch" id="logging" name="logging" __logging_checked__>
-                        <label class="form-check-label" for="logging">Enable Logging</label>
-                    </div>
-
-                    <div class="form-check form-switch form-switch-lg mb-3">
-                        <input class="form-check-input" type="checkbox" role="switch" id="verbose_logging" name="verbose_logging"__verbose_logging_checked__>
-                        <label class="form-check-label" for="verbose_logging">Verbose Logging</label>
-                    </div>
-
-                    <div class="form-check form-switch form-switch-lg mb-3">
-                        <input class="form-check-input" type="checkbox" role="switch" id="fake_live_data" name="fake_live_data" __fake_live_data_checked__>
-                        <label class="form-check-label" for="fake_live_data">Simulate Fake Solar Data</label>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary" id="apply_button">Apply</button>
+                    <button type="submit" class="btn btn-primary mt-4" id="apply_button">Apply</button>
                 </div>
             </div>
         </div>

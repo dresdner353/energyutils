@@ -32,6 +32,9 @@ gv_data_dict['day'] = []
 gv_data_dict['month'] = []
 gv_data_dict['year'] = []
 
+# dashboard directives to web page
+gv_data_dict['dashboard'] = {}
+
 # metrics
 gv_data_dict['metrics'] = {}
 gv_data_dict['metrics']['live'] = {}
@@ -124,6 +127,23 @@ def set_default_config():
     json_config['shelly']['device_username'] = 'none'
     json_config['shelly']['device_password'] = 'none'
 
+    # dashboard
+    json_config['dashboard'] = {}
+
+    json_config['dashboard']['donut'] = {}
+    json_config['dashboard']['donut']['consumed'] = False
+    json_config['dashboard']['donut']['export'] = True
+    json_config['dashboard']['donut']['import'] = True
+    json_config['dashboard']['donut']['solar'] = False
+    json_config['dashboard']['donut']['solar_consumed'] = True
+
+    json_config['dashboard']['bar_chart'] = {}
+    json_config['dashboard']['bar_chart']['consumed'] = False
+    json_config['dashboard']['bar_chart']['export'] = True
+    json_config['dashboard']['bar_chart']['import'] = True
+    json_config['dashboard']['bar_chart']['solar'] = True
+    json_config['dashboard']['bar_chart']['solar_consumed'] = True
+
     return json_config
 
 
@@ -178,6 +198,7 @@ def config_agent():
                 gv_config_dict = json_config
                 last_check = config_last_modified
                 gv_verbose = gv_config_dict['logging']['verbose']
+                gv_data_dict['dashboard'] = gv_config_dict['dashboard']
 
         time.sleep(10)
 
@@ -764,6 +785,46 @@ def build_admin_web_page():
             gv_config_dict['shelly']['device_password'])
 
     admin_page_str = admin_page_str.replace(
+            '__donut_import_checked__', 
+            'checked' if gv_config_dict['dashboard']['donut']['import'] else '')
+
+    admin_page_str = admin_page_str.replace(
+            '__donut_consumed_checked__', 
+            'checked' if gv_config_dict['dashboard']['donut']['consumed'] else '')
+
+    admin_page_str = admin_page_str.replace(
+            '__donut_solar_checked__', 
+            'checked' if gv_config_dict['dashboard']['donut']['solar'] else '')
+
+    admin_page_str = admin_page_str.replace(
+            '__donut_solar_consumed_checked__', 
+            'checked' if gv_config_dict['dashboard']['donut']['solar_consumed'] else '')
+
+    admin_page_str = admin_page_str.replace(
+            '__donut_export_checked__', 
+            'checked' if gv_config_dict['dashboard']['donut']['export'] else '')
+
+    admin_page_str = admin_page_str.replace(
+            '__bar_chart_import_checked__', 
+            'checked' if gv_config_dict['dashboard']['bar_chart']['import'] else '')
+
+    admin_page_str = admin_page_str.replace(
+            '__bar_chart_consumed_checked__', 
+            'checked' if gv_config_dict['dashboard']['bar_chart']['consumed'] else '')
+
+    admin_page_str = admin_page_str.replace(
+            '__bar_chart_solar_checked__', 
+            'checked' if gv_config_dict['dashboard']['bar_chart']['solar'] else '')
+
+    admin_page_str = admin_page_str.replace(
+            '__bar_chart_solar_consumed_checked__', 
+            'checked' if gv_config_dict['dashboard']['bar_chart']['solar_consumed'] else '')
+
+    admin_page_str = admin_page_str.replace(
+            '__bar_chart_export_checked__', 
+            'checked' if gv_config_dict['dashboard']['bar_chart']['export'] else '')
+
+    admin_page_str = admin_page_str.replace(
             '__logging_checked__', 
             'checked' if gv_config_dict['logging']['enabled'] else '')
 
@@ -789,9 +850,18 @@ class admin_handler(object):
             shelly_device_host = None,
             shelly_device_username = None,
             shelly_device_password = None,
+            donut_import = None,
+            donut_consumed = None,
+            donut_solar = None,
+            donut_solar_consumed = None,
+            donut_export = None,
+            bar_chart_import = None,
+            bar_chart_consumed = None,
+            bar_chart_solar = None,
+            bar_chart_solar_consumed = None,
+            bar_chart_export = None,
             logging = None,
             verbose_logging = None,
-            donut_source_live = None,
             fake_live_data = None,
             ):
 
@@ -826,20 +896,24 @@ class admin_handler(object):
             if shelly_device_password:
                 gv_config_dict['shelly']['device_password'] = shelly_device_password
 
-            if logging:
-                gv_config_dict['logging']['enabled'] = True
-            else:
-                gv_config_dict['logging']['enabled'] = False
+            # donut chart
+            gv_config_dict['dashboard']['donut']['import'] = True if donut_import else False
+            gv_config_dict['dashboard']['donut']['consumed'] = True if donut_consumed else False
+            gv_config_dict['dashboard']['donut']['solar'] = True if donut_solar else False
+            gv_config_dict['dashboard']['donut']['solar_consumed'] = True if donut_solar_consumed else False
+            gv_config_dict['dashboard']['donut']['export'] = True if donut_export else False
 
-            if verbose_logging:
-                gv_config_dict['logging']['verbose'] = True
-            else:
-                gv_config_dict['logging']['verbose'] = False
+            # bar chart
+            gv_config_dict['dashboard']['bar_chart']['import'] = True if bar_chart_import else False
+            gv_config_dict['dashboard']['bar_chart']['consumed'] = True if bar_chart_consumed else False
+            gv_config_dict['dashboard']['bar_chart']['solar'] = True if bar_chart_solar else False
+            gv_config_dict['dashboard']['bar_chart']['solar_consumed'] = True if bar_chart_solar_consumed else False
+            gv_config_dict['dashboard']['bar_chart']['export'] = True if bar_chart_export else False
 
-            if fake_live_data:
-                gv_config_dict['simulation']['fake_live_data'] = True
-            else:
-                gv_config_dict['simulation']['fake_live_data'] = False
+            # logging and faking
+            gv_config_dict['logging']['enabled'] = True if logging else False
+            gv_config_dict['logging']['verbose'] = True if verbose_logging else False
+            gv_config_dict['simulation']['fake_live_data'] = True if fake_live_data else False
 
             save_config(gv_config_dict, gv_config_file)
 
@@ -875,7 +949,7 @@ def web_server():
     global gv_config_dict
 
     # engine config
-    prod = 1
+    prod = 0
     if prod:
         cherrypy.config.update(
                 {
