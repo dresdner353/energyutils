@@ -40,9 +40,9 @@
             /* fixes flickering tooltip */
             pointer-events: none 
         }
-       .material-icons.metric { 
-           font-size: 2.0vw;
-       }
+        .material-icons.metric { 
+            font-size: 2.0vw;
+        }
     </style>
     <title>Solar Monitor</title>
 
@@ -222,6 +222,25 @@
             var chart_height = (window.innerHeight - 130) / 3;
             var donut_chart_height = chart_height;
 
+            // series fields and colour assignments
+            const series_fields = ["import", "consumed", "solar", "solar_consumed", "export"];
+
+            const series_labels = {
+                "import": "Grid Import",
+                "consumed": "Total Consumption",
+                "solar": "PV Yield",
+                "solar_consumed": "PV Consumption",
+                "export": "PV Export",
+            };
+
+            const series_colours = {
+                "import": "#CC0000",
+                "consumed": "#00487F",
+                "solar": "#DDDD00",
+                "solar_consumed": "#028A0F",
+                "export": "#0096FF",
+            };
+
             // live power distribution 
 
             if (live_donut_chart == undefined) {
@@ -236,8 +255,20 @@
             }
 
             // donut options (shared)
+
+            // construct donut series and colour lists
+            donut_series_list = []
+            donut_colour_list = []
+
+            for (series_field of series_fields) {
+                if (data_dict.dashboard.donut[series_field]) {
+                    donut_series_list.push(series_field)
+                    donut_colour_list.push(series_colours[series_field])
+                }
+            }
+
             var donut_options = {
-                colors: ['#CC0000', '#028A0F','#0096FF'],
+                colors: donut_colour_list,
                 pieHole: 0.4,
                 height: donut_chart_height,
                 chartArea:{
@@ -264,41 +295,47 @@
 
             // live 
             metrics_source = data_dict.metrics.live;
+            var live_data = new google.visualization.DataTable();
+            live_data.addColumn('string', 'Source');
+            live_data.addColumn('number', 'kW');
 
-            // scaled to watts (does not work on smaller values)
-            var grid_import = metrics_source.import * 1000
-            var solar_consumed = metrics_source.solar_consumed * 1000
-            var solar_export = metrics_source.export * 1000
-
-            var live_data = google.visualization.arrayToDataTable([
-                ['Source', 'kW'],
-                ['Grid Import', grid_import],
-                ['PV Consumption',  solar_consumed],
-                //['PV Export', solar_export]
-            ]);
+            for (series_field of donut_series_list) {
+                live_data.addRows([
+                    [series_labels[series_field], metrics_source[series_field] * 1000],
+                ]);
+            }
 
             // today
             metrics_source = data_dict.metrics.today;
+            var today_data = new google.visualization.DataTable();
+            today_data.addColumn('string', 'Source');
+            today_data.addColumn('number', 'kWh');
 
-            // power distribution values 
-            // scaled to watts (does not work on smaller values)
-            var grid_import = metrics_source.import * 1000
-            var solar_consumed = metrics_source.solar_consumed * 1000
-            var solar_export = metrics_source.export * 1000
+            for (series_field of donut_series_list) {
+                today_data.addRows([
+                    [series_labels[series_field], metrics_source[series_field] * 1000],
+                ]);
+            }
 
-            var today_data = google.visualization.arrayToDataTable([
-                ['Source', 'kWh'],
-                ['Grid Import', grid_import],
-                ['PV Consumption',  solar_consumed],
-                //['PV Export', solar_export]
-            ]);
-
-            // draw
+            // draw donuts
             live_donut_chart.draw(live_data, donut_options);
             today_donut_chart.draw(today_data, donut_options);
 
+            // bar chart options (shared)
+
+            // construct bar_chart series and colour lists
+            bar_chart_series_list = []
+            bar_chart_colour_list = []
+
+            for (series_field of series_fields) {
+                if (data_dict.dashboard.bar_chart[series_field]) {
+                    bar_chart_series_list.push(series_field)
+                    bar_chart_colour_list.push(series_colours[series_field])
+                }
+            }
+
             var bar_chart_options = {
-                colors: ['#CC0000', '#DDDD00','#028A0F','#0096FF'],
+                colors: bar_chart_colour_list,
                 hAxis: {
                     title: 'Hour',
                     titleTextStyle: {
@@ -350,17 +387,22 @@
                 }
 
                 var day_data = new google.visualization.DataTable();
-
                 day_data.addColumn('string', 'Hour');
-                day_data.addColumn('number', 'Grid Import');
-                day_data.addColumn('number', 'PV Yield');
-                day_data.addColumn('number', 'PV Consumption');
-                day_data.addColumn('number', 'PV Export');
 
+                for (series_field of bar_chart_series_list) {
+                    day_data.addColumn('number', series_labels[series_field]);
+                }
+
+                day_data.addRows(data_dict.day.length);
+                row = 0
                 for (const item of data_dict.day) {
-                    day_data.addRows([
-                        [item.hour.toString(), item.import, item.solar, item.solar_consumed, item.export],
-                    ]);
+                    day_data.setCell(row, 0, item.hour.toString());
+                    col = 1
+                    for (series_field of bar_chart_series_list) {
+                        day_data.setCell(row, col, item[series_field]);
+                        col += 1;
+                    }
+                    row += 1;
                 }
 
                 day_chart.draw(day_data, bar_chart_options);
@@ -379,17 +421,22 @@
                 }
 
                 var month_data = new google.visualization.DataTable();
-
                 month_data.addColumn('string', 'Day');
-                month_data.addColumn('number', 'Grid Import');
-                month_data.addColumn('number', 'PV Yield');
-                month_data.addColumn('number', 'PV Consumption');
-                month_data.addColumn('number', 'PV Export');
 
+                for (series_field of bar_chart_series_list) {
+                    month_data.addColumn('number', series_labels[series_field]);
+                }
+
+                month_data.addRows(data_dict.month.length);
+                row = 0
                 for (const item of data_dict.month) {
-                    month_data.addRows([
-                        [item.day, item.import, item.solar, item.solar_consumed, item.export],
-                    ]);
+                    month_data.setCell(row, 0, item.day);
+                    col = 1
+                    for (series_field of bar_chart_series_list) {
+                        month_data.setCell(row, col, item[series_field]);
+                        col += 1;
+                    }
+                    row += 1;
                 }
 
                 month_chart.draw(month_data, bar_chart_options);
@@ -408,17 +455,22 @@
                 }
 
                 var year_data = new google.visualization.DataTable();
-
                 year_data.addColumn('string', 'Month');
-                year_data.addColumn('number', 'Grid Import');
-                year_data.addColumn('number', 'PV Yield');
-                year_data.addColumn('number', 'PV Consumption');
-                year_data.addColumn('number', 'PV Export');
 
+                for (series_field of bar_chart_series_list) {
+                    year_data.addColumn('number', series_labels[series_field]);
+                }
+
+                year_data.addRows(data_dict.year.length);
+                row = 0
                 for (const item of data_dict.year) {
-                    year_data.addRows([
-                        [item.month, item.import, item.solar, item.solar_consumed, item.export],
-                    ]);
+                    year_data.setCell(row, 0, item.month);
+                    col = 1
+                    for (series_field of bar_chart_series_list) {
+                        year_data.setCell(row, col, item[series_field]);
+                        col += 1;
+                    }
+                    row += 1;
                 }
 
                 year_chart.draw(year_data, bar_chart_options);
@@ -441,7 +493,7 @@
                     <div class="card-body text-center">
                         <center>
                             <!-- debugging output for window height/width
-                            <span id="window_width"></span> x <span id="window_height"></span>
+                                <span id="window_width"></span> x <span id="window_height"></span>
                             -->
                             <h4 class="card-title">Live Power Distribution</h4>
                             <div id="live_donut_chart"></div>
@@ -499,7 +551,7 @@
                     <div class="card-body text-center">
                         <center>
                             <!--
-                            <span id="window_width"></span> x <span id="window_height"></span>
+                                <span id="window_width"></span> x <span id="window_height"></span>
                             -->
                             <h4 class="card-title">Today's Power Distribution</h4>
                             <div id="today_donut_chart"></div>
