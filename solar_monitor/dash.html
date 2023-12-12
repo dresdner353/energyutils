@@ -15,6 +15,30 @@
         .table-striped{
             font-size: 20px;
         }
+        .metric-value-white{
+            font-size: 36pt;
+            color: white;
+        }
+        .metric-value-yellow{
+            font-size: 36pt;
+            color: #DDDD00;
+        }
+        .metric-value-red{
+            font-size: 36pt;
+            color: #CC0000;
+        }
+        .metric-value-green{
+            font-size: 36pt;
+            color: 028A0F;
+        }
+        .metric-value-blue{
+            font-size: 36pt;
+            color: #0096FF;
+        }
+        .metric-unit{
+            font-size: 28pt;
+            color: white;
+        }
         g.google-visualization-tooltip { 
             /* fixes flickering tooltip */
             pointer-events: none 
@@ -105,83 +129,83 @@
                 // live values to 3 decimal places
                 $("#live_import").html(live_source.import.toFixed(3));
                 if (live_source.import > 0) {
-                    $("#live_import").css("color", "#CC0000");
+                    $("#live_import").removeClass().addClass("metric-value-red");
                 }
                 else {
-                    $("#live_import").css("color", "#028A0F");
+                    $("#live_import").removeClass().addClass("metric-value-green");
                 }
 
                 $("#live_solar").html(live_source.solar.toFixed(3));
                 if (live_source.solar > 0) {
-                    $("#live_solar").css("color", "#DDDD00");
+                    $("#live_solar").removeClass().addClass("metric-value-yellow");
                 }
                 else {
-                    $("#live_solar").css("color", "white");
+                    $("#live_solar").removeClass().addClass("metric-value-white");
                 }
 
                 $("#live_export").html(live_source.export.toFixed(3));
                 if (live_source.export > 0) {
-                    $("#live_export").css("color", "#0096FF");
+                    $("#live_export").removeClass().addClass("metric-value-blue");
                 }
                 else {
-                    $("#live_export").css("color", "white");
+                    $("#live_export").removeClass().addClass("metric-value-white");
                 }
 
                 $("#live_solar_consumed").html(live_source.solar_consumed.toFixed(3));
                 if (live_source.solar_consumed > 0) {
-                    $("#live_solar_consumed").css("color", "#028A0F");
+                    $("#live_solar_consumed").removeClass().addClass("metric-value-green");
                 }
                 else {
-                    $("#live_solar_consumed").css("color", "white");
+                    $("#live_solar_consumed").removeClass().addClass("metric-value-white");
                 }
 
                 $("#live_consumed").html(live_source.consumed.toFixed(3));
                 if (live_source.import <= 0) {
-                    $("#live_consumed").css("color", "#028A0F");
+                    $("#live_consumed").removeClass().addClass("metric-value-green");
                 }
                 else {
-                    $("#live_consumed").css("color", "white");
+                    $("#live_consumed").removeClass().addClass("metric-value-white");
                 }
 
                 // today values to 3 decimal places
                 $("#today_import").html(today_source.import.toFixed(3));
                 if (today_source.import > 0) {
-                    $("#today_import").css("color", "#CC0000");
+                    $("#today_import").removeClass().addClass("metric-value-red");
                 }
                 else {
-                    $("#today_import").css("color", "#028A0F");
+                    $("#today_import").removeClass().addClass("metric-value-green");
                 }
 
                 $("#today_solar").html(today_source.solar.toFixed(3));
                 if (today_source.solar > 0) {
-                    $("#today_solar").css("color", "#DDDD00");
+                    $("#today_solar").removeClass().addClass("metric-value-yellow");
                 }
                 else {
-                    $("#today_solar").css("color", "white");
+                    $("#today_solar").removeClass().addClass("metric-value-white");
                 }
 
                 $("#today_export").html(today_source.export.toFixed(3));
                 if (today_source.export > 0) {
-                    $("#today_export").css("color", "#0096FF");
+                    $("#today_export").removeClass().addClass("metric-value-blue");
                 }
                 else {
-                    $("#today_export").css("color", "white");
+                    $("#today_export").removeClass().addClass("metric-value-white");
                 }
 
                 $("#today_solar_consumed").html(today_source.solar_consumed.toFixed(3));
                 if (today_source.solar_consumed > 0) {
-                    $("#today_solar_consumed").css("color", "#028A0F");
+                    $("#today_solar_consumed").removeClass().addClass("metric-value-green");
                 }
                 else {
-                    $("#today_solar_consumed").css("color", "white");
+                    $("#today_solar_consumed").removeClass().addClass("metric-value-white");
                 }
 
                 $("#today_consumed").html(today_source.consumed.toFixed(3));
                 if (today_source.import <= 0) {
-                    $("#today_consumed").css("color", "#028A0F");
+                    $("#today_consumed").removeClass().addClass("metric-value-green");
                 }
                 else {
-                    $("#today_consumed").css("color", "white");
+                    $("#today_consumed").removeClass().addClass("metric-value-white");
                 }
 
                 $("#last_updated").html(data_dict.last_updated);
@@ -214,8 +238,8 @@
 
         function draw_charts() {
 
-            var chart_height = (window.innerHeight - 100) / 3;
-            var donut_chart_height = (window.innerHeight - 100) / 3;
+            var chart_height = (window.innerHeight - 120) / 3;
+            var donut_chart_height = chart_height;
 
             // live power distribution 
 
@@ -531,10 +555,8 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-1">
                                 <div class="card-body">
-                                    <h1 class="card-title">
-                                        <span id="live_import">0</span>
-                                    </h1>
-                                    <h6 class="card-title">Grid Import kW</h6>
+                                    <span id="live_import" style="metric-value-white">0</span><span style="metric-unit"> kW</span>
+                                    <h6 class="card-title">Grid Import</h6>
                                 </div>
                             </div>
                         </div>
@@ -542,10 +564,8 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-1">
                                 <div class="card-body">
-                                    <h1 class="card-title">
-                                        <span id="live_solar">0</span>
-                                    </h1>
-                                    <h6 class="card-title">PV Yield kW</h6>
+                                    <span id="live_solar" style="metric-value-white">0</span><span style="metric-unit"> kW</span>
+                                    <h6 class="card-title">PV Yield</h6>
                                 </div>
                             </div>
                         </div>
@@ -553,10 +573,8 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-2">
                                 <div class="card-body">
-                                    <h1 class="card-title">
-                                        <span id="live_solar_consumed">0</span>
-                                    </h1>
-                                    <h6 class="card-title">PV Consumption kW</h6>
+                                    <span id="live_solar_consumed" style="metric-value-white">0</span><span style="metric-unit"> kW</span>
+                                    <h6 class="card-title">PV Consumption</h6>
                                 </div>
                             </div>
                         </div>
@@ -564,10 +582,8 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-2">
                                 <div class="card-body">
-                                    <h1 class="card-title">
-                                        <span id="live_export">0</span>
-                                    </h1>
-                                    <h6 class="card-title">PV Export kW</h6>
+                                    <span id="live_export" style="metric-value-white">0</span><span style="metric-unit"> kW</span>
+                                    <h6 class="card-title">PV Export</h6>
                                 </div>
                             </div>
                         </div>
@@ -597,10 +613,8 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-1">
                                 <div class="card-body">
-                                    <h1 class="card-title">
-                                        <span id="today_import">0</span>
-                                    </h1>
-                                    <h6 class="card-title">Grid Import kWh</h6>
+                                    <span id="today_import" style="metric-value-white">0</span><span style="metric-unit"> kWh</span>
+                                    <h6 class="card-title">Grid Import</h6>
                                 </div>
                             </div>
                         </div>
@@ -608,10 +622,8 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-1">
                                 <div class="card-body">
-                                    <h1 class="card-title">
-                                        <span id="today_solar">0</span>
-                                    </h1>
-                                    <h6 class="card-title">PV Yield kWh</h6>
+                                    <span id="today_solar" style="metric-value-white">0</span><span style="metric-unit"> kWh</span>
+                                    <h6 class="card-title">PV Yield</h6>
                                 </div>
                             </div>
                         </div>
@@ -619,10 +631,8 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-2">
                                 <div class="card-body">
-                                    <h1 class="card-title">
-                                        <span id="today_solar_consumed">0</span>
-                                    </h1>
-                                    <h6 class="card-title">PV Consumption kWh</h6>
+                                    <span id="today_solar_consumed" style="metric-value-white">0</span><span style="metric-unit"> kWh</span>
+                                    <h6 class="card-title">PV Consumption</h6>
                                 </div>
                             </div>
                         </div>
@@ -630,10 +640,8 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-2">
                                 <div class="card-body">
-                                    <h1 class="card-title">
-                                        <span id="today_export">0</span>
-                                    </h1>
-                                    <h6 class="card-title">PV Export kWh</h6>
+                                    <span id="today_export" style="metric-value-white">0</span><span style="metric-unit"> kWh</span>
+                                    <h6 class="card-title">PV Export</h6>
                                 </div>
                             </div>
                         </div>
@@ -642,15 +650,6 @@
 
                 </div>
                 <!-- today metric cards -->
-
-                <!-- last updated footer -->
-                <div class="row">
-                    <div class="col-12">
-                        <h6 class="card-title mt-3" style="color:white;">
-                            Updated: <span id="last_updated"></span>
-                        </h6>
-                    </div>
-                </div>
 
             </div>
             <!-- end Left column for live usage and metrics -->
@@ -681,6 +680,16 @@
             </div>
             <!-- Right column for day, month and year graphs -->
 
+        </div>
+        <div class="row mt-0">
+            <!-- last updated footer -->
+            <div class="row">
+                <div class="col-12">
+                    <h6 class="card-title mt-0" style="color:white;">
+                        Updated: <span id="last_updated"></span>
+                    </h6>
+                </div>
+            </div>
         </div>
 
     </div>
