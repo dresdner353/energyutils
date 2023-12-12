@@ -16,23 +16,23 @@
             font-size: 20px;
         }
         .metric-value-white{
-            font-size: 36pt;
+            font-size: 40pt;
             color: white;
         }
         .metric-value-yellow{
-            font-size: 36pt;
+            font-size: 40pt;
             color: #DDDD00;
         }
         .metric-value-red{
-            font-size: 36pt;
+            font-size: 40pt;
             color: #CC0000;
         }
         .metric-value-green{
-            font-size: 36pt;
+            font-size: 40pt;
             color: 028A0F;
         }
         .metric-value-blue{
-            font-size: 36pt;
+            font-size: 40pt;
             color: #0096FF;
         }
         .metric-unit{
@@ -43,6 +43,9 @@
             /* fixes flickering tooltip */
             pointer-events: none 
         }
+       .material-icons.metric { 
+           font-size: 40px;
+       }
     </style>
     <title>__TITLE__</title>
 
@@ -555,8 +558,8 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-1">
                                 <div class="card-body">
+                                    <span class="material-icons metric">login</span>
                                     <span id="live_import" style="metric-value-white">0</span><span style="metric-unit"> kW</span>
-                                    <h6 class="card-title">Grid Import</h6>
                                 </div>
                             </div>
                         </div>
@@ -564,8 +567,8 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-1">
                                 <div class="card-body">
+                                    <span class="material-icons metric">solar_power</span>
                                     <span id="live_solar" style="metric-value-white">0</span><span style="metric-unit"> kW</span>
-                                    <h6 class="card-title">PV Yield</h6>
                                 </div>
                             </div>
                         </div>
@@ -573,8 +576,8 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-2">
                                 <div class="card-body">
+                                    <span class="material-icons metric">electrical_services</span>
                                     <span id="live_solar_consumed" style="metric-value-white">0</span><span style="metric-unit"> kW</span>
-                                    <h6 class="card-title">PV Consumption</h6>
                                 </div>
                             </div>
                         </div>
@@ -582,8 +585,8 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-2">
                                 <div class="card-body">
+                                    <span class="material-icons metric">logout</span>
                                     <span id="live_export" style="metric-value-white">0</span><span style="metric-unit"> kW</span>
-                                    <h6 class="card-title">PV Export</h6>
                                 </div>
                             </div>
                         </div>
@@ -613,8 +616,8 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-1">
                                 <div class="card-body">
+                                    <span class="material-icons metric">login</span>
                                     <span id="today_import" style="metric-value-white">0</span><span style="metric-unit"> kWh</span>
-                                    <h6 class="card-title">Grid Import</h6>
                                 </div>
                             </div>
                         </div>
@@ -622,8 +625,8 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-1">
                                 <div class="card-body">
+                                    <span class="material-icons metric">solar_power</span>
                                     <span id="today_solar" style="metric-value-white">0</span><span style="metric-unit"> kWh</span>
-                                    <h6 class="card-title">PV Yield</h6>
                                 </div>
                             </div>
                         </div>
@@ -631,8 +634,8 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-2">
                                 <div class="card-body">
+                                    <span class="material-icons metric">electrical_services</span>
                                     <span id="today_solar_consumed" style="metric-value-white">0</span><span style="metric-unit"> kWh</span>
-                                    <h6 class="card-title">PV Consumption</h6>
                                 </div>
                             </div>
                         </div>
@@ -640,8 +643,8 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-2">
                                 <div class="card-body">
+                                    <span class="material-icons metric">logout</span>
                                     <span id="today_export" style="metric-value-white">0</span><span style="metric-unit"> kWh</span>
-                                    <h6 class="card-title">PV Export</h6>
                                 </div>
                             </div>
                         </div>
