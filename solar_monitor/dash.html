@@ -16,6 +16,10 @@
             font-size: 2.5vw;
             color: white;
         }
+        .metric-value-grey{
+            font-size: 2.5vw;
+            color: #828282;
+        }
         .metric-value-yellow{
             font-size: 2.5vw;
             color: #DDDD00;
@@ -141,7 +145,7 @@
                     $("#live_solar").removeClass().addClass("metric-value-yellow");
                 }
                 else {
-                    $("#live_solar").removeClass().addClass("metric-value-white");
+                    $("#live_solar").removeClass().addClass("metric-value-grey");
                 }
 
                 $("#live_export").html(live_source.export.toFixed(3));
@@ -149,7 +153,7 @@
                     $("#live_export").removeClass().addClass("metric-value-blue");
                 }
                 else {
-                    $("#live_export").removeClass().addClass("metric-value-white");
+                    $("#live_export").removeClass().addClass("metric-value-grey");
                 }
 
                 $("#live_consumed").html(live_source.consumed.toFixed(3));
@@ -160,7 +164,7 @@
                     $("#live_consumed").removeClass().addClass("metric-value-orange");
                 }
                 else {
-                    $("#live_consumed").removeClass().addClass("metric-value-white");
+                    $("#live_consumed").removeClass().addClass("metric-value-red");
                 }
 
                 // today values to 3 decimal places
@@ -177,7 +181,7 @@
                     $("#today_solar").removeClass().addClass("metric-value-yellow");
                 }
                 else {
-                    $("#today_solar").removeClass().addClass("metric-value-white");
+                    $("#today_solar").removeClass().addClass("metric-value-grey");
                 }
 
                 $("#today_export").html(today_source.export.toFixed(3));
@@ -185,15 +189,18 @@
                     $("#today_export").removeClass().addClass("metric-value-blue");
                 }
                 else {
-                    $("#today_export").removeClass().addClass("metric-value-white");
+                    $("#today_export").removeClass().addClass("metric-value-grey");
                 }
 
                 $("#today_consumed").html(today_source.consumed.toFixed(3));
                 if (today_source.import <= 0) {
                     $("#today_consumed").removeClass().addClass("metric-value-green");
                 }
+                else if (today_source.solar > 0) {
+                    $("#today_consumed").removeClass().addClass("metric-value-orange");
+                }
                 else {
-                    $("#today_consumed").removeClass().addClass("metric-value-white");
+                    $("#today_consumed").removeClass().addClass("metric-value-red");
                 }
 
                 $("#last_updated").html(data_dict.last_updated);
@@ -533,7 +540,7 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
-                                    <span class="material-icons metric">electrical_services</span>
+                                    <span class="material-icons metric">home</span>
                                     <span id="live_consumed" style="metric-value-white">0</span><span style="metric-unit"> kW</span>
                                 </div>
                             </div>
@@ -591,7 +598,7 @@
                         <div class="col">
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
-                                    <span class="material-icons metric">electrical_services</span>
+                                    <span class="material-icons metric">home</span>
                                     <span id="today_consumed" style="metric-value-white">0</span><span style="metric-unit"> kWh</span>
                                 </div>
                             </div>
