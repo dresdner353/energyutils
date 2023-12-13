@@ -540,8 +540,9 @@ def cloud_api_agent():
                     date_to = year_end_str)
             
             if year_data:
-                # every 6 hours
-                year_ts = now + (6 * 3600) 
+                # reset timestamp
+                # for :10 past next hour
+                year_ts = ((70 - dt_today.minute) * 60) + now
                 log_message(
                         gv_verbose,
                         'Year API Data\n%s\n' % (
