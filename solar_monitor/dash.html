@@ -12,36 +12,41 @@
             height: 200px;
             background-color: #202332; 
         }
-        .metric-value-white{
+        .valign{
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .metric-white{
             font-size: 2.5vw;
             color: white;
         }
-        .metric-value-grey{
+        .metric-grey{
             font-size: 2.5vw;
             color: #828282;
         }
-        .metric-value-yellow{
+        .metric-yellow{
             font-size: 2.5vw;
             color: #DDDD00;
         }
-        .metric-value-orange{
+        .metric-orange{
             font-size: 2.5vw;
             color: #FC6600;
         }
-        .metric-value-red{
+        .metric-red{
             font-size: 2.5vw;
             color: #CC0000;
         }
-        .metric-value-green{
+        .metric-green{
             font-size: 2.5vw;
             color: 028A0F;
         }
-        .metric-value-blue{
+        .metric-blue{
             font-size: 2.5vw;
             color: #0096FF;
         }
         .metric-unit{
-            font-size: 28pt;
+            font-size: 1.0vw;
             color: white;
         }
         g.google-visualization-tooltip { 
@@ -134,73 +139,73 @@
                 // live values to 3 decimal places
                 $("#live_import").html(live_source.import.toFixed(3));
                 if (live_source.import > 0) {
-                    $("#live_import").removeClass().addClass("metric-value-red");
+                    $("#live_import").removeClass().addClass("metric-red");
                 }
                 else {
-                    $("#live_import").removeClass().addClass("metric-value-green");
+                    $("#live_import").removeClass().addClass("metric-green");
                 }
 
                 $("#live_solar").html(live_source.solar.toFixed(3));
                 if (live_source.solar > 0) {
-                    $("#live_solar").removeClass().addClass("metric-value-yellow");
+                    $("#live_solar").removeClass().addClass("metric-yellow");
                 }
                 else {
-                    $("#live_solar").removeClass().addClass("metric-value-grey");
+                    $("#live_solar").removeClass().addClass("metric-grey");
                 }
 
                 $("#live_export").html(live_source.export.toFixed(3));
                 if (live_source.export > 0) {
-                    $("#live_export").removeClass().addClass("metric-value-blue");
+                    $("#live_export").removeClass().addClass("metric-blue");
                 }
                 else {
-                    $("#live_export").removeClass().addClass("metric-value-grey");
+                    $("#live_export").removeClass().addClass("metric-grey");
                 }
 
                 $("#live_consumed").html(live_source.consumed.toFixed(3));
                 if (live_source.import <= 0) {
-                    $("#live_consumed").removeClass().addClass("metric-value-green");
+                    $("#live_consumed").removeClass().addClass("metric-green");
                 }
                 else if (live_source.solar > 0) {
-                    $("#live_consumed").removeClass().addClass("metric-value-orange");
+                    $("#live_consumed").removeClass().addClass("metric-orange");
                 }
                 else {
-                    $("#live_consumed").removeClass().addClass("metric-value-red");
+                    $("#live_consumed").removeClass().addClass("metric-red");
                 }
 
                 // today values to 3 decimal places
                 $("#today_import").html(today_source.import.toFixed(3));
                 if (today_source.import > 0) {
-                    $("#today_import").removeClass().addClass("metric-value-red");
+                    $("#today_import").removeClass().addClass("metric-red");
                 }
                 else {
-                    $("#today_import").removeClass().addClass("metric-value-green");
+                    $("#today_import").removeClass().addClass("metric-green");
                 }
 
                 $("#today_solar").html(today_source.solar.toFixed(3));
                 if (today_source.solar > 0) {
-                    $("#today_solar").removeClass().addClass("metric-value-yellow");
+                    $("#today_solar").removeClass().addClass("metric-yellow");
                 }
                 else {
-                    $("#today_solar").removeClass().addClass("metric-value-grey");
+                    $("#today_solar").removeClass().addClass("metric-grey");
                 }
 
                 $("#today_export").html(today_source.export.toFixed(3));
                 if (today_source.export > 0) {
-                    $("#today_export").removeClass().addClass("metric-value-blue");
+                    $("#today_export").removeClass().addClass("metric-blue");
                 }
                 else {
-                    $("#today_export").removeClass().addClass("metric-value-grey");
+                    $("#today_export").removeClass().addClass("metric-grey");
                 }
 
                 $("#today_consumed").html(today_source.consumed.toFixed(3));
                 if (today_source.import <= 0) {
-                    $("#today_consumed").removeClass().addClass("metric-value-green");
+                    $("#today_consumed").removeClass().addClass("metric-green");
                 }
                 else if (today_source.solar > 0) {
-                    $("#today_consumed").removeClass().addClass("metric-value-orange");
+                    $("#today_consumed").removeClass().addClass("metric-orange");
                 }
                 else {
-                    $("#today_consumed").removeClass().addClass("metric-value-red");
+                    $("#today_consumed").removeClass().addClass("metric-red");
                 }
 
                 $("#last_updated").html(data_dict.last_updated);
@@ -521,36 +526,36 @@
 
                         <div class="col">
                             <div class="card-transparent text-center mt-0">
-                                <div class="card-body">
-                                    <span class="material-icons metric">login</span>
-                                    <span id="live_import" style="metric-value-white">0</span><span style="metric-unit"> kW</span>
+                                <div class="card-body valign">
+                                    <div class="material-icons metric">login</div>
+                                    <div id="live_import" style="metric-white">0</div><div class="metric-unit"> kW</div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col">
                             <div class="card-transparent text-center mt-0">
-                                <div class="card-body">
-                                    <span class="material-icons metric">solar_power</span>
-                                    <span id="live_solar" style="metric-value-white">0</span><span style="metric-unit"> kW</span>
+                                <div class="card-body valign">
+                                    <div class="material-icons metric">solar_power</div>
+                                    <div id="live_solar" style="metric-white">0</div><div class="metric-unit"> kW</div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col">
                             <div class="card-transparent text-center mt-0">
-                                <div class="card-body">
-                                    <span class="material-icons metric">home</span>
-                                    <span id="live_consumed" style="metric-value-white">0</span><span style="metric-unit"> kW</span>
+                                <div class="card-body valign">
+                                    <div class="material-icons metric">home</div>
+                                    <div id="live_consumed" style="metric-white">0</div><div class="metric-unit"> kW</div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col">
                             <div class="card-transparent text-center mt-0">
-                                <div class="card-body">
-                                    <span class="material-icons metric">logout</span>
-                                    <span id="live_export" style="metric-value-white">0</span><span style="metric-unit"> kW</span>
+                                <div class="card-body valign">
+                                    <div class="material-icons metric">logout</div>
+                                    <div id="live_export" style="metric-white">0</div><div class="metric-unit"> kW</div>
                                 </div>
                             </div>
                         </div>
@@ -564,9 +569,6 @@
                 <div id="today_chart_div" class="card-transparent text-white text-center mt-4">
                     <div class="card-body text-center">
                         <center>
-                            <!--
-                                <span id="window_width"></span> x <span id="window_height"></span>
-                            -->
                             <h4 class="card-title">Today's Power Distribution</h4>
                             <div id="today_donut_chart"></div>
                         </center>
@@ -579,36 +581,36 @@
 
                         <div class="col">
                             <div class="card-transparent text-center mt-0">
-                                <div class="card-body">
-                                    <span class="material-icons metric">login</span>
-                                    <span id="today_import" style="metric-value-white">0</span><span style="metric-unit"> kWh</span>
+                                <div class="card-body valign">
+                                    <div class="material-icons metric">login</div>
+                                    <div id="today_import" style="metric-white">0</div><div class="metric-unit"> kWh</div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col">
                             <div class="card-transparent text-center mt-0">
-                                <div class="card-body">
-                                    <span class="material-icons metric">solar_power</span>
-                                    <span id="today_solar" style="metric-value-white">0</span><span style="metric-unit"> kWh</span>
+                                <div class="card-body valign">
+                                    <div class="material-icons metric">solar_power</div>
+                                    <div id="today_solar" style="metric-white">0</div><div class="metric-unit"> kWh</div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col">
                             <div class="card-transparent text-center mt-0">
-                                <div class="card-body">
-                                    <span class="material-icons metric">home</span>
-                                    <span id="today_consumed" style="metric-value-white">0</span><span style="metric-unit"> kWh</span>
+                                <div class="card-body valign">
+                                    <div class="material-icons metric">home</div>
+                                    <div id="today_consumed" style="metric-white">0</div><div class="metric-unit"> kWh</div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col">
                             <div class="card-transparent text-center mt-0">
-                                <div class="card-body">
-                                    <span class="material-icons metric">logout</span>
-                                    <span id="today_export" style="metric-value-white">0</span><span style="metric-unit"> kWh</span>
+                                <div class="card-body valign">
+                                    <div class="material-icons metric">logout</div>
+                                    <div id="today_export" style="metric-white">0</div><div class="metric-unit"> kWh</div>
                                 </div>
                             </div>
                         </div>
@@ -622,7 +624,7 @@
                 <div class="row">
                     <div class="col">
                         <h6 class="card-title mt-2" style="color:white;">
-                            Updated: <span id="last_updated"></span>
+                            <span>Updated: </span><span id="last_updated"></span>
                         </h6>
                     </div>
                 </div>
