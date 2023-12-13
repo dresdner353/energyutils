@@ -8,6 +8,10 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <meta name="mobile-web-app-capable" content="yes">
     <style>
+        :root {
+            --metric-font-size: 2.5vw;
+            --metric-icon-size: 2.0vw;
+        }
         #bgdark {
             height: 200px;
             background-color: #202332; 
@@ -15,34 +19,31 @@
         .valign{
             display: flex;
             align-items: center;
+            justify-content: center;
             flex-wrap: wrap;
         }
+        .metric{
+            font-size: var(--metric-font-size);
+        }
         .metric-white{
-            font-size: 2.5vw;
             color: white;
         }
         .metric-grey{
-            font-size: 2.5vw;
             color: #828282;
         }
         .metric-yellow{
-            font-size: 2.5vw;
             color: #DDDD00;
         }
         .metric-orange{
-            font-size: 2.5vw;
             color: #FC6600;
         }
         .metric-red{
-            font-size: 2.5vw;
             color: #CC0000;
         }
         .metric-green{
-            font-size: 2.5vw;
             color: 028A0F;
         }
         .metric-blue{
-            font-size: 2.5vw;
             color: #0096FF;
         }
         .metric-unit{
@@ -54,7 +55,7 @@
             pointer-events: none 
         }
         .material-icons.metric { 
-            font-size: 2.0vw;
+            font-size: var(--metric-icon-size);
         }
     </style>
     <title>Solar Monitor</title>
@@ -139,90 +140,97 @@
                 // live values to 3 decimal places
                 $("#live_import").html(live_source.import.toFixed(3));
                 if (live_source.import > 0) {
-                    $("#live_import").removeClass().addClass("metric-red");
+                    $("#live_import").removeClass().addClass("metric metric-red");
                 }
                 else {
-                    $("#live_import").removeClass().addClass("metric-green");
+                    $("#live_import").removeClass().addClass("metric metric-green");
                 }
 
                 $("#live_solar").html(live_source.solar.toFixed(3));
                 if (live_source.solar > 0) {
-                    $("#live_solar").removeClass().addClass("metric-yellow");
+                    $("#live_solar").removeClass().addClass("metric metric-yellow");
                 }
                 else {
-                    $("#live_solar").removeClass().addClass("metric-grey");
+                    $("#live_solar").removeClass().addClass("metric metric-grey");
                 }
 
                 $("#live_export").html(live_source.export.toFixed(3));
                 if (live_source.export > 0) {
-                    $("#live_export").removeClass().addClass("metric-blue");
+                    $("#live_export").removeClass().addClass("metric metric-blue");
                 }
                 else {
-                    $("#live_export").removeClass().addClass("metric-grey");
+                    $("#live_export").removeClass().addClass("metric metric-grey");
                 }
 
                 $("#live_consumed").html(live_source.consumed.toFixed(3));
                 if (live_source.import <= 0) {
-                    $("#live_consumed").removeClass().addClass("metric-green");
+                    $("#live_consumed").removeClass().addClass("metric metric-green");
                 }
                 else if (live_source.solar > 0) {
-                    $("#live_consumed").removeClass().addClass("metric-orange");
+                    $("#live_consumed").removeClass().addClass("metric metric-orange");
                 }
                 else {
-                    $("#live_consumed").removeClass().addClass("metric-red");
+                    $("#live_consumed").removeClass().addClass("metric metric-red");
                 }
 
                 // today values to 3 decimal places
                 $("#today_import").html(today_source.import.toFixed(3));
                 if (today_source.import > 0) {
-                    $("#today_import").removeClass().addClass("metric-red");
+                    $("#today_import").removeClass().addClass("metric metric-red");
                 }
                 else {
-                    $("#today_import").removeClass().addClass("metric-green");
+                    $("#today_import").removeClass().addClass("metric metric-green");
                 }
 
                 $("#today_solar").html(today_source.solar.toFixed(3));
                 if (today_source.solar > 0) {
-                    $("#today_solar").removeClass().addClass("metric-yellow");
+                    $("#today_solar").removeClass().addClass("metric metric-yellow");
                 }
                 else {
-                    $("#today_solar").removeClass().addClass("metric-grey");
+                    $("#today_solar").removeClass().addClass("metric metric-grey");
                 }
 
                 $("#today_export").html(today_source.export.toFixed(3));
                 if (today_source.export > 0) {
-                    $("#today_export").removeClass().addClass("metric-blue");
+                    $("#today_export").removeClass().addClass("metric metric-blue");
                 }
                 else {
-                    $("#today_export").removeClass().addClass("metric-grey");
+                    $("#today_export").removeClass().addClass("metric metric-grey");
                 }
 
                 $("#today_consumed").html(today_source.consumed.toFixed(3));
                 if (today_source.import <= 0) {
-                    $("#today_consumed").removeClass().addClass("metric-green");
+                    $("#today_consumed").removeClass().addClass("metric metric-green");
                 }
                 else if (today_source.solar > 0) {
-                    $("#today_consumed").removeClass().addClass("metric-orange");
+                    $("#today_consumed").removeClass().addClass("metric metric-orange");
                 }
                 else {
-                    $("#today_consumed").removeClass().addClass("metric-red");
+                    $("#today_consumed").removeClass().addClass("metric metric-red");
                 }
 
                 $("#last_updated").html(data_dict.last_updated);
 
-                // hide the total consumption column for smaller resolutions
-                // change live metric grid to 2-wide from 3 
-                // reverse these changes if the width/height are within
-                // the larger boundaries
+                // for smaller screens
+                // hide the donuts
+                // and make the metrics singlt-column
                 $("#window_width").html(window.innerWidth);
                 $("#window_height").html(window.innerHeight);
                 if (window.innerWidth < 1500 || window.innerHeight < 1080) {
                     $("#live_donut_chart").hide();
                     $("#today_donut_chart").hide();
+                    $("#live_metric_grid").removeClass("row-cols-2").addClass("row-cols-1");
+                    $("#today_metric_grid").removeClass("row-cols-2").addClass("row-cols-1");
+                    document.body.style.setProperty("--metric-font-size", '5vw');
+                    document.body.style.setProperty("--metric-icon-size", '4.5vw');
                 }
                 else {
                     $("#live_donut_chart").show();
                     $("#today_donut_chart").show();
+                    $("#live_metric_grid").removeClass("row-cols-1").addClass("row-cols-2");
+                    $("#today_metric_grid").removeClass("row-cols-1").addClass("row-cols-2");
+                    document.body.style.setProperty("--metric-font-size", '2.5vw');
+                    document.body.style.setProperty("--metric-icon-size", '2.0vw');
                 }
 
                 draw_charts();
@@ -528,7 +536,7 @@
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body valign">
                                     <div class="material-icons metric">login</div>
-                                    <div id="live_import" style="metric-white">0</div><div class="metric-unit"> kW</div>
+                                    <div id="live_import" style="metric metric-white">0</div><div class="metric-unit"> kW</div>
                                 </div>
                             </div>
                         </div>
@@ -537,7 +545,7 @@
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body valign">
                                     <div class="material-icons metric">solar_power</div>
-                                    <div id="live_solar" style="metric-white">0</div><div class="metric-unit"> kW</div>
+                                    <div id="live_solar" style="metric metric-white">0</div><div class="metric-unit"> kW</div>
                                 </div>
                             </div>
                         </div>
@@ -546,7 +554,7 @@
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body valign">
                                     <div class="material-icons metric">home</div>
-                                    <div id="live_consumed" style="metric-white">0</div><div class="metric-unit"> kW</div>
+                                    <div id="live_consumed" style="metric metric-white">0</div><div class="metric-unit"> kW</div>
                                 </div>
                             </div>
                         </div>
@@ -555,7 +563,7 @@
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body valign">
                                     <div class="material-icons metric">logout</div>
-                                    <div id="live_export" style="metric-white">0</div><div class="metric-unit"> kW</div>
+                                    <div id="live_export" style="metric metric-white">0</div><div class="metric-unit"> kW</div>
                                 </div>
                             </div>
                         </div>
@@ -583,7 +591,7 @@
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body valign">
                                     <div class="material-icons metric">login</div>
-                                    <div id="today_import" style="metric-white">0</div><div class="metric-unit"> kWh</div>
+                                    <div id="today_import" style="metric metric-white">0</div><div class="metric-unit"> kWh</div>
                                 </div>
                             </div>
                         </div>
@@ -592,7 +600,7 @@
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body valign">
                                     <div class="material-icons metric">solar_power</div>
-                                    <div id="today_solar" style="metric-white">0</div><div class="metric-unit"> kWh</div>
+                                    <div id="today_solar" style="metric metric-white">0</div><div class="metric-unit"> kWh</div>
                                 </div>
                             </div>
                         </div>
@@ -601,7 +609,7 @@
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body valign">
                                     <div class="material-icons metric">home</div>
-                                    <div id="today_consumed" style="metric-white">0</div><div class="metric-unit"> kWh</div>
+                                    <div id="today_consumed" style="metric metric-white">0</div><div class="metric-unit"> kWh</div>
                                 </div>
                             </div>
                         </div>
@@ -610,7 +618,7 @@
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body valign">
                                     <div class="material-icons metric">logout</div>
-                                    <div id="today_export" style="metric-white">0</div><div class="metric-unit"> kWh</div>
+                                    <div id="today_export" style="metric metric-white">0</div><div class="metric-unit"> kWh</div>
                                 </div>
                             </div>
                         </div>
