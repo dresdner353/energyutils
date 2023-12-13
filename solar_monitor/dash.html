@@ -20,6 +20,10 @@
             font-size: 2.5vw;
             color: #DDDD00;
         }
+        .metric-value-orange{
+            font-size: 2.5vw;
+            color: #FC6600;
+        }
         .metric-value-red{
             font-size: 2.5vw;
             color: #CC0000;
@@ -151,6 +155,9 @@
                 $("#live_consumed").html(live_source.consumed.toFixed(3));
                 if (live_source.import <= 0) {
                     $("#live_consumed").removeClass().addClass("metric-value-green");
+                }
+                else if (live_source.solar > 0) {
+                    $("#live_consumed").removeClass().addClass("metric-value-orange");
                 }
                 else {
                     $("#live_consumed").removeClass().addClass("metric-value-white");
