@@ -946,12 +946,18 @@ class api_handler(object):
     index._cp_config = {'tools.trailing_slash.on': False}
 
 
-def web_server():
+def web_server(dev_mode):
     global gv_config_dict
 
-    # engine config
-    prod = 0
-    if prod:
+    log_message(
+            1,
+            'Starting web server.. dev_mode:%s' % (
+                dev_mode)
+            )
+
+    # engine config for production
+    # lockds down exception logging from web I/F
+    if not dev_mode:
         cherrypy.config.update(
                 {
                     'environment': 'production',
@@ -1035,6 +1041,18 @@ def thread_exception_wrapper(
         raise Exception(exception_str)  
 
 # main()
+parser = argparse.ArgumentParser(
+        description = 'ESB HDF Reader'
+        )
+
+parser.add_argument(
+        '--dev', 
+        help = 'Enable Development mode', 
+        action = 'store_true'
+        )
+
+args = vars(parser.parse_args())
+dev_mode = args['dev']
 
 # Thread management 
 executor = concurrent.futures.ThreadPoolExecutor(
@@ -1064,7 +1082,8 @@ future_dict['Device API Agent'] = executor.submit(
 # Cherry Py web server
 future_dict['Web Server'] = executor.submit(
         thread_exception_wrapper,
-        web_server)
+        web_server,
+        dev_mode)
 
 # main loop
 while (True):
