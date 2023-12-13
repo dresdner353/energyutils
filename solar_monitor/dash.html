@@ -1,11 +1,11 @@
 <head>   
     <meta id="META" name="viewport" content="width=device-width, initial-scale=1.0" >
     <link rel="icon" type="image/png" href="/favicon.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <meta name="mobile-web-app-capable" content="yes">
     <style>
         :root {
@@ -57,10 +57,17 @@
         .material-icons.metric { 
             font-size: var(--metric-icon-size);
         }
+        .custom-tooltip {
+            --bs-tooltip-bg: var(--bs-primary);
+        }
     </style>
     <title>Solar Monitor</title>
 
     <script>
+        // popper tooltips init
+        $(function(){
+            $('body').tooltip({ selector: '[data-bs-toggle="tooltip"]' });
+        });
 
         // Google charts
         google.charts.load('current', {'packages': ['corechart']});
@@ -527,7 +534,6 @@
 
 <body id="bgdark">
     <div id="dashboard" class="container-fluid text-center" data-bs-theme="dark">
-
         <div class="row mt-2">
 
             <!-- Left column for live usage and metrics -->
@@ -550,7 +556,12 @@
                 <div class="container text-white text-center">
                     <div id="live_metric_grid" class="row row-cols-2">
 
-                        <div class="col">
+                        <div class="col"
+                             data-bs-toggle="tooltip" 
+                             data-bs-placement="bottom"
+                             data-bs-custom-class="custom-tooltip"
+                             data-bs-title="Live Grid Import (kW). This is the real-time power being drawn from the electricity supply grid">
+
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body valign">
                                     <div id="live_import_icon" class="material-icons metric">login</div>
@@ -559,7 +570,12 @@
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div class="col"
+                             data-bs-toggle="tooltip" 
+                             data-bs-placement="bottom"
+                             data-bs-custom-class="custom-tooltip"
+                             data-bs-title="Live PV Yield (kW). This is the real-time power being generated from the solar panels">
+
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body valign">
                                     <div id="live_solar_icon" class="material-icons metric">solar_power</div>
@@ -568,7 +584,12 @@
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div class="col"
+                             data-bs-toggle="tooltip" 
+                             data-bs-placement="bottom"
+                             data-bs-custom-class="custom-tooltip"
+                             data-bs-title="Live Consumption (kW). This is the real-time power being consumed by the premises">
+
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body valign">
                                     <div id="live_consumed_icon" class="material-icons metric">home</div>
@@ -577,7 +598,12 @@
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div class="col"
+                             data-bs-toggle="tooltip" 
+                             data-bs-placement="bottom"
+                             data-bs-custom-class="custom-tooltip"
+                             data-bs-title="Live PV Export (kW). This is the real-time PV surplus being exported to the grid">
+
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body valign">
                                     <div id="live_export_icon" class="material-icons metric">logout</div>
@@ -605,7 +631,12 @@
                 <div class="container text-white text-center">
                     <div id="today_metric_grid" class="row row-cols-2">
 
-                        <div class="col">
+                        <div class="col"
+                             data-bs-toggle="tooltip" 
+                             data-bs-placement="bottom"
+                             data-bs-custom-class="custom-tooltip"
+                             data-bs-title="Grid Import (kWh) for today. This is the overall power drawn from the electricity supply grid today">
+
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body valign">
                                     <div id="today_import_icon" class="material-icons metric">login</div>
@@ -614,7 +645,12 @@
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div class="col"
+                             data-bs-toggle="tooltip" 
+                             data-bs-placement="bottom"
+                             data-bs-custom-class="custom-tooltip"
+                             data-bs-title="PV Yield (kWh) for today. This is the overall power generated from the solar panels today">
+
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body valign">
                                     <div id="today_solar_icon" class="material-icons metric">solar_power</div>
@@ -623,7 +659,12 @@
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div class="col"
+                             data-bs-toggle="tooltip" 
+                             data-bs-placement="bottom"
+                             data-bs-custom-class="custom-tooltip"
+                             data-bs-title="Consumption (kW) for today. This is the overall power consumed by the premises today">
+
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body valign">
                                     <div id="today_consumed_icon" class="material-icons metric">home</div>
@@ -632,7 +673,12 @@
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div class="col"
+                             data-bs-toggle="tooltip" 
+                             data-bs-placement="bottom"
+                             data-bs-custom-class="custom-tooltip"
+                             data-bs-title="PV Export (kW) for today. This is the overall PV surplus exported to the grid today">
+
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body valign">
                                     <div id="today_export_icon" class="material-icons metric">logout</div>
