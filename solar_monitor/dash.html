@@ -9,8 +9,18 @@
     <meta name="mobile-web-app-capable" content="yes">
     <style>
         :root {
-            --metric-font-size: 2.5vw;
-            --metric-icon-size: 2.5vw;
+            /* metric and material icon sizing
+             * two variations for large and smaller screens
+             */
+            --metric-font-size-large-screen: 4.5vmin;
+            --metric-font-size-small-screen: 6vmin;
+            --metric-font-size: var(--metric-font-size-large-screen);
+
+            /* chart title font size */
+            --title-font-size: 2vmin;
+
+            /* last updated font size */
+            --last-updated-font-size: 1.5vmin;
         }
         #bgdark {
             height: 200px;
@@ -21,6 +31,14 @@
             align-items: center;
             justify-content: center;
             flex-wrap: wrap;
+        }
+        .title{
+            font-size: var(--title-font-size);
+            color: white;
+        }
+        .last-updated{
+            font-size: var(--last-updated-font-size);
+            color: white;
         }
         .metric{
             font-size: var(--metric-font-size);
@@ -47,7 +65,7 @@
             color: #0096FF;
         }
         .metric-unit{
-            font-size: 1.0vw;
+            font-size: 1.0vmin;
             color: #525252;
         }
         g.google-visualization-tooltip { 
@@ -55,7 +73,7 @@
             pointer-events: none 
         }
         .material-icons.metric { 
-            font-size: var(--metric-icon-size);
+            font-size: var(--metric-font-size);
         }
         .custom-tooltip {
             --bs-tooltip-bg: var(--bs-primary);
@@ -246,16 +264,14 @@
                     $("#today_donut_chart").hide();
                     $("#live_metric_grid").removeClass("row-cols-2").addClass("row-cols-1");
                     $("#today_metric_grid").removeClass("row-cols-2").addClass("row-cols-1");
-                    document.body.style.setProperty("--metric-font-size", '3.5vw');
-                    document.body.style.setProperty("--metric-icon-size", '3.5vw');
+                    document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-small-screen)');
                 }
                 else {
                     $("#live_donut_chart").show();
                     $("#today_donut_chart").show();
                     $("#live_metric_grid").removeClass("row-cols-1").addClass("row-cols-2");
                     $("#today_metric_grid").removeClass("row-cols-1").addClass("row-cols-2");
-                    document.body.style.setProperty("--metric-font-size", '2.5vw');
-                    document.body.style.setProperty("--metric-icon-size", '2.5vw');
+                    document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-large-screen)');
                 }
 
                 draw_charts();
@@ -553,7 +569,7 @@
                             <!-- debugging output for window height/width
                                 <span id="window_width"></span> x <span id="window_height"></span>
                             -->
-                            <h4 class="card-title">Live Power Distribution</h4>
+                            <div class="title">Live Power Distribution</div>
                             <div id="live_donut_chart"></div>
                         </center>
                     </div>
@@ -628,7 +644,7 @@
                 <div id="today_chart_div" class="card-transparent text-white text-center mt-4">
                     <div class="card-body text-center">
                         <center>
-                            <h4 class="card-title">Today's Power Distribution</h4>
+                            <div class="title">Today's Power Distribution</div>
                             <div id="today_donut_chart"></div>
                         </center>
                     </div>
@@ -702,9 +718,7 @@
                 <!-- last updated footer -->
                 <div class="row">
                     <div class="col">
-                        <h6 class="card-title mt-2" style="color:white;">
-                            <span>Updated: </span><span id="last_updated"></span>
-                        </h6>
+                        <span class="last-updated">Updated: </span><span class="last-updated" id="last_updated"></span>
                     </div>
                 </div>
 
@@ -715,21 +729,21 @@
             <div class="col-8">
                 <div class="row">
                     <div class="col">
-                        <center><h4 class="card-title" style="color:white;">Last 36 Hours</h4></center>
+                        <center><div class="title">Last 36 Hours</div></center>
                         <div id="day_chart"></div>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col">
-                        <center><h4 class="card-title" style="color:white;">Last 30 Days</h4></center>
+                        <center><div class="title">Last 30 Days</div></center>
                         <div id="month_chart"></div>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col">
-                        <center><h4 class="card-title" style="color:white;">Last 12 Months</h4></center>
+                        <center><div class="title">Last 12 Months</div></center>
                         <div id="year_chart"></div>
                     </div>
                 </div>
