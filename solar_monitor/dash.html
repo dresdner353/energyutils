@@ -14,12 +14,12 @@
              */
             --metric-font-size-large-screen: 4.5vmin;
             --metric-font-size-small-screen: 6.5vmin;
+            --metric-unit-font-size-large-screen: 1.8vmin;
+            --metric-unit-font-size-small-screen: 3.8vmin;
             --metric-font-size: var(--metric-font-size-large-screen);
+            --metric-unit-font-size: var(--metric-unit-font-size-large-screen);
 
-            /* chart title font size */
             --title-font-size: 2.2vmin;
-
-            /* last updated font size */
             --last-updated-font-size: 1.8vmin;
         }
         #bgdark {
@@ -65,7 +65,7 @@
             color: #0096FF;
         }
         .metric-unit{
-            font-size: 1.0vmin;
+            font-size: var(--metric-unit-font-size);
             color: #525252;
         }
         g.google-visualization-tooltip { 
@@ -259,12 +259,13 @@
                 // and make the metrics singlt-column
                 $("#window_width").html(window.innerWidth);
                 $("#window_height").html(window.innerHeight);
-                if (window.innerWidth < 1500 || window.innerHeight < 1080) {
+                if (window.innerWidth < 1600 || window.innerHeight < 1080) {
                     $("#live_donut_chart").hide();
                     $("#today_donut_chart").hide();
                     $("#live_metric_grid").removeClass("row-cols-2").addClass("row-cols-1");
                     $("#today_metric_grid").removeClass("row-cols-2").addClass("row-cols-1");
                     document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-small-screen)');
+                    document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-small-screen)');
                 }
                 else {
                     $("#live_donut_chart").show();
@@ -272,6 +273,7 @@
                     $("#live_metric_grid").removeClass("row-cols-1").addClass("row-cols-2");
                     $("#today_metric_grid").removeClass("row-cols-1").addClass("row-cols-2");
                     document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-large-screen)');
+                    document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-large-screen)');
                 }
 
                 draw_charts();
