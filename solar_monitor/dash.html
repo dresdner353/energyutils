@@ -386,6 +386,8 @@
                 }
             }
 
+            // common options
+            // but the hAxis title will be tweaked
             var bar_chart_options = {
                 colors: bar_chart_colour_list,
                 hAxis: {
@@ -459,6 +461,7 @@
                     row += 1;
                 }
 
+                bar_chart_options.hAxis.title = 'Hour';
                 day_chart.draw(day_data, bar_chart_options);
             }
 
@@ -493,6 +496,7 @@
                     row += 1;
                 }
 
+                bar_chart_options.hAxis.title = 'Day';
                 month_chart.draw(month_data, bar_chart_options);
             }
 
@@ -527,6 +531,7 @@
                     row += 1;
                 }
 
+                bar_chart_options.hAxis.title = 'Month';
                 year_chart.draw(year_data, bar_chart_options);
             }
         }
