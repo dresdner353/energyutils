@@ -1,4 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Solar Monitor Kiosk
-Exec=/home/pi/energyutils/solar_monitor/kiosk.sh
