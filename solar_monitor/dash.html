@@ -571,7 +571,7 @@
                             <!-- debugging output for window height/width
                                 <span id="window_width"></span> x <span id="window_height"></span>
                             -->
-                            <div class="title">Live Power Distribution</div>
+                            <span class="title">Live Usage @</span><span class="title" id="last_updated"></span>
                             <div id="live_donut_chart"></div>
                         </center>
                     </div>
@@ -646,7 +646,7 @@
                 <div id="today_chart_div" class="card-transparent text-white text-center mt-4">
                     <div class="card-body text-center">
                         <center>
-                            <div class="title">Today's Power Distribution</div>
+                            <div class="title">Today's Overall Usage</div>
                             <div id="today_donut_chart"></div>
                         </center>
                     </div>
@@ -716,13 +716,6 @@
 
                 </div>
                 <!-- today metric cards -->
-
-                <!-- last updated footer -->
-                <div class="row">
-                    <div class="col">
-                        <span class="last-updated">Updated: </span><span class="last-updated" id="last_updated"></span>
-                    </div>
-                </div>
 
             </div>
             <!-- end Left column for live usage and metrics -->

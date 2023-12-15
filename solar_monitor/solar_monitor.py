@@ -95,6 +95,10 @@ def log_message(
     return
 
 
+def get_last_updated_time():
+    return time.strftime('%H:%M:%S')
+
+
 def set_default_config():
 
     log_message(
@@ -463,7 +467,7 @@ def cloud_api_agent():
                             )
                         )
                 gv_data_dict['day'] = day_data
-                gv_data_dict['last_updated'] = time.asctime()
+                gv_data_dict['last_updated'] = get_last_updated_time()
         
         if now >= month_ts:
             # last 30 days
@@ -500,7 +504,7 @@ def cloud_api_agent():
                             )
                         )
                 gv_data_dict['month'] = month_data
-                gv_data_dict['last_updated'] = time.asctime()
+                gv_data_dict['last_updated'] = get_last_updated_time()
 
                 # take todays totals from last recorded day in month
                 today_rec = month_data[-1]
@@ -552,7 +556,7 @@ def cloud_api_agent():
                             )
                         )
                 gv_data_dict['year'] = year_data
-                gv_data_dict['last_updated'] = time.asctime()
+                gv_data_dict['last_updated'] = get_last_updated_time()
 
                 # take months totals from last recorded month in year
                 month_rec = year_data[-1]
@@ -694,7 +698,7 @@ def device_api_agent():
                     gv_data_dict['metrics']['live']['consumed'],
                     )
                 )
-        gv_data_dict['last_updated'] = time.asctime()
+        gv_data_dict['last_updated'] = get_last_updated_time()
 
     return
 
