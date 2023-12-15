@@ -25,7 +25,7 @@ gv_config_file = '%s/config.json' % (
 
 # tracked device and API data
 gv_data_dict = {}
-gv_data_dict['last_updated'] = ''
+gv_data_dict['last_updated'] = 0
 
 # day, month and year records
 gv_data_dict['day'] = []
@@ -96,7 +96,8 @@ def log_message(
 
 
 def get_last_updated_time():
-    return time.strftime('%H:%M:%S')
+    # epoch msecs
+    return int(time.time() * 1000)
 
 
 def set_default_config():

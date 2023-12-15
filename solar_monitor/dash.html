@@ -20,7 +20,6 @@
             --metric-unit-font-size: var(--metric-unit-font-size-large-screen);
 
             --title-font-size: 2.2vmin;
-            --last-updated-font-size: 1.8vmin;
         }
         #bgdark {
             height: 200px;
@@ -34,10 +33,6 @@
         }
         .title{
             font-size: var(--title-font-size);
-            color: white;
-        }
-        .last-updated{
-            font-size: var(--last-updated-font-size);
             color: white;
         }
         .metric{
@@ -144,7 +139,7 @@
 
             data_request.fail(function() {
                 refresh_error_count += 1;
-                $("#last_updated").html(`Data refresh failure (${refresh_error_count})`);
+                $("#last_updated").html(`Error (${refresh_error_count})`);
             });           
 
             data_request.done(function(data) {
@@ -152,7 +147,7 @@
 
                 // show the dashboard only when we have
                 // a valid last updated timestamp
-                if (data_dict.last_updated.length > 0) {
+                if (data_dict.last_updated > 0) {
                     $("#dashboard").show();
                 }
 
@@ -252,7 +247,9 @@
                     $("#today_consumed_icon").removeClass().addClass("material-icons metric metric-red");
                 }
 
-                $("#last_updated").html(data_dict.last_updated);
+                // render as HH:MM:SS
+                var date = new Date(data_dict.last_updated);
+                $("#last_updated").html(date.toLocaleTimeString());
 
                 // for smaller screens
                 // hide the donuts
