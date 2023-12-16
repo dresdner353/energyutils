@@ -415,7 +415,7 @@
                 hAxis: {
                     title: 'Hour',
                     titleTextStyle: {
-                        color: 'gray'
+                        color: 'white'
                     },
                     textStyle: {
                         color: 'gray'
@@ -424,17 +424,23 @@
                 vAxis: {
                     title: 'kwH',
                     titleTextStyle: {
-                        color: 'gray'
+                        color: 'white'
                     },
                     textStyle: {
                         color: 'gray'
                     },
+                    gridlines: {
+                        color: 'gray', 
+                    },
+                    minorGridlines: {
+                        color: 'gray', 
+                    },
                 },
                 chartArea:{
-                    top:30,
-                    bottom:45,
-                    right:10,
+                    left:50,
+                    right:20,
                 },
+                axisTitlesPosition: 'in',
                 isStacked: true,
                 height: chart_height,
                 legend: { 
