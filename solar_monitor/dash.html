@@ -162,8 +162,8 @@
                 live_source = data_dict.metrics.live;
                 today_source = data_dict.metrics.today;
 
-                // live values to 3 decimal places
-                $("#live_import").html(live_source.import.toFixed(3));
+                // live values to 2 decimal places
+                $("#live_import").html(live_source.import.toFixed(2));
                 if (live_source.import > 0) {
                     $("#live_import").removeClass().addClass("metric metric-red");
                     $("#live_import_icon").removeClass().addClass("material-icons metric metric-red");
@@ -173,7 +173,7 @@
                     $("#live_import_icon").removeClass().addClass("material-icons metric metric-green");
                 }
 
-                $("#live_solar").html(live_source.solar.toFixed(3));
+                $("#live_solar").html(live_source.solar.toFixed(2));
                 if (live_source.solar > 0) {
                     $("#live_solar").removeClass().addClass("metric metric-yellow");
                     $("#live_solar_icon").removeClass().addClass("material-icons metric metric-yellow");
@@ -183,7 +183,7 @@
                     $("#live_solar_icon").removeClass().addClass("material-icons metric metric-grey");
                 }
 
-                $("#live_export").html(live_source.export.toFixed(3));
+                $("#live_export").html(live_source.export.toFixed(2));
                 if (live_source.export > 0) {
                     $("#live_export").removeClass().addClass("metric metric-blue");
                     $("#live_export_icon").removeClass().addClass("material-icons metric metric-blue");
@@ -193,7 +193,7 @@
                     $("#live_export_icon").removeClass().addClass("material-icons metric metric-grey");
                 }
 
-                $("#live_consumed").html(live_source.consumed.toFixed(3));
+                $("#live_consumed").html(live_source.consumed.toFixed(2));
                 if (live_source.import <= 0) {
                     $("#live_consumed").removeClass().addClass("metric metric-green");
                     $("#live_consumed_icon").removeClass().addClass("material-icons metric metric-green");
@@ -208,7 +208,7 @@
                 }
 
                 // today values to 3 decimal places
-                $("#today_import").html(today_source.import.toFixed(3));
+                $("#today_import").html(today_source.import.toFixed(2));
                 if (today_source.import > 0) {
                     $("#today_import").removeClass().addClass("metric metric-red");
                     $("#today_import_icon").removeClass().addClass("material-icons metric metric-red");
@@ -218,7 +218,7 @@
                     $("#today_import_icon").removeClass().addClass("material-icons metric metric-green");
                 }
 
-                $("#today_solar").html(today_source.solar.toFixed(3));
+                $("#today_solar").html(today_source.solar.toFixed(2));
                 if (today_source.solar > 0) {
                     $("#today_solar").removeClass().addClass("metric metric-yellow");
                     $("#today_solar_icon").removeClass().addClass("material-icons metric metric-yellow");
@@ -228,7 +228,7 @@
                     $("#today_solar_icon").removeClass().addClass("material-icons metric metric-grey");
                 }
 
-                $("#today_export").html(today_source.export.toFixed(3));
+                $("#today_export").html(today_source.export.toFixed(2));
                 if (today_source.export > 0) {
                     $("#today_export").removeClass().addClass("metric metric-blue");
                     $("#today_export_icon").removeClass().addClass("material-icons metric metric-blue");
@@ -238,7 +238,7 @@
                     $("#today_export_icon").removeClass().addClass("material-icons metric metric-grey");
                 }
 
-                $("#today_consumed").html(today_source.consumed.toFixed(3));
+                $("#today_consumed").html(today_source.consumed.toFixed(2));
                 if (today_source.import <= 0) {
                     $("#today_consumed").removeClass().addClass("metric metric-green");
                     $("#today_consumed_icon").removeClass().addClass("material-icons metric metric-green");
@@ -481,7 +481,7 @@
                     day_data.setCell(row, 0, item.hour.toString());
                     col = 1
                     for (series_field of bar_chart_series_list) {
-                        day_data.setCell(row, col, item[series_field]);
+                        day_data.setCell(row, col, item[series_field].toFixed(2));
                         col += 1;
                     }
                     row += 1;
@@ -516,7 +516,7 @@
                     month_data.setCell(row, 0, item.day);
                     col = 1
                     for (series_field of bar_chart_series_list) {
-                        month_data.setCell(row, col, item[series_field]);
+                        month_data.setCell(row, col, item[series_field].toFixed(2));
                         col += 1;
                     }
                     row += 1;
@@ -551,7 +551,7 @@
                     year_data.setCell(row, 0, item.month);
                     col = 1
                     for (series_field of bar_chart_series_list) {
-                        year_data.setCell(row, col, item[series_field]);
+                        year_data.setCell(row, col, item[series_field].toFixed(2));
                         col += 1;
                     }
                     row += 1;
