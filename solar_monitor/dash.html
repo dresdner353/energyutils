@@ -66,7 +66,7 @@
         }
         .metric-unit{
             font-size: var(--metric-unit-font-size);
-            color: #525252;
+            color: #929292;
         }
         g.google-visualization-tooltip { 
             /* fixes flickering tooltip */
@@ -162,8 +162,16 @@
                 live_source = data_dict.metrics.live;
                 today_source = data_dict.metrics.today;
 
-                // live values to 2 decimal places
-                $("#live_import").html(live_source.import.toFixed(2));
+                // live values to 2 decimal places when >= 1kW
+                // or as watts when < 1.0 kW
+                if (live_source.import >= 1) {
+                    $("#live_import").html(live_source.import.toFixed(2));
+                    $("#live_import_unit").html(' kW');
+                }
+                else {
+                    $("#live_import").html(Math.floor(live_source.import * 1000));
+                    $("#live_import_unit").html(' W');
+                }
                 if (live_source.import > 0) {
                     $("#live_import").removeClass().addClass("metric metric-red");
                     $("#live_import_icon").removeClass().addClass("material-icons metric metric-red");
@@ -173,7 +181,14 @@
                     $("#live_import_icon").removeClass().addClass("material-icons metric metric-green");
                 }
 
-                $("#live_solar").html(live_source.solar.toFixed(2));
+                if (live_source.solar >= 1) {
+                    $("#live_solar").html(live_source.solar.toFixed(2));
+                    $("#live_solar_unit").html(' kW');
+                }
+                else {
+                    $("#live_solar").html(Math.floor(live_source.solar * 1000));
+                    $("#live_solar_unit").html(' W');
+                }
                 if (live_source.solar > 0) {
                     $("#live_solar").removeClass().addClass("metric metric-yellow");
                     $("#live_solar_icon").removeClass().addClass("material-icons metric metric-yellow");
@@ -183,7 +198,14 @@
                     $("#live_solar_icon").removeClass().addClass("material-icons metric metric-grey");
                 }
 
-                $("#live_export").html(live_source.export.toFixed(2));
+                if (live_source.export >= 1) {
+                    $("#live_export").html(live_source.export.toFixed(2));
+                    $("#live_export_unit").html(' kW');
+                }
+                else {
+                    $("#live_export").html(Math.floor(live_source.export * 1000));
+                    $("#live_export_unit").html(' W');
+                }
                 if (live_source.export > 0) {
                     $("#live_export").removeClass().addClass("metric metric-blue");
                     $("#live_export_icon").removeClass().addClass("material-icons metric metric-blue");
@@ -193,7 +215,14 @@
                     $("#live_export_icon").removeClass().addClass("material-icons metric metric-grey");
                 }
 
-                $("#live_consumed").html(live_source.consumed.toFixed(2));
+                if (live_source.consumed >= 1) {
+                    $("#live_consumed").html(live_source.consumed.toFixed(2));
+                    $("#live_consumed_unit").html(' kW');
+                } 
+                else {
+                    $("#live_consumed").html(Math.floor(live_source.consumed * 1000));
+                    $("#live_consumed_unit").html(' W');
+                }
                 if (live_source.import <= 0) {
                     $("#live_consumed").removeClass().addClass("metric metric-green");
                     $("#live_consumed_icon").removeClass().addClass("material-icons metric metric-green");
@@ -598,7 +627,7 @@
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body valign">
                                     <div id="live_import_icon" class="material-icons metric">login</div>
-                                    <div id="live_import" style="metric metric-white">0</div><div class="metric-unit"> kW</div>
+                                    <div id="live_import" style="metric metric-white">0</div><div id="live_import_unit" class="metric-unit"> kW</div>
                                 </div>
                             </div>
                         </div>
@@ -612,7 +641,7 @@
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body valign">
                                     <div id="live_solar_icon" class="material-icons metric">solar_power</div>
-                                    <div id="live_solar" style="metric metric-white">0</div><div class="metric-unit"> kW</div>
+                                    <div id="live_solar" style="metric metric-white">0</div><div id="live_solar_unit" class="metric-unit"> kW</div>
                                 </div>
                             </div>
                         </div>
@@ -626,7 +655,7 @@
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body valign">
                                     <div id="live_consumed_icon" class="material-icons metric">home</div>
-                                    <div id="live_consumed" style="metric metric-white">0</div><div class="metric-unit"> kW</div>
+                                    <div id="live_consumed" style="metric metric-white">0</div><div id="live_consumed_unit" class="metric-unit"> kW</div>
                                 </div>
                             </div>
                         </div>
@@ -640,7 +669,7 @@
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body valign">
                                     <div id="live_export_icon" class="material-icons metric">logout</div>
-                                    <div id="live_export" style="metric metric-white">0</div><div class="metric-unit"> kW</div>
+                                    <div id="live_export" style="metric metric-white">0</div><div id="live_export_unit" class="metric-unit"> kW</div>
                                 </div>
                             </div>
                         </div>
