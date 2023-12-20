@@ -31,12 +31,6 @@
             /*background-color: #202025; */
             background-color: #000000; 
         }
-        .valign{
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
         .title{
             font-size: var(--title-font-size);
             color: white;
@@ -163,8 +157,8 @@
                 live_source = data_dict.metrics.live;
                 today_source = data_dict.metrics.today;
 
-                watt_unit_str = '&nbsp;W'
-                kw_unit_str = '&nbsp;kW'
+                watt_unit_str = 'W'
+                kw_unit_str = 'kW'
 
                 // live values to 2 decimal places when >= 1kW
                 // or as watts when < 1.0 kW
@@ -629,10 +623,18 @@
                              data-bs-title="Live Grid Import (kW). This is the real-time power being drawn from the electricity supply grid">
 
                             <div class="card-transparent text-center mt-0">
-                                <div class="card-body valign">
-                                    <div id="live_import_icon" class="material-icons metric">login</div>
-                                    <div id="live_import" style="metric metric-white">0</div>
-                                    <div id="live_import_unit" class="metric-unit"></div>
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="live_import_icon" class="material-icons metric">login</span>
+                                            </td>
+                                            <td style="vertical-align: bottom;">
+                                                <span id="live_import" style="metric metric-white">0</span>
+                                                <span id="live_import_unit" class="metric-unit"></span>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -644,10 +646,18 @@
                              data-bs-title="Live PV Yield (kW). This is the real-time power being generated from the solar panels">
 
                             <div class="card-transparent text-center mt-0">
-                                <div class="card-body valign">
-                                    <div id="live_solar_icon" class="material-icons metric">solar_power</div>
-                                    <div id="live_solar" style="metric metric-white">0</div>
-                                    <div id="live_solar_unit" class="metric-unit"></div>
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="live_solar_icon" class="material-icons metric">solar_power</span>
+                                            </td>
+                                            <td style="vertical-align: bottom;">
+                                                <span id="live_solar" style="metric metric-white">0</span>
+                                                <span id="live_solar_unit" class="metric-unit"></span>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -659,10 +669,18 @@
                              data-bs-title="Live Consumption (kW). This is the real-time power being consumed by the premises">
 
                             <div class="card-transparent text-center mt-0">
-                                <div class="card-body valign">
-                                    <div id="live_consumed_icon" class="material-icons metric">home</div>
-                                    <div id="live_consumed" style="metric metric-white">0</div>
-                                    <div id="live_consumed_unit" class="metric-unit"></div>
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="live_consumed_icon" class="material-icons metric">home</span>
+                                            </td>
+                                            <td style="vertical-align: bottom;">
+                                                <span id="live_consumed" style="metric metric-white">0</span>
+                                                <span id="live_consumed_unit" class="metric-unit"></span>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -674,10 +692,18 @@
                              data-bs-title="Live PV Export (kW). This is the real-time PV surplus being exported to the grid">
 
                             <div class="card-transparent text-center mt-0">
-                                <div class="card-body valign">
-                                    <div id="live_export_icon" class="material-icons metric">logout</div>
-                                    <div id="live_export" style="metric metric-white">0</div>
-                                    <div id="live_export_unit" class="metric-unit"></div>
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="live_export_icon" class="material-icons metric">logout</span>
+                                            </td>
+                                            <td style="vertical-align: bottom;">
+                                                <span id="live_export" style="metric metric-white">0</span>
+                                                <span id="live_export_unit" class="metric-unit"></span>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -708,10 +734,18 @@
                              data-bs-title="Grid Import (kWh) for today. This is the overall power drawn from the electricity supply grid today">
 
                             <div class="card-transparent text-center mt-0">
-                                <div class="card-body valign">
-                                    <div id="today_import_icon" class="material-icons metric">login</div>
-                                    <div id="today_import" style="metric metric-white">0</div>
-                                    <div class="metric-unit">&nbsp;kWh</div>
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="today_import_icon" class="material-icons metric">login</span>
+                                            </td>
+                                            <td style="vertical-align: bottom;">
+                                                <span id="today_import" style="metric metric-white">0</span>
+                                                <span class="metric-unit">kWh</span>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -723,10 +757,18 @@
                              data-bs-title="PV Yield (kWh) for today. This is the overall power generated from the solar panels today">
 
                             <div class="card-transparent text-center mt-0">
-                                <div class="card-body valign">
-                                    <div id="today_solar_icon" class="material-icons metric">solar_power</div>
-                                    <div id="today_solar" style="metric metric-white">0</div>
-                                    <div class="metric-unit">&nbsp;kWh</div>
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="today_solar_icon" class="material-icons metric">solar_power</span>
+                                            </td>
+                                            <td style="vertical-align: bottom;">
+                                                <span id="today_solar" style="metric metric-white">0</span>
+                                                <span class="metric-unit">kWh</span>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -738,10 +780,18 @@
                              data-bs-title="Consumption (kW) for today. This is the overall power consumed by the premises today">
 
                             <div class="card-transparent text-center mt-0">
-                                <div class="card-body valign">
-                                    <div id="today_consumed_icon" class="material-icons metric">home</div>
-                                    <div id="today_consumed" style="metric metric-white">0</div>
-                                    <div class="metric-unit">&nbsp;kWh</div>
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="today_consumed_icon" class="material-icons metric">home</span>
+                                            </td>
+                                            <td style="vertical-align: bottom;">
+                                                <span id="today_consumed" style="metric metric-white">0</span>
+                                                <span class="metric-unit">kWh</span>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -753,10 +803,18 @@
                              data-bs-title="PV Export (kW) for today. This is the overall PV surplus exported to the grid today">
 
                             <div class="card-transparent text-center mt-0">
-                                <div class="card-body valign">
-                                    <div id="today_export_icon" class="material-icons metric">logout</div>
-                                    <div id="today_export" style="metric metric-white">0</div>
-                                    <div class="metric-unit">&nbsp;kWh</div>
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="today_export_icon" class="material-icons metric">logout</span>
+                                            </td>
+                                            <td style="vertical-align: bottom;">
+                                                <span id="today_export" style="metric metric-white">0</span>
+                                                <span class="metric-unit">kWh</span>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
                         </div>
