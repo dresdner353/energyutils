@@ -8,27 +8,28 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <meta name="mobile-web-app-capable" content="yes">
     <style>
-        :root {
-            /* metric and material icon sizing
-             * two variations for large and smaller screens
-             */
-            --metric-font-size-large-screen: 4.5vmin;
-            --metric-font-size-small-screen: 7.5vmin;
+:root {
+    /* metric and material icon sizing
+     * two variations for large and smaller screens
+     */
+    --metric-font-size-large-screen: 4.5vmin;
+    --metric-font-size-small-screen: 7.5vmin;
 
-            --metric-unit-font-size-large-screen: 1.5vmin;
-            --metric-unit-font-size-small-screen: 2.8vmin;
+    --metric-unit-font-size-large-screen: 1.5vmin;
+    --metric-unit-font-size-small-screen: 2.8vmin;
 
-            --title-font-size-large-screen: 2.0vmin;
-            --title-font-size-small-screen: 2.2vmin;
+    --title-font-size-large-screen: 2.0vmin;
+    --title-font-size-small-screen: 2.2vmin;
 
-            --metric-font-size: var(--metric-font-size-large-screen);
-            --metric-unit-font-size: var(--metric-unit-font-size-large-screen);
+    --metric-font-size: var(--metric-font-size-large-screen);
+    --metric-unit-font-size: var(--metric-unit-font-size-large-screen);
 
-            --title-font-size: var(--title-font-size-large-screen);
-        }
+    --title-font-size: var(--title-font-size-large-screen);
+}
         #bgdark {
             height: 200px;
-            background-color: #202025; 
+            /*background-color: #202025; */
+            background-color: #000000; 
         }
         .valign{
             display: flex;
@@ -162,15 +163,18 @@
                 live_source = data_dict.metrics.live;
                 today_source = data_dict.metrics.today;
 
+                watt_unit_str = '&nbsp;W'
+                kw_unit_str = '&nbsp;kW'
+
                 // live values to 2 decimal places when >= 1kW
                 // or as watts when < 1.0 kW
                 if (live_source.import >= 1) {
                     $("#live_import").html(live_source.import.toFixed(2));
-                    $("#live_import_unit").html(' kW');
+                    $("#live_import_unit").html(kw_unit_str);
                 }
                 else {
                     $("#live_import").html(Math.floor(live_source.import * 1000));
-                    $("#live_import_unit").html(' W');
+                    $("#live_import_unit").html(watt_unit_str);
                 }
                 if (live_source.import > 0) {
                     $("#live_import").removeClass().addClass("metric metric-red");
@@ -183,11 +187,11 @@
 
                 if (live_source.solar >= 1) {
                     $("#live_solar").html(live_source.solar.toFixed(2));
-                    $("#live_solar_unit").html(' kW');
+                    $("#live_solar_unit").html(kw_unit_str);
                 }
                 else {
                     $("#live_solar").html(Math.floor(live_source.solar * 1000));
-                    $("#live_solar_unit").html(' W');
+                    $("#live_solar_unit").html(watt_unit_str);
                 }
                 if (live_source.solar > 0) {
                     $("#live_solar").removeClass().addClass("metric metric-yellow");
@@ -200,11 +204,11 @@
 
                 if (live_source.export >= 1) {
                     $("#live_export").html(live_source.export.toFixed(2));
-                    $("#live_export_unit").html(' kW');
+                    $("#live_export_unit").html(kw_unit_str);
                 }
                 else {
                     $("#live_export").html(Math.floor(live_source.export * 1000));
-                    $("#live_export_unit").html(' W');
+                    $("#live_export_unit").html(watt_unit_str);
                 }
                 if (live_source.export > 0) {
                     $("#live_export").removeClass().addClass("metric metric-blue");
@@ -217,11 +221,11 @@
 
                 if (live_source.consumed >= 1) {
                     $("#live_consumed").html(live_source.consumed.toFixed(2));
-                    $("#live_consumed_unit").html(' kW');
+                    $("#live_consumed_unit").html(kw_unit_str);
                 } 
                 else {
                     $("#live_consumed").html(Math.floor(live_source.consumed * 1000));
-                    $("#live_consumed_unit").html(' W');
+                    $("#live_consumed_unit").html(watt_unit_str);
                 }
                 if (live_source.import <= 0) {
                     $("#live_consumed").removeClass().addClass("metric metric-green");
@@ -628,7 +632,7 @@
                                 <div class="card-body valign">
                                     <div id="live_import_icon" class="material-icons metric">login</div>
                                     <div id="live_import" style="metric metric-white">0</div>
-                                    <div id="live_import_unit" class="metric-unit"> kW</div>
+                                    <div id="live_import_unit" class="metric-unit"></div>
                                 </div>
                             </div>
                         </div>
@@ -643,7 +647,7 @@
                                 <div class="card-body valign">
                                     <div id="live_solar_icon" class="material-icons metric">solar_power</div>
                                     <div id="live_solar" style="metric metric-white">0</div>
-                                    <div id="live_solar_unit" class="metric-unit"> kW</div>
+                                    <div id="live_solar_unit" class="metric-unit"></div>
                                 </div>
                             </div>
                         </div>
@@ -658,7 +662,7 @@
                                 <div class="card-body valign">
                                     <div id="live_consumed_icon" class="material-icons metric">home</div>
                                     <div id="live_consumed" style="metric metric-white">0</div>
-                                    <div id="live_consumed_unit" class="metric-unit"> kW</div>
+                                    <div id="live_consumed_unit" class="metric-unit"></div>
                                 </div>
                             </div>
                         </div>
@@ -673,7 +677,7 @@
                                 <div class="card-body valign">
                                     <div id="live_export_icon" class="material-icons metric">logout</div>
                                     <div id="live_export" style="metric metric-white">0</div>
-                                    <div id="live_export_unit" class="metric-unit"> kW</div>
+                                    <div id="live_export_unit" class="metric-unit"></div>
                                 </div>
                             </div>
                         </div>
@@ -707,7 +711,7 @@
                                 <div class="card-body valign">
                                     <div id="today_import_icon" class="material-icons metric">login</div>
                                     <div id="today_import" style="metric metric-white">0</div>
-                                    <div class="metric-unit"> kWh</div>
+                                    <div class="metric-unit">&nbsp;kWh</div>
                                 </div>
                             </div>
                         </div>
@@ -722,7 +726,7 @@
                                 <div class="card-body valign">
                                     <div id="today_solar_icon" class="material-icons metric">solar_power</div>
                                     <div id="today_solar" style="metric metric-white">0</div>
-                                    <div class="metric-unit"> kWh</div>
+                                    <div class="metric-unit">&nbsp;kWh</div>
                                 </div>
                             </div>
                         </div>
@@ -737,7 +741,7 @@
                                 <div class="card-body valign">
                                     <div id="today_consumed_icon" class="material-icons metric">home</div>
                                     <div id="today_consumed" style="metric metric-white">0</div>
-                                    <div class="metric-unit"> kWh</div>
+                                    <div class="metric-unit">&nbsp;kWh</div>
                                 </div>
                             </div>
                         </div>
@@ -752,7 +756,7 @@
                                 <div class="card-body valign">
                                     <div id="today_export_icon" class="material-icons metric">logout</div>
                                     <div id="today_export" style="metric metric-white">0</div>
-                                    <div class="metric-unit"> kWh</div>
+                                    <div class="metric-unit">&nbsp;kWh</div>
                                 </div>
                             </div>
                         </div>
