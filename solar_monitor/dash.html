@@ -283,28 +283,56 @@
                 var date = new Date(data_dict.last_updated);
                 $("#last_updated").html(date.toLocaleTimeString());
 
-                // for smaller screens
-                // hide the donuts
-                // and make the metrics singlt-column
                 $("#window_width").html(window.innerWidth);
                 $("#window_height").html(window.innerHeight);
-                if (window.innerWidth < 1600 || window.innerHeight < 1080) {
-                    $("#live_donut_chart").hide();
-                    $("#today_donut_chart").hide();
-                    $("#live_metric_grid").removeClass("row-cols-2").addClass("row-cols-1");
-                    $("#today_metric_grid").removeClass("row-cols-2").addClass("row-cols-1");
+
+                // height and width checks
+                if (window.innerWidth <= window.innerHeight) {
+                    // remove column spans to force vertical 
+                    // stack
+                    $("#metric_column").removeClass("col-4");
+                    $("#chart_column").removeClass("col-8");
+
+                    // metrics in two columns and show donuts
+                    $("#live_donut_chart").show();
+                    $("#today_donut_chart").show();
+                    $("#live_metric_grid").removeClass("row-cols-1").addClass("row-cols-2");
+                    $("#today_metric_grid").removeClass("row-cols-1").addClass("row-cols-2");
+
+                    // set the small screen larger font sizes
                     document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-small-screen)');
                     document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-small-screen)');
                     document.body.style.setProperty("--title-font-size", 'var(--title-font-size-small-screen)');
                 }
                 else {
-                    $("#live_donut_chart").show();
-                    $("#today_donut_chart").show();
-                    $("#live_metric_grid").removeClass("row-cols-1").addClass("row-cols-2");
-                    $("#today_metric_grid").removeClass("row-cols-1").addClass("row-cols-2");
-                    document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-large-screen)');
-                    document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-large-screen)');
-                    document.body.style.setProperty("--title-font-size", 'var(--title-font-size-large-screen)');
+                    $("#metric_column").addClass("col-4");
+                    $("#chart_column").addClass("col-8");
+
+                    if (window.innerWidth < 1600 || window.innerHeight < 1080) {
+                        // hide donuts and make metrics single
+                        // column 
+                        $("#live_donut_chart").hide();
+                        $("#today_donut_chart").hide();
+                        $("#live_metric_grid").removeClass("row-cols-2").addClass("row-cols-1");
+                        $("#today_metric_grid").removeClass("row-cols-2").addClass("row-cols-1");
+
+                        // set the small screen larger font sizes
+                        document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-small-screen)');
+                        document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-small-screen)');
+                        document.body.style.setProperty("--title-font-size", 'var(--title-font-size-small-screen)');
+                    }
+                    else {
+                        // metrics in two columns and show donuts
+                        $("#live_donut_chart").show();
+                        $("#today_donut_chart").show();
+                        $("#live_metric_grid").removeClass("row-cols-1").addClass("row-cols-2");
+                        $("#today_metric_grid").removeClass("row-cols-1").addClass("row-cols-2");
+
+                        // set the large screen smaller font sizes
+                        document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-large-screen)');
+                        document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-large-screen)');
+                        document.body.style.setProperty("--title-font-size", 'var(--title-font-size-large-screen)');
+                    }
                 }
 
                 draw_charts();
@@ -594,10 +622,10 @@
 
 <body id="bgdark">
     <div id="dashboard" class="container-fluid text-center" data-bs-theme="dark">
-        <div class="row mt-2">
+        <div class="row">
 
             <!-- Left column for live usage and metrics -->
-            <div class="col-4">
+            <div id="metric_column" class="col-4 mt-2">
 
                 <!-- Live donut -->
                 <div class="card-transparent text-white text-center">
@@ -828,7 +856,7 @@
             <!-- end Left column for live usage and metrics -->
 
             <!-- Right column for day, month and year graphs -->
-            <div class="col-8">
+            <div id="chart_column" class="col-8 mt-2">
                 <div class="row">
                     <div class="col">
                         <center><div class="title">Last 36 Hours</div></center>
