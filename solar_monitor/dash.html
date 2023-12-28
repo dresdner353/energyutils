@@ -12,18 +12,20 @@
     /* metric and material icon sizing
      * two variations for large and smaller screens
      */
-    --metric-font-size-large-screen: 4.5vmin;
-    --metric-font-size-small-screen: 7.5vmin;
+    --metric-font-size-large-screen: 3.0vw;
+    --metric-font-size-small-screen: 4.5vw;
+    --metric-font-size-portrait-screen: 8.5vw;
 
-    --metric-unit-font-size-large-screen: 1.5vmin;
-    --metric-unit-font-size-small-screen: 2.8vmin;
+    --metric-unit-font-size-large-screen: 1.0vw;
+    --metric-unit-font-size-small-screen: 1.5vw;
+    --metric-unit-font-size-portrait-screen: 3.5vw;
 
-    --title-font-size-large-screen: 2.0vmin;
-    --title-font-size-small-screen: 2.2vmin;
+    --title-font-size-large-screen: 1.0vw;
+    --title-font-size-small-screen: 1.5vw;
+    --title-font-size-portrait-screen: 4.5vw;
 
     --metric-font-size: var(--metric-font-size-large-screen);
     --metric-unit-font-size: var(--metric-unit-font-size-large-screen);
-
     --title-font-size: var(--title-font-size-large-screen);
 }
         #bgdark {
@@ -299,10 +301,10 @@
                     $("#live_metric_grid").removeClass("row-cols-1").addClass("row-cols-2");
                     $("#today_metric_grid").removeClass("row-cols-1").addClass("row-cols-2");
 
-                    // set the small screen larger font sizes
-                    document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-small-screen)');
-                    document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-small-screen)');
-                    document.body.style.setProperty("--title-font-size", 'var(--title-font-size-small-screen)');
+                    // set the portrait screen font sizes
+                    document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-portrait-screen)');
+                    document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-portrait-screen)');
+                    document.body.style.setProperty("--title-font-size", 'var(--title-font-size-portrait-screen)');
                 }
                 else {
                     $("#metric_column").addClass("col-4");
