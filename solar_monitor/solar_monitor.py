@@ -91,6 +91,7 @@ def log_message(
                     message
                     )
                 )
+        sys.stdout.flush()
 
     return
 
@@ -1047,7 +1048,7 @@ def thread_exception_wrapper(
 
 # main()
 parser = argparse.ArgumentParser(
-        description = 'ESB HDF Reader'
+        description = 'Solar Monitor'
         )
 
 parser.add_argument(
