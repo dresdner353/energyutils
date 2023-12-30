@@ -705,14 +705,13 @@ def device_api_agent():
     return
 
 
-def build_dash_web_page(refresh_interval = 5000):
+def build_dash_web_page():
     global gv_verbose
     global gv_data_dict
 
     log_message(
             gv_verbose,
-            'Building /dashboard webpage with refresh of %d msecs' % (
-            refresh_interval))
+            'Building /dashboard webpage')
 
     dash_filename = '%s/dash.html' % (
             os.path.dirname(os.path.realpath(__file__))
