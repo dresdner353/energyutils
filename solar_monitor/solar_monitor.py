@@ -252,11 +252,18 @@ class config_handler(object):
 
         if cherrypy.request.method == 'POST':
             # update config
-            gv_config_dict = json.loads(cherrypy.request.body.read())
+            updated_config_dict = json.loads(cherrypy.request.body.read())
             utils.log_message(
                     utils.gv_verbose,
-                    'config post %s' % (gv_config_dict)
+                    'config post %s' % (updated_config_dict)
                     )
+
+            # map like to like keys in config
+            # this is a hack as its allowing config to exist that is not 
+            # served back from the admin page
+            for key in updated_config_dict:
+                gv_config_dict[key] = updated_config_dict[key]
+
             save_config(gv_config_dict, gv_config_file)
             return ""
 
