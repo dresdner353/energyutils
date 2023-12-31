@@ -43,6 +43,7 @@
                 }
 
                 if ('solis' in config_dict){
+                    $('#solis_inverter_sn').val(config_dict['solis']['inverter_sn']);
                     $('#solis_api_host').val(config_dict['solis']['api_host']);
                     $('#solis_key_id').val(config_dict['solis']['key_id']);
                     $('#solis_key_secret').val(config_dict['solis']['key_secret']);
@@ -117,6 +118,7 @@
             config_dict['shelly']['device_password'] = $('#shelly_device_password').val();
 
             config_dict['solis'] = {}
+            config_dict['solis']['inverter_sn'] = $('#solis_inverter_sn').val();
             config_dict['solis']['api_host'] = $('#solis_api_host').val();
             config_dict['solis']['key_id'] = $('#solis_key_id').val();
             config_dict['solis']['key_secret'] = $('#solis_key_secret').val();
@@ -226,6 +228,10 @@
                                         </div>
                                     </div>
                                     <div class="col">
+                                        <div class="form-floating mb-3">
+                                            <input type="password" class="form-control" id="solis_inverter_sn" placeholder="xxxxxxxxx">
+                                            <label for="solis_inverter_sn">Solis Inverter SN</label>
+                                        </div>
                                         <div class="form-floating mb-3">
                                             <input type="password" class="form-control" id="solis_key_secret" placeholder="xxxxxxxxx">
                                             <label for="solis_key_secret">Solis Key Secret</label>
