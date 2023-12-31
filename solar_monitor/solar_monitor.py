@@ -12,6 +12,7 @@ import concurrent.futures
 import cherrypy
 import utils
 import shelly
+import solis
 
 # global config
 gv_config_dict = {}
@@ -130,6 +131,8 @@ def monitor_agent():
     while True:
         if gv_config_dict['data_source'] == 'shelly':
             gv_data_dict, sleep_interval = shelly.get_data(gv_config_dict['shelly'])
+        elif gv_config_dict['data_source'] == 'solis':
+            gv_data_dict, sleep_interval = solis.get_data(gv_config_dict['solis'])
         else:
             utils.log_message(
                     1,
@@ -137,6 +140,18 @@ def monitor_agent():
                     )
 
         # FIXME elseif others into place
+
+        # sleep protection
+        if sleep_interval < 5:
+            sleep_interval = 5
+
+        # refresh interval
+        # for longer sleep periods, we can let the 
+        # dashboard refresh back off a bit
+        if sleep_interval <= 30:
+            gv_data_dict['refresh_interval'] = sleep_interval 
+        else:
+            gv_data_dict['refresh_interval'] = 30 
 
         utils.log_message(
                 utils.gv_verbose,
