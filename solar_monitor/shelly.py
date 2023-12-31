@@ -212,8 +212,7 @@ def get_shelly_api_data(
             usage_rec['year'] = '%04d' %(
                     ts_dt.year)
             usage_rec['month'] = ts_dt.strftime('%b')
-            usage_rec['day'] = '%d' % (
-                    ts_dt.day)
+            usage_rec['day'] = ts_dt.day
             usage_rec['hour'] = ts_dt.hour
 
             # store in dict
@@ -316,7 +315,6 @@ def get_cloud_data(shelly_config):
                         )
                     )
             shelly_data_dict['day'] = day_data
-            shelly_data_dict['last_updated'] = int(time.time())
     
     if now >= month_ts:
         # last 30 days
@@ -353,7 +351,6 @@ def get_cloud_data(shelly_config):
                         )
                     )
             shelly_data_dict['month'] = month_data
-            shelly_data_dict['last_updated'] = int(time.time())
 
             # take todays totals from last recorded day in month
             today_rec = month_data[-1]
@@ -405,7 +402,6 @@ def get_cloud_data(shelly_config):
                         )
                     )
             shelly_data_dict['year'] = year_data
-            shelly_data_dict['last_updated'] = int(time.time())
 
             # take months totals from last recorded month in year
             month_rec = year_data[-1]
