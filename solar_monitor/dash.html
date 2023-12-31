@@ -101,7 +101,8 @@
         // standard refresh timer 
         // normal refresh timer when window is
         // in focus
-        var standard_refresh_timer = setInterval(refresh_data, 5000);
+        var refresh_interval = 5000
+        var standard_refresh_timer = setInterval(refresh_data, refresh_interval);
 
         // hide dashboard initially
         $( document ).ready(function() {
@@ -113,8 +114,8 @@
         // avoids background activity when not in focus
         $(window).focus(function() {
             clearInterval(standard_refresh_timer);
+            standard_refresh_timer = setInterval(refresh_data, refresh_interval);
             refresh_data();
-            standard_refresh_timer = setInterval(refresh_data, 5000);
         }).blur(function() {
             clearInterval(standard_refresh_timer);
         });
@@ -146,6 +147,25 @@
 
             data_request.done(function(data) {
                 data_dict = JSON.parse(data);
+
+                // check data dict refresh and update if required
+                // Note: shown as second and JS operates on msecs
+                if ('refresh_interval' in data_dict) {
+                    data_dict_refresh = data_dict.refresh_interval * 1000
+                    if (refresh_interval != data_dict_refresh) {
+                        refresh_interval = data_dict_refresh;
+
+                        // protection of min 5 sec refresh
+                        if (refresh_interval < 5000) {
+                            refresh_interval = 5000;
+                        }
+
+                        // reset timer
+                        clearInterval(standard_refresh_timer);
+                        standard_refresh_timer = setInterval(refresh_data, refresh_interval);
+                        console.log('new refresh interval:' + refresh_interval);
+                    }
+                }
 
                 // show the dashboard only when we have
                 // a valid last updated timestamp
@@ -528,6 +548,9 @@
                 }
 
                 var day_data = new google.visualization.DataTable();
+
+                // hour is actually a number (int)
+                // but we chart it as a string
                 day_data.addColumn('string', 'Hour');
 
                 for (series_field of bar_chart_series_list) {
@@ -537,6 +560,8 @@
                 day_data.addRows(data_dict.day.length);
                 row = 0
                 for (const item of data_dict.day) {
+                    // set hour value as string
+                    // prevents chart from splitting columns as fractions/averages
                     day_data.setCell(row, 0, item.hour.toString());
                     col = 1
                     for (series_field of bar_chart_series_list) {
@@ -563,6 +588,7 @@
                 }
 
                 var month_data = new google.visualization.DataTable();
+                // present int day number as string
                 month_data.addColumn('string', 'Day');
 
                 for (series_field of bar_chart_series_list) {
@@ -572,7 +598,9 @@
                 month_data.addRows(data_dict.month.length);
                 row = 0
                 for (const item of data_dict.month) {
-                    month_data.setCell(row, 0, item.day);
+                    // force to string to prevent averaging of 
+                    // column values
+                    month_data.setCell(row, 0, item.day.toString());
                     col = 1
                     for (series_field of bar_chart_series_list) {
                         month_data.setCell(row, col, item[series_field].toFixed(2));
