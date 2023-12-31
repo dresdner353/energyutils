@@ -154,7 +154,7 @@ def monitor_agent():
             gv_data_dict['refresh_interval'] = 30 
 
         utils.log_message(
-                utils.gv_verbose,
+                1,
                 "Monitor sleeping for %d seconds" % (sleep_interval)
                 )
         time.sleep(sleep_interval)
