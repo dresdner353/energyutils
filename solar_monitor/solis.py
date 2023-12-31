@@ -429,10 +429,10 @@ def get_inverter_month_data(solis_config):
         solis_data_dict['metrics']['yesterday']['consumed'] = yesterday_rec['import'] + yesterday_rec['solar_consumed']
 
     # new refresh time
-    #month_ts = ((70 - dt_now.minute) * 60) + now
+    month_ts = ((70 - dt_now.minute) * 60) + now
 
     # temp hack to refresh every 5 minutes
-    month_ts = now + 280
+    #month_ts = now + 280
     return 
 
 
@@ -580,8 +580,11 @@ def get_data(solis_config):
     now = int(time.time())
     next_update_ts = solis_data_dict['last_updated'] + 300 + 20
     update_interval = next_update_ts - now
+
+    # negative scenarios
+    # fall back to 2-min refresh
     if update_interval < 0:
-        update_interval = 60
+        update_interval = 120
 
     # return data and fixed sleep of 5 minutes for refresh
     return solis_data_dict, update_interval
