@@ -282,7 +282,7 @@
                 }
 
                 // render as HH:MM:SS
-                var date = new Date(data_dict.last_updated);
+                var date = new Date(data_dict.last_updated * 1000);
                 $("#last_updated").html(date.toLocaleTimeString());
 
                 $("#window_width").html(window.innerWidth);
