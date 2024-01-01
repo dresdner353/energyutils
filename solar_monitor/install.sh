@@ -37,7 +37,7 @@ apt-get update
 apt install python3-dateutil python3-cherrypy3
 
 # download code
-su ${HOME_USER} -c "bash -c install_solar_monitor"
+su ${USER} -c "bash -c install_solar_monitor"
 
 # install and start service
 cp ${HOME_DIR}/energyutils/solar_monitor/solarmon.service /etc/systemd/system
