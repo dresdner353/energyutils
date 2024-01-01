@@ -10,8 +10,10 @@ function install_solar_monitor {
 
     # GIT repo
     echo "Downloading energyutils..."
+    mv energyutils/solar_monitor/config.json /tmp
     rm -rf energyutils
     git clone https://github.com/dresdner353/energyutils.git
+    mv /tmp/config.json energyutils/solar_monitor
 
     # firefox kiosk
     AUTOSTART_DIR=.config/autostart
@@ -30,12 +32,8 @@ then
 fi
 
 # Create account for solarmon
-USER=solarmon
-PASSWORD='123456789'
+USER=pi
 HOME_DIR=/home/${USER}
-
-adduser --disabled-password --comment '' ${USER} --home ${HOME_DIR}
-printf "${PASSWORD}""\n""${PASSWORD}""\n" | passwd ${USER}
 
 # install packages
 apt-get update

@@ -1,4 +1,4 @@
 [Desktop Entry]
 Type=Application
 Name=Solar Monitor Kiosk
-Exec=/home/solarmon/energyutils/solar_monitor/chromium_kiosk.sh
+Exec=/home/pi/energyutils/solar_monitor/chromium_kiosk.sh

@@ -3,9 +3,9 @@ Description=Solar Monitor Dashboard
 After=multi-user.target
 
 [Service]
-ExecStart=/usr/bin/python3 /home/solarmon/energyutils/solar_monitor/solar_monitor.py
-User=solarmon
-Group=solarmon
+ExecStart=/usr/bin/python3 /home/pi/energyutils/solar_monitor/solar_monitor.py
+User=pi
+Group=pi
 Restart=always
 StandardOutput=null
 StandardError=null
