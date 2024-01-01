@@ -151,7 +151,11 @@ def monitor_agent():
         if sleep_interval <= 30:
             gv_data_dict['refresh_interval'] = sleep_interval 
         else:
-            gv_data_dict['refresh_interval'] = 10 
+            gv_data_dict['refresh_interval'] = 30 
+
+        # metric cycle interval
+        # FIXME make configurable
+        gv_data_dict['metric_cycle_interval'] = 10
 
         utils.log_message(
                 1,
