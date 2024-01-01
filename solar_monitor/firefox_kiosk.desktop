@@ -1,4 +1,4 @@
 [Desktop Entry]
 Type=Application
 Name=Solar Monitor Kiosk
-Exec=/home/pi/energyutils/solar_monitor/firefox_kiosk.sh
+Exec=/home/solarmon/energyutils/solar_monitor/firefox_kiosk.sh

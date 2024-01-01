@@ -12,6 +12,9 @@ function install_solar_monitor {
     echo "Downloading energyutils..."
     rm -rf energyutils
     git clone https://github.com/dresdner353/energyutils.git
+
+    # firefox kiosk
+    cp energyutils/solar_monitor/firefox_kiosk.desktop .config/autostart
 }
 
 # export function for su call
