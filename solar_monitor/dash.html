@@ -134,7 +134,12 @@
         }
 
         var refresh_error_count = 0;
+
+        // tracking the current overall
+        // metric series
         var overall_metric_index = 0;
+        var overall_metric_cycle_interval = 5000;
+        var overall_metric_cycle_ts = 0;
 
         function refresh_data() {
             console.log("refresh_data()");
@@ -168,6 +173,17 @@
                     }
                 }
 
+                if ('metric_cycle_interval' in data_dict) {
+                    overall_metric_cycle_interval = data_dict.metric_cycle_interval * 1000;
+                    console.log('metric cycle interval:' + overall_metric_cycle_interval);
+
+                    // protection of min 5 sec refresh
+                    if (overall_metric_cycle_interval < 5000) {
+                        overall_metric_cycle_interval = 5000;
+                    }
+                    console.log('metric cycle interval:' + overall_metric_cycle_interval);
+                }
+
                 // show the dashboard only when we have
                 // a valid last updated timestamp
                 if (data_dict.last_updated > 0) {
@@ -178,13 +194,18 @@
                 refresh_error_count = 0
 
                 // rotating metrics for "overall" section
-                metric_list = Object.keys(data_dict.metrics);
-                for (i = 0; i < metric_list.length; i++) {
-                    overall_metric_index = (overall_metric_index + 1) % metric_list.length;
-                    if (metric_list[overall_metric_index] != 'live') {
-                        overall_metric_key = metric_list[overall_metric_index];
-                        $("#overall_donut_title").html("Overall Usage for " + data_dict['metrics'][overall_metric_key]['title']);
-                        break;
+                // rotates every N msecs 
+                var now = Date.now();
+                if (now - overall_metric_cycle_ts >= overall_metric_cycle_interval) {
+                    metric_list = Object.keys(data_dict.metrics);
+                    for (i = 0; i < metric_list.length; i++) {
+                        overall_metric_index = (overall_metric_index + 1) % metric_list.length;
+                        if (metric_list[overall_metric_index] != 'live') {
+                            overall_metric_key = metric_list[overall_metric_index];
+                            $("#overall_donut_title").html("Usage for " + data_dict['metrics'][overall_metric_key]['title']);
+                            overall_metric_cycle_ts = now;
+                            break;
+                        }
                     }
                 }
 
@@ -332,7 +353,12 @@
                     $("#overall_co2_icon").removeClass().addClass("material-icons metric metric-grey");
                 }
 
-                $("#overall_trees").html(overall_source.trees.toFixed(2));
+                if (overall_source.trees >= 1) {
+                    $("#overall_trees").html(overall_source.trees.toFixed(0));
+                }
+                else {
+                    $("#overall_trees").html(overall_source.trees.toFixed(2));
+                }
                 if (overall_source.trees > 0) {
                     $("#overall_trees").removeClass().addClass("metric metric-green");
                     $("#overall_trees_icon").removeClass().addClass("material-icons metric metric-green");
@@ -924,7 +950,7 @@
                              data-bs-toggle="tooltip" 
                              data-bs-placement="bottom"
                              data-bs-custom-class="custom-tooltip"
-                             data-bs-title="CO2 (kg). This is the overall CO2 saved by the premises">
+                             data-bs-title="CO2 (g/kg). This is the overall CO2 emissions avoided by the PV generation">
 
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
