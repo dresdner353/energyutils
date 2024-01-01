@@ -130,9 +130,9 @@ def monitor_agent():
 
     while True:
         if gv_config_dict['data_source'] == 'shelly':
-            gv_data_dict, sleep_interval = shelly.get_data(gv_config_dict['shelly'])
+            gv_data_dict, sleep_interval = shelly.get_data(gv_config_dict)
         elif gv_config_dict['data_source'] == 'solis':
-            gv_data_dict, sleep_interval = solis.get_data(gv_config_dict['solis'])
+            gv_data_dict, sleep_interval = solis.get_data(gv_config_dict)
         else:
             utils.log_message(
                     1,
@@ -151,7 +151,7 @@ def monitor_agent():
         if sleep_interval <= 30:
             gv_data_dict['refresh_interval'] = sleep_interval 
         else:
-            gv_data_dict['refresh_interval'] = 30 
+            gv_data_dict['refresh_interval'] = 10 
 
         utils.log_message(
                 1,
