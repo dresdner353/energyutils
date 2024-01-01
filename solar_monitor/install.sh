@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Exit on errors
-set -ex
+set -x
 
 # install
 function install_solar_monitor {
@@ -34,8 +34,7 @@ printf "${PASSWORD}""\n""${PASSWORD}""\n" | passwd ${USER}
 
 # install packages
 apt-get update
-apt-get -y install python3-pip
-pip3 install cherrypy 
+apt install python3-dateutil python3-cherrypy3
 
 # download code
 su ${HOME_USER} -c "bash -c install_solar_monitor"
