@@ -18,7 +18,8 @@ function install_solar_monitor {
     # firefox kiosk
     AUTOSTART_DIR=.config/autostart
     mkdir -p ${AUTOSTART_DIR}
-    cp energyutils/solar_monitor/firefox_kiosk.desktop ${AUTOSTART_DIR}
+    #cp energyutils/solar_monitor/firefox_kiosk.desktop ${AUTOSTART_DIR}
+    cp energyutils/solar_monitor/chromium_kiosk.desktop ${AUTOSTART_DIR}
 }
 
 # export function for su call
