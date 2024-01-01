@@ -1,0 +1,14 @@
+[Unit]
+Description=Solar Monitor Dashboard
+After=multi-user.target
+
+[Service]
+ExecStart=/usr/bin/python3 /home/solarmon/energyutils/solar_monitor/solar_monitor.py
+User=solarmon
+Group=solarmon
+Restart=always
+StandardOutput=null
+StandardError=null
+
+[Install]
+WantedBy=multi-user.target
