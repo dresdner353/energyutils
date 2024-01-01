@@ -30,6 +30,7 @@ shelly_data_dict['metrics']['live']['export'] = 0
 shelly_data_dict['metrics']['live']['consumed'] = 0
 
 shelly_data_dict['metrics']['today'] = {}
+shelly_data_dict['metrics']['today']['title'] = 'Today'
 shelly_data_dict['metrics']['today']['import'] = 0
 shelly_data_dict['metrics']['today']['solar'] = 0
 shelly_data_dict['metrics']['today']['solar_consumed'] = 0
@@ -37,6 +38,7 @@ shelly_data_dict['metrics']['today']['export'] = 0
 shelly_data_dict['metrics']['today']['consumed'] = 0
 
 shelly_data_dict['metrics']['yesterday'] = {}
+shelly_data_dict['metrics']['yesterday']['title'] = 'Yesterday'
 shelly_data_dict['metrics']['yesterday']['import'] = 0
 shelly_data_dict['metrics']['yesterday']['solar'] = 0
 shelly_data_dict['metrics']['yesterday']['solar_consumed'] = 0
@@ -44,6 +46,7 @@ shelly_data_dict['metrics']['yesterday']['export'] = 0
 shelly_data_dict['metrics']['yesterday']['consumed'] = 0
 
 shelly_data_dict['metrics']['this_month'] = {}
+shelly_data_dict['metrics']['this_month']['title'] = 'This Month'
 shelly_data_dict['metrics']['this_month']['import'] = 0
 shelly_data_dict['metrics']['this_month']['solar'] = 0
 shelly_data_dict['metrics']['this_month']['solar_consumed'] = 0
@@ -51,6 +54,7 @@ shelly_data_dict['metrics']['this_month']['export'] = 0
 shelly_data_dict['metrics']['this_month']['consumed'] = 0
 
 shelly_data_dict['metrics']['last_month'] = {}
+shelly_data_dict['metrics']['last_month']['title'] = 'Last Month'
 shelly_data_dict['metrics']['last_month']['import'] = 0
 shelly_data_dict['metrics']['last_month']['solar'] = 0
 shelly_data_dict['metrics']['last_month']['solar_consumed'] = 0
@@ -58,11 +62,20 @@ shelly_data_dict['metrics']['last_month']['export'] = 0
 shelly_data_dict['metrics']['last_month']['consumed'] = 0
 
 shelly_data_dict['metrics']['this_year'] = {}
+shelly_data_dict['metrics']['this_year']['title'] = 'This Year'
 shelly_data_dict['metrics']['this_year']['import'] = 0
 shelly_data_dict['metrics']['this_year']['solar'] = 0
 shelly_data_dict['metrics']['this_year']['solar_consumed'] = 0
 shelly_data_dict['metrics']['this_year']['export'] = 0
 shelly_data_dict['metrics']['this_year']['consumed'] = 0
+
+shelly_data_dict['metrics']['last_12_months'] = {}
+shelly_data_dict['metrics']['last_12_months']['title'] = 'Last 12 Months'
+shelly_data_dict['metrics']['last_12_months']['import'] = 0
+shelly_data_dict['metrics']['last_12_months']['solar'] = 0
+shelly_data_dict['metrics']['last_12_months']['solar_consumed'] = 0
+shelly_data_dict['metrics']['last_12_months']['export'] = 0
+shelly_data_dict['metrics']['last_12_months']['consumed'] = 0
 
 # timestamps to track the next call
 month_ts = 0
@@ -88,18 +101,16 @@ def parse_time(
 
 
 def get_shelly_api_data(
-        api_host,
-        auth_key,
-        device_id,
+        config,
         date_range,
         date_from,
         date_to):
 
     # check if creds are set
     if (
-            not api_host or
-            not auth_key or
-            not device_id
+            not config['shelly']['api_host'] or
+            not config['shelly']['auth_key'] or
+            not config['shelly']['device_id']
             ):
         utils.log_message(
                 1,
@@ -109,10 +120,10 @@ def get_shelly_api_data(
 
     # API URL and params
     shelly_cloud_url = 'https://%s/v2/statistics/power-consumption/em-1p' % (
-            api_host)
+            config['shelly']['api_host'])
     params = {}
-    params['id'] = device_id
-    params['auth_key'] = auth_key
+    params['id'] = config['shelly']['device_id']
+    params['auth_key'] = config['shelly']['auth_key']
     params['date_range'] = date_range
 
     if date_from:
@@ -247,6 +258,10 @@ def get_shelly_api_data(
         usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
         usage_rec['consumed'] = usage_rec['import'] + usage_rec['solar_consumed']
 
+        # environmental metrics
+        usage_rec['co2'] = (config['environment']['gco2_kwh'] * usage_rec['solar']) / 1000
+        usage_rec['trees'] = config['environment']['trees_kwh'] * usage_rec['solar']
+
     # reformat to list of records
     data_list = []
     for key in sorted(data_dict.keys()):
@@ -255,7 +270,7 @@ def get_shelly_api_data(
     return data_list
 
 
-def get_cloud_data(shelly_config):
+def get_cloud_data(config):
 
     global shelly_data_dict
     global month_ts
@@ -294,9 +309,7 @@ def get_cloud_data(shelly_config):
                     )
         
         day_data = get_shelly_api_data(
-                api_host = shelly_config['api_host'],
-                auth_key = shelly_config['auth_key'],
-                device_id = shelly_config['device_id'],
+                config,
                 date_range = 'custom',
                 date_from = day_ago_str,
                 date_to = day_end_str)
@@ -331,9 +344,7 @@ def get_cloud_data(shelly_config):
                     )
         
         month_data = get_shelly_api_data(
-                api_host = shelly_config['api_host'],
-                auth_key = shelly_config['auth_key'],
-                device_id = shelly_config['device_id'],
+                config,
                 date_range = 'custom',
                 date_from = month_start_str,
                 date_to = month_end_str)
@@ -359,6 +370,8 @@ def get_cloud_data(shelly_config):
             shelly_data_dict['metrics']['today']['solar_consumed'] = today_rec['solar_consumed']
             shelly_data_dict['metrics']['today']['export'] = today_rec['export']
             shelly_data_dict['metrics']['today']['consumed'] = today_rec['import'] +  today_rec['solar_consumed']
+            shelly_data_dict['metrics']['today']['co2'] = today_rec['co2']
+            shelly_data_dict['metrics']['today']['trees'] = today_rec['trees']
 
             if len(month_data) >= 2:
                 yesterday_rec = month_data[-2]
@@ -367,6 +380,8 @@ def get_cloud_data(shelly_config):
                 shelly_data_dict['metrics']['yesterday']['solar_consumed'] = yesterday_rec['solar_consumed']
                 shelly_data_dict['metrics']['yesterday']['export'] = yesterday_rec['export']
                 shelly_data_dict['metrics']['yesterday']['consumed'] = yesterday_rec['import'] + yesterday_rec['solar_consumed']
+                shelly_data_dict['metrics']['yesterday']['co2'] = yesterday_rec['co2']
+                shelly_data_dict['metrics']['yesterday']['trees'] = yesterday_rec['trees']
 
     if now >= year_ts:
         # last several months or so
@@ -382,9 +397,7 @@ def get_cloud_data(shelly_config):
                     )
         
         year_data = get_shelly_api_data(
-                api_host = shelly_config['api_host'],
-                auth_key = shelly_config['auth_key'],
-                device_id = shelly_config['device_id'],
+                config,
                 date_range = 'custom',
                 date_from = last_year_start_str,
                 date_to = year_end_str)
@@ -410,6 +423,8 @@ def get_cloud_data(shelly_config):
             shelly_data_dict['metrics']['this_month']['solar_consumed'] = month_rec['solar_consumed']
             shelly_data_dict['metrics']['this_month']['export'] = month_rec['export']
             shelly_data_dict['metrics']['this_month']['consumed'] = month_rec['import'] + month_rec['solar_consumed']
+            shelly_data_dict['metrics']['this_month']['co2'] = month_rec['co2']
+            shelly_data_dict['metrics']['this_month']['trees'] = month_rec['trees']
 
             if len(year_data) >= 2:
                 last_month_rec = year_data[-2]
@@ -418,6 +433,8 @@ def get_cloud_data(shelly_config):
                 shelly_data_dict['metrics']['last_month']['solar_consumed'] = last_month_rec['solar_consumed']
                 shelly_data_dict['metrics']['last_month']['export'] = last_month_rec['export']
                 shelly_data_dict['metrics']['last_month']['consumed'] = last_month_rec['import'] + last_month_rec['solar_consumed']
+                shelly_data_dict['metrics']['last_month']['co2'] = last_month_rec['co2']
+                shelly_data_dict['metrics']['last_month']['trees'] = last_month_rec['trees']
 
             # this year
             # add all month records for last referenced year
@@ -429,6 +446,8 @@ def get_cloud_data(shelly_config):
             shelly_data_dict['metrics']['this_year']['solar_consumed'] = 0
             shelly_data_dict['metrics']['this_year']['export'] = 0
             shelly_data_dict['metrics']['this_year']['consumed'] = 0
+            shelly_data_dict['metrics']['this_year']['co2'] = 0
+            shelly_data_dict['metrics']['this_year']['trees'] = 0
 
             for month_rec in year_data:
                 if month_rec['year'] != this_year:
@@ -439,29 +458,51 @@ def get_cloud_data(shelly_config):
                 shelly_data_dict['metrics']['this_year']['solar_consumed'] += month_rec['solar_consumed']
                 shelly_data_dict['metrics']['this_year']['export'] += month_rec['export']
                 shelly_data_dict['metrics']['this_year']['consumed'] += month_rec['import'] + month_rec['solar_consumed']
+                shelly_data_dict['metrics']['this_year']['co2'] += month_rec['co2']
+                shelly_data_dict['metrics']['this_year']['trees'] += month_rec['trees']
 
+            # last 12 months 
+            # add all month records 
+
+            # reset
+            shelly_data_dict['metrics']['last_12_months']['import'] = 0
+            shelly_data_dict['metrics']['last_12_months']['solar'] = 0
+            shelly_data_dict['metrics']['last_12_months']['solar_consumed'] = 0
+            shelly_data_dict['metrics']['last_12_months']['export'] = 0
+            shelly_data_dict['metrics']['last_12_months']['consumed'] = 0
+            shelly_data_dict['metrics']['last_12_months']['co2'] = 0
+            shelly_data_dict['metrics']['last_12_months']['trees'] = 0
+
+            for month_rec in year_data:
+                shelly_data_dict['metrics']['last_12_months']['import'] += month_rec['import']
+                shelly_data_dict['metrics']['last_12_months']['solar'] += month_rec['solar']
+                shelly_data_dict['metrics']['last_12_months']['solar_consumed'] += month_rec['solar_consumed']
+                shelly_data_dict['metrics']['last_12_months']['export'] += month_rec['export']
+                shelly_data_dict['metrics']['last_12_months']['consumed'] += month_rec['import'] + month_rec['solar_consumed']
+                shelly_data_dict['metrics']['last_12_months']['co2'] += month_rec['co2']
+                shelly_data_dict['metrics']['last_12_months']['trees'] += month_rec['trees']
 
     return
 
 
-def get_live_data(shelly_config):
+def get_live_data(config):
 
     utils.log_message(
             1,
             "Updating Shelly Live Data"
             )
 
-    if not shelly_config['device_host']:
+    if not config['shelly']['device_host']:
         utils.log_message(
                 1,
                 "Shelly Device Host is not configured.. skipping device call"
                 )
         return
 
-    device_url = 'http://%s/status' % (shelly_config['device_host'])
+    device_url = 'http://%s/status' % (config['shelly']['device_host'])
     basic =  requests.auth.HTTPBasicAuth(
-            shelly_config['device_username'], 
-            shelly_config['device_password']) 
+            config['shelly']['device_username'], 
+            config['shelly']['device_password']) 
 
     try:
         utils.log_message(
@@ -523,7 +564,7 @@ def get_live_data(shelly_config):
     return
 
 
-def get_data(shelly_config):
+def get_data(config):
 
     global shelly_data_dict
 
@@ -532,8 +573,8 @@ def get_data(shelly_config):
             "Updating Shelly Data"
             )
 
-    get_live_data(shelly_config)
-    get_cloud_data(shelly_config)
+    get_live_data(config)
+    get_cloud_data(config)
 
     # return data and fixed sleep of 5 seconds for refresh
     return shelly_data_dict, 5

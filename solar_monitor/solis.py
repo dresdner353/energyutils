@@ -29,6 +29,7 @@ solis_data_dict['metrics']['live']['export'] = 0
 solis_data_dict['metrics']['live']['consumed'] = 0
 
 solis_data_dict['metrics']['today'] = {}
+solis_data_dict['metrics']['today']['title'] = 'Today'
 solis_data_dict['metrics']['today']['import'] = 0
 solis_data_dict['metrics']['today']['solar'] = 0
 solis_data_dict['metrics']['today']['solar_consumed'] = 0
@@ -36,6 +37,7 @@ solis_data_dict['metrics']['today']['export'] = 0
 solis_data_dict['metrics']['today']['consumed'] = 0
 
 solis_data_dict['metrics']['yesterday'] = {}
+solis_data_dict['metrics']['yesterday']['title'] = 'Yesterday'
 solis_data_dict['metrics']['yesterday']['import'] = 0
 solis_data_dict['metrics']['yesterday']['solar'] = 0
 solis_data_dict['metrics']['yesterday']['solar_consumed'] = 0
@@ -43,6 +45,7 @@ solis_data_dict['metrics']['yesterday']['export'] = 0
 solis_data_dict['metrics']['yesterday']['consumed'] = 0
 
 solis_data_dict['metrics']['this_month'] = {}
+solis_data_dict['metrics']['this_month']['title'] = 'This Month'
 solis_data_dict['metrics']['this_month']['import'] = 0
 solis_data_dict['metrics']['this_month']['solar'] = 0
 solis_data_dict['metrics']['this_month']['solar_consumed'] = 0
@@ -50,6 +53,7 @@ solis_data_dict['metrics']['this_month']['export'] = 0
 solis_data_dict['metrics']['this_month']['consumed'] = 0
 
 solis_data_dict['metrics']['last_month'] = {}
+solis_data_dict['metrics']['last_month']['title'] = 'Last Month'
 solis_data_dict['metrics']['last_month']['import'] = 0
 solis_data_dict['metrics']['last_month']['solar'] = 0
 solis_data_dict['metrics']['last_month']['solar_consumed'] = 0
@@ -57,12 +61,20 @@ solis_data_dict['metrics']['last_month']['export'] = 0
 solis_data_dict['metrics']['last_month']['consumed'] = 0
 
 solis_data_dict['metrics']['this_year'] = {}
+solis_data_dict['metrics']['this_year']['title'] = 'This Year'
 solis_data_dict['metrics']['this_year']['import'] = 0
 solis_data_dict['metrics']['this_year']['solar'] = 0
 solis_data_dict['metrics']['this_year']['solar_consumed'] = 0
 solis_data_dict['metrics']['this_year']['export'] = 0
 solis_data_dict['metrics']['this_year']['consumed'] = 0
 
+solis_data_dict['metrics']['last_12_months'] = {}
+solis_data_dict['metrics']['last_12_months']['title'] = 'Last 12 Months'
+solis_data_dict['metrics']['last_12_months']['import'] = 0
+solis_data_dict['metrics']['last_12_months']['solar'] = 0
+solis_data_dict['metrics']['last_12_months']['solar_consumed'] = 0
+solis_data_dict['metrics']['last_12_months']['export'] = 0
+solis_data_dict['metrics']['last_12_months']['consumed'] = 0
 
 # timestamps to track the next call
 month_ts = 0
@@ -71,7 +83,7 @@ year_ts = 0
 # adapted from code
 # in https://github.com/Gentleman1983/ginlong_solis_api_connector
 def get_solis_cloud_data(
-        solis_config,
+        config,
         url_part, 
         request) -> dict:
 
@@ -91,12 +103,12 @@ def get_solis_cloud_data(
             url_part
             )
     hmac_obj = hmac.new(
-            solis_config['key_secret'].encode('utf-8'),
+            config['solis']['key_secret'].encode('utf-8'),
             msg = encrypt_str.encode('utf-8'),
             digestmod = hashlib.sha1,
             )
     authorization = 'API %s:%s' % (
-            solis_config['key_id'],
+            config['solis']['key_id'],
             base64.b64encode(hmac_obj.digest()).decode('utf-8')
             )
     headers = {
@@ -108,14 +120,14 @@ def get_solis_cloud_data(
     utils.log_message(
             utils.gv_verbose,
             'API: \nURL:%s \nHeaders:%s \nrequest:\n%s\n' % (
-                solis_config['api_host'] + url_part,
+                config['solis']['api_host'] + url_part,
                 json.dumps(headers, indent = 4),
                 json.dumps(request, indent = 4)
                 )
             )
     try:
         resp = requests.post(
-                solis_config['api_host'] + url_part,
+                config['solis']['api_host'] + url_part,
                 headers = headers,
                 json = request)
         utils.log_message(
@@ -129,12 +141,12 @@ def get_solis_cloud_data(
     except:
         utils.log_message(
                 1,
-                'Solis API failure.. URL:%s' % (solis_config['api_host'] + url_part) 
+                'Solis API failure.. URL:%s' % (config['solis']['api_host'] + url_part) 
                 )
         return None
 
 
-def get_inverter_day_data(solis_config):
+def get_inverter_day_data(config):
     global solis_data_dict
 
     utils.log_message(
@@ -162,13 +174,13 @@ def get_inverter_day_data(solis_config):
     solis_snap_list = []
 
     request = {}
-    request['sn'] = solis_config['inverter_sn']
+    request['sn'] = config['solis']['inverter_sn']
     request['TimeZone'] = 0
 
     # yesterday
     request['time'] = yesterday.strftime('%Y-%m-%d')
     day_dict = get_solis_cloud_data(
-            solis_config,
+            config,
             '/v1/api/inverterDay', 
             request)
     if not day_dict:
@@ -182,7 +194,7 @@ def get_inverter_day_data(solis_config):
     # today
     request['time'] = today.strftime('%Y-%m-%d')
     day_dict = get_solis_cloud_data(
-            solis_config,
+            config,
             '/v1/api/inverterDay', 
             request)
     if not day_dict:
@@ -259,6 +271,10 @@ def get_inverter_day_data(solis_config):
         usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
         usage_rec['consumed'] = usage_rec['import'] + usage_rec['solar_consumed']
 
+        # environmental metrics
+        usage_rec['co2'] = (config['environment']['gco2_kwh'] * usage_rec['solar']) / 1000
+        usage_rec['trees'] = config['environment']['trees_kwh'] * usage_rec['solar']
+
     # fill in empty records for absent hours
     # but not beyond the latest record
     
@@ -287,6 +303,8 @@ def get_inverter_day_data(solis_config):
                 usage_rec['export'] = 0
                 usage_rec['consumed'] = usage_rec['import']
                 usage_rec['solar_consumed'] = 0
+                usage_rec['co2'] = 0
+                usage_rec['trees'] = 0
 
     # cull to last 36 hours
     sorted_keys = sorted(data_dict.keys())[-36:]
@@ -325,7 +343,7 @@ def get_inverter_day_data(solis_config):
     return
 
 
-def get_inverter_month_data(solis_config):
+def get_inverter_month_data(config):
     global month_ts
     global solis_data_dict
 
@@ -351,13 +369,13 @@ def get_inverter_month_data(solis_config):
     solis_day_list = []
 
     request = {}
-    request['sn'] = solis_config['inverter_sn']
+    request['sn'] = config['solis']['inverter_sn']
     request['TimeZone'] = 0
 
     # last month
     request['month'] = last_month.strftime('%Y-%m')
     month_dict = get_solis_cloud_data(
-            solis_config,
+            config,
             '/v1/api/inverterMonth', 
             request)
     if not month_dict:
@@ -371,7 +389,7 @@ def get_inverter_month_data(solis_config):
     # this month
     request['month'] = today.strftime('%Y-%m')
     month_dict = get_solis_cloud_data(
-            solis_config,
+            config,
             '/v1/api/inverterMonth', 
             request)
     if not month_dict:
@@ -397,6 +415,10 @@ def get_inverter_month_data(solis_config):
         usage_rec['month'] = ts_dt.strftime('%b')
         usage_rec['day'] = ts_dt.day
 
+        # environmental metrics
+        usage_rec['co2'] = (config['environment']['gco2_kwh'] * usage_rec['solar']) / 1000
+        usage_rec['trees'] = config['environment']['trees_kwh'] * usage_rec['solar']
+
         data_dict[usage_rec['ts']] = usage_rec
 
     # cull to last 30 days
@@ -419,6 +441,8 @@ def get_inverter_month_data(solis_config):
     solis_data_dict['metrics']['today']['solar_consumed'] = today_rec['solar_consumed']
     solis_data_dict['metrics']['today']['export'] = today_rec['export']
     solis_data_dict['metrics']['today']['consumed'] = today_rec['import'] +  today_rec['solar_consumed']
+    solis_data_dict['metrics']['today']['co2'] = today_rec['co2']
+    solis_data_dict['metrics']['today']['trees'] = today_rec['trees']
 
     if len(month_data) >= 2:
         yesterday_rec = month_data[-2]
@@ -427,6 +451,8 @@ def get_inverter_month_data(solis_config):
         solis_data_dict['metrics']['yesterday']['solar_consumed'] = yesterday_rec['solar_consumed']
         solis_data_dict['metrics']['yesterday']['export'] = yesterday_rec['export']
         solis_data_dict['metrics']['yesterday']['consumed'] = yesterday_rec['import'] + yesterday_rec['solar_consumed']
+        solis_data_dict['metrics']['yesterday']['co2'] = yesterday_rec['co2']
+        solis_data_dict['metrics']['yesterday']['trees'] = yesterday_rec['trees']
 
     # new refresh time
     month_ts = ((70 - dt_now.minute) * 60) + now
@@ -436,7 +462,7 @@ def get_inverter_month_data(solis_config):
     return 
 
 
-def get_inverter_year_data(solis_config):
+def get_inverter_year_data(config):
     global year_ts
     global solis_data_dict
 
@@ -461,13 +487,13 @@ def get_inverter_year_data(solis_config):
     solis_month_list = []
 
     request = {}
-    request['sn'] = solis_config['inverter_sn']
+    request['sn'] = config['solis']['inverter_sn']
     request['TimeZone'] = 0
 
     # last year
     request['year'] = '%d' % (today.year - 1)
     year_dict = get_solis_cloud_data(
-            solis_config,
+            config,
             '/v1/api/inverterYear', 
             request)
     if not year_dict:
@@ -480,7 +506,7 @@ def get_inverter_year_data(solis_config):
     # this year
     request['year'] = '%d' % (today.year)
     year_dict = get_solis_cloud_data(
-            solis_config,
+            config,
             '/v1/api/inverterYear', 
             request)
     if not year_dict:
@@ -504,6 +530,10 @@ def get_inverter_year_data(solis_config):
         usage_rec['year'] = ts_dt.strftime('%Y')
         usage_rec['month'] = ts_dt.strftime('%b')
 
+        # environmental metrics
+        usage_rec['co2'] = (config['environment']['gco2_kwh'] * usage_rec['solar']) / 1000
+        usage_rec['trees'] = config['environment']['trees_kwh'] * usage_rec['solar']
+
         data_dict[usage_rec['ts']] = usage_rec
 
     # cull to last 12 months
@@ -526,6 +556,8 @@ def get_inverter_year_data(solis_config):
     solis_data_dict['metrics']['this_month']['solar_consumed'] = month_rec['solar_consumed']
     solis_data_dict['metrics']['this_month']['export'] = month_rec['export']
     solis_data_dict['metrics']['this_month']['consumed'] = month_rec['import'] + month_rec['solar_consumed']
+    solis_data_dict['metrics']['this_month']['co2'] = month_rec['co2']
+    solis_data_dict['metrics']['this_month']['trees'] = month_rec['trees']
 
     if len(year_data) >= 2:
         last_month_rec = year_data[-2]
@@ -534,6 +566,8 @@ def get_inverter_year_data(solis_config):
         solis_data_dict['metrics']['last_month']['solar_consumed'] = last_month_rec['solar_consumed']
         solis_data_dict['metrics']['last_month']['export'] = last_month_rec['export']
         solis_data_dict['metrics']['last_month']['consumed'] = last_month_rec['import'] + last_month_rec['solar_consumed']
+        solis_data_dict['metrics']['last_month']['co2'] = last_month_rec['co2']
+        solis_data_dict['metrics']['last_month']['trees'] = last_month_rec['trees']
 
     # this year
     # add all month records for last referenced year
@@ -545,6 +579,8 @@ def get_inverter_year_data(solis_config):
     solis_data_dict['metrics']['this_year']['solar_consumed'] = 0
     solis_data_dict['metrics']['this_year']['export'] = 0
     solis_data_dict['metrics']['this_year']['consumed'] = 0
+    solis_data_dict['metrics']['this_year']['co2'] = 0
+    solis_data_dict['metrics']['this_year']['trees'] = 0
 
     for month_rec in year_data:
         if month_rec['year'] != this_year:
@@ -555,13 +591,36 @@ def get_inverter_year_data(solis_config):
         solis_data_dict['metrics']['this_year']['solar_consumed'] += month_rec['solar_consumed']
         solis_data_dict['metrics']['this_year']['export'] += month_rec['export']
         solis_data_dict['metrics']['this_year']['consumed'] += month_rec['import'] + month_rec['solar_consumed']
+        solis_data_dict['metrics']['this_year']['co2'] += month_rec['co2']
+        solis_data_dict['metrics']['this_year']['trees'] += month_rec['trees']
+
+    # last 12 months year
+    # add all month records 
+
+    # reset
+    solis_data_dict['metrics']['last_12_months']['import'] = 0
+    solis_data_dict['metrics']['last_12_months']['solar'] = 0
+    solis_data_dict['metrics']['last_12_months']['solar_consumed'] = 0
+    solis_data_dict['metrics']['last_12_months']['export'] = 0
+    solis_data_dict['metrics']['last_12_months']['consumed'] = 0
+    solis_data_dict['metrics']['last_12_months']['co2'] = 0
+    solis_data_dict['metrics']['last_12_months']['trees'] = 0
+
+    for month_rec in year_data:
+        solis_data_dict['metrics']['last_12_months']['import'] += month_rec['import']
+        solis_data_dict['metrics']['last_12_months']['solar'] += month_rec['solar']
+        solis_data_dict['metrics']['last_12_months']['solar_consumed'] += month_rec['solar_consumed']
+        solis_data_dict['metrics']['last_12_months']['export'] += month_rec['export']
+        solis_data_dict['metrics']['last_12_months']['consumed'] += month_rec['import'] + month_rec['solar_consumed']
+        solis_data_dict['metrics']['last_12_months']['co2'] += month_rec['co2']
+        solis_data_dict['metrics']['last_12_months']['trees'] += month_rec['trees']
 
     # new refresh time
     year_ts = ((70 - dt_now.minute) * 60) + now
     return 
 
 
-def get_data(solis_config):
+def get_data(config):
 
     global solis_data_dict
     utils.log_message(
@@ -569,9 +628,9 @@ def get_data(solis_config):
             "Updating Solis Data"
             )
 
-    get_inverter_day_data(solis_config)
-    get_inverter_month_data(solis_config)
-    get_inverter_year_data(solis_config)
+    get_inverter_day_data(config)
+    get_inverter_month_data(config)
+    get_inverter_year_data(config)
 
     # update interval based on last_updated
     # time. This gives a form of dynamic tie-in to 
