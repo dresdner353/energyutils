@@ -289,8 +289,18 @@
                     $("#live_consumed_icon").removeClass().addClass("material-icons metric metric-red");
                 }
 
-                // overall values to 3 decimal places
-                $("#overall_import").html(overall_source.import.toFixed(0));
+                watt_hour_unit_str = 'Wh'
+                kw_hour_unit_str = 'kWh'
+
+                if (overall_source.import >= 1) {
+                    $("#overall_import").html(overall_source.import.toFixed(0));
+                    $("#overall_import_unit").html(kw_hour_unit_str);
+                }
+                else {
+                    $("#overall_import").html(overall_source.import.toFixed(3));
+                    $("#overall_import_unit").html(kw_hour_unit_str);
+                }
+
                 if (overall_source.import > 0) {
                     $("#overall_import").removeClass().addClass("metric metric-red");
                     $("#overall_import_icon").removeClass().addClass("material-icons metric metric-red");
@@ -300,7 +310,15 @@
                     $("#overall_import_icon").removeClass().addClass("material-icons metric metric-green");
                 }
 
-                $("#overall_solar").html(overall_source.solar.toFixed(0));
+                if (overall_source.solar >= 1) {
+                    $("#overall_solar").html(overall_source.solar.toFixed(0));
+                    $("#overall_solar_unit").html(kw_hour_unit_str);
+                }
+                else {
+                    $("#overall_solar").html(overall_source.solar.toFixed(3));
+                    $("#overall_solar_unit").html(kw_hour_unit_str);
+                }
+
                 if (overall_source.solar > 0) {
                     $("#overall_solar").removeClass().addClass("metric metric-yellow");
                     $("#overall_solar_icon").removeClass().addClass("material-icons metric metric-yellow");
@@ -310,7 +328,15 @@
                     $("#overall_solar_icon").removeClass().addClass("material-icons metric metric-grey");
                 }
 
-                $("#overall_export").html(overall_source.export.toFixed(0));
+                if (overall_source.export >= 1) {
+                    $("#overall_export").html(overall_source.export.toFixed(0));
+                    $("#overall_export_unit").html(kw_hour_unit_str);
+                }
+                else {
+                    $("#overall_export").html(overall_source.export.toFixed(3));
+                    $("#overall_export_unit").html(kw_hour_unit_str);
+                }
+
                 if (overall_source.export > 0) {
                     $("#overall_export").removeClass().addClass("metric metric-blue");
                     $("#overall_export_icon").removeClass().addClass("material-icons metric metric-blue");
@@ -320,7 +346,15 @@
                     $("#overall_export_icon").removeClass().addClass("material-icons metric metric-grey");
                 }
 
-                $("#overall_consumed").html(overall_source.consumed.toFixed(0));
+                if (overall_source.consumed >= 1) {
+                    $("#overall_consumed").html(overall_source.consumed.toFixed(0));
+                    $("#overall_consumed_unit").html(kw_hour_unit_str);
+                }
+                else {
+                    $("#overall_consumed").html(overall_source.consumed.toFixed(3));
+                    $("#overall_consumed_unit").html(kw_hour_unit_str);
+                }
+
                 if (overall_source.import <= 0) {
                     $("#overall_consumed").removeClass().addClass("metric metric-green");
                     $("#overall_consumed_icon").removeClass().addClass("material-icons metric metric-green");
@@ -341,8 +375,8 @@
                     $("#overall_co2_unit").html(kg_unit_str);
                 }
                 else {
-                    $("#overall_co2").html(Math.floor(overall_source.co2 * 1000));
-                    $("#overall_co2_unit").html(g_unit_str);
+                    $("#overall_co2").html(overall_source.co2.toFixed(3));
+                    $("#overall_co2_unit").html(kg_unit_str);
                 }
                 if (overall_source.co2 > 0) {
                     $("#overall_co2").removeClass().addClass("metric metric-green");
@@ -357,7 +391,7 @@
                     $("#overall_trees").html(overall_source.trees.toFixed(0));
                 }
                 else {
-                    $("#overall_trees").html(overall_source.trees.toFixed(2));
+                    $("#overall_trees").html(overall_source.trees.toFixed(3));
                 }
                 if (overall_source.trees > 0) {
                     $("#overall_trees").removeClass().addClass("metric metric-green");
@@ -869,7 +903,7 @@
                                             </td>
                                             <td style="vertical-align: bottom;">
                                                 <span id="overall_import" style="metric metric-white">0</span>
-                                                <span class="metric-unit">kWh</span>
+                                                <span id="overall_import_unit" class="metric-unit">kWh</span>
                                             </td>
                                         </tr>
                                     </table>
@@ -892,7 +926,7 @@
                                             </td>
                                             <td style="vertical-align: bottom;">
                                                 <span id="overall_solar" style="metric metric-white">0</span>
-                                                <span class="metric-unit">kWh</span>
+                                                <span id="overall_solar_unit" class="metric-unit">kWh</span>
                                             </td>
                                         </tr>
                                     </table>
@@ -915,7 +949,7 @@
                                             </td>
                                             <td style="vertical-align: bottom;">
                                                 <span id="overall_consumed" style="metric metric-white">0</span>
-                                                <span class="metric-unit">kWh</span>
+                                                <span id="overall_consumed_unit" class="metric-unit">kWh</span>
                                             </td>
                                         </tr>
                                     </table>
@@ -938,7 +972,7 @@
                                             </td>
                                             <td style="vertical-align: bottom;">
                                                 <span id="overall_export" style="metric metric-white">0</span>
-                                                <span class="metric-unit">kWh</span>
+                                                <span id="overall_export_unit" class="metric-unit">kWh</span>
                                             </td>
                                         </tr>
                                     </table>
