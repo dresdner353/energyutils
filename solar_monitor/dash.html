@@ -175,13 +175,11 @@
 
                 if ('metric_cycle_interval' in data_dict) {
                     agg_metric_cycle_interval = data_dict.metric_cycle_interval * 1000;
-                    console.log('metric cycle interval:' + agg_metric_cycle_interval);
 
                     // protection of min 5 sec refresh
                     if (agg_metric_cycle_interval < 5000) {
                         agg_metric_cycle_interval = 5000;
                     }
-                    console.log('metric cycle interval:' + agg_metric_cycle_interval);
                 }
 
                 // show the dashboard only when we have
@@ -297,8 +295,8 @@
                     $("#agg_import_unit").html(kw_hour_unit_str);
                 }
                 else {
-                    $("#agg_import").html(agg_source.import.toFixed(3));
-                    $("#agg_import_unit").html(kw_hour_unit_str);
+                    $("#agg_import").html(Math.floor(agg_source.import * 1000));
+                    $("#agg_import_unit").html(watt_hour_unit_str);
                 }
 
                 if (agg_source.import > 0) {
@@ -315,8 +313,8 @@
                     $("#agg_solar_unit").html(kw_hour_unit_str);
                 }
                 else {
-                    $("#agg_solar").html(agg_source.solar.toFixed(3));
-                    $("#agg_solar_unit").html(kw_hour_unit_str);
+                    $("#agg_solar").html(Math.floor(agg_source.solar * 1000));
+                    $("#agg_solar_unit").html(watt_hour_unit_str);
                 }
 
                 if (agg_source.solar > 0) {
@@ -333,8 +331,8 @@
                     $("#agg_export_unit").html(kw_hour_unit_str);
                 }
                 else {
-                    $("#agg_export").html(agg_source.export.toFixed(3));
-                    $("#agg_export_unit").html(kw_hour_unit_str);
+                    $("#agg_export").html(Math.floor(agg_source.export * 1000));
+                    $("#agg_export_unit").html(watt_hour_unit_str);
                 }
 
                 if (agg_source.export > 0) {
@@ -351,8 +349,8 @@
                     $("#agg_consumed_unit").html(kw_hour_unit_str);
                 }
                 else {
-                    $("#agg_consumed").html(agg_source.consumed.toFixed(3));
-                    $("#agg_consumed_unit").html(kw_hour_unit_str);
+                    $("#agg_consumed").html(Math.floor(agg_source.consumed * 1000));
+                    $("#agg_consumed_unit").html(watt_hour_unit_str);
                 }
 
                 if (agg_source.import <= 0) {
@@ -375,8 +373,8 @@
                     $("#agg_co2_unit").html(kg_unit_str);
                 }
                 else {
-                    $("#agg_co2").html(agg_source.co2.toFixed(3));
-                    $("#agg_co2_unit").html(kg_unit_str);
+                    $("#agg_co2").html(Math.floor(agg_source.co2 * 1000));
+                    $("#agg_co2_unit").html(g_unit_str);
                 }
                 if (agg_source.co2 > 0) {
                     $("#agg_co2").removeClass().addClass("metric metric-green");
@@ -1025,7 +1023,6 @@
                                 </div>
                             </div>
                         </div>
-
 
                     </div>
 
