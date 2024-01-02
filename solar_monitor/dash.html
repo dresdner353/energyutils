@@ -200,7 +200,7 @@
                         agg_metric_index = (agg_metric_index + 1) % metric_list.length;
                         if (metric_list[agg_metric_index] != 'live') {
                             agg_metric_key = metric_list[agg_metric_index];
-                            $("#agg_donut_title").html("Usage for " + data_dict['metrics'][agg_metric_key]['title']);
+                            $("#agg_donut_title").html(data_dict['metrics'][agg_metric_key]['title']);
                             agg_metric_cycle_ts = now;
                             break;
                         }
