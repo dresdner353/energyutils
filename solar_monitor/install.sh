@@ -8,14 +8,18 @@ function install_solar_monitor {
     cd # go to home
     echo "Installing energyutils user:${USER} pwd:${HOME}"
 
-    # GIT repo
-    echo "Downloading energyutils..."
+    # backup any existing config and wipe repo
     mv energyutils/solar_monitor/config.json /tmp
     rm -rf energyutils
+
+    # GIT repo
+    echo "Downloading energyutils..."
     git clone https://github.com/dresdner353/energyutils.git
+
+    # restore config
     mv /tmp/config.json energyutils/solar_monitor
 
-    # firefox kiosk
+    # browser kiosk
     AUTOSTART_DIR=.config/autostart
     mkdir -p ${AUTOSTART_DIR}
     #cp energyutils/solar_monitor/firefox_kiosk.desktop ${AUTOSTART_DIR}
