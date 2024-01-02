@@ -62,6 +62,11 @@
                 $("#bar_chart_solar" ).prop("checked", config_dict['dashboard']['bar_chart']['solar']);
                 $("#bar_chart_export" ).prop("checked", config_dict['dashboard']['bar_chart']['export']);
                 $("#bar_chart_solar_consumed").prop( "checked", config_dict['dashboard']['bar_chart']['solar_consumed']);
+
+                if ('environment' in config_dict){
+                    $('#env_gco2_kwh').val(config_dict['environment']['gco2_kwh']);
+                    $('#env_trees_kwh').val(config_dict['environment']['trees_kwh']);
+                }
             });
         });
 
@@ -138,6 +143,10 @@
             config_dict['dashboard']['bar_chart']['solar'] = $('#bar_chart_solar').prop('checked');
             config_dict['dashboard']['bar_chart']['export'] = $('#bar_chart_export').prop('checked');
             config_dict['dashboard']['bar_chart']['solar_consumed'] = $('#bar_chart_solar_consumed').prop('checked');
+
+            config_dict['environment'] = {}
+            config_dict['environment']['gco2_kwh'] = Number($('#env_gco2_kwh').val());
+            config_dict['environment']['trees_kwh'] = Number($('#env_trees_kwh').val());
 
             // JSON POST to /config
             post_body = JSON.stringify(config_dict)
@@ -310,6 +319,21 @@
                         <div id="general_config" class="col">
                             <div class="card">
                                 <div class="card-body">
+                                    <h5 class="card-title">Environment Settings</h5>
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="env_gco2_kwh" placeholder="gggg">
+                                        <label for="env_gco2_kwh">CO2g per kWh</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="env_trees_kwh" placeholder="tttt">
+                                        <label for="env_trees_kwh">Trees Planted per kWh</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="general_config" class="col">
+                            <div class="card">
+                                <div class="card-body">
                                     <h5 class="card-title">General Settings</h5>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="show_passwords" onchange="toggle_passwords()">
@@ -320,7 +344,6 @@
                             </div>
                         </div>
                     </div>
-
                     <button type="submit" class="btn btn-primary mt-4" id="apply_button">Apply</button>
                 </div>
             </div>
