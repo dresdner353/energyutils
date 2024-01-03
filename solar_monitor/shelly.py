@@ -12,70 +12,62 @@ import random
 import utils
 
 # tracked device and API data
-shelly_data_dict = {}
-shelly_data_dict['last_updated'] = 0
+gv_data_dict = {}
+gv_data_dict['last_updated'] = 0
 
 # day, month and year records
-shelly_data_dict['day'] = []
-shelly_data_dict['month'] = []
-shelly_data_dict['year'] = []
+gv_data_dict['day'] = []
+gv_data_dict['month'] = []
+gv_data_dict['year'] = []
 
 # metrics
-shelly_data_dict['metrics'] = {}
-shelly_data_dict['metrics']['live'] = {}
-shelly_data_dict['metrics']['live']['import'] = 0
-shelly_data_dict['metrics']['live']['solar'] = 0
-shelly_data_dict['metrics']['live']['solar_consumed'] = 0
-shelly_data_dict['metrics']['live']['export'] = 0
-shelly_data_dict['metrics']['live']['consumed'] = 0
+gv_data_dict['metrics'] = {}
+gv_data_dict['metrics']['live'] = {}
+gv_data_dict['metrics']['live']['import'] = 0
+gv_data_dict['metrics']['live']['solar'] = 0
+gv_data_dict['metrics']['live']['solar_consumed'] = 0
+gv_data_dict['metrics']['live']['export'] = 0
+gv_data_dict['metrics']['live']['consumed'] = 0
 
-shelly_data_dict['metrics']['today'] = {}
-shelly_data_dict['metrics']['today']['title'] = 'Today'
-shelly_data_dict['metrics']['today']['import'] = 0
-shelly_data_dict['metrics']['today']['solar'] = 0
-shelly_data_dict['metrics']['today']['solar_consumed'] = 0
-shelly_data_dict['metrics']['today']['export'] = 0
-shelly_data_dict['metrics']['today']['consumed'] = 0
+gv_data_dict['metrics']['today'] = {}
+gv_data_dict['metrics']['today']['title'] = 'Today'
+gv_data_dict['metrics']['today']['import'] = 0
+gv_data_dict['metrics']['today']['solar'] = 0
+gv_data_dict['metrics']['today']['solar_consumed'] = 0
+gv_data_dict['metrics']['today']['export'] = 0
+gv_data_dict['metrics']['today']['consumed'] = 0
 
-shelly_data_dict['metrics']['yesterday'] = {}
-shelly_data_dict['metrics']['yesterday']['title'] = 'Yesterday'
-shelly_data_dict['metrics']['yesterday']['import'] = 0
-shelly_data_dict['metrics']['yesterday']['solar'] = 0
-shelly_data_dict['metrics']['yesterday']['solar_consumed'] = 0
-shelly_data_dict['metrics']['yesterday']['export'] = 0
-shelly_data_dict['metrics']['yesterday']['consumed'] = 0
+gv_data_dict['metrics']['yesterday'] = {}
+gv_data_dict['metrics']['yesterday']['title'] = 'Yesterday'
+gv_data_dict['metrics']['yesterday']['import'] = 0
+gv_data_dict['metrics']['yesterday']['solar'] = 0
+gv_data_dict['metrics']['yesterday']['solar_consumed'] = 0
+gv_data_dict['metrics']['yesterday']['export'] = 0
+gv_data_dict['metrics']['yesterday']['consumed'] = 0
 
-shelly_data_dict['metrics']['this_month'] = {}
-shelly_data_dict['metrics']['this_month']['title'] = 'This Month'
-shelly_data_dict['metrics']['this_month']['import'] = 0
-shelly_data_dict['metrics']['this_month']['solar'] = 0
-shelly_data_dict['metrics']['this_month']['solar_consumed'] = 0
-shelly_data_dict['metrics']['this_month']['export'] = 0
-shelly_data_dict['metrics']['this_month']['consumed'] = 0
+gv_data_dict['metrics']['this_month'] = {}
+gv_data_dict['metrics']['this_month']['title'] = 'This Month'
+gv_data_dict['metrics']['this_month']['import'] = 0
+gv_data_dict['metrics']['this_month']['solar'] = 0
+gv_data_dict['metrics']['this_month']['solar_consumed'] = 0
+gv_data_dict['metrics']['this_month']['export'] = 0
+gv_data_dict['metrics']['this_month']['consumed'] = 0
 
-shelly_data_dict['metrics']['last_month'] = {}
-shelly_data_dict['metrics']['last_month']['title'] = 'Last Month'
-shelly_data_dict['metrics']['last_month']['import'] = 0
-shelly_data_dict['metrics']['last_month']['solar'] = 0
-shelly_data_dict['metrics']['last_month']['solar_consumed'] = 0
-shelly_data_dict['metrics']['last_month']['export'] = 0
-shelly_data_dict['metrics']['last_month']['consumed'] = 0
+gv_data_dict['metrics']['last_month'] = {}
+gv_data_dict['metrics']['last_month']['title'] = 'Last Month'
+gv_data_dict['metrics']['last_month']['import'] = 0
+gv_data_dict['metrics']['last_month']['solar'] = 0
+gv_data_dict['metrics']['last_month']['solar_consumed'] = 0
+gv_data_dict['metrics']['last_month']['export'] = 0
+gv_data_dict['metrics']['last_month']['consumed'] = 0
 
-shelly_data_dict['metrics']['this_year'] = {}
-shelly_data_dict['metrics']['this_year']['title'] = 'This Year'
-shelly_data_dict['metrics']['this_year']['import'] = 0
-shelly_data_dict['metrics']['this_year']['solar'] = 0
-shelly_data_dict['metrics']['this_year']['solar_consumed'] = 0
-shelly_data_dict['metrics']['this_year']['export'] = 0
-shelly_data_dict['metrics']['this_year']['consumed'] = 0
-
-shelly_data_dict['metrics']['last_12_months'] = {}
-shelly_data_dict['metrics']['last_12_months']['title'] = 'Last 12 Months'
-shelly_data_dict['metrics']['last_12_months']['import'] = 0
-shelly_data_dict['metrics']['last_12_months']['solar'] = 0
-shelly_data_dict['metrics']['last_12_months']['solar_consumed'] = 0
-shelly_data_dict['metrics']['last_12_months']['export'] = 0
-shelly_data_dict['metrics']['last_12_months']['consumed'] = 0
+gv_data_dict['metrics']['last_12_months'] = {}
+gv_data_dict['metrics']['last_12_months']['title'] = 'Last 12 Months'
+gv_data_dict['metrics']['last_12_months']['import'] = 0
+gv_data_dict['metrics']['last_12_months']['solar'] = 0
+gv_data_dict['metrics']['last_12_months']['solar_consumed'] = 0
+gv_data_dict['metrics']['last_12_months']['export'] = 0
+gv_data_dict['metrics']['last_12_months']['consumed'] = 0
 
 # timestamps to track the next call
 month_ts = 0
@@ -272,7 +264,7 @@ def get_shelly_api_data(
 
 def get_cloud_data(config):
 
-    global shelly_data_dict
+    global gv_data_dict
     global month_ts
     global year_ts
     global day_ts
@@ -292,6 +284,7 @@ def get_cloud_data(config):
 
     now = int(time.time())
     dt_today = datetime.datetime.today() 
+    dt_yesterday = dt_today - datetime.timedelta(days = 1)
 
     if now >= day_ts:
         # last 36 hours
@@ -327,7 +320,7 @@ def get_cloud_data(config):
                             indent = 4),
                         )
                     )
-            shelly_data_dict['day'] = day_data
+            gv_data_dict['day'] = day_data
     
     if now >= month_ts:
         # last 30 days
@@ -361,27 +354,35 @@ def get_cloud_data(config):
                             indent = 4),
                         )
                     )
-            shelly_data_dict['month'] = month_data
+            gv_data_dict['month'] = month_data
 
             # take todays totals from last recorded day in month
             today_rec = month_data[-1]
-            shelly_data_dict['metrics']['today']['import'] = today_rec['import']
-            shelly_data_dict['metrics']['today']['solar'] = today_rec['solar']
-            shelly_data_dict['metrics']['today']['solar_consumed'] = today_rec['solar_consumed']
-            shelly_data_dict['metrics']['today']['export'] = today_rec['export']
-            shelly_data_dict['metrics']['today']['consumed'] = today_rec['import'] +  today_rec['solar_consumed']
-            shelly_data_dict['metrics']['today']['co2'] = today_rec['co2']
-            shelly_data_dict['metrics']['today']['trees'] = today_rec['trees']
+            gv_data_dict['metrics']['today']['title'] = 'Today (%s %d %s)' % (
+                    today_rec['month'], 
+                    today_rec['day'], 
+                    today_rec['year'])
+            gv_data_dict['metrics']['today']['import'] = today_rec['import']
+            gv_data_dict['metrics']['today']['solar'] = today_rec['solar']
+            gv_data_dict['metrics']['today']['solar_consumed'] = today_rec['solar_consumed']
+            gv_data_dict['metrics']['today']['export'] = today_rec['export']
+            gv_data_dict['metrics']['today']['consumed'] = today_rec['import'] +  today_rec['solar_consumed']
+            gv_data_dict['metrics']['today']['co2'] = today_rec['co2']
+            gv_data_dict['metrics']['today']['trees'] = today_rec['trees']
 
             if len(month_data) >= 2:
                 yesterday_rec = month_data[-2]
-                shelly_data_dict['metrics']['yesterday']['import'] = yesterday_rec['import']
-                shelly_data_dict['metrics']['yesterday']['solar'] = yesterday_rec['solar']
-                shelly_data_dict['metrics']['yesterday']['solar_consumed'] = yesterday_rec['solar_consumed']
-                shelly_data_dict['metrics']['yesterday']['export'] = yesterday_rec['export']
-                shelly_data_dict['metrics']['yesterday']['consumed'] = yesterday_rec['import'] + yesterday_rec['solar_consumed']
-                shelly_data_dict['metrics']['yesterday']['co2'] = yesterday_rec['co2']
-                shelly_data_dict['metrics']['yesterday']['trees'] = yesterday_rec['trees']
+                gv_data_dict['metrics']['yesterday']['title'] = 'Yesterday (%s %d %s)' % (
+                        yesterday_rec['month'], 
+                        yesterday_rec['day'], 
+                        yesterday_rec['year'])
+                gv_data_dict['metrics']['yesterday']['import'] = yesterday_rec['import']
+                gv_data_dict['metrics']['yesterday']['solar'] = yesterday_rec['solar']
+                gv_data_dict['metrics']['yesterday']['solar_consumed'] = yesterday_rec['solar_consumed']
+                gv_data_dict['metrics']['yesterday']['export'] = yesterday_rec['export']
+                gv_data_dict['metrics']['yesterday']['consumed'] = yesterday_rec['import'] + yesterday_rec['solar_consumed']
+                gv_data_dict['metrics']['yesterday']['co2'] = yesterday_rec['co2']
+                gv_data_dict['metrics']['yesterday']['trees'] = yesterday_rec['trees']
 
     if now >= year_ts:
         # last several months or so
@@ -414,73 +415,51 @@ def get_cloud_data(config):
                             indent = 4),
                         )
                     )
-            shelly_data_dict['year'] = year_data
+            gv_data_dict['year'] = year_data
 
             # take months totals from last recorded month in year
             month_rec = year_data[-1]
-            shelly_data_dict['metrics']['this_month']['import'] = month_rec['import']
-            shelly_data_dict['metrics']['this_month']['solar'] = month_rec['solar']
-            shelly_data_dict['metrics']['this_month']['solar_consumed'] = month_rec['solar_consumed']
-            shelly_data_dict['metrics']['this_month']['export'] = month_rec['export']
-            shelly_data_dict['metrics']['this_month']['consumed'] = month_rec['import'] + month_rec['solar_consumed']
-            shelly_data_dict['metrics']['this_month']['co2'] = month_rec['co2']
-            shelly_data_dict['metrics']['this_month']['trees'] = month_rec['trees']
+            gv_data_dict['metrics']['this_month']['title'] = 'This Month (%s %s)' % (month_rec['month'], month_rec['year'])
+            gv_data_dict['metrics']['this_month']['import'] = month_rec['import']
+            gv_data_dict['metrics']['this_month']['solar'] = month_rec['solar']
+            gv_data_dict['metrics']['this_month']['solar_consumed'] = month_rec['solar_consumed']
+            gv_data_dict['metrics']['this_month']['export'] = month_rec['export']
+            gv_data_dict['metrics']['this_month']['consumed'] = month_rec['import'] + month_rec['solar_consumed']
+            gv_data_dict['metrics']['this_month']['co2'] = month_rec['co2']
+            gv_data_dict['metrics']['this_month']['trees'] = month_rec['trees']
 
             if len(year_data) >= 2:
                 last_month_rec = year_data[-2]
-                shelly_data_dict['metrics']['last_month']['import'] = last_month_rec['import']
-                shelly_data_dict['metrics']['last_month']['solar'] = last_month_rec['solar']
-                shelly_data_dict['metrics']['last_month']['solar_consumed'] = last_month_rec['solar_consumed']
-                shelly_data_dict['metrics']['last_month']['export'] = last_month_rec['export']
-                shelly_data_dict['metrics']['last_month']['consumed'] = last_month_rec['import'] + last_month_rec['solar_consumed']
-                shelly_data_dict['metrics']['last_month']['co2'] = last_month_rec['co2']
-                shelly_data_dict['metrics']['last_month']['trees'] = last_month_rec['trees']
-
-            # this year
-            # add all month records for last referenced year
-            this_year = month_rec['year']
-
-            # reset
-            shelly_data_dict['metrics']['this_year']['import'] = 0
-            shelly_data_dict['metrics']['this_year']['solar'] = 0
-            shelly_data_dict['metrics']['this_year']['solar_consumed'] = 0
-            shelly_data_dict['metrics']['this_year']['export'] = 0
-            shelly_data_dict['metrics']['this_year']['consumed'] = 0
-            shelly_data_dict['metrics']['this_year']['co2'] = 0
-            shelly_data_dict['metrics']['this_year']['trees'] = 0
-
-            for month_rec in year_data:
-                if month_rec['year'] != this_year:
-                    continue
-
-                shelly_data_dict['metrics']['this_year']['import'] += month_rec['import']
-                shelly_data_dict['metrics']['this_year']['solar'] += month_rec['solar']
-                shelly_data_dict['metrics']['this_year']['solar_consumed'] += month_rec['solar_consumed']
-                shelly_data_dict['metrics']['this_year']['export'] += month_rec['export']
-                shelly_data_dict['metrics']['this_year']['consumed'] += month_rec['import'] + month_rec['solar_consumed']
-                shelly_data_dict['metrics']['this_year']['co2'] += month_rec['co2']
-                shelly_data_dict['metrics']['this_year']['trees'] += month_rec['trees']
+                gv_data_dict['metrics']['last_month']['title'] = 'Last Month (%s %s)' % (last_month_rec['month'], last_month_rec['year'])
+                gv_data_dict['metrics']['last_month']['import'] = last_month_rec['import']
+                gv_data_dict['metrics']['last_month']['solar'] = last_month_rec['solar']
+                gv_data_dict['metrics']['last_month']['solar_consumed'] = last_month_rec['solar_consumed']
+                gv_data_dict['metrics']['last_month']['export'] = last_month_rec['export']
+                gv_data_dict['metrics']['last_month']['consumed'] = last_month_rec['import'] + last_month_rec['solar_consumed']
+                gv_data_dict['metrics']['last_month']['co2'] = last_month_rec['co2']
+                gv_data_dict['metrics']['last_month']['trees'] = last_month_rec['trees']
 
             # last 12 months 
             # add all month records 
 
             # reset
-            shelly_data_dict['metrics']['last_12_months']['import'] = 0
-            shelly_data_dict['metrics']['last_12_months']['solar'] = 0
-            shelly_data_dict['metrics']['last_12_months']['solar_consumed'] = 0
-            shelly_data_dict['metrics']['last_12_months']['export'] = 0
-            shelly_data_dict['metrics']['last_12_months']['consumed'] = 0
-            shelly_data_dict['metrics']['last_12_months']['co2'] = 0
-            shelly_data_dict['metrics']['last_12_months']['trees'] = 0
+            gv_data_dict['metrics']['last_12_months']['title'] = 'Last %d Months' % (len(year_data))
+            gv_data_dict['metrics']['last_12_months']['import'] = 0
+            gv_data_dict['metrics']['last_12_months']['solar'] = 0
+            gv_data_dict['metrics']['last_12_months']['solar_consumed'] = 0
+            gv_data_dict['metrics']['last_12_months']['export'] = 0
+            gv_data_dict['metrics']['last_12_months']['consumed'] = 0
+            gv_data_dict['metrics']['last_12_months']['co2'] = 0
+            gv_data_dict['metrics']['last_12_months']['trees'] = 0
 
             for month_rec in year_data:
-                shelly_data_dict['metrics']['last_12_months']['import'] += month_rec['import']
-                shelly_data_dict['metrics']['last_12_months']['solar'] += month_rec['solar']
-                shelly_data_dict['metrics']['last_12_months']['solar_consumed'] += month_rec['solar_consumed']
-                shelly_data_dict['metrics']['last_12_months']['export'] += month_rec['export']
-                shelly_data_dict['metrics']['last_12_months']['consumed'] += month_rec['import'] + month_rec['solar_consumed']
-                shelly_data_dict['metrics']['last_12_months']['co2'] += month_rec['co2']
-                shelly_data_dict['metrics']['last_12_months']['trees'] += month_rec['trees']
+                gv_data_dict['metrics']['last_12_months']['import'] += month_rec['import']
+                gv_data_dict['metrics']['last_12_months']['solar'] += month_rec['solar']
+                gv_data_dict['metrics']['last_12_months']['solar_consumed'] += month_rec['solar_consumed']
+                gv_data_dict['metrics']['last_12_months']['export'] += month_rec['export']
+                gv_data_dict['metrics']['last_12_months']['consumed'] += month_rec['import'] + month_rec['solar_consumed']
+                gv_data_dict['metrics']['last_12_months']['co2'] += month_rec['co2']
+                gv_data_dict['metrics']['last_12_months']['trees'] += month_rec['trees']
 
     return
 
@@ -536,37 +515,37 @@ def get_live_data(config):
     solar = device_resp_dict['emeters'][1]['power'] / 1000
 
     if grid >= 0:
-        shelly_data_dict['metrics']['live']['import'] = grid
-        shelly_data_dict['metrics']['live']['export'] = 0
+        gv_data_dict['metrics']['live']['import'] = grid
+        gv_data_dict['metrics']['live']['export'] = 0
     else:
-        shelly_data_dict['metrics']['live']['import'] = 0
-        shelly_data_dict['metrics']['live']['export'] = grid * -1
+        gv_data_dict['metrics']['live']['import'] = 0
+        gv_data_dict['metrics']['live']['export'] = grid * -1
 
     if solar >= 0.010:
-        shelly_data_dict['metrics']['live']['solar'] = solar
+        gv_data_dict['metrics']['live']['solar'] = solar
     else:
-        shelly_data_dict['metrics']['live']['solar'] = 0
+        gv_data_dict['metrics']['live']['solar'] = 0
 
-    shelly_data_dict['metrics']['live']['solar_consumed'] = shelly_data_dict['metrics']['live']['solar'] - shelly_data_dict['metrics']['live']['export']
-    shelly_data_dict['metrics']['live']['consumed'] = shelly_data_dict['metrics']['live']['import'] + shelly_data_dict['metrics']['live']['solar_consumed'] 
+    gv_data_dict['metrics']['live']['solar_consumed'] = gv_data_dict['metrics']['live']['solar'] - gv_data_dict['metrics']['live']['export']
+    gv_data_dict['metrics']['live']['consumed'] = gv_data_dict['metrics']['live']['import'] + gv_data_dict['metrics']['live']['solar_consumed'] 
 
     utils.log_message(
             1,
             "Shelly Device: import:%f export:%f solar:%f consumed:%f" % (
-                shelly_data_dict['metrics']['live']['import'],
-                shelly_data_dict['metrics']['live']['export'],
-                shelly_data_dict['metrics']['live']['solar'],
-                shelly_data_dict['metrics']['live']['consumed'],
+                gv_data_dict['metrics']['live']['import'],
+                gv_data_dict['metrics']['live']['export'],
+                gv_data_dict['metrics']['live']['solar'],
+                gv_data_dict['metrics']['live']['consumed'],
                 )
             )
-    shelly_data_dict['last_updated'] = int(time.time())
+    gv_data_dict['last_updated'] = int(time.time())
 
     return
 
 
 def get_data(config):
 
-    global shelly_data_dict
+    global gv_data_dict
 
     utils.log_message(
             1,
@@ -577,7 +556,7 @@ def get_data(config):
     get_cloud_data(config)
 
     # return data and fixed sleep of 5 seconds for refresh
-    return shelly_data_dict, 5
+    return gv_data_dict, 5
 
 
 
