@@ -28,7 +28,7 @@
     --metric-unit-font-size: var(--metric-unit-font-size-large-screen);
     --title-font-size: var(--title-font-size-large-screen);
 }
-        #dashboard {
+        #bg {
             height: 200px;
             /*background-color: #202025; */
             background-color: #000000; 
@@ -88,6 +88,7 @@
         google.charts.load('current', {'packages': ['corechart']});
         google.charts.load('current', {'packages':['gauge']});
 
+        // data dict as taken from the /data GET
         var data_dict = {
             year: [],
             month: [],
@@ -110,9 +111,11 @@
         var month_column_chart_html;
         var year_column_chart_html;
 
+        // global string for selected layout
         var layout;
 
         $( document ).ready(function() {
+            $("#dashboard").hide();
             // extract dashboard elements
             // from the flat stach of divs in default body
             live_metrics_html = $("#live_metrics").html();
@@ -156,6 +159,16 @@
             console.log("Window dims.. w:" + window_width + " h:" + window_height);
 
             // layout templates
+            // these will be substituted into the top-level 
+            // body to complete re-arrange the screen according to the 
+            // selected screen size
+            // it was too complex to try and dynamically change various bootstrap
+            // class values etc to try and tweak a common layout to obey
+
+            // large screen model
+            // two columns, split 4:8 on bootstrap 12 breakpoints
+            // left column has the donut metrics and right
+            // has the three column charts
             large_screen_layout = `
                 <div class="container-fluid" data-bs-theme="dark">
                     <div class="row">
@@ -177,6 +190,10 @@
                 </div>
             `
 
+            // small screen model
+            // even 6:6 split columns
+            // each with a donut/metrics set
+            // bolumn charts are not displayed
             small_screen_layout = `
                 <div class="container-fluid" data-bs-theme="dark">
                     <div class="row">
@@ -188,6 +205,11 @@
                 </div>
             `
 
+            // portrait screen model
+            // vertical stack of everything
+            // in a series of rows, one column
+            // each. Works for phones and portrait
+            // tablets or monitors
             portrait_screen_layout = `
                 <div class="container-fluid" data-bs-theme="dark">
                     <div id="metrics_insert" class="row">
@@ -252,12 +274,10 @@
             console.log("Set layout to " + layout);
         }
 
-
-
         var refresh_error_count = 0;
 
         // tracking the current agg
-        // metric series
+        // metric series rotation
         var agg_metric_index = 0;
         var agg_metric_cycle_interval = 5000;
         var agg_metric_cycle_ts = 0;
@@ -265,20 +285,23 @@
         function refresh_data() {
             console.log("refresh_data()");
 
+            // get the latest data
             var data_request = $.get('/data');
 
+            // display the get error
             data_request.fail(function() {
                 refresh_error_count += 1;
                 $("#last_updated").html(`Error (${refresh_error_count})`);
             });           
 
+            // valid retrieval of data
             data_request.done(function(data) {
                 data_dict = JSON.parse(data);
 
                 // check data dict refresh and update if required
                 // Note: shown as second and JS operates on msecs
                 if ('refresh_interval' in data_dict) {
-                    data_dict_refresh = data_dict.refresh_interval * 1000
+                    data_dict_refresh = data_dict.refresh_interval * 1000;
                     if (refresh_interval != data_dict_refresh) {
                         refresh_interval = data_dict_refresh;
 
@@ -320,26 +343,26 @@
                     for (i = 0; i < metric_list.length; i++) {
                         agg_metric_index = (agg_metric_index + 1) % metric_list.length;
                         if (metric_list[agg_metric_index] != 'live') {
-                                        agg_metric_key = metric_list[agg_metric_index];
-                                        $("#agg_donut_title").html(data_dict['metrics'][agg_metric_key]['title']);
-                                        agg_metric_cycle_ts = now;
-                                        break;
-                                        }
-                                        }
-                                        }
+                            agg_metric_key = metric_list[agg_metric_index];
+                            $("#agg_donut_title").html(data_dict['metrics'][agg_metric_key]['title']);
+                            agg_metric_cycle_ts = now;
+                            break;
+                        }
+                    }
+                }
 
-                                        live_source = data_dict.metrics.live;
-                                        agg_source = data_dict.metrics[agg_metric_key];
+                live_source = data_dict.metrics.live;
+                agg_source = data_dict.metrics[agg_metric_key];
 
-                                        watt_unit_str = 'W';
-                                        kw_unit_str = 'kW';
+                watt_unit_str = 'W';
+                kw_unit_str = 'kW';
 
-                                        // live values to 2 decimal places when >= 1kW
+                // live values to 2 decimal places when >= 1kW
                 // or as watts when < 1.0 kW
-                                        if (live_source.import >= 1) {
-                                            $("#live_import").html(live_source.import.toFixed(2));
-                                            $("#live_import_unit").html(kw_unit_str);
-                                        }
+                if (live_source.import >= 1) {
+                    $("#live_import").html(live_source.import.toFixed(2));
+                    $("#live_import_unit").html(kw_unit_str);
+                }
                 else {
                     $("#live_import").html(Math.floor(live_source.import * 1000));
                     $("#live_import_unit").html(watt_unit_str);
@@ -396,20 +419,20 @@
                     $("#live_consumed_unit").html(watt_unit_str);
                 }
                 if (live_source.import <= 0) {
-                                        $("#live_consumed").removeClass().addClass("metric metric-green");
-                                        $("#live_consumed_icon").removeClass().addClass("material-icons metric metric-green");
-                                        }
-                                        else if (live_source.solar > 0) {
-                                            $("#live_consumed").removeClass().addClass("metric metric-orange");
-                                            $("#live_consumed_icon").removeClass().addClass("material-icons metric metric-orange");
-                                        }
+                    $("#live_consumed").removeClass().addClass("metric metric-green");
+                    $("#live_consumed_icon").removeClass().addClass("material-icons metric metric-green");
+                }
+                else if (live_source.solar > 0) {
+                    $("#live_consumed").removeClass().addClass("metric metric-orange");
+                    $("#live_consumed_icon").removeClass().addClass("material-icons metric metric-orange");
+                }
                 else {
                     $("#live_consumed").removeClass().addClass("metric metric-red");
                     $("#live_consumed_icon").removeClass().addClass("material-icons metric metric-red");
                 }
 
-                watt_hour_unit_str = 'Wh'
-                kw_hour_unit_str = 'kWh'
+                watt_hour_unit_str = 'Wh';
+                kw_hour_unit_str = 'kWh';
 
                 if (agg_source.import >= 1) {
                     $("#agg_import").html(agg_source.import.toFixed(0));
@@ -475,20 +498,20 @@
                 }
 
                 if (agg_source.import <= 0) {
-                                        $("#agg_consumed").removeClass().addClass("metric metric-green");
-                                        $("#agg_consumed_icon").removeClass().addClass("material-icons metric metric-green");
-                                        }
-                                        else if (agg_source.solar > 0) {
-                                            $("#agg_consumed").removeClass().addClass("metric metric-orange");
-                                            $("#agg_consumed_icon").removeClass().addClass("material-icons metric metric-orange");
-                                        }
+                    $("#agg_consumed").removeClass().addClass("metric metric-green");
+                    $("#agg_consumed_icon").removeClass().addClass("material-icons metric metric-green");
+                }
+                else if (agg_source.solar > 0) {
+                    $("#agg_consumed").removeClass().addClass("metric metric-orange");
+                    $("#agg_consumed_icon").removeClass().addClass("material-icons metric metric-orange");
+                }
                 else {
                     $("#agg_consumed").removeClass().addClass("metric metric-red");
                     $("#agg_consumed_icon").removeClass().addClass("material-icons metric metric-red");
                 }
 
-                kg_unit_str = 'kg'
-                g_unit_str = 'g'
+                kg_unit_str = 'kg';
+                g_unit_str = 'g';
                 if (agg_source.co2 >= 1) {
                     $("#agg_co2").html(agg_source.co2.toFixed(2));
                     $("#agg_co2_unit").html(kg_unit_str);
@@ -521,11 +544,9 @@
                     $("#agg_trees_icon").removeClass().addClass("material-icons metric metric-grey");
                 }
 
-                // render as HH:MM:SS
+                // render as local time
                 var date = new Date(data_dict.last_updated * 1000);
                 $("#last_updated").html(date.toLocaleTimeString());
-
-
 
                 draw_charts();
             });
@@ -814,292 +835,294 @@
     </script>
 </head>   
 
-<body id="dashboard">
+<body id="bg">
+    <div id="dashboard">
 
-    <div id="live_metrics" class="col mt-2">
+        <div id="live_metrics" class="col mt-2">
 
-        <!-- live donut -->
-        <div class="card-transparent text-white text-center">
-            <div class="card-body text-center">
-                <center>
-                    <span class="title">Live Usage @</span><span class="title" id="last_updated"></span>
-                    <div id="live_donut_chart"></div>
-                </center>
+            <!-- live donut -->
+            <div class="card-transparent text-white text-center">
+                <div class="card-body text-center">
+                    <center>
+                        <span class="title">Live Usage @</span><span class="title" id="last_updated"></span>
+                        <div id="live_donut_chart"></div>
+                    </center>
+                </div>
+            </div>
+
+            <!-- live metric cards -->
+            <div class="container text-white text-center">
+                <div id="live_metric_grid" class="row row-cols-2">
+
+                    <div class="col"
+                         data-bs-toggle="tooltip" 
+                         data-bs-placement="bottom"
+                         data-bs-custom-class="custom-tooltip"
+                         data-bs-title="Live Grid Import (W/kW). This is the real-time power being drawn from the electricity supply grid">
+
+                        <div class="card-transparent text-center mt-0">
+                            <div class="card-body">
+                                <table border="0" align="center">
+                                    <tr>
+                                        <td style="vertical-align: middle;">
+                                            <span id="live_import_icon" class="material-icons metric">login</span>
+                                        </td>
+                                        <td style="vertical-align: bottom;">
+                                            <span id="live_import" style="metric metric-white">0</span>
+                                            <span id="live_import_unit" class="metric-unit"></span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col"
+                         data-bs-toggle="tooltip" 
+                         data-bs-placement="bottom"
+                         data-bs-custom-class="custom-tooltip"
+                         data-bs-title="Live PV Yield (W/kW). This is the real-time power being generated from the solar panels">
+
+                        <div class="card-transparent text-center mt-0">
+                            <div class="card-body">
+                                <table border="0" align="center">
+                                    <tr>
+                                        <td style="vertical-align: middle;">
+                                            <span id="live_solar_icon" class="material-icons metric">solar_power</span>
+                                        </td>
+                                        <td style="vertical-align: bottom;">
+                                            <span id="live_solar" style="metric metric-white">0</span>
+                                            <span id="live_solar_unit" class="metric-unit"></span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col"
+                         data-bs-toggle="tooltip" 
+                         data-bs-placement="bottom"
+                         data-bs-custom-class="custom-tooltip"
+                         data-bs-title="Live Consumption (W/kW). This is the real-time power being consumed by the premises">
+
+                        <div class="card-transparent text-center mt-0">
+                            <div class="card-body">
+                                <table border="0" align="center">
+                                    <tr>
+                                        <td style="vertical-align: middle;">
+                                            <span id="live_consumed_icon" class="material-icons metric">home</span>
+                                        </td>
+                                        <td style="vertical-align: bottom;">
+                                            <span id="live_consumed" style="metric metric-white">0</span>
+                                            <span id="live_consumed_unit" class="metric-unit"></span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col"
+                         data-bs-toggle="tooltip" 
+                         data-bs-placement="bottom"
+                         data-bs-custom-class="custom-tooltip"
+                         data-bs-title="Live PV Export (W/kW). This is the real-time PV surplus being exported to the grid">
+
+                        <div class="card-transparent text-center mt-0">
+                            <div class="card-body">
+                                <table border="0" align="center">
+                                    <tr>
+                                        <td style="vertical-align: middle;">
+                                            <span id="live_export_icon" class="material-icons metric">logout</span>
+                                        </td>
+                                        <td style="vertical-align: bottom;">
+                                            <span id="live_export" style="metric metric-white">0</span>
+                                            <span id="live_export_unit" class="metric-unit"></span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
         </div>
 
-        <!-- live metric cards -->
-        <div class="container text-white text-center">
-            <div id="live_metric_grid" class="row row-cols-2">
+        <div id="agg_metrics" class="col mt-2">
 
-                <div class="col"
-                     data-bs-toggle="tooltip" 
-                     data-bs-placement="bottom"
-                     data-bs-custom-class="custom-tooltip"
-                     data-bs-title="Live Grid Import (W/kW). This is the real-time power being drawn from the electricity supply grid">
-
-                    <div class="card-transparent text-center mt-0">
-                        <div class="card-body">
-                            <table border="0" align="center">
-                                <tr>
-                                    <td style="vertical-align: middle;">
-                                        <span id="live_import_icon" class="material-icons metric">login</span>
-                                    </td>
-                                    <td style="vertical-align: bottom;">
-                                        <span id="live_import" style="metric metric-white">0</span>
-                                        <span id="live_import_unit" class="metric-unit"></span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
+            <!-- agg donut -->
+            <div id="agg_chart_div" class="card-transparent text-white text-center mt-2">
+                <div class="card-body text-center">
+                    <center>
+                        <div id="agg_donut_title" class="title">Overall Usage</div>
+                        <div id="agg_donut_chart"></div>
+                    </center>
                 </div>
+            </div>
 
-                <div class="col"
-                     data-bs-toggle="tooltip" 
-                     data-bs-placement="bottom"
-                     data-bs-custom-class="custom-tooltip"
-                     data-bs-title="Live PV Yield (W/kW). This is the real-time power being generated from the solar panels">
+            <!-- agg metric cards -->
+            <div class="container text-white text-center">
+                <div id="agg_metric_grid" class="row row-cols-2">
 
-                    <div class="card-transparent text-center mt-0">
-                        <div class="card-body">
-                            <table border="0" align="center">
-                                <tr>
-                                    <td style="vertical-align: middle;">
-                                        <span id="live_solar_icon" class="material-icons metric">solar_power</span>
-                                    </td>
-                                    <td style="vertical-align: bottom;">
-                                        <span id="live_solar" style="metric metric-white">0</span>
-                                        <span id="live_solar_unit" class="metric-unit"></span>
-                                    </td>
-                                </tr>
-                            </table>
+                    <div class="col"
+                         data-bs-toggle="tooltip" 
+                         data-bs-placement="bottom"
+                         data-bs-custom-class="custom-tooltip"
+                         data-bs-title="Grid Import (kWh). This is the total power drawn from the electricity supply grid">
+
+                        <div class="card-transparent text-center mt-0">
+                            <div class="card-body">
+                                <table border="0" align="center">
+                                    <tr>
+                                        <td style="vertical-align: middle;">
+                                            <span id="agg_import_icon" class="material-icons metric">login</span>
+                                        </td>
+                                        <td style="vertical-align: bottom;">
+                                            <span id="agg_import" style="metric metric-white">0</span>
+                                            <span id="agg_import_unit" class="metric-unit">kWh</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="col"
-                     data-bs-toggle="tooltip" 
-                     data-bs-placement="bottom"
-                     data-bs-custom-class="custom-tooltip"
-                     data-bs-title="Live Consumption (W/kW). This is the real-time power being consumed by the premises">
+                    <div class="col"
+                         data-bs-toggle="tooltip" 
+                         data-bs-placement="bottom"
+                         data-bs-custom-class="custom-tooltip"
+                         data-bs-title="PV Yield (kWh). This is the total power generated from the solar panels">
 
-                    <div class="card-transparent text-center mt-0">
-                        <div class="card-body">
-                            <table border="0" align="center">
-                                <tr>
-                                    <td style="vertical-align: middle;">
-                                        <span id="live_consumed_icon" class="material-icons metric">home</span>
-                                    </td>
-                                    <td style="vertical-align: bottom;">
-                                        <span id="live_consumed" style="metric metric-white">0</span>
-                                        <span id="live_consumed_unit" class="metric-unit"></span>
-                                    </td>
-                                </tr>
-                            </table>
+                        <div class="card-transparent text-center mt-0">
+                            <div class="card-body">
+                                <table border="0" align="center">
+                                    <tr>
+                                        <td style="vertical-align: middle;">
+                                            <span id="agg_solar_icon" class="material-icons metric">solar_power</span>
+                                        </td>
+                                        <td style="vertical-align: bottom;">
+                                            <span id="agg_solar" style="metric metric-white">0</span>
+                                            <span id="agg_solar_unit" class="metric-unit">kWh</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="col"
-                     data-bs-toggle="tooltip" 
-                     data-bs-placement="bottom"
-                     data-bs-custom-class="custom-tooltip"
-                     data-bs-title="Live PV Export (W/kW). This is the real-time PV surplus being exported to the grid">
+                    <div class="col"
+                         data-bs-toggle="tooltip" 
+                         data-bs-placement="bottom"
+                         data-bs-custom-class="custom-tooltip"
+                         data-bs-title="Consumption (kW). This is the total power consumed by the premises">
 
-                    <div class="card-transparent text-center mt-0">
-                        <div class="card-body">
-                            <table border="0" align="center">
-                                <tr>
-                                    <td style="vertical-align: middle;">
-                                        <span id="live_export_icon" class="material-icons metric">logout</span>
-                                    </td>
-                                    <td style="vertical-align: bottom;">
-                                        <span id="live_export" style="metric metric-white">0</span>
-                                        <span id="live_export_unit" class="metric-unit"></span>
-                                    </td>
-                                </tr>
-                            </table>
+                        <div class="card-transparent text-center mt-0">
+                            <div class="card-body">
+                                <table border="0" align="center">
+                                    <tr>
+                                        <td style="vertical-align: middle;">
+                                            <span id="agg_consumed_icon" class="material-icons metric">home</span>
+                                        </td>
+                                        <td style="vertical-align: bottom;">
+                                            <span id="agg_consumed" style="metric metric-white">0</span>
+                                            <span id="agg_consumed_unit" class="metric-unit">kWh</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
                     </div>
+
+                    <div class="col"
+                         data-bs-toggle="tooltip" 
+                         data-bs-placement="bottom"
+                         data-bs-custom-class="custom-tooltip"
+                         data-bs-title="PV Export (kW). This is the total PV surplus exported to the grid">
+
+                        <div class="card-transparent text-center mt-0">
+                            <div class="card-body">
+                                <table border="0" align="center">
+                                    <tr>
+                                        <td style="vertical-align: middle;">
+                                            <span id="agg_export_icon" class="material-icons metric">logout</span>
+                                        </td>
+                                        <td style="vertical-align: bottom;">
+                                            <span id="agg_export" style="metric metric-white">0</span>
+                                            <span id="agg_export_unit" class="metric-unit">kWh</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col"
+                         data-bs-toggle="tooltip" 
+                         data-bs-placement="bottom"
+                         data-bs-custom-class="custom-tooltip"
+                         data-bs-title="CO2 (g/kg). This is the total CO2 emissions avoided by the PV generation">
+
+                        <div class="card-transparent text-center mt-0">
+                            <div class="card-body">
+                                <table border="0" align="center">
+                                    <tr>
+                                        <td style="vertical-align: middle;">
+                                            <span id="agg_co2_icon" class="material-icons metric">co2</span>
+                                        </td>
+                                        <td style="vertical-align: bottom;">
+                                            <span id="agg_co2" style="metric metric-white">0</span>
+                                            <span id="agg_co2_unit" class="metric-unit">kg</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col"
+                         data-bs-toggle="tooltip" 
+                         data-bs-placement="bottom"
+                         data-bs-custom-class="custom-tooltip"
+                         data-bs-title="Trees planted. This is the total PV generation represented as trees planted">
+
+                        <div class="card-transparent text-center mt-0">
+                            <div class="card-body">
+                                <table border="0" align="center">
+                                    <tr>
+                                        <td style="vertical-align: middle;">
+                                            <span id="agg_trees_icon" class="material-icons metric">forest</span>
+                                        </td>
+                                        <td style="vertical-align: bottom;">
+                                            <span id="agg_trees" style="metric metric-white">0</span>
+                                            <span class="metric-unit">trees</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
-
-        </div>
-    </div>
-
-    <div id="agg_metrics" class="col mt-2">
-
-        <!-- agg donut -->
-        <div id="agg_chart_div" class="card-transparent text-white text-center mt-2">
-            <div class="card-body text-center">
-                <center>
-                    <div id="agg_donut_title" class="title">Overall Usage</div>
-                    <div id="agg_donut_chart"></div>
-                </center>
-            </div>
+            <!-- agg metric cards -->
         </div>
 
-        <!-- agg metric cards -->
-        <div class="container text-white text-center">
-            <div id="agg_metric_grid" class="row row-cols-2">
-
-                <div class="col"
-                     data-bs-toggle="tooltip" 
-                     data-bs-placement="bottom"
-                     data-bs-custom-class="custom-tooltip"
-                     data-bs-title="Grid Import (kWh). This is the total power drawn from the electricity supply grid">
-
-                    <div class="card-transparent text-center mt-0">
-                        <div class="card-body">
-                            <table border="0" align="center">
-                                <tr>
-                                    <td style="vertical-align: middle;">
-                                        <span id="agg_import_icon" class="material-icons metric">login</span>
-                                    </td>
-                                    <td style="vertical-align: bottom;">
-                                        <span id="agg_import" style="metric metric-white">0</span>
-                                        <span id="agg_import_unit" class="metric-unit">kWh</span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col"
-                     data-bs-toggle="tooltip" 
-                     data-bs-placement="bottom"
-                     data-bs-custom-class="custom-tooltip"
-                     data-bs-title="PV Yield (kWh). This is the total power generated from the solar panels">
-
-                    <div class="card-transparent text-center mt-0">
-                        <div class="card-body">
-                            <table border="0" align="center">
-                                <tr>
-                                    <td style="vertical-align: middle;">
-                                        <span id="agg_solar_icon" class="material-icons metric">solar_power</span>
-                                    </td>
-                                    <td style="vertical-align: bottom;">
-                                        <span id="agg_solar" style="metric metric-white">0</span>
-                                        <span id="agg_solar_unit" class="metric-unit">kWh</span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col"
-                     data-bs-toggle="tooltip" 
-                     data-bs-placement="bottom"
-                     data-bs-custom-class="custom-tooltip"
-                     data-bs-title="Consumption (kW). This is the total power consumed by the premises">
-
-                    <div class="card-transparent text-center mt-0">
-                        <div class="card-body">
-                            <table border="0" align="center">
-                                <tr>
-                                    <td style="vertical-align: middle;">
-                                        <span id="agg_consumed_icon" class="material-icons metric">home</span>
-                                    </td>
-                                    <td style="vertical-align: bottom;">
-                                        <span id="agg_consumed" style="metric metric-white">0</span>
-                                        <span id="agg_consumed_unit" class="metric-unit">kWh</span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col"
-                     data-bs-toggle="tooltip" 
-                     data-bs-placement="bottom"
-                     data-bs-custom-class="custom-tooltip"
-                     data-bs-title="PV Export (kW). This is the total PV surplus exported to the grid">
-
-                    <div class="card-transparent text-center mt-0">
-                        <div class="card-body">
-                            <table border="0" align="center">
-                                <tr>
-                                    <td style="vertical-align: middle;">
-                                        <span id="agg_export_icon" class="material-icons metric">logout</span>
-                                    </td>
-                                    <td style="vertical-align: bottom;">
-                                        <span id="agg_export" style="metric metric-white">0</span>
-                                        <span id="agg_export_unit" class="metric-unit">kWh</span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col"
-                     data-bs-toggle="tooltip" 
-                     data-bs-placement="bottom"
-                     data-bs-custom-class="custom-tooltip"
-                     data-bs-title="CO2 (g/kg). This is the total CO2 emissions avoided by the PV generation">
-
-                    <div class="card-transparent text-center mt-0">
-                        <div class="card-body">
-                            <table border="0" align="center">
-                                <tr>
-                                    <td style="vertical-align: middle;">
-                                        <span id="agg_co2_icon" class="material-icons metric">co2</span>
-                                    </td>
-                                    <td style="vertical-align: bottom;">
-                                        <span id="agg_co2" style="metric metric-white">0</span>
-                                        <span id="agg_co2_unit" class="metric-unit">kg</span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col"
-                     data-bs-toggle="tooltip" 
-                     data-bs-placement="bottom"
-                     data-bs-custom-class="custom-tooltip"
-                     data-bs-title="Trees planted. This is the total PV generation represented as trees planted">
-
-                    <div class="card-transparent text-center mt-0">
-                        <div class="card-body">
-                            <table border="0" align="center">
-                                <tr>
-                                    <td style="vertical-align: middle;">
-                                        <span id="agg_trees_icon" class="material-icons metric">forest</span>
-                                    </td>
-                                    <td style="vertical-align: bottom;">
-                                        <span id="agg_trees" style="metric metric-white">0</span>
-                                        <span class="metric-unit">trees</span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
+        <div id="day_column_chart" class="col">
+            <center><div class="title">Last 36 Hours</div></center>
+            <div id="day_google_chart"></div>
         </div>
-        <!-- agg metric cards -->
-    </div>
-
-    <div id="day_column_chart" class="col">
-        <center><div class="title">Last 36 Hours</div></center>
-        <div id="day_google_chart"></div>
-    </div>
-    <div id="month_column_chart"class="col">
-        <center><div class="title">Last 30 Days</div></center>
-        <div id="month_google_chart"></div>
-    </div>
-    <div id="year_column_chart"class="col">
-        <center><div class="title">Last 12 Months</div></center>
-        <div id="year_google_chart"></div>
+        <div id="month_column_chart"class="col">
+            <center><div class="title">Last 30 Days</div></center>
+            <div id="month_google_chart"></div>
+        </div>
+        <div id="year_column_chart"class="col">
+            <center><div class="title">Last 12 Months</div></center>
+            <div id="year_google_chart"></div>
+        </div>
     </div>
 
 </body>
