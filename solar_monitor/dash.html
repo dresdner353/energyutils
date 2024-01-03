@@ -72,18 +72,10 @@
         .material-icons.metric { 
             font-size: var(--metric-font-size);
         }
-        .custom-tooltip {
-            --bs-tooltip-bg: var(--bs-primary);
-        }
     </style>
     <title>Solar Monitor</title>
 
     <script>
-        // popper tooltips init
-        $(function(){
-            $('body').tooltip({ selector: '[data-bs-toggle="tooltip"]' });
-        });
-
         // Google charts
         google.charts.load('current', {'packages': ['corechart']});
         google.charts.load('current', {'packages':['gauge']});
@@ -854,11 +846,7 @@
             <div class="container text-white text-center">
                 <div id="live_metric_grid" class="row row-cols-2">
 
-                    <div class="col"
-                         data-bs-toggle="tooltip" 
-                         data-bs-placement="bottom"
-                         data-bs-custom-class="custom-tooltip"
-                         data-bs-title="Live Grid Import (W/kW). This is the real-time power being drawn from the electricity supply grid">
+                    <div class="col">
 
                         <div class="card-transparent text-center mt-0">
                             <div class="card-body">
@@ -877,11 +865,7 @@
                         </div>
                     </div>
 
-                    <div class="col"
-                         data-bs-toggle="tooltip" 
-                         data-bs-placement="bottom"
-                         data-bs-custom-class="custom-tooltip"
-                         data-bs-title="Live PV Yield (W/kW). This is the real-time power being generated from the solar panels">
+                    <div class="col">
 
                         <div class="card-transparent text-center mt-0">
                             <div class="card-body">
@@ -900,11 +884,7 @@
                         </div>
                     </div>
 
-                    <div class="col"
-                         data-bs-toggle="tooltip" 
-                         data-bs-placement="bottom"
-                         data-bs-custom-class="custom-tooltip"
-                         data-bs-title="Live Consumption (W/kW). This is the real-time power being consumed by the premises">
+                    <div class="col">
 
                         <div class="card-transparent text-center mt-0">
                             <div class="card-body">
@@ -923,11 +903,7 @@
                         </div>
                     </div>
 
-                    <div class="col"
-                         data-bs-toggle="tooltip" 
-                         data-bs-placement="bottom"
-                         data-bs-custom-class="custom-tooltip"
-                         data-bs-title="Live PV Export (W/kW). This is the real-time PV surplus being exported to the grid">
+                    <div class="col">
 
                         <div class="card-transparent text-center mt-0">
                             <div class="card-body">
@@ -967,11 +943,7 @@
             <div class="container text-white text-center">
                 <div id="agg_metric_grid" class="row row-cols-2">
 
-                    <div class="col"
-                         data-bs-toggle="tooltip" 
-                         data-bs-placement="bottom"
-                         data-bs-custom-class="custom-tooltip"
-                         data-bs-title="Grid Import (kWh). This is the total power drawn from the electricity supply grid">
+                    <div class="col">
 
                         <div class="card-transparent text-center mt-0">
                             <div class="card-body">
@@ -990,11 +962,7 @@
                         </div>
                     </div>
 
-                    <div class="col"
-                         data-bs-toggle="tooltip" 
-                         data-bs-placement="bottom"
-                         data-bs-custom-class="custom-tooltip"
-                         data-bs-title="PV Yield (kWh). This is the total power generated from the solar panels">
+                    <div class="col">
 
                         <div class="card-transparent text-center mt-0">
                             <div class="card-body">
@@ -1013,11 +981,7 @@
                         </div>
                     </div>
 
-                    <div class="col"
-                         data-bs-toggle="tooltip" 
-                         data-bs-placement="bottom"
-                         data-bs-custom-class="custom-tooltip"
-                         data-bs-title="Consumption (kW). This is the total power consumed by the premises">
+                    <div class="col">
 
                         <div class="card-transparent text-center mt-0">
                             <div class="card-body">
@@ -1036,11 +1000,7 @@
                         </div>
                     </div>
 
-                    <div class="col"
-                         data-bs-toggle="tooltip" 
-                         data-bs-placement="bottom"
-                         data-bs-custom-class="custom-tooltip"
-                         data-bs-title="PV Export (kW). This is the total PV surplus exported to the grid">
+                    <div class="col">
 
                         <div class="card-transparent text-center mt-0">
                             <div class="card-body">
@@ -1059,11 +1019,7 @@
                         </div>
                     </div>
 
-                    <div class="col"
-                         data-bs-toggle="tooltip" 
-                         data-bs-placement="bottom"
-                         data-bs-custom-class="custom-tooltip"
-                         data-bs-title="CO2 (g/kg). This is the total CO2 emissions avoided by the PV generation">
+                    <div class="col">
 
                         <div class="card-transparent text-center mt-0">
                             <div class="card-body">
@@ -1082,11 +1038,7 @@
                         </div>
                     </div>
 
-                    <div class="col"
-                         data-bs-toggle="tooltip" 
-                         data-bs-placement="bottom"
-                         data-bs-custom-class="custom-tooltip"
-                         data-bs-title="Trees planted. This is the total PV generation represented as trees planted">
+                    <div class="col">
 
                         <div class="card-transparent text-center mt-0">
                             <div class="card-body">
