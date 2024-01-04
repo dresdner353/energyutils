@@ -24,9 +24,14 @@
     --title-font-size-small-screen: 1.5vw;
     --title-font-size-portrait-screen: 4.5vw;
 
+    --legend-font-size-large-screen: 1.0vw;
+    --legend-font-size-small-screen: 1.5vw;
+    --legend-font-size-portrait-screen: 3.0vw;
+
     --metric-font-size: var(--metric-font-size-large-screen);
     --metric-unit-font-size: var(--metric-unit-font-size-large-screen);
     --title-font-size: var(--title-font-size-large-screen);
+    --legend-font-size: var(--legend-font-size-large-screen);
 }
         #bg {
             height: 200px;
@@ -233,6 +238,7 @@
                 document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-portrait-screen)');
                 document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-portrait-screen)');
                 document.body.style.setProperty("--title-font-size", 'var(--title-font-size-portrait-screen)');
+                document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-portrait-screen)');
             }
             else {
                 if (window_width < 1600 || window_height < 1080) {
@@ -246,6 +252,7 @@
                     document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-small-screen)');
                     document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-small-screen)');
                     document.body.style.setProperty("--title-font-size", 'var(--title-font-size-small-screen)');
+                    document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-small-screen)');
                 }
                 else {
                     // large screen landscape
@@ -260,6 +267,7 @@
                     document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-large-screen)');
                     document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-large-screen)');
                     document.body.style.setProperty("--title-font-size", 'var(--title-font-size-large-screen)');
+                    document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-large-screen)');
                 }
             }
 
@@ -560,6 +568,32 @@
                 donut_chart_height = (window.innerHeight) * 0.6;
             }
 
+            // legend font size
+            // this is a bit of work
+            // we parse layout and determine the CSS ref variable to 
+            // use for legend font. Google does not allow us pass that CSS
+            // in for the font size. So it needs to rendered in pixels
+            switch(layout) {
+                case "large":
+                    legend_font_size_var = "--legend-font-size-large-screen";
+                    break;
+                case "small":
+                    legend_font_size_var = "--legend-font-size-small-screen";
+                    break;
+                case "portrait":
+                    legend_font_size_var = "--legend-font-size-portrait-screen";
+                    break;
+            }
+            // expand that variable into the computed size (which will be x.xxvw)
+            legend_font_vw_size = getComputedStyle(document.documentElement).getPropertyValue(legend_font_size_var);
+
+            // strip the trailing "vw" text
+            // and get the numerical value
+            legend_font_vw_number = Number(legend_font_vw_size.replace('vw', ''));
+
+            // Convert into raw pixels using screen width
+            legend_font_px_size = (legend_font_vw_number * window.innerWidth) / 100;
+
             // series fields and colour assignments
             const series_fields = ["import", "consumed", "solar", "solar_consumed", "export" ];
 
@@ -617,13 +651,13 @@
                     position: 'bottom', 
                     maxLines: 3,
                     textStyle: {
-                        fontSize: 18,
+                        fontSize: legend_font_px_size,
                         color: 'gray'
                     },
                 },
                 pieSliceText: 'percentage',
                 pieSliceTextStyle: {
-                    fontSize: 20,
+                    fontSize: legend_font_px_size,
                 },
                 backgroundColor: { fill:'transparent' },
                 pieSliceBorderColor: 'transparent',
@@ -712,7 +746,7 @@
                         alignment: 'center', 
                         maxLines: 3,
                         textStyle: {
-                            fontSize: 18,
+                            fontSize: legend_font_px_size,
                             color: 'gray'
                         },
                     },
