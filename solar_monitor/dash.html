@@ -610,7 +610,7 @@
             // series fields and colour assignments
             const series_fields = ["import", "consumed", "solar", "solar_consumed", "export" ];
 
-            const series_labels = {
+            const series_labels_long = {
                 "import": "Grid Import",
                 "consumed": "Total Consumption",
                 "solar": "PV Yield",
@@ -618,8 +618,16 @@
                 "export": "PV Export",
             };
 
+            const series_labels_short = {
+                "import": "Import",
+                "consumed": "Total Cons",
+                "solar": "PV",
+                "solar_consumed": "PV Cons",
+                "export": "Export",
+            };
+
             const series_colours = {
-                "import": "#CC0000",
+                "import": "#AA0000",
                 "consumed": "#00487F",
                 "solar": "#DDDD00",
                 "solar_consumed": "#028A0F",
@@ -684,7 +692,7 @@
 
             for (series_field of donut_series_list) {
                 live_data.addRows([
-                    [series_labels[series_field], live_source[series_field] * 1000],
+                    [series_labels_short[series_field], live_source[series_field] * 1000],
                 ]);
             }
 
@@ -696,7 +704,7 @@
 
             for (series_field of donut_series_list) {
                 agg_data.addRows([
-                    [series_labels[series_field], agg_source[series_field] * 1000],
+                    [series_labels_short[series_field], agg_source[series_field] * 1000],
                 ]);
             }
 
@@ -783,7 +791,7 @@
                     day_data.addColumn('string', 'Hour');
 
                     for (series_field of bar_chart_series_list) {
-                        day_data.addColumn('number', series_labels[series_field]);
+                        day_data.addColumn('number', series_labels_long[series_field]);
                     }
 
                     day_data.addRows(data_dict.day.length);
@@ -817,7 +825,7 @@
                     month_data.addColumn('string', 'Day');
 
                     for (series_field of bar_chart_series_list) {
-                        month_data.addColumn('number', series_labels[series_field]);
+                        month_data.addColumn('number', series_labels_long[series_field]);
                     }
 
                     month_data.addRows(data_dict.month.length);
@@ -850,7 +858,7 @@
                     year_data.addColumn('string', 'Month');
 
                     for (series_field of bar_chart_series_list) {
-                        year_data.addColumn('number', series_labels[series_field]);
+                        year_data.addColumn('number', series_labels_long[series_field]);
                     }
 
                     year_data.addRows(data_dict.year.length);
