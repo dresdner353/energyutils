@@ -8,7 +8,6 @@ import json
 import hashlib
 import base64
 import utils
-import random
 
 # tracked device and API data
 gv_data_dict = {}
@@ -257,11 +256,8 @@ def get_inverter_day_data(config):
             # add relative value to offset for next hour
             offset_dict[field][offset_key] += usage_rec[field]
 
-        # FIXME random import/export
-        usage_rec['import'] = random.uniform(0.5, 2)
-        usage_rec['export'] = random.uniform(0.0, usage_rec['solar'] * 0.8)
+        # re-calculate the solar consumed from the adjusted numbers
         usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
-        usage_rec['consumed'] = usage_rec['import'] + usage_rec['solar_consumed']
 
         # environmental metrics
         usage_rec['co2'] = (config['environment']['gco2_kwh'] * usage_rec['solar']) / 1000
@@ -269,7 +265,6 @@ def get_inverter_day_data(config):
 
     # fill in empty records for absent hours
     # but not beyond the latest record
-    
     latest_key = sorted(data_dict.keys())[-1]
     last_day = data_dict[latest_key]['day']
     last_hour = data_dict[latest_key]['hour']
@@ -291,7 +286,7 @@ def get_inverter_day_data(config):
                 usage_rec['day'] = dt.day
                 usage_rec['hour'] = hour
                 usage_rec['solar'] = 0
-                usage_rec['import'] = random.uniform(0.2, 1) # FIXME random
+                usage_rec['import'] = 0
                 usage_rec['export'] = 0
                 usage_rec['consumed'] = usage_rec['import']
                 usage_rec['solar_consumed'] = 0
@@ -313,7 +308,7 @@ def get_inverter_day_data(config):
 
     latest_snap_rec = solis_snap_list[-1]
     solar = latest_snap_rec['pac'] / 1000
-    grid = random.uniform(0, 5)
+    grid = latest_snap_rec['pSum'] / 1000
 
     if grid >= 0:
         gv_data_dict['metrics']['live']['import'] = grid
@@ -322,10 +317,7 @@ def get_inverter_day_data(config):
         gv_data_dict['metrics']['live']['import'] = 0
         gv_data_dict['metrics']['live']['export'] = grid * -1
 
-    if solar >= 0.010:
-        gv_data_dict['metrics']['live']['solar'] = solar
-    else:
-        gv_data_dict['metrics']['live']['solar'] = 0
+    gv_data_dict['metrics']['live']['solar'] = solar
 
     gv_data_dict['metrics']['live']['solar_consumed'] = gv_data_dict['metrics']['live']['solar'] - gv_data_dict['metrics']['live']['export']
     gv_data_dict['metrics']['live']['consumed'] = gv_data_dict['metrics']['live']['import'] + gv_data_dict['metrics']['live']['solar_consumed'] 
@@ -397,10 +389,6 @@ def get_inverter_month_data(config):
         usage_rec['import'] = solis_day_rec['gridPurchasedEnergy']
         usage_rec['export'] = solis_day_rec['gridSellEnergy']
         usage_rec['solar'] = solis_day_rec['energy']
-
-        # FIXME fakery
-        usage_rec['import'] = random.uniform(8, 20)
-        usage_rec['export'] = random.uniform(0.0, usage_rec['solar'] * 0.8)
 
         usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
         usage_rec['consumed'] = usage_rec['import'] + usage_rec['solar_consumed']
@@ -521,10 +509,6 @@ def get_inverter_year_data(config):
         usage_rec['import'] = solis_month_rec['gridPurchasedEnergy']
         usage_rec['export'] = solis_month_rec['gridSellEnergy']
         usage_rec['solar'] = solis_month_rec['energy']
-
-        # FIXME fakery
-        usage_rec['import'] = random.uniform(200, 500)
-        usage_rec['export'] = random.uniform(50, usage_rec['solar'])
 
         usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
         usage_rec['consumed'] = usage_rec['import'] + usage_rec['solar_consumed']
