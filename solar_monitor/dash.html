@@ -279,6 +279,7 @@
         // tracking the current agg
         // metric series rotation
         var agg_metric_index = 0;
+        var agg_metric_key = '';
         var agg_metric_cycle_interval = 5000;
         var agg_metric_cycle_ts = 0;
 
@@ -342,7 +343,12 @@
                     metric_list = Object.keys(data_dict.metrics);
                     for (i = 0; i < metric_list.length; i++) {
                         agg_metric_index = (agg_metric_index + 1) % metric_list.length;
-                        if (metric_list[agg_metric_index] != 'live') {
+
+                        // ignore "live" as it has its own donut
+                        // then for everything else, check its enabled in the config
+                        if (
+                            metric_list[agg_metric_index] != 'live' &&
+                            data_dict.dashboard.metrics[metric_list[agg_metric_index]]) {
                             agg_metric_key = metric_list[agg_metric_index];
                             $("#agg_donut_title").html(data_dict['metrics'][agg_metric_key]['title']);
                             agg_metric_cycle_ts = now;

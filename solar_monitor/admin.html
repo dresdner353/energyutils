@@ -49,6 +49,13 @@
                     $('#solis_key_secret').val(config_dict['solis']['key_secret']);
                 }
 
+                // metrics
+                $("#metrics_today" ).prop("checked", config_dict['dashboard']['metrics']['today']);
+                $("#metrics_yesterday" ).prop("checked", config_dict['dashboard']['metrics']['yesterday']);
+                $("#metrics_this_month" ).prop("checked", config_dict['dashboard']['metrics']['this_month']);
+                $("#metrics_last_month" ).prop("checked", config_dict['dashboard']['metrics']['last_month']);
+                $("#metrics_last_12_months" ).prop("checked", config_dict['dashboard']['metrics']['last_12_months']);
+
                 // donut
                 $("#donut_import" ).prop("checked", config_dict['dashboard']['donut']['import']);
                 $("#donut_consumed" ).prop("checked", config_dict['dashboard']['donut']['consumed']);
@@ -129,6 +136,13 @@
             config_dict['solis']['key_secret'] = $('#solis_key_secret').val();
 
             config_dict['dashboard'] = {}
+
+            config_dict['dashboard']['metrics'] = {}
+            config_dict['dashboard']['metrics']['today'] = $('#metrics_today').prop('checked');
+            config_dict['dashboard']['metrics']['yesterday'] = $('#metrics_yesterday').prop('checked');
+            config_dict['dashboard']['metrics']['this_month'] = $('#metrics_this_month').prop('checked');
+            config_dict['dashboard']['metrics']['last_month'] = $('#metrics_last_month').prop('checked');
+            config_dict['dashboard']['metrics']['last_12_months'] = $('#metrics_last_12_months').prop('checked');
 
             config_dict['dashboard']['donut'] = {}
             config_dict['dashboard']['donut']['import'] = $('#donut_import').prop('checked');
@@ -252,6 +266,48 @@
                         </div>
                     </div>
                     <div class="row mt-3">
+
+                        <div id="metrics_config" class="col">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Donut Metrics Sources</h5>
+
+                                    <!-- hard-coded to checked and disabled
+                                         for display purposes only
+                                    -->
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="metrics_live" checked disabled>
+                                        <label class="form-check-label" for="metrics_live">Live</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="metrics_today">
+                                        <label class="form-check-label" for="metrics_today">Today</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="metrics_yesterday">
+                                        <label class="form-check-label" for="metrics_yesterday">Yesterday</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="metrics_this_month">
+                                        <label class="form-check-label" for="metrics_this_month">This Month</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="metrics_last_month">
+                                        <label class="form-check-label" for="metrics_last_month">Last Month</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="metrics_last_12_months">
+                                        <label class="form-check-label" for="metrics_last_12_months">Last 12 Months</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div id="donut_config" class="col">
                             <div class="card">
                                 <div class="card-body">
@@ -284,6 +340,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div id="chart_config" class="col">
                             <div class="card">
                                 <div class="card-body">
@@ -316,7 +373,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="general_config" class="col">
+
+                        <div id="env_config" class="col">
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">Environment Settings</h5>
@@ -331,6 +389,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div id="general_config" class="col">
                             <div class="card">
                                 <div class="card-body">
@@ -343,6 +402,7 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                     <button type="submit" class="btn btn-primary mt-4" id="apply_button">Apply</button>
                 </div>
