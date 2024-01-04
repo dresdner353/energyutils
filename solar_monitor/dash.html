@@ -447,8 +447,12 @@
                 watt_hour_unit_str = 'Wh';
                 kw_hour_unit_str = 'kWh';
 
-                if (agg_source.import >= 1) {
+                if (agg_source.import >= 50) {
                     $("#agg_import").html(agg_source.import.toFixed(0));
+                    $("#agg_import_unit").html(kw_hour_unit_str);
+                }
+                else if (agg_source.import >= 1) {
+                    $("#agg_import").html(agg_source.import.toFixed(2));
                     $("#agg_import_unit").html(kw_hour_unit_str);
                 }
                 else {
@@ -465,8 +469,12 @@
                     $("#agg_import_icon").removeClass().addClass("material-icons metric metric-green");
                 }
 
-                if (agg_source.solar >= 1) {
+                if (agg_source.solar >= 50) {
                     $("#agg_solar").html(agg_source.solar.toFixed(0));
+                    $("#agg_solar_unit").html(kw_hour_unit_str);
+                }
+                else if (agg_source.solar >= 1) {
+                    $("#agg_solar").html(agg_source.solar.toFixed(2));
                     $("#agg_solar_unit").html(kw_hour_unit_str);
                 }
                 else {
@@ -483,8 +491,12 @@
                     $("#agg_solar_icon").removeClass().addClass("material-icons metric metric-grey");
                 }
 
-                if (agg_source.export >= 1) {
+                if (agg_source.export >= 50) {
                     $("#agg_export").html(agg_source.export.toFixed(0));
+                    $("#agg_export_unit").html(kw_hour_unit_str);
+                }
+                else if (agg_source.export >= 1) {
+                    $("#agg_export").html(agg_source.export.toFixed(2));
                     $("#agg_export_unit").html(kw_hour_unit_str);
                 }
                 else {
@@ -501,8 +513,12 @@
                     $("#agg_export_icon").removeClass().addClass("material-icons metric metric-grey");
                 }
 
-                if (agg_source.consumed >= 1) {
+                if (agg_source.consumed >= 50) {
                     $("#agg_consumed").html(agg_source.consumed.toFixed(0));
+                    $("#agg_consumed_unit").html(kw_hour_unit_str);
+                }
+                else if (agg_source.consumed >= 1) {
+                    $("#agg_consumed").html(agg_source.consumed.toFixed(2));
                     $("#agg_consumed_unit").html(kw_hour_unit_str);
                 }
                 else {
@@ -525,7 +541,11 @@
 
                 kg_unit_str = 'kg';
                 g_unit_str = 'g';
-                if (agg_source.co2 >= 1) {
+                if (agg_source.co2 >= 50) {
+                    $("#agg_co2").html(agg_source.co2.toFixed(0));
+                    $("#agg_co2_unit").html(kg_unit_str);
+                }
+                else if (agg_source.co2 >= 1) {
                     $("#agg_co2").html(agg_source.co2.toFixed(2));
                     $("#agg_co2_unit").html(kg_unit_str);
                 }
@@ -542,8 +562,11 @@
                     $("#agg_co2_icon").removeClass().addClass("material-icons metric metric-grey");
                 }
 
-                if (agg_source.trees >= 1) {
+                if (agg_source.trees >= 50) {
                     $("#agg_trees").html(agg_source.trees.toFixed(0));
+                }
+                else if (agg_source.trees >= 1) {
+                    $("#agg_trees").html(agg_source.trees.toFixed(2));
                 }
                 else {
                     $("#agg_trees").html(agg_source.trees.toFixed(3));
