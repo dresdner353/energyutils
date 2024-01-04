@@ -340,6 +340,10 @@
                 // rotates every N msecs 
                 var now = Date.now();
                 if (now - agg_metric_cycle_ts >= agg_metric_cycle_interval) {
+                    
+                    // always default to today
+                    agg_metric_key = "today";
+
                     metric_list = Object.keys(data_dict.metrics);
                     for (i = 0; i < metric_list.length; i++) {
                         agg_metric_index = (agg_metric_index + 1) % metric_list.length;
@@ -350,7 +354,6 @@
                             metric_list[agg_metric_index] != 'live' &&
                             data_dict.dashboard.metrics[metric_list[agg_metric_index]]) {
                             agg_metric_key = metric_list[agg_metric_index];
-                            $("#agg_donut_title").html(data_dict['metrics'][agg_metric_key]['title']);
                             agg_metric_cycle_ts = now;
                             break;
                         }
@@ -358,7 +361,6 @@
                 }
 
                 live_source = data_dict.metrics.live;
-                agg_source = data_dict.metrics[agg_metric_key];
 
                 watt_unit_str = 'W';
                 kw_unit_str = 'kW';
@@ -436,6 +438,11 @@
                     $("#live_consumed").removeClass().addClass("metric metric-red");
                     $("#live_consumed_icon").removeClass().addClass("material-icons metric metric-red");
                 }
+
+
+                // Aggregate metrics
+                agg_source = data_dict.metrics[agg_metric_key];
+                $("#agg_donut_title").html(data_dict['metrics'][agg_metric_key]['title']);
 
                 watt_hour_unit_str = 'Wh';
                 kw_hour_unit_str = 'kWh';
