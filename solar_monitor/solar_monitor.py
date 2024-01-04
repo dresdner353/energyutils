@@ -141,17 +141,17 @@ def monitor_agent():
 
         # FIXME elseif others into place
 
-        # sleep protection
+        # short sleep protection
         if sleep_interval < 5:
             sleep_interval = 5
 
         # refresh interval
-        # for longer sleep periods, we can let the 
-        # dashboard refresh back off a bit
-        if sleep_interval <= 30:
-            gv_data_dict['refresh_interval'] = sleep_interval 
+        # we want a min of 10 but can go 
+        # lower for more real-time values
+        if sleep_interval >= 10:
+            gv_data_dict['refresh_interval'] = 10 
         else:
-            gv_data_dict['refresh_interval'] = 30 
+            gv_data_dict['refresh_interval'] = sleep_interval 
 
         # metric cycle interval
         # FIXME make configurable
