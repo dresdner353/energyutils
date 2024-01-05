@@ -274,6 +274,55 @@
             console.log("Set layout to " + layout);
         }
 
+        function format_energy_value(value, std_unit, mega_unit, milli_unit) {
+            value_dict = {};
+
+            if (value >= 1000) {
+                // mega unit
+                value_dict['value'] = (value / 1000).toFixed(2);
+                value_dict['unit'] = mega_unit;
+            }
+            else if (value >= 50) {
+                // standard >= 50
+                value_dict['value'] = value.toFixed(0);
+                value_dict['unit'] = std_unit;
+            }
+            else if (value >= 1) {
+                // standard 2 decimal places
+                value_dict['value'] = value.toFixed(2);
+                value_dict['unit'] = std_unit;
+            }
+            else {
+                // milli unit
+                value_dict['value'] = Math.floor(value * 1000);
+                value_dict['unit'] = milli_unit;
+            }
+
+            return value_dict;
+        }
+
+        function format_trees(value) {
+            value_dict = {};
+
+            if (value >= 500) {
+                // no decimal places
+                value_dict['value'] = value.toFixed(0);
+                value_dict['unit'] = 'trees';
+            }
+            else if (value >= 1) {
+                // standard 2 decimal places
+                value_dict['value'] = value.toFixed(2);
+                value_dict['unit'] = 'trees';
+            }
+            else {
+                // 3 decimal places
+                value_dict['value'] = value.toFixed(3);
+                value_dict['unit'] = 'trees';
+            }
+
+            return value_dict;
+        }
+
         var refresh_error_count = 0;
 
         // tracking the current agg
@@ -362,19 +411,10 @@
 
                 live_source = data_dict.metrics.live;
 
-                watt_unit_str = 'W';
-                kw_unit_str = 'kW';
+                value_dict = format_energy_value(live_source.import, 'kW', 'mW', 'W');
+                $("#live_import").html(value_dict['value']);
+                $("#live_import_unit").html(value_dict['unit']);
 
-                // live values to 2 decimal places when >= 1kW
-                // or as watts when < 1.0 kW
-                if (live_source.import >= 1) {
-                    $("#live_import").html(live_source.import.toFixed(2));
-                    $("#live_import_unit").html(kw_unit_str);
-                }
-                else {
-                    $("#live_import").html(Math.floor(live_source.import * 1000));
-                    $("#live_import_unit").html(watt_unit_str);
-                }
                 if (live_source.import > 0) {
                     $("#live_import").removeClass().addClass("metric metric-red");
                     $("#live_import_icon").removeClass().addClass("material-icons metric metric-red");
@@ -384,14 +424,10 @@
                     $("#live_import_icon").removeClass().addClass("material-icons metric metric-green");
                 }
 
-                if (live_source.solar >= 1) {
-                    $("#live_solar").html(live_source.solar.toFixed(2));
-                    $("#live_solar_unit").html(kw_unit_str);
-                }
-                else {
-                    $("#live_solar").html(Math.floor(live_source.solar * 1000));
-                    $("#live_solar_unit").html(watt_unit_str);
-                }
+                value_dict = format_energy_value(live_source.solar, 'kW', 'mW', 'W');
+                $("#live_solar").html(value_dict['value']);
+                $("#live_solar_unit").html(value_dict['unit']);
+
                 if (live_source.solar > 0) {
                     $("#live_solar").removeClass().addClass("metric metric-yellow");
                     $("#live_solar_icon").removeClass().addClass("material-icons metric metric-yellow");
@@ -401,14 +437,10 @@
                     $("#live_solar_icon").removeClass().addClass("material-icons metric metric-grey");
                 }
 
-                if (live_source.export >= 1) {
-                    $("#live_export").html(live_source.export.toFixed(2));
-                    $("#live_export_unit").html(kw_unit_str);
-                }
-                else {
-                    $("#live_export").html(Math.floor(live_source.export * 1000));
-                    $("#live_export_unit").html(watt_unit_str);
-                }
+                value_dict = format_energy_value(live_source.export, 'kW', 'mW', 'W');
+                $("#live_export").html(value_dict['value']);
+                $("#live_export_unit").html(value_dict['unit']);
+
                 if (live_source.export > 0) {
                     $("#live_export").removeClass().addClass("metric metric-blue");
                     $("#live_export_icon").removeClass().addClass("material-icons metric metric-blue");
@@ -418,14 +450,10 @@
                     $("#live_export_icon").removeClass().addClass("material-icons metric metric-grey");
                 }
 
-                if (live_source.consumed >= 1) {
-                    $("#live_consumed").html(live_source.consumed.toFixed(2));
-                    $("#live_consumed_unit").html(kw_unit_str);
-                } 
-                else {
-                    $("#live_consumed").html(Math.floor(live_source.consumed * 1000));
-                    $("#live_consumed_unit").html(watt_unit_str);
-                }
+                value_dict = format_energy_value(live_source.consumed, 'kW', 'mW', 'W');
+                $("#live_consumed").html(value_dict['value']);
+                $("#live_consumed_unit").html(value_dict['unit']);
+
                 if (live_source.import <= 0) {
                     $("#live_consumed").removeClass().addClass("metric metric-green");
                     $("#live_consumed_icon").removeClass().addClass("material-icons metric metric-green");
@@ -439,26 +467,13 @@
                     $("#live_consumed_icon").removeClass().addClass("material-icons metric metric-red");
                 }
 
-
                 // Aggregate metrics
                 agg_source = data_dict.metrics[agg_metric_key];
                 $("#agg_donut_title").html(data_dict['metrics'][agg_metric_key]['title']);
 
-                watt_hour_unit_str = 'Wh';
-                kw_hour_unit_str = 'kWh';
-
-                if (agg_source.import >= 50) {
-                    $("#agg_import").html(agg_source.import.toFixed(0));
-                    $("#agg_import_unit").html(kw_hour_unit_str);
-                }
-                else if (agg_source.import >= 1) {
-                    $("#agg_import").html(agg_source.import.toFixed(2));
-                    $("#agg_import_unit").html(kw_hour_unit_str);
-                }
-                else {
-                    $("#agg_import").html(Math.floor(agg_source.import * 1000));
-                    $("#agg_import_unit").html(watt_hour_unit_str);
-                }
+                value_dict = format_energy_value(agg_source.import, 'kWh', 'mWh', 'Wh');
+                $("#agg_import").html(value_dict['value']);
+                $("#agg_import_unit").html(value_dict['unit']);
 
                 if (agg_source.import > 0) {
                     $("#agg_import").removeClass().addClass("metric metric-red");
@@ -469,18 +484,9 @@
                     $("#agg_import_icon").removeClass().addClass("material-icons metric metric-green");
                 }
 
-                if (agg_source.solar >= 50) {
-                    $("#agg_solar").html(agg_source.solar.toFixed(0));
-                    $("#agg_solar_unit").html(kw_hour_unit_str);
-                }
-                else if (agg_source.solar >= 1) {
-                    $("#agg_solar").html(agg_source.solar.toFixed(2));
-                    $("#agg_solar_unit").html(kw_hour_unit_str);
-                }
-                else {
-                    $("#agg_solar").html(Math.floor(agg_source.solar * 1000));
-                    $("#agg_solar_unit").html(watt_hour_unit_str);
-                }
+                value_dict = format_energy_value(agg_source.solar, 'kWh', 'mWh', 'Wh');
+                $("#agg_solar").html(value_dict['value']);
+                $("#agg_solar_unit").html(value_dict['unit']);
 
                 if (agg_source.solar > 0) {
                     $("#agg_solar").removeClass().addClass("metric metric-yellow");
@@ -491,18 +497,9 @@
                     $("#agg_solar_icon").removeClass().addClass("material-icons metric metric-grey");
                 }
 
-                if (agg_source.export >= 50) {
-                    $("#agg_export").html(agg_source.export.toFixed(0));
-                    $("#agg_export_unit").html(kw_hour_unit_str);
-                }
-                else if (agg_source.export >= 1) {
-                    $("#agg_export").html(agg_source.export.toFixed(2));
-                    $("#agg_export_unit").html(kw_hour_unit_str);
-                }
-                else {
-                    $("#agg_export").html(Math.floor(agg_source.export * 1000));
-                    $("#agg_export_unit").html(watt_hour_unit_str);
-                }
+                value_dict = format_energy_value(agg_source.export, 'kWh', 'mWh', 'Wh');
+                $("#agg_export").html(value_dict['value']);
+                $("#agg_export_unit").html(value_dict['unit']);
 
                 if (agg_source.export > 0) {
                     $("#agg_export").removeClass().addClass("metric metric-blue");
@@ -513,18 +510,9 @@
                     $("#agg_export_icon").removeClass().addClass("material-icons metric metric-grey");
                 }
 
-                if (agg_source.consumed >= 50) {
-                    $("#agg_consumed").html(agg_source.consumed.toFixed(0));
-                    $("#agg_consumed_unit").html(kw_hour_unit_str);
-                }
-                else if (agg_source.consumed >= 1) {
-                    $("#agg_consumed").html(agg_source.consumed.toFixed(2));
-                    $("#agg_consumed_unit").html(kw_hour_unit_str);
-                }
-                else {
-                    $("#agg_consumed").html(Math.floor(agg_source.consumed * 1000));
-                    $("#agg_consumed_unit").html(watt_hour_unit_str);
-                }
+                value_dict = format_energy_value(agg_source.consumed, 'kWh', 'mWh', 'Wh');
+                $("#agg_consumed").html(value_dict['value']);
+                $("#agg_consumed_unit").html(value_dict['unit']);
 
                 if (agg_source.import <= 0) {
                     $("#agg_consumed").removeClass().addClass("metric metric-green");
@@ -539,20 +527,10 @@
                     $("#agg_consumed_icon").removeClass().addClass("material-icons metric metric-red");
                 }
 
-                kg_unit_str = 'kg';
-                g_unit_str = 'g';
-                if (agg_source.co2 >= 50) {
-                    $("#agg_co2").html(agg_source.co2.toFixed(0));
-                    $("#agg_co2_unit").html(kg_unit_str);
-                }
-                else if (agg_source.co2 >= 1) {
-                    $("#agg_co2").html(agg_source.co2.toFixed(2));
-                    $("#agg_co2_unit").html(kg_unit_str);
-                }
-                else {
-                    $("#agg_co2").html(Math.floor(agg_source.co2 * 1000));
-                    $("#agg_co2_unit").html(g_unit_str);
-                }
+                value_dict = format_energy_value(agg_source.co2, 'kg', 'mt', 'g');
+                $("#agg_co2").html(value_dict['value']);
+                $("#agg_co2_unit").html(value_dict['unit']);
+
                 if (agg_source.co2 > 0) {
                     $("#agg_co2").removeClass().addClass("metric metric-green");
                     $("#agg_co2_icon").removeClass().addClass("material-icons metric metric-green");
@@ -562,15 +540,10 @@
                     $("#agg_co2_icon").removeClass().addClass("material-icons metric metric-grey");
                 }
 
-                if (agg_source.trees >= 50) {
-                    $("#agg_trees").html(agg_source.trees.toFixed(0));
-                }
-                else if (agg_source.trees >= 1) {
-                    $("#agg_trees").html(agg_source.trees.toFixed(2));
-                }
-                else {
-                    $("#agg_trees").html(agg_source.trees.toFixed(3));
-                }
+                value_dict = format_trees(agg_source.trees);
+                $("#agg_trees").html(value_dict['value']);
+                $("#agg_trees_unit").html(value_dict['unit']);
+
                 if (agg_source.trees > 0) {
                     $("#agg_trees").removeClass().addClass("metric metric-green");
                     $("#agg_trees_icon").removeClass().addClass("material-icons metric metric-green");
@@ -580,7 +553,7 @@
                     $("#agg_trees_icon").removeClass().addClass("material-icons metric metric-grey");
                 }
 
-                // render as local time
+                // render update timestamp as local time
                 var date = new Date(data_dict.last_updated * 1000);
                 $("#last_updated").html(date.toLocaleTimeString());
 
@@ -1127,7 +1100,7 @@
                                         </td>
                                         <td style="vertical-align: bottom;">
                                             <span id="agg_trees" style="metric metric-white">0</span>
-                                            <span class="metric-unit">trees</span>
+                                            <span id="agg_trees_unit" class="metric-unit">trees</span>
                                         </td>
                                     </tr>
                                 </table>
