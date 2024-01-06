@@ -13,7 +13,7 @@
      * two variations for large and smaller screens
      */
     --metric-font-size-large-screen: 6.0vw;
-    --metric-font-size-small-screen: 7.5vw;
+    --metric-font-size-small-screen: 9.0vw;
     --metric-font-size-portrait-screen: 8.5vw;
 
     --icon-font-size-large-screen: 3.0vw;
@@ -310,18 +310,23 @@
         function format_energy_value(value, std_unit, mega_unit, milli_unit) {
             value_dict = {};
 
+            if (value >= 10000) {
+                // mega unit 1dp
+                value_dict['value'] = (value / 1000).toFixed(1);
+                value_dict['unit'] = mega_unit;
+            }
             if (value >= 1000) {
-                // mega unit
+                // mega unit 2dp
                 value_dict['value'] = (value / 1000).toFixed(2);
                 value_dict['unit'] = mega_unit;
             }
             else if (value >= 50) {
-                // standard >= 50
+                // standard >= 50 0dp
                 value_dict['value'] = value.toFixed(0);
                 value_dict['unit'] = std_unit;
             }
             else if (value >= 1) {
-                // standard 2 decimal places
+                // standard 2dp
                 value_dict['value'] = value.toFixed(2);
                 value_dict['unit'] = std_unit;
             }
@@ -338,17 +343,17 @@
             value_dict = {};
 
             if (value >= 500) {
-                // no decimal places
+                // no dp
                 value_dict['value'] = value.toFixed(0);
                 value_dict['unit'] = 'trees';
             }
             else if (value >= 1) {
-                // standard 2 decimal places
+                // 2 dp
                 value_dict['value'] = value.toFixed(2);
                 value_dict['unit'] = 'trees';
             }
             else {
-                // 3 decimal places
+                // 3dp
                 value_dict['value'] = value.toFixed(3);
                 value_dict['unit'] = 'trees';
             }
@@ -471,7 +476,7 @@
                     $("#agg_import_unit").removeClass().addClass("metric-unit metric-green");
                 }
 
-                value_dict = format_energy_value(agg_source.solar, milli_energy_unit, milli_energy_unit, milli_energy_unit);
+                value_dict = format_energy_value(agg_source.solar, std_energy_unit, mega_energy_unit, milli_energy_unit);
                 $("#agg_solar").html(value_dict['value']);
                 $("#agg_solar_unit").html(value_dict['unit']);
 
@@ -486,7 +491,7 @@
                     $("#agg_solar_unit").removeClass().addClass("metric-unit metric-grey");
                 }
 
-                value_dict = format_energy_value(agg_source.export, milli_energy_unit, milli_energy_unit, milli_energy_unit);
+                value_dict = format_energy_value(agg_source.export, std_energy_unit, mega_energy_unit, milli_energy_unit);
                 $("#agg_export").html(value_dict['value']);
                 $("#agg_export_unit").html(value_dict['unit']);
 
@@ -501,7 +506,7 @@
                     $("#agg_export_unit").removeClass().addClass("metric-unit metric-grey");
                 }
 
-                value_dict = format_energy_value(agg_source.consumed, milli_energy_unit, milli_energy_unit, milli_energy_unit);
+                value_dict = format_energy_value(agg_source.consumed, std_energy_unit, mega_energy_unit, milli_energy_unit);
                 $("#agg_consumed").html(value_dict['value']);
                 $("#agg_consumed_unit").html(value_dict['unit']);
 
@@ -639,7 +644,7 @@
                 "consumed": "T-Con",
                 "solar": "PV",
                 "solar_consumed": "PV-Con",
-                "export": "Exp",
+                "export": "PV-Exp",
             };
 
             const series_colours = {
