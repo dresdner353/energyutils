@@ -26,7 +26,7 @@
 
     --title-font-size-large-screen: 1.0vw;
     --title-font-size-small-screen: 2.5vw;
-    --title-font-size-portrait-screen: 5.0vw;
+    --title-font-size-portrait-screen: 4.0vw;
 
     --legend-font-size-large-screen: 1.0vw;
     --legend-font-size-small-screen: 1.5vw;
@@ -178,14 +178,14 @@
             large_screen_layout = `
                 <div class="container-fluid" data-bs-theme="dark">
                     <div class="row">
-                        <div class="col col-6 mt-2">
+                        <div class="col col-5 mt-2">
                             <div id="agg_donut_insert" class="row">
                             </div>
                             <div id="agg_metrics_insert" class="row">
                             </div>
                         </div>
 
-                        <div id="chart_column" class="col col-6 mt-2">
+                        <div id="chart_column" class="col col-7 mt-2">
                             <div id="day_column_chart_insert" class="row">
                             </div>
 
@@ -207,9 +207,9 @@
             small_screen_layout = `
                 <div class="container-fluid" data-bs-theme="dark">
                     <div class="row">
-                        <div id="agg_donut_insert" class="col col-6 mt-2">
+                        <div id="agg_donut_insert" class="col col-5 mt-2">
                         </div>
-                        <div id="agg_metrics_insert" class="col col-6 mt-2">
+                        <div id="agg_metrics_insert" class="col col-7 mt-2">
                         </div>
                     </div>
                 </div>
@@ -251,6 +251,9 @@
                 $("#month_column_chart_insert").html(month_column_chart_html);
                 $("#year_column_chart_insert").html(year_column_chart_html);
 
+                // force metrics to stack in single column
+                //$("#agg_metric_grid").removeClass("row-cols-2").addClass("row-cols-1");
+
                 // set the portrait screen font sizes
                 document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-portrait-screen)');
                 document.body.style.setProperty("--icon-font-size", 'var(--icon-font-size-portrait-screen)');
@@ -268,7 +271,7 @@
                     $("#agg_metrics_insert").html(agg_metrics_html);
 
                     // force metrics to stack in single column
-                    $("#agg_metric_grid").removeClass("row-cols-2").addClass("row-cols-1");
+                    //$("#agg_metric_grid").removeClass("row-cols-2").addClass("row-cols-1");
 
                     // set the small screen font sizes
                     document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-small-screen)');
