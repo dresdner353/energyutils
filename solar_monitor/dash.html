@@ -12,26 +12,36 @@
     /* metric and material icon sizing
      * two variations for large and smaller screens
      */
-    --metric-font-size-large-screen: 3.0vw;
-    --metric-font-size-small-screen: 5.0vw;
+    --metric-font-size-large-screen: 6.0vw;
+    --metric-font-size-small-screen: 7.5vw;
     --metric-font-size-portrait-screen: 8.0vw;
 
+    --icon-font-size-large-screen: 3.5vw;
+    --icon-font-size-small-screen: 3.5vw;
+    --icon-font-size-portrait-screen: 3.5vw;
+
     --metric-unit-font-size-large-screen: 1.0vw;
-    --metric-unit-font-size-small-screen: 1.5vw;
-    --metric-unit-font-size-portrait-screen: 3.0vw;
+    --metric-unit-font-size-small-screen: 2.0vw;
+    --metric-unit-font-size-portrait-screen: 2.0vw;
 
     --title-font-size-large-screen: 1.0vw;
-    --title-font-size-small-screen: 1.5vw;
-    --title-font-size-portrait-screen: 4.5vw;
+    --title-font-size-small-screen: 2.5vw;
+    --title-font-size-portrait-screen: 5.0vw;
 
-    --legend-font-size-large-screen: 0.8vw;
-    --legend-font-size-small-screen: 1.3vw;
-    --legend-font-size-portrait-screen: 2.8vw;
+    --legend-font-size-large-screen: 1.0vw;
+    --legend-font-size-small-screen: 1.5vw;
+    --legend-font-size-portrait-screen: 3.5vw;
+
+    --slice-font-size-large-screen: 1.5vw;
+    --slice-font-size-small-screen: 3.0vw;
+    --slice-font-size-portrait-screen: 3.0vw;
 
     --metric-font-size: var(--metric-font-size-large-screen);
+    --icon-font-size: var(--icon-font-size-large-screen);
     --metric-unit-font-size: var(--metric-unit-font-size-large-screen);
     --title-font-size: var(--title-font-size-large-screen);
     --legend-font-size: var(--legend-font-size-large-screen);
+    --slice-font-size: var(--slice-font-size-large-screen);
 }
         #bg {
             height: 200px;
@@ -68,14 +78,13 @@
         }
         .metric-unit{
             font-size: var(--metric-unit-font-size);
-            color: #929292;
         }
         g.google-visualization-tooltip { 
             /* fixes flickering tooltip */
             pointer-events: none 
         }
         .material-icons.metric { 
-            font-size: var(--metric-font-size);
+            font-size: var(--icon-font-size);
         }
     </style>
     <title>Solar Monitor</title>
@@ -102,7 +111,7 @@
         var refresh_interval = 5000
         var standard_refresh_timer = setInterval(refresh_data, refresh_interval);
 
-        var live_metrics_html;
+        var agg_donut_html;
         var agg_metrics_html;
         var day_column_chart_html;
         var month_column_chart_html;
@@ -115,7 +124,7 @@
             $("#dashboard").hide();
             // extract dashboard elements
             // from the flat stach of divs in default body
-            live_metrics_html = $("#live_metrics").html();
+            agg_donut_html = $("#agg_donut_chart").html();
             agg_metrics_html = $("#agg_metrics").html();
             day_column_chart_html = $("#day_column_chart").html();
             month_column_chart_html = $("#month_column_chart").html();
@@ -169,10 +178,14 @@
             large_screen_layout = `
                 <div class="container-fluid" data-bs-theme="dark">
                     <div class="row">
-                        <div id="metrics_insert" class="col col-4 mt-2">
+                        <div class="col col-6 mt-2">
+                            <div id="agg_donut_insert" class="row">
+                            </div>
+                            <div id="agg_metrics_insert" class="row">
+                            </div>
                         </div>
 
-                        <div id="chart_column" class="col col-8 mt-2">
+                        <div id="chart_column" class="col col-6 mt-2">
                             <div id="day_column_chart_insert" class="row">
                             </div>
 
@@ -194,7 +207,7 @@
             small_screen_layout = `
                 <div class="container-fluid" data-bs-theme="dark">
                     <div class="row">
-                        <div id="live_metrics_insert" class="col col-6 mt-2">
+                        <div id="agg_donut_insert" class="col col-6 mt-2">
                         </div>
                         <div id="agg_metrics_insert" class="col col-6 mt-2">
                         </div>
@@ -209,7 +222,10 @@
             // tablets or monitors
             portrait_screen_layout = `
                 <div class="container-fluid" data-bs-theme="dark">
-                    <div id="metrics_insert" class="row">
+                    <div id="agg_donut_insert" class="row">
+                    </div>
+
+                    <div id="agg_metrics_insert" class="row">
                     </div>
 
                     <div id="day_column_chart_insert" class="row">
@@ -229,45 +245,59 @@
                 // portrait view
                 layout = "portrait";
                 $("#dashboard").html(portrait_screen_layout);
-                $("#metrics_insert").html(live_metrics_html + agg_metrics_html);
+                $("#agg_donut_insert").html(agg_donut_html);
+                $("#agg_metrics_insert").html(agg_metrics_html);
                 $("#day_column_chart_insert").html(day_column_chart_html);
                 $("#month_column_chart_insert").html(month_column_chart_html);
                 $("#year_column_chart_insert").html(year_column_chart_html);
 
                 // set the portrait screen font sizes
                 document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-portrait-screen)');
+                document.body.style.setProperty("--icon-font-size", 'var(--icon-font-size-portrait-screen)');
                 document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-portrait-screen)');
                 document.body.style.setProperty("--title-font-size", 'var(--title-font-size-portrait-screen)');
                 document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-portrait-screen)');
+                document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-portrait-screen)');
             }
             else {
                 if (window_width < 1600 || window_height < 1080) {
                     // small screen landscape
                     layout = "small";
                     $("#dashboard").html(small_screen_layout);
-                    $("#live_metrics_insert").html(live_metrics_html);
+                    $("#agg_donut_insert").html(agg_donut_html);
                     $("#agg_metrics_insert").html(agg_metrics_html);
+
+                    // force metrics to stack in single column
+                    $("#agg_metric_grid").removeClass("row-cols-2").addClass("row-cols-1");
 
                     // set the small screen font sizes
                     document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-small-screen)');
+                    document.body.style.setProperty("--icon-font-size", 'var(--icon-font-size-small-screen)');
                     document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-small-screen)');
                     document.body.style.setProperty("--title-font-size", 'var(--title-font-size-small-screen)');
                     document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-small-screen)');
+                    document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-small-screen)');
                 }
                 else {
                     // large screen landscape
                     layout = "large";
                     $("#dashboard").html(large_screen_layout);
-                    $("#metrics_insert").html(live_metrics_html + agg_metrics_html);
+                    $("#agg_donut_insert").html(agg_donut_html);
+                    $("#agg_metrics_insert").html(agg_metrics_html);
                     $("#day_column_chart_insert").html(day_column_chart_html);
                     $("#month_column_chart_insert").html(month_column_chart_html);
                     $("#year_column_chart_insert").html(year_column_chart_html);
 
+                    // force metrics to stack in single column
+                    //$("#agg_metric_grid").removeClass("row-cols-2").addClass("row-cols-1");
+
                     // set the large screen smaller font sizes
                     document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-large-screen)');
+                    document.body.style.setProperty("--icon-font-size", 'var(--icon-font-size-large-screen)');
                     document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-large-screen)');
                     document.body.style.setProperty("--title-font-size", 'var(--title-font-size-large-screen)');
                     document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-large-screen)');
+                    document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-large-screen)');
                 }
             }
 
@@ -341,7 +371,7 @@
             // display the get error
             data_request.fail(function() {
                 refresh_error_count += 1;
-                $("#last_updated").html(`Error (${refresh_error_count})`);
+                $("#agg_donut_title").html(`Error (${refresh_error_count})`);
             });           
 
             // valid retrieval of data
@@ -389,9 +419,9 @@
                 // rotates every N msecs 
                 var now = Date.now();
                 if (now - agg_metric_cycle_ts >= agg_metric_cycle_interval) {
-                    
-                    // always default to today
-                    agg_metric_key = "today";
+
+                    // always default to live
+                    agg_metric_key = "live";
 
                     metric_list = Object.keys(data_dict.metrics);
                     for (i = 0; i < metric_list.length; i++) {
@@ -399,9 +429,7 @@
 
                         // ignore "live" as it has its own donut
                         // then for everything else, check its enabled in the config
-                        if (
-                            metric_list[agg_metric_index] != 'live' &&
-                            data_dict.dashboard.metrics[metric_list[agg_metric_index]]) {
+                        if (data_dict.dashboard.metrics[metric_list[agg_metric_index]]) {
                             agg_metric_key = metric_list[agg_metric_index];
                             agg_metric_cycle_ts = now;
                             break;
@@ -409,172 +437,155 @@
                     }
                 }
 
-                live_source = data_dict.metrics.live;
-
-                value_dict = format_energy_value(live_source.import, 'kW', 'mW', 'W');
-                $("#live_import").html(value_dict['value']);
-                $("#live_import_unit").html(value_dict['unit']);
-
-                if (live_source.import > 0) {
-                    $("#live_import").removeClass().addClass("metric metric-red");
-                    $("#live_import_icon").removeClass().addClass("material-icons metric metric-red");
-                }
-                else {
-                    $("#live_import").removeClass().addClass("metric metric-green");
-                    $("#live_import_icon").removeClass().addClass("material-icons metric metric-green");
-                }
-
-                value_dict = format_energy_value(live_source.solar, 'kW', 'mW', 'W');
-                $("#live_solar").html(value_dict['value']);
-                $("#live_solar_unit").html(value_dict['unit']);
-
-                if (live_source.solar > 0) {
-                    $("#live_solar").removeClass().addClass("metric metric-yellow");
-                    $("#live_solar_icon").removeClass().addClass("material-icons metric metric-yellow");
-                }
-                else {
-                    $("#live_solar").removeClass().addClass("metric metric-grey");
-                    $("#live_solar_icon").removeClass().addClass("material-icons metric metric-grey");
-                }
-
-                value_dict = format_energy_value(live_source.export, 'kW', 'mW', 'W');
-                $("#live_export").html(value_dict['value']);
-                $("#live_export_unit").html(value_dict['unit']);
-
-                if (live_source.export > 0) {
-                    $("#live_export").removeClass().addClass("metric metric-blue");
-                    $("#live_export_icon").removeClass().addClass("material-icons metric metric-blue");
-                }
-                else {
-                    $("#live_export").removeClass().addClass("metric metric-grey");
-                    $("#live_export_icon").removeClass().addClass("material-icons metric metric-grey");
-                }
-
-                value_dict = format_energy_value(live_source.consumed, 'kW', 'mW', 'W');
-                $("#live_consumed").html(value_dict['value']);
-                $("#live_consumed_unit").html(value_dict['unit']);
-
-                if (live_source.import <= 0) {
-                    $("#live_consumed").removeClass().addClass("metric metric-green");
-                    $("#live_consumed_icon").removeClass().addClass("material-icons metric metric-green");
-                }
-                else if (live_source.solar > 0) {
-                    $("#live_consumed").removeClass().addClass("metric metric-orange");
-                    $("#live_consumed_icon").removeClass().addClass("material-icons metric metric-orange");
-                }
-                else {
-                    $("#live_consumed").removeClass().addClass("metric metric-red");
-                    $("#live_consumed_icon").removeClass().addClass("material-icons metric metric-red");
-                }
-
                 // Aggregate metrics
                 agg_source = data_dict.metrics[agg_metric_key];
-                $("#agg_donut_title").html(data_dict['metrics'][agg_metric_key]['title']);
+                $("#agg_donut_title").html(agg_source['title']);
 
-                value_dict = format_energy_value(agg_source.import, 'kWh', 'mWh', 'Wh');
+                // select units
+                if (agg_metric_key == 'live'){
+                    std_energy_unit = 'kW';
+                    mega_energy_unit = 'mW';
+                    milli_energy_unit = 'W';
+                }
+                else {
+                    std_energy_unit = 'kWh';
+                    mega_energy_unit = 'mWh';
+                    milli_energy_unit = 'Wh';
+                }
+
+                value_dict = format_energy_value(agg_source.import, std_energy_unit, mega_energy_unit, milli_energy_unit);
                 $("#agg_import").html(value_dict['value']);
                 $("#agg_import_unit").html(value_dict['unit']);
 
                 if (agg_source.import > 0) {
                     $("#agg_import").removeClass().addClass("metric metric-red");
                     $("#agg_import_icon").removeClass().addClass("material-icons metric metric-red");
+                    $("#agg_import_unit").removeClass().addClass("metric-unit metric-red");
                 }
                 else {
                     $("#agg_import").removeClass().addClass("metric metric-green");
                     $("#agg_import_icon").removeClass().addClass("material-icons metric metric-green");
+                    $("#agg_import_unit").removeClass().addClass("metric-unit metric-green");
                 }
 
-                value_dict = format_energy_value(agg_source.solar, 'kWh', 'mWh', 'Wh');
+                value_dict = format_energy_value(agg_source.solar, milli_energy_unit, milli_energy_unit, milli_energy_unit);
                 $("#agg_solar").html(value_dict['value']);
                 $("#agg_solar_unit").html(value_dict['unit']);
 
                 if (agg_source.solar > 0) {
                     $("#agg_solar").removeClass().addClass("metric metric-yellow");
                     $("#agg_solar_icon").removeClass().addClass("material-icons metric metric-yellow");
+                    $("#agg_solar_unit").removeClass().addClass("metric-unit metric-yellow");
                 }
                 else {
                     $("#agg_solar").removeClass().addClass("metric metric-grey");
                     $("#agg_solar_icon").removeClass().addClass("material-icons metric metric-grey");
+                    $("#agg_solar_unit").removeClass().addClass("metric-unit metric-grey");
                 }
 
-                value_dict = format_energy_value(agg_source.export, 'kWh', 'mWh', 'Wh');
+                value_dict = format_energy_value(agg_source.export, milli_energy_unit, milli_energy_unit, milli_energy_unit);
                 $("#agg_export").html(value_dict['value']);
                 $("#agg_export_unit").html(value_dict['unit']);
 
                 if (agg_source.export > 0) {
                     $("#agg_export").removeClass().addClass("metric metric-blue");
                     $("#agg_export_icon").removeClass().addClass("material-icons metric metric-blue");
+                    $("#agg_export_unit").removeClass().addClass("metric-unit metric-blue");
                 }
                 else {
                     $("#agg_export").removeClass().addClass("metric metric-grey");
                     $("#agg_export_icon").removeClass().addClass("material-icons metric metric-grey");
+                    $("#agg_export_unit").removeClass().addClass("metric-unit metric-grey");
                 }
 
-                value_dict = format_energy_value(agg_source.consumed, 'kWh', 'mWh', 'Wh');
+                value_dict = format_energy_value(agg_source.consumed, milli_energy_unit, milli_energy_unit, milli_energy_unit);
                 $("#agg_consumed").html(value_dict['value']);
                 $("#agg_consumed_unit").html(value_dict['unit']);
 
                 if (agg_source.import <= 0) {
                     $("#agg_consumed").removeClass().addClass("metric metric-green");
                     $("#agg_consumed_icon").removeClass().addClass("material-icons metric metric-green");
+                    $("#agg_consumed_unit").removeClass().addClass("metric-unit metric-green");
                 }
                 else if (agg_source.solar > 0) {
                     $("#agg_consumed").removeClass().addClass("metric metric-orange");
                     $("#agg_consumed_icon").removeClass().addClass("material-icons metric metric-orange");
+                    $("#agg_consumed_unit").removeClass().addClass("metric-unit metric-orange");
                 }
                 else {
                     $("#agg_consumed").removeClass().addClass("metric metric-red");
                     $("#agg_consumed_icon").removeClass().addClass("material-icons metric metric-red");
+                    $("#agg_consumed_unit").removeClass().addClass("metric-unit metric-red");
                 }
 
-                value_dict = format_energy_value(agg_source.co2, 'kg', 'mt', 'g');
-                $("#agg_co2").html(value_dict['value']);
-                $("#agg_co2_unit").html(value_dict['unit']);
+                if (agg_source.co2) {
+                    $("#agg_co2_col").show();
+                    value_dict = format_energy_value(agg_source.co2, 'kg', 'mt', 'g');
+                    $("#agg_co2").html(value_dict['value']);
+                    $("#agg_co2_unit").html(value_dict['unit']);
 
-                if (agg_source.co2 > 0) {
-                    $("#agg_co2").removeClass().addClass("metric metric-green");
-                    $("#agg_co2_icon").removeClass().addClass("material-icons metric metric-green");
-                }
-                else {
-                    $("#agg_co2").removeClass().addClass("metric metric-grey");
-                    $("#agg_co2_icon").removeClass().addClass("material-icons metric metric-grey");
-                }
-
-                value_dict = format_trees(agg_source.trees);
-                $("#agg_trees").html(value_dict['value']);
-                $("#agg_trees_unit").html(value_dict['unit']);
-
-                if (agg_source.trees > 0) {
-                    $("#agg_trees").removeClass().addClass("metric metric-green");
-                    $("#agg_trees_icon").removeClass().addClass("material-icons metric metric-green");
+                    if (agg_source.co2 > 0) {
+                        $("#agg_co2").removeClass().addClass("metric metric-green");
+                        $("#agg_co2_icon").removeClass().addClass("material-icons metric metric-green");
+                        $("#agg_co2_unit").removeClass().addClass("metric-unit metric-green");
+                    }
+                    else {
+                        $("#agg_co2").removeClass().addClass("metric metric-grey");
+                        $("#agg_co2_icon").removeClass().addClass("material-icons metric metric-grey");
+                        $("#agg_co2_unit").removeClass().addClass("metric-unit metric-grey");
+                    }
                 }
                 else {
-                    $("#agg_trees").removeClass().addClass("metric metric-grey");
-                    $("#agg_trees_icon").removeClass().addClass("material-icons metric metric-grey");
+                    $("#agg_co2_col").hide();
                 }
 
-                // render update timestamp as local time
-                var date = new Date(data_dict.last_updated * 1000);
-                $("#last_updated").html(date.toLocaleTimeString());
+                if (agg_source.trees) {
+                    $("#agg_trees_col").show();
+                    value_dict = format_trees(agg_source.trees);
+                    $("#agg_trees").html(value_dict['value']);
+
+                    if (agg_source.trees > 0) {
+                        $("#agg_trees").removeClass().addClass("metric metric-green");
+                        $("#agg_trees_icon").removeClass().addClass("material-icons metric metric-green");
+                        $("#agg_trees_unit").removeClass().addClass("metric-unit metric-green");
+                    }
+                    else {
+                        $("#agg_trees").removeClass().addClass("metric metric-grey");
+                        $("#agg_trees_icon").removeClass().addClass("material-icons metric metric-grey");
+                        $("#agg_trees_unit").removeClass().addClass("metric-unit metric-grey");
+                    }
+                }
+                else {
+                    $("#agg_trees_col").hide();
+                }
 
                 draw_charts();
             });
         }
 
         // chart globals to avoid memory growth
-        var live_donut_chart;
-        var agg_donut_chart;
+        var donut_chart;
         var day_chart;
         var month_chart;
         var year_chart;
 
         function draw_charts() {
 
-            var column_chart_height = (window.innerHeight - 100) / 3;
-            var donut_chart_height = column_chart_height * 0.95;
+            column_chart_height = (window.innerHeight - 100) / 3;
 
-            if (layout == "small") {
-                donut_chart_height = (window.innerHeight) * 0.6;
+            switch(layout) {
+                case "small":
+                    donut_chart_height = (window.innerHeight) * 0.9;
+                    break;
+
+                case "portrait":
+                    donut_chart_height = (window.innerHeight) * 0.4;
+                    break;
+
+                case "large":
+                    donut_chart_height = (window.innerHeight) * 0.5;
+                    break;
+
             }
 
             // legend font size
@@ -583,25 +594,31 @@
             // use for legend font. Google does not allow us pass that CSS
             // in for the font size. So it needs to rendered in pixels
             switch(layout) {
-                case "large":
-                    legend_font_size_var = "--legend-font-size-large-screen";
-                    break;
-                case "small":
-                    legend_font_size_var = "--legend-font-size-small-screen";
-                    break;
-                case "portrait":
-                    legend_font_size_var = "--legend-font-size-portrait-screen";
-                    break;
+              case "large":
+              legend_font_size_var = "--legend-font-size-large-screen";
+              slice_font_size_var = "--slice-font-size-large-screen";
+              break;
+              case "small":
+              legend_font_size_var = "--legend-font-size-small-screen";
+              slice_font_size_var = "--slice-font-size-small-screen";
+              break;
+              case "portrait":
+              legend_font_size_var = "--legend-font-size-portrait-screen";
+              slice_font_size_var = "--slice-font-size-portrait-screen";
+              break;
             }
             // expand that variable into the computed size (which will be x.xxvw)
             legend_font_vw_size = getComputedStyle(document.documentElement).getPropertyValue(legend_font_size_var);
+            slice_font_vw_size = getComputedStyle(document.documentElement).getPropertyValue(slice_font_size_var);
 
             // strip the trailing "vw" text
             // and get the numerical value
             legend_font_vw_number = Number(legend_font_vw_size.replace('vw', ''));
+            slice_font_vw_number = Number(slice_font_vw_size.replace('vw', ''));
 
             // Convert into raw pixels using screen width
             legend_font_px_size = (legend_font_vw_number * window.innerWidth) / 100;
+            slice_font_px_size = (slice_font_vw_number * window.innerWidth) / 100;
 
             // series fields and colour assignments
             const series_fields = ["import", "consumed", "solar", "solar_consumed", "export" ];
@@ -632,13 +649,11 @@
 
             // live power distribution 
 
-            if (live_donut_chart != undefined) {
+            if (donut_chart != undefined) {
                 // wipe existing data
-                live_donut_chart.clearChart();
-                agg_donut_chart.clearChart();
+                donut_chart.clearChart();
             }
-            live_donut_chart = new google.visualization.PieChart(document.getElementById('live_donut_chart'));
-            agg_donut_chart = new google.visualization.PieChart(document.getElementById('agg_donut_chart'));
+            donut_chart = new google.visualization.PieChart(document.getElementById('donut_chart'));
 
             // donut options (shared)
 
@@ -674,23 +689,11 @@
                 },
                 pieSliceText: 'percentage',
                 pieSliceTextStyle: {
-                    fontSize: legend_font_px_size,
+                    fontSize: slice_font_px_size,
                 },
                 backgroundColor: { fill:'transparent' },
                 pieSliceBorderColor: 'transparent',
             };
-
-            // live 
-            live_source = data_dict.metrics.live;
-            var live_data = new google.visualization.DataTable();
-            live_data.addColumn('string', 'Source');
-            live_data.addColumn('number', 'kW');
-
-            for (series_field of donut_series_list) {
-                live_data.addRows([
-                    [series_labels_short[series_field], live_source[series_field] * 1000],
-                ]);
-            }
 
             // agg
             agg_source = data_dict.metrics[agg_metric_key];
@@ -704,9 +707,8 @@
                 ]);
             }
 
-            // draw donuts
-            live_donut_chart.draw(live_data, donut_options);
-            agg_donut_chart.draw(agg_data, donut_options);
+            // draw donut
+            donut_chart.draw(agg_data, donut_options);
 
             // bar charts
             // only applies to portrait or large layouts
@@ -881,238 +883,137 @@
 <body id="bg">
     <div id="dashboard">
 
-        <div id="live_metrics" class="col mt-2">
-
-            <!-- live donut -->
-            <div class="card-transparent text-white text-center">
-                <div class="card-body text-center">
-                    <center>
-                        <span class="title">Live Usage @</span><span class="title" id="last_updated"></span>
-                        <div id="live_donut_chart"></div>
-                    </center>
-                </div>
-            </div>
-
-            <!-- live metric cards -->
-            <div class="container text-white text-center">
-                <div id="live_metric_grid" class="row row-cols-2">
-
-                    <div class="col">
-
-                        <div class="card-transparent text-center mt-0">
-                            <div class="card-body">
-                                <table border="0" align="center">
-                                    <tr>
-                                        <td style="vertical-align: middle;">
-                                            <span id="live_import_icon" class="material-icons metric">login</span>
-                                        </td>
-                                        <td style="vertical-align: bottom;">
-                                            <span id="live_import" style="metric metric-white">0</span>
-                                            <span id="live_import_unit" class="metric-unit"></span>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col">
-
-                        <div class="card-transparent text-center mt-0">
-                            <div class="card-body">
-                                <table border="0" align="center">
-                                    <tr>
-                                        <td style="vertical-align: middle;">
-                                            <span id="live_solar_icon" class="material-icons metric">solar_power</span>
-                                        </td>
-                                        <td style="vertical-align: bottom;">
-                                            <span id="live_solar" style="metric metric-white">0</span>
-                                            <span id="live_solar_unit" class="metric-unit"></span>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col">
-
-                        <div class="card-transparent text-center mt-0">
-                            <div class="card-body">
-                                <table border="0" align="center">
-                                    <tr>
-                                        <td style="vertical-align: middle;">
-                                            <span id="live_consumed_icon" class="material-icons metric">home</span>
-                                        </td>
-                                        <td style="vertical-align: bottom;">
-                                            <span id="live_consumed" style="metric metric-white">0</span>
-                                            <span id="live_consumed_unit" class="metric-unit"></span>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col">
-
-                        <div class="card-transparent text-center mt-0">
-                            <div class="card-body">
-                                <table border="0" align="center">
-                                    <tr>
-                                        <td style="vertical-align: middle;">
-                                            <span id="live_export_icon" class="material-icons metric">logout</span>
-                                        </td>
-                                        <td style="vertical-align: bottom;">
-                                            <span id="live_export" style="metric metric-white">0</span>
-                                            <span id="live_export_unit" class="metric-unit"></span>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
+        <!-- donut -->
+        <div id="agg_donut_chart" class="card-transparent text-white text-center mt-2">
+            <div class="card-body text-center">
+                <center>
+                    <div id="agg_donut_title" class="title"></div>
+                    <div id="donut_chart"></div>
+                </center>
             </div>
         </div>
 
-        <div id="agg_metrics" class="col mt-2">
+        <!-- agg metric cards -->
+        <div id="agg_metrics" class="container text-white text-center">
+            <div id="agg_metric_grid" class="row row-cols-2">
 
-            <!-- agg donut -->
-            <div id="agg_chart_div" class="card-transparent text-white text-center mt-2">
-                <div class="card-body text-center">
-                    <center>
-                        <div id="agg_donut_title" class="title"></div>
-                        <div id="agg_donut_chart"></div>
-                    </center>
+                <div class="col">
+
+                    <div class="card-transparent text-center mt-0">
+                        <div class="card-body">
+                            <table border="0" align="center">
+                                <tr>
+                                    <td style="vertical-align: middle;">
+                                        <span id="agg_import" style="metric metric-white">0</span>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <div id="agg_import_icon" class="material-icons metric">login</div>
+                                        <div id="agg_import_unit" class="metric-unit metric-white">kWh</div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- agg metric cards -->
-            <div class="container text-white text-center">
-                <div id="agg_metric_grid" class="row row-cols-2">
+                <div class="col">
 
-                    <div class="col">
-
-                        <div class="card-transparent text-center mt-0">
-                            <div class="card-body">
-                                <table border="0" align="center">
-                                    <tr>
-                                        <td style="vertical-align: middle;">
-                                            <span id="agg_import_icon" class="material-icons metric">login</span>
-                                        </td>
-                                        <td style="vertical-align: bottom;">
-                                            <span id="agg_import" style="metric metric-white">0</span>
-                                            <span id="agg_import_unit" class="metric-unit">kWh</span>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
+                    <div class="card-transparent text-center mt-0">
+                        <div class="card-body">
+                            <table border="0" align="center">
+                                <tr>
+                                    <td style="vertical-align: middle;">
+                                        <span id="agg_solar" style="metric metric-white">0</span>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <div id="agg_solar_icon" class="material-icons metric">solar_power</div>
+                                        <div id="agg_solar_unit" class="metric-unit metric-white">kWh</div>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col">
+                <div class="col">
 
-                        <div class="card-transparent text-center mt-0">
-                            <div class="card-body">
-                                <table border="0" align="center">
-                                    <tr>
-                                        <td style="vertical-align: middle;">
-                                            <span id="agg_solar_icon" class="material-icons metric">solar_power</span>
-                                        </td>
-                                        <td style="vertical-align: bottom;">
-                                            <span id="agg_solar" style="metric metric-white">0</span>
-                                            <span id="agg_solar_unit" class="metric-unit">kWh</span>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
+                    <div class="card-transparent text-center mt-0">
+                        <div class="card-body">
+                            <table border="0" align="center">
+                                <tr>
+                                    <td style="vertical-align: middle;">
+                                        <span id="agg_consumed" style="metric metric-white">0</span>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <div id="agg_consumed_icon" class="material-icons metric">home</div>
+                                        <div id="agg_consumed_unit" class="metric-unit metric-white">kWh</div>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col">
+                <div class="col">
 
-                        <div class="card-transparent text-center mt-0">
-                            <div class="card-body">
-                                <table border="0" align="center">
-                                    <tr>
-                                        <td style="vertical-align: middle;">
-                                            <span id="agg_consumed_icon" class="material-icons metric">home</span>
-                                        </td>
-                                        <td style="vertical-align: bottom;">
-                                            <span id="agg_consumed" style="metric metric-white">0</span>
-                                            <span id="agg_consumed_unit" class="metric-unit">kWh</span>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
+                    <div class="card-transparent text-center mt-0">
+                        <div class="card-body">
+                            <table border="0" align="center">
+                                <tr>
+                                    <td style="vertical-align: middle;">
+                                        <span id="agg_export" style="metric metric-white">0</span>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <div id="agg_export_icon" class="material-icons metric">logout</div>
+                                        <div id="agg_export_unit" class="metric-unit metric-white">kWh</div>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col">
+                <div id="agg_co2_col" class="col">
 
-                        <div class="card-transparent text-center mt-0">
-                            <div class="card-body">
-                                <table border="0" align="center">
-                                    <tr>
-                                        <td style="vertical-align: middle;">
-                                            <span id="agg_export_icon" class="material-icons metric">logout</span>
-                                        </td>
-                                        <td style="vertical-align: bottom;">
-                                            <span id="agg_export" style="metric metric-white">0</span>
-                                            <span id="agg_export_unit" class="metric-unit">kWh</span>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
+                    <div class="card-transparent text-center mt-0">
+                        <div class="card-body">
+                            <table border="0" align="center">
+                                <tr>
+                                    <td style="vertical-align: middle;">
+                                        <span id="agg_co2" style="metric metric-white">0</span>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <div id="agg_co2_icon" class="material-icons metric">co2</div>
+                                        <div id="agg_co2_unit" class="metric-unit metric-white">kg</div>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col">
+                <div id="agg_trees_col" class="col">
 
-                        <div class="card-transparent text-center mt-0">
-                            <div class="card-body">
-                                <table border="0" align="center">
-                                    <tr>
-                                        <td style="vertical-align: middle;">
-                                            <span id="agg_co2_icon" class="material-icons metric">co2</span>
-                                        </td>
-                                        <td style="vertical-align: bottom;">
-                                            <span id="agg_co2" style="metric metric-white">0</span>
-                                            <span id="agg_co2_unit" class="metric-unit">kg</span>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
+                    <div class="card-transparent text-center mt-0">
+                        <div class="card-body">
+                            <table border="0" align="center">
+                                <tr>
+                                    <td style="vertical-align: middle;">
+                                        <span id="agg_trees" style="metric metric-white">0</span>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <div id="agg_trees_icon" class="material-icons metric">forest</div>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
-
-                    <div class="col">
-
-                        <div class="card-transparent text-center mt-0">
-                            <div class="card-body">
-                                <table border="0" align="center">
-                                    <tr>
-                                        <td style="vertical-align: middle;">
-                                            <span id="agg_trees_icon" class="material-icons metric">forest</span>
-                                        </td>
-                                        <td style="vertical-align: bottom;">
-                                            <span id="agg_trees" style="metric metric-white">0</span>
-                                            <span id="agg_trees_unit" class="metric-unit">trees</span>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
 
             </div>
-            <!-- agg metric cards -->
+
         </div>
+        <!-- agg metric cards -->
 
         <div id="day_column_chart" class="col mt-2">
             <center><div class="title">Last 36 Hours</div></center>
