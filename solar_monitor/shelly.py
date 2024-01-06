@@ -23,6 +23,7 @@ gv_data_dict['year'] = []
 # metrics
 gv_data_dict['metrics'] = {}
 gv_data_dict['metrics']['live'] = {}
+gv_data_dict['metrics']['live']['title'] = 'Now'
 gv_data_dict['metrics']['live']['import'] = 0
 gv_data_dict['metrics']['live']['solar'] = 0
 gv_data_dict['metrics']['live']['solar_consumed'] = 0
@@ -514,6 +515,11 @@ def get_live_data(config):
     grid = device_resp_dict['emeters'][0]['power'] / 1000
     solar = device_resp_dict['emeters'][1]['power'] / 1000
 
+    gv_data_dict['last_updated'] = int(time.time())
+    time_str = datetime.datetime.fromtimestamp(
+            gv_data_dict['last_updated']).strftime('%H:%M:%S')
+    gv_data_dict['metrics']['live']['title'] = 'Live Usage @%s' % (time_str)
+
     if grid >= 0:
         gv_data_dict['metrics']['live']['import'] = grid
         gv_data_dict['metrics']['live']['export'] = 0
@@ -538,7 +544,6 @@ def get_live_data(config):
                 gv_data_dict['metrics']['live']['consumed'],
                 )
             )
-    gv_data_dict['last_updated'] = int(time.time())
 
     return
 
