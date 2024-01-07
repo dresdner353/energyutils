@@ -47,11 +47,12 @@ def set_default_config():
     json_config['dashboard'] = {}
 
     json_config['dashboard']['metrics'] = {}
-    json_config['dashboard']['donut']['today'] = True
-    json_config['dashboard']['donut']['yesterday'] = True
-    json_config['dashboard']['donut']['this_month'] = True
-    json_config['dashboard']['donut']['last_month'] = True
-    json_config['dashboard']['donut']['last_12_months'] = True
+    json_config['dashboard']['metrics']['live'] = True
+    json_config['dashboard']['metrics']['today'] = True
+    json_config['dashboard']['metrics']['yesterday'] = True
+    json_config['dashboard']['metrics']['this_month'] = True
+    json_config['dashboard']['metrics']['last_month'] = True
+    json_config['dashboard']['metrics']['last_12_months'] = True
 
     json_config['dashboard']['donut'] = {}
     json_config['dashboard']['donut']['consumed'] = False
@@ -66,6 +67,10 @@ def set_default_config():
     json_config['dashboard']['bar_chart']['import'] = True
     json_config['dashboard']['bar_chart']['solar'] = True
     json_config['dashboard']['bar_chart']['solar_consumed'] = True
+
+    json_config['environment'] = {}
+    json_config['environment']['gco2_kwh'] = 297.4
+    json_config['environment']['trees_kwh'] = 0.0117
 
     return json_config
 

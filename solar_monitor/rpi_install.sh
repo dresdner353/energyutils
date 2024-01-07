@@ -22,7 +22,6 @@ function install_solar_monitor {
     # browser kiosk
     AUTOSTART_DIR=.config/autostart
     mkdir -p ${AUTOSTART_DIR}
-    #cp energyutils/solar_monitor/firefox_kiosk.desktop ${AUTOSTART_DIR}
     cp energyutils/solar_monitor/chromium_kiosk.desktop ${AUTOSTART_DIR}
 }
 
@@ -36,15 +35,16 @@ then
     exit 1
 fi
 
-# Create account for solarmon
+# target user is pi
+# this is the only user that can be forced to auto-login
 USER=pi
-HOME_DIR=/home/${USER}
+HOME_DIR=~pi
 
 # install packages
 apt-get update
 apt install python3-dateutil python3-cherrypy3
 
-# download code
+# download code as tareget user
 su ${USER} -c "bash -c install_solar_monitor"
 
 # install and start service
