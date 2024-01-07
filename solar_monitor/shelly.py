@@ -342,7 +342,7 @@ def get_cloud_data(config):
                 date_range = 'custom',
                 date_from = month_start_str,
                 date_to = month_end_str)
-        
+
         if month_data:
             # reset timestamp
             # for :10 past next hour
@@ -355,6 +355,10 @@ def get_cloud_data(config):
                             indent = 4),
                         )
                     )
+
+            # truncate to last 30 days as we can overflow into 31
+            month_data = month_data[-30:]
+        
             gv_data_dict['month'] = month_data
 
             # take todays totals from last recorded day in month
