@@ -172,8 +172,8 @@
             // class values etc to try and tweak a common layout to obey
 
             // large screen model
-            // two columns, split 4:8 on bootstrap 12 breakpoints
-            // left column has the donut metrics and right
+            // two columns, split 5:7 on bootstrap 12 breakpoints
+            // left column has the donut and metrics and right
             // has the three column charts
             large_screen_layout = `
                 <div class="container-fluid" data-bs-theme="dark">
@@ -201,9 +201,8 @@
             `
 
             // small screen model
-            // even 6:6 split columns
-            // each with a donut/metrics set
-            // bolumn charts are not displayed
+            // 5:7 split columns
+            // donut on  left, metrics stack on right
             small_screen_layout = `
                 <div class="container-fluid" data-bs-theme="dark">
                     <div class="row">
@@ -251,9 +250,6 @@
                 $("#month_column_chart_insert").html(month_column_chart_html);
                 $("#year_column_chart_insert").html(year_column_chart_html);
 
-                // force metrics to stack in single column
-                //$("#agg_metric_grid").removeClass("row-cols-2").addClass("row-cols-1");
-
                 // set the portrait screen font sizes
                 document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-portrait-screen)');
                 document.body.style.setProperty("--icon-font-size", 'var(--icon-font-size-portrait-screen)');
@@ -269,9 +265,6 @@
                     $("#dashboard").html(small_screen_layout);
                     $("#agg_donut_insert").html(agg_donut_html);
                     $("#agg_metrics_insert").html(agg_metrics_html);
-
-                    // force metrics to stack in single column
-                    //$("#agg_metric_grid").removeClass("row-cols-2").addClass("row-cols-1");
 
                     // set the small screen font sizes
                     document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-small-screen)');
@@ -290,9 +283,6 @@
                     $("#day_column_chart_insert").html(day_column_chart_html);
                     $("#month_column_chart_insert").html(month_column_chart_html);
                     $("#year_column_chart_insert").html(year_column_chart_html);
-
-                    // force metrics to stack in single column
-                    //$("#agg_metric_grid").removeClass("row-cols-2").addClass("row-cols-1");
 
                     // set the large screen smaller font sizes
                     document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-large-screen)');
@@ -365,7 +355,7 @@
 
         // tracking the current agg
         // metric series rotation
-        var agg_metric_index = 0;
+        var agg_metric_index = -1; // init only
         var agg_metric_key = '';
         var agg_metric_cycle_interval = 5000;
         var agg_metric_cycle_ts = 0;
@@ -435,8 +425,7 @@
                     for (i = 0; i < metric_list.length; i++) {
                         agg_metric_index = (agg_metric_index + 1) % metric_list.length;
 
-                        // ignore "live" as it has its own donut
-                        // then for everything else, check its enabled in the config
+                        // check its enabled in the config
                         if (data_dict.dashboard.metrics[metric_list[agg_metric_index]]) {
                             agg_metric_key = metric_list[agg_metric_index];
                             agg_metric_cycle_ts = now;
