@@ -24,7 +24,9 @@ Notes:
 If you have a raspberry pi that has a recent image installed, then these steps will download an install script and install everything automatically. 
 
 Login as pi to the rpi and open a terminal, running the following command:
-* curl -s https://raw.githubusercontent.com/dresdner353/energyutils/master/solar_monintor/rpi_install.sh | sudo bash
+```
+ curl -s https://raw.githubusercontent.com/dresdner353/energyutils/master/solar_monitor/rpi_install.sh | sudo bash
+```
 
 This step will do the following:
 * Install python3 dateutil and cherrypy (web server) modules
