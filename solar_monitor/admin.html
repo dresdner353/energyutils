@@ -50,24 +50,25 @@
                 }
 
                 // metrics
-                $("#metrics_today" ).prop("checked", config_dict['dashboard']['metrics']['today']);
-                $("#metrics_yesterday" ).prop("checked", config_dict['dashboard']['metrics']['yesterday']);
-                $("#metrics_this_month" ).prop("checked", config_dict['dashboard']['metrics']['this_month']);
-                $("#metrics_last_month" ).prop("checked", config_dict['dashboard']['metrics']['last_month']);
-                $("#metrics_last_12_months" ).prop("checked", config_dict['dashboard']['metrics']['last_12_months']);
+                $("#metrics_live").prop("checked", config_dict['dashboard']['metrics']['live']);
+                $("#metrics_today").prop("checked", config_dict['dashboard']['metrics']['today']);
+                $("#metrics_yesterday").prop("checked", config_dict['dashboard']['metrics']['yesterday']);
+                $("#metrics_this_month").prop("checked", config_dict['dashboard']['metrics']['this_month']);
+                $("#metrics_last_month").prop("checked", config_dict['dashboard']['metrics']['last_month']);
+                $("#metrics_last_12_months").prop("checked", config_dict['dashboard']['metrics']['last_12_months']);
 
                 // donut
-                $("#donut_import" ).prop("checked", config_dict['dashboard']['donut']['import']);
-                $("#donut_consumed" ).prop("checked", config_dict['dashboard']['donut']['consumed']);
-                $("#donut_solar" ).prop("checked", config_dict['dashboard']['donut']['solar']);
-                $("#donut_export" ).prop("checked", config_dict['dashboard']['donut']['export']);
+                $("#donut_import").prop("checked", config_dict['dashboard']['donut']['import']);
+                $("#donut_consumed").prop("checked", config_dict['dashboard']['donut']['consumed']);
+                $("#donut_solar").prop("checked", config_dict['dashboard']['donut']['solar']);
+                $("#donut_export").prop("checked", config_dict['dashboard']['donut']['export']);
                 $("#donut_solar_consumed").prop( "checked", config_dict['dashboard']['donut']['solar_consumed']);
 
                 // bar charts
-                $("#bar_chart_import" ).prop("checked", config_dict['dashboard']['bar_chart']['import']);
-                $("#bar_chart_consumed" ).prop("checked", config_dict['dashboard']['bar_chart']['consumed']);
-                $("#bar_chart_solar" ).prop("checked", config_dict['dashboard']['bar_chart']['solar']);
-                $("#bar_chart_export" ).prop("checked", config_dict['dashboard']['bar_chart']['export']);
+                $("#bar_chart_import").prop("checked", config_dict['dashboard']['bar_chart']['import']);
+                $("#bar_chart_consumed").prop("checked", config_dict['dashboard']['bar_chart']['consumed']);
+                $("#bar_chart_solar").prop("checked", config_dict['dashboard']['bar_chart']['solar']);
+                $("#bar_chart_export").prop("checked", config_dict['dashboard']['bar_chart']['export']);
                 $("#bar_chart_solar_consumed").prop( "checked", config_dict['dashboard']['bar_chart']['solar_consumed']);
 
                 if ('environment' in config_dict){
@@ -138,7 +139,7 @@
             config_dict['dashboard'] = {}
 
             config_dict['dashboard']['metrics'] = {}
-            config_dict['dashboard']['metrics']['live'] = true;
+            config_dict['dashboard']['metrics']['live'] =  $('#metrics_live').prop('checked');
             config_dict['dashboard']['metrics']['today'] = $('#metrics_today').prop('checked');
             config_dict['dashboard']['metrics']['yesterday'] = $('#metrics_yesterday').prop('checked');
             config_dict['dashboard']['metrics']['this_month'] = $('#metrics_this_month').prop('checked');
@@ -273,11 +274,8 @@
                                 <div class="card-body">
                                     <h5 class="card-title">Donut Metrics Sources</h5>
 
-                                    <!-- hard-coded to checked and disabled
-                                         for display purposes only
-                                    -->
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="metrics_live" checked disabled>
+                                        <input class="form-check-input" type="checkbox" id="metrics_live">
                                         <label class="form-check-label" for="metrics_live">Live</label>
                                     </div>
 
