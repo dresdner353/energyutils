@@ -310,8 +310,8 @@
                 value_dict['value'] = (value / 1000).toFixed(2);
                 value_dict['unit'] = mega_unit;
             }
-            else if (value >= 50) {
-                // standard >= 50 0dp
+            else if (value >= 100) {
+                // standard >= 100 0dp
                 value_dict['value'] = value.toFixed(0);
                 value_dict['unit'] = std_unit;
             }
@@ -332,7 +332,7 @@
         function format_trees(value) {
             value_dict = {};
 
-            if (value >= 500) {
+            if (value >= 100) {
                 // no dp
                 value_dict['value'] = value.toFixed(0);
                 value_dict['unit'] = 'trees';
