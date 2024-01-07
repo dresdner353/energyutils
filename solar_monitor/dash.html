@@ -805,6 +805,9 @@
 
                     bar_chart_options.hAxis.title = 'Hour';
                     day_chart.draw(day_data, bar_chart_options);
+
+                    chart_title = `Last ${data_dict.day.length} Hours`;
+                    $("#day_chart_title").html(chart_title);
                 }
 
                 // month 
@@ -839,6 +842,9 @@
 
                     bar_chart_options.hAxis.title = 'Day';
                     month_chart.draw(month_data, bar_chart_options);
+
+                    chart_title = `Last ${data_dict.month.length} Days`;
+                    $("#month_chart_title").html(chart_title);
                 }
 
                 // year
@@ -870,6 +876,9 @@
 
                     bar_chart_options.hAxis.title = 'Month';
                     year_chart.draw(year_data, bar_chart_options);
+
+                    chart_title = `Last ${data_dict.year.length} Months`;
+                    $("#year_chart_title").html(chart_title);
                 }
             }
         }
@@ -1013,15 +1022,15 @@
         <!-- agg metric cards -->
 
         <div id="day_column_chart" class="col mt-2">
-            <center><div class="title">Last 36 Hours</div></center>
+            <center><div id="day_chart_title" class="title"></div></center>
             <div id="day_google_chart"></div>
         </div>
         <div id="month_column_chart"class="col mt-2">
-            <center><div class="title">Last 30 Days</div></center>
+            <center><div id="month_chart_title" class="title"></div></center>
             <div id="month_google_chart"></div>
         </div>
         <div id="year_column_chart"class="col mt-2">
-            <center><div class="title">Last 12 Months</div></center>
+            <center><div id="year_chart_title" class="title"></div></center>
             <div id="year_google_chart"></div>
         </div>
     </div>
