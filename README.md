@@ -7,4 +7,5 @@ Specific Guides:
 * [Shelly EM Utility](./SHELLY_EM_UTIL.md)  
 * [Report Generator Utility](./GEN_REPORT.md)  
 * [Battery Simulator](./BATTERY_SIM.md)  
+* [Solar Monitor Dashboard](./solar_monitor/SOLAR_MONITOR.md)  
 * more to come.. 
