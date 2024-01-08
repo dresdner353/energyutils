@@ -50,13 +50,24 @@ The idea here is to use the rpi as a kiosk. You would also need to configure the
 ![Admin Page](screenshots/admin.png)
 
 ### Large Screen Format (HD/4K monitor/TV)
+The layout here uses a donut chart on the left that graphs a metric set. Underneath the donut, you will find the various metric values in numeric format. The units used will auto-scale between W/kW/mW or Wh/kWh/mWh as required.
+
+Then on the right are three column charts that graph the recent performance for the last 36 hours, last 30 days and last 12 months. This layout will be used when rendering the page on a larger screen in landscape mode. Best suited for HD/4K monitors and TVs.
+
 ![Large Screen Live](screenshots/large_live.png)
+
 ![Large Screen Last Month](screenshots/large_last_month.png)
+
 ![Large Screen Last 12 Months](screenshots/large_last_12_months.png)
 
-### Small Screen Format (tablet)
+### Small Screen Format (laptop/tablet)
+The small screen format will be used on smaller screens such as laptops and tablets. This layout removes the column charts due to limited space and places the donut chart on the left and metric values on the right.
+
 ![Small Screen Live](screenshots/small_live.png)
+
 ![Small Screen This Month](screenshots/small_this_month.png)
 
 ### Portrait Screen Format (portrait tablet/phone)
+The portrait format will apply for any portrait monitor where the height > width and this includes mobile phones etc. All charts and metrics are shown in thos format and can be scrolled as required. If using a tablet in landscape mode, then rotating it to portrait should result in this portrait mode being activated. When rotated back to landscape, the small screen layout will resume.
+
 ![Portrait Screen Live](screenshots/portrait_live.jpg)
