@@ -59,4 +59,4 @@ The idea here is to use the rpi as a kiosk. You would also need to configure the
 ![Small Screen This Month](screenshots/small_this_month.png)
 
 ### Portrait Screen Format (portrait tablet/phone)
-![Portrait Screen Live](screenshots/portrait_live.png)
+![Portrait Screen Live](screenshots/portrait_live.jpg)
