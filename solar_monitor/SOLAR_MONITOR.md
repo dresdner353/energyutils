@@ -50,7 +50,7 @@ The idea here is to use the rpi as a kiosk. You would also need to configure the
 ## Sample Screenshots
 
 ### Admin Page
-The admin page is accessed from http://localhost:8090/admin and has default user "admin" and pasword "123456789". These can be modified by manually editing the config.json file that is crated in energyutils/shelly_monitor/config.json. 
+The admin page is accessed from http://localhost:8090/admin and has default user "admin" and pasword "123456789". These can be modified by manually editing the config.json file that is created in energyutils/shelly_monitor/config.json. 
 
 This screen is used to first select the desired source/inverter variant and enter the API credentials. The same screen is used to customise the metrics sources that are cycled on the dashboard and also series fields for the donut and column charts.
 
