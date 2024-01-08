@@ -80,6 +80,6 @@ These metrics will cycle every 10 seconds from one set to the other.
 ![Small Screen This Month](screenshots/small_this_month.png)
 
 ### Portrait Screen Format (portrait tablet/phone)
-The portrait format will apply for any portrait monitor where the height > width and this includes mobile phones etc. All charts and metrics are shown in thos format and can be scrolled as required. If using a tablet in landscape mode, then rotating it to portrait should result in this portrait mode being activated. When rotated back to landscape, the small screen layout will resume.
+The portrait format will apply for any portrait monitor where the height > width and this includes mobile phones etc. All charts and metrics are shown in this format and can be scrolled as required. If using a tablet in landscape mode, then rotating it to portrait should result in this portrait mode being activated. When rotated back to landscape, the small screen layout will resume.
 
 ![Portrait Screen Live](screenshots/portrait_live.jpg)
