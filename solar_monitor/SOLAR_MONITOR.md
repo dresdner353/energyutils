@@ -54,6 +54,8 @@ The layout here uses a donut chart on the left that graphs a metric set. Underne
 
 Then on the right are three column charts that graph the recent performance for the last 36 hours, last 30 days and last 12 months. This layout will be used when rendering the page on a larger screen in landscape mode. Best suited for HD/4K monitors and TVs.
 
+Every 10 seconds the donut chart and metrics will be cycled to the next metric. The specific set of metrics that get ued can be controlled from the admin page (<server ip/hostname>:8090/admin). 
+
 ![Large Screen Live](screenshots/large_live.png)
 
 ![Large Screen Last Month](screenshots/large_last_month.png)
@@ -62,6 +64,8 @@ Then on the right are three column charts that graph the recent performance for 
 
 ### Small Screen Format (laptop/tablet)
 The small screen format will be used on smaller screens such as laptops and tablets. This layout removes the column charts due to limited space and places the donut chart on the left and metric values on the right.
+
+These metrics will cycle every 10 seconds from one set to the other. 
 
 ![Small Screen Live](screenshots/small_live.png)
 
