@@ -44,3 +44,19 @@ This step will do the following:
 
 The idea here is to use the rpi as a kiosk. You would also need to configure the pi to auto-login as user pi everytime it boots and the end result should be a functioning kiosk that shows the dashboard
  
+## Sample Screenshots
+
+### Admin Page
+![Admin Page](screenshots/admin.png)
+
+### Large Screen Format (HD/4K monitor/TV)
+![Large Screen Live](screenshots/large_live.png)
+![Large Screen Last Month](screenshots/large_last_month.png)
+![Large Screen Last 12 Months](screenshots/large_last_12_months.png)
+
+### Small Screen Format (tablet)
+![Small Screen Live](screenshots/small_live.png)
+![Small Screen This Month](screenshots/small_this_month.png)
+
+### Portrait Screen Format (portrait tablet/phone)
+![Portrait Screen Live](screenshots/portrait_live.png)
