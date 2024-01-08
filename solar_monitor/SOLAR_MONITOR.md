@@ -27,6 +27,7 @@ Notes:
 * When ready to save, click the apply button
 * If the Shelly or inverter credentials are correct, then actual usage data should soon appear on the main dashboard.
 * For now, only Shelly EM and Solis inverters are supported. Others such as Sofar, Huawei etc will be added over time
+* The script outputs logging details as it runs on the console. You can add --verbose to get this logging more detailed data if need be.
 
 
 ## Install steps for a Raspberry pi kiosk
