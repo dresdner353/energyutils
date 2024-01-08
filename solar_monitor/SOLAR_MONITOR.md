@@ -24,7 +24,7 @@ Notes:
 * Browse to http://localhost:8090/admin to bring up the admin page (when prompted, login as user "admin" and password "123456789")
 * Select the inverter/data source type and go from there inputing the credentials or your given device. 
    - Note: The inverter sources list Sofar and Huawei but only Shelly EM and Solis are supported for now.
-* Once you select the data source, various fields will be shown that need to be populated with the related creentials.
+* Once you select the data source, various fields will be shown that need to be populated with the related credentials.
 * When ready to save, click the apply button
 * If the Shelly or inverter credentials are correct, then actual usage data should soon appear on the main dashboard.
 * For now, only Shelly EM and Solis inverters are supported. Others such as Sofar, Huawei etc will be added over time
