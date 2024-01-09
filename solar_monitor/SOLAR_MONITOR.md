@@ -20,7 +20,7 @@ To run:
 
 Notes:
 * The script will startup and create a default config.json file in energyutils/solar_monitor
-* point your browser at either http://localhost:8090 or http://[IP of computer]:8090 and you should see The banner "SolarMon" displayed with a settings cog wheel"
+* point your browser at either http://localhost:8090 or http://[IP of computer]:8090 and you should see The banner "SolarMon" displayed with a settings cog wheel
 * Click the cog wheel or browse to http://localhost:8090/admin to bring up the admin page (when prompted, login as user "admin" and password "123456789")
 * Select the inverter/data source type and go from there inputing the credentials or your given device. 
    - Note: The inverter sources list Sofar and Huawei but only Shelly EM and Solis are supported for now.
