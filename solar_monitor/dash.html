@@ -158,6 +158,26 @@
         // forced fast refresh on resize to redraw
         $(window).resize(function () { 
             clearInterval(quick_refresh_timer);
+
+            // clear down and null charts 
+            // to avoid memory leak
+            if (donut_chart != undefined) {
+                donut_chart.clearChart();
+                donut_chart = undefined;
+            }
+            if (day_chart != undefined) {
+                day_chart.clearChart();
+                day_chart = undefined;
+            }
+            if (month_chart != undefined) {
+                month_chart.clearChart();
+                month_chart = undefined;
+            }
+            if (year_chart != undefined) {
+                year_chart.clearChart();
+                year_chart = undefined;
+            }
+
             quick_refresh_timer = setInterval(quick_refresh, 1000);
         });
 
@@ -652,11 +672,12 @@
 
             // live power distribution 
 
-            if (donut_chart != undefined) {
-                // wipe existing data
+            if (donut_chart == undefined) {
+                donut_chart = new google.visualization.PieChart(document.getElementById('donut_chart'));
+            }
+            else {
                 donut_chart.clearChart();
             }
-            donut_chart = new google.visualization.PieChart(document.getElementById('donut_chart'));
 
             // donut options (shared)
 
@@ -694,7 +715,9 @@
                 pieSliceTextStyle: {
                     fontSize: slice_font_px_size,
                 },
-                backgroundColor: { fill:'transparent' },
+                backgroundColor: { 
+                    fill:'transparent' 
+                },
                 pieSliceBorderColor: 'transparent',
             };
 
@@ -780,10 +803,12 @@
                 // day
                 if (data_dict.day.length > 0) {
 
-                    if (day_chart != undefined) {
+                    if (day_chart == undefined) {
+                        day_chart = new google.visualization.ColumnChart(document.getElementById('day_google_chart'));
+                    }
+                    else {
                         day_chart.clearChart();
                     }
-                    day_chart = new google.visualization.ColumnChart(document.getElementById('day_google_chart'));
 
                     var day_data = new google.visualization.DataTable();
 
@@ -819,10 +844,12 @@
                 // month 
                 if (data_dict.month.length > 0) {
 
-                    if (month_chart != undefined) {
+                    if (month_chart == undefined) {
+                        month_chart = new google.visualization.ColumnChart(document.getElementById('month_google_chart'));
+                    }
+                    else {
                         month_chart.clearChart();
                     }
-                    month_chart = new google.visualization.ColumnChart(document.getElementById('month_google_chart'));
 
                     var month_data = new google.visualization.DataTable();
                     // present int day number as string
@@ -856,10 +883,12 @@
                 // year
                 if (data_dict.year.length > 0) {
 
-                    if (year_chart != undefined) {
+                    if (year_chart == undefined) {
+                        year_chart = new google.visualization.ColumnChart(document.getElementById('year_google_chart'));
+                    }
+                    else {
                         year_chart.clearChart();
                     }
-                    year_chart = new google.visualization.ColumnChart(document.getElementById('year_google_chart'));
 
                     var year_data = new google.visualization.DataTable();
                     year_data.addColumn('string', 'Month');
