@@ -519,38 +519,42 @@ def get_live_data(config):
     grid = device_resp_dict['emeters'][0]['power'] / 1000
     solar = device_resp_dict['emeters'][1]['power'] / 1000
 
-    gv_data_dict['last_updated'] = int(time.time())
-    time_str = datetime.datetime.fromtimestamp(
-            gv_data_dict['last_updated']).strftime('%H:%M:%S')
-    gv_data_dict['metrics']['live']['title'] = 'Live Usage @%s' % (time_str)
-
+    # render into separate values for import and export
     if grid >= 0:
-        gv_data_dict['metrics']['live']['import'] = grid
-        gv_data_dict['metrics']['live']['export'] = 0
+        grid_import = grid
+        grid_export = 0
     else:
-        gv_data_dict['metrics']['live']['import'] = 0
-        gv_data_dict['metrics']['live']['export'] = grid * -1
+        grid_import = 0
+        grid_export = grid * -1
 
     # solar can go negative as inverter draws power
     # So we treat negative as 0
-    if solar >= 0:
-        gv_data_dict['metrics']['live']['solar'] = solar
-    else:
-        gv_data_dict['metrics']['live']['solar'] = 0
+    if solar < 0:
+        solar = 0
 
-    gv_data_dict['metrics']['live']['solar_consumed'] = gv_data_dict['metrics']['live']['solar'] - gv_data_dict['metrics']['live']['export']
-    gv_data_dict['metrics']['live']['consumed'] = gv_data_dict['metrics']['live']['import'] + gv_data_dict['metrics']['live']['solar_consumed'] 
+    # update live metrics
+    gv_data_dict['last_updated'] = int(time.time())
+    live_metrics_rec = gv_data_dict['metrics']['live']
 
-    gv_data_dict['metrics']['live']['co2'] = (config['environment']['gco2_kwh'] * gv_data_dict['metrics']['live']['solar']) / 1000
-    gv_data_dict['metrics']['live']['trees'] = config['environment']['trees_kwh'] * gv_data_dict['metrics']['live']['solar']
+    time_str = datetime.datetime.fromtimestamp(
+            gv_data_dict['last_updated']).strftime('%H:%M:%S')
+    live_metrics_rec['title'] = 'Live Usage @%s' % (time_str)
+
+    live_metrics_rec['import'] = grid_import
+    live_metrics_rec['export'] = grid_export
+    live_metrics_rec['solar'] = solar
+    live_metrics_rec['solar_consumed'] = live_metrics_rec['solar'] - live_metrics_rec['export']
+    live_metrics_rec['consumed'] = live_metrics_rec['import'] + live_metrics_rec['solar_consumed'] 
+    live_metrics_rec['co2'] = (config['environment']['gco2_kwh'] * solar) / 1000
+    live_metrics_rec['trees'] = config['environment']['trees_kwh'] * solar
 
     utils.log_message(
             1,
             "Shelly Device: import:%f export:%f solar:%f consumed:%f" % (
-                gv_data_dict['metrics']['live']['import'],
-                gv_data_dict['metrics']['live']['export'],
-                gv_data_dict['metrics']['live']['solar'],
-                gv_data_dict['metrics']['live']['consumed'],
+                live_metrics_rec['import'],
+                live_metrics_rec['export'],
+                live_metrics_rec['solar'],
+                live_metrics_rec['consumed'],
                 )
             )
 
