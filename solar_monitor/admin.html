@@ -98,7 +98,7 @@
 
             // then show the selected one
             switch(data_source) {
-              case "shelly":
+              case "shelly-em":
               $("#shelly_config").show();
               break;
 
@@ -195,7 +195,7 @@
                                 <div class="input-group mb-3">
                                     <span class="input-group-text">Inverter/Cloud Source</span>
                                     <select id="data_source" class="form-select" onchange="toggle_config()">
-                                        <option value="shelly">Shelly EM Device & Shelly Cloud</option>
+                                        <option value="shelly-em">Shelly EM Device & Shelly Cloud</option>
                                         <option value="solis">Solis Cloud</option>
                                         <option value="sofar">Sofar Cloud</option>
                                         <option value="huawei">Huawei Cloud</option>
