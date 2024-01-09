@@ -431,6 +431,13 @@ parser.add_argument(
         )
 
 parser.add_argument(
+        '--config', 
+        help = 'Config File Location (defaults to same dir as script)', 
+        required = False,
+        default = gv_config_file
+        )
+
+parser.add_argument(
         '--verbose', 
         help = 'Verbose Logging', 
         action = 'store_true'
@@ -439,6 +446,7 @@ parser.add_argument(
 
 args = vars(parser.parse_args())
 dev_mode = args['dev']
+gv_config_file = args['config']
 utils.gv_verbose = args['verbose']
 
 # Thread management 
