@@ -21,10 +21,10 @@ sleep 5
 echo "Starting Chromium in kiosk mode"
 killall -9 chromium-browser
 chromium-browser \
-    --disable-translate \
-    --disable-infobars \
-    --disable-suggestions-service \
-    --disable-save-password-bubble \
     --noerrdialogs \
-    --disable-component-update \
+    --disable-infobars \
+    --no-first-run \
+    --ozone-platform=wayland \
+    --enable-features=OverlayScrollbar \
+    --start-maximized \
     --kiosk http://localhost:8090
