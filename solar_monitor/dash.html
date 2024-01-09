@@ -48,6 +48,10 @@
             /*background-color: #202025; */
             background-color: #000000; 
         }
+        a, a:hover, a:focus, a:active {
+            text-decoration: none;
+            color: inherit;
+        }
         .title{
             font-size: var(--title-font-size);
             color: white;
@@ -121,14 +125,21 @@
         var layout;
 
         $( document ).ready(function() {
+            // hide the dashboard and splash initially
             $("#dashboard").hide();
+            $("#splash").hide();
+
             // extract dashboard elements
-            // from the flat stach of divs in default body
+            // from the flat stack of divs in default body
             agg_donut_html = $("#agg_donut_chart").html();
             agg_metrics_html = $("#agg_metrics").html();
             day_column_chart_html = $("#day_column_chart").html();
             month_column_chart_html = $("#month_column_chart").html();
             year_column_chart_html = $("#year_column_chart").html();
+
+            // set dash to blank text
+            // layout will over-ride this
+            $("#dashboard").html("");
 
             set_layout();
         });
@@ -369,7 +380,7 @@
             // display the get error
             data_request.fail(function() {
                 refresh_error_count += 1;
-                $("#agg_donut_title").html(`Error (${refresh_error_count})`);
+                $("#agg_donut_title").html(`Data Refresh Failure #${refresh_error_count}`);
             });           
 
             // valid retrieval of data
@@ -404,10 +415,15 @@
                     }
                 }
 
-                // show the dashboard only when we have
-                // a valid last updated timestamp
+                // switch from splash to dashboard 
+                // only when we have data to show
                 if (data_dict.last_updated > 0) {
+                    $("#splash").hide();
                     $("#dashboard").show();
+                }
+                else {
+                    $("#splash").show();
+                    $("#dashboard").hide();
                 }
 
                 // reset error count
@@ -515,45 +531,35 @@
                     $("#agg_consumed_unit").removeClass().addClass("metric-unit metric-red");
                 }
 
-                if (agg_source.co2) {
-                    $("#agg_co2_col").show();
-                    value_dict = format_energy_value(agg_source.co2, 'kg', 'mt', 'g');
-                    $("#agg_co2").html(value_dict['value']);
-                    $("#agg_co2_unit").html(value_dict['unit']);
+                $("#agg_co2_col").show();
+                value_dict = format_energy_value(agg_source.co2, 'kg', 'mt', 'g');
+                $("#agg_co2").html(value_dict['value']);
+                $("#agg_co2_unit").html(value_dict['unit']);
 
-                    if (agg_source.co2 > 0) {
-                        $("#agg_co2").removeClass().addClass("metric metric-green");
-                        $("#agg_co2_icon").removeClass().addClass("material-icons metric metric-green");
-                        $("#agg_co2_unit").removeClass().addClass("metric-unit metric-green");
-                    }
-                    else {
-                        $("#agg_co2").removeClass().addClass("metric metric-grey");
-                        $("#agg_co2_icon").removeClass().addClass("material-icons metric metric-grey");
-                        $("#agg_co2_unit").removeClass().addClass("metric-unit metric-grey");
-                    }
+                if (agg_source.co2 > 0) {
+                    $("#agg_co2").removeClass().addClass("metric metric-green");
+                    $("#agg_co2_icon").removeClass().addClass("material-icons metric metric-green");
+                    $("#agg_co2_unit").removeClass().addClass("metric-unit metric-green");
                 }
                 else {
-                    $("#agg_co2_col").hide();
+                    $("#agg_co2").removeClass().addClass("metric metric-grey");
+                    $("#agg_co2_icon").removeClass().addClass("material-icons metric metric-grey");
+                    $("#agg_co2_unit").removeClass().addClass("metric-unit metric-grey");
                 }
 
-                if (agg_source.trees) {
-                    $("#agg_trees_col").show();
-                    value_dict = format_trees(agg_source.trees);
-                    $("#agg_trees").html(value_dict['value']);
+                $("#agg_trees_col").show();
+                value_dict = format_trees(agg_source.trees);
+                $("#agg_trees").html(value_dict['value']);
 
-                    if (agg_source.trees > 0) {
-                        $("#agg_trees").removeClass().addClass("metric metric-green");
-                        $("#agg_trees_icon").removeClass().addClass("material-icons metric metric-green");
-                        $("#agg_trees_unit").removeClass().addClass("metric-unit metric-green");
-                    }
-                    else {
-                        $("#agg_trees").removeClass().addClass("metric metric-grey");
-                        $("#agg_trees_icon").removeClass().addClass("material-icons metric metric-grey");
-                        $("#agg_trees_unit").removeClass().addClass("metric-unit metric-grey");
-                    }
+                if (agg_source.trees > 0) {
+                    $("#agg_trees").removeClass().addClass("metric metric-green");
+                    $("#agg_trees_icon").removeClass().addClass("material-icons metric metric-green");
+                    $("#agg_trees_unit").removeClass().addClass("metric-unit metric-green");
                 }
                 else {
-                    $("#agg_trees_col").hide();
+                    $("#agg_trees").removeClass().addClass("metric metric-grey");
+                    $("#agg_trees_icon").removeClass().addClass("material-icons metric metric-grey");
+                    $("#agg_trees_unit").removeClass().addClass("metric-unit metric-grey");
                 }
 
                 draw_charts();
@@ -887,13 +893,26 @@
 </head>   
 
 <body id="bg">
-    <div id="dashboard">
 
+    <!-- initial spash -->
+    <div id="splash" class="row justify-content-center">
+        <div id="init_splash" class="col col-12 mt-2">
+            <div class="card-transparent text-center mt-0">
+                <div class="card-body">
+                    <span class="metric metric-white">SolarMon </span>
+                    <a href="/admin"><span class="material-icons metric metric-white">settings_applications</span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- dashboard -->
+    <div id="dashboard">
         <!-- donut -->
         <div id="agg_donut_chart" class="card-transparent text-white text-center mt-2">
             <div class="card-body text-center">
                 <center>
-                    <div id="agg_donut_title" class="title"></div>
+                    <a href="/admin"><div id="agg_donut_title" class="title"></div></a>
                     <div id="donut_chart"></div>
                 </center>
             </div>
@@ -901,7 +920,7 @@
 
         <!-- agg metric cards -->
         <div id="agg_metrics" class="container text-white text-center">
-            <div id="agg_metric_grid" class="row row-cols-2">
+            <div class="row row-cols-2">
 
                 <div class="col">
 
@@ -1021,18 +1040,23 @@
         </div>
         <!-- agg metric cards -->
 
+        <!-- column charts -->
         <div id="day_column_chart" class="col mt-2">
             <center><div id="day_chart_title" class="title"></div></center>
             <div id="day_google_chart"></div>
         </div>
+
         <div id="month_column_chart"class="col mt-2">
             <center><div id="month_chart_title" class="title"></div></center>
             <div id="month_google_chart"></div>
         </div>
+
         <div id="year_column_chart"class="col mt-2">
             <center><div id="year_chart_title" class="title"></div></center>
             <div id="year_google_chart"></div>
         </div>
+        <!-- column charts -->
+
     </div>
 
 </body>
