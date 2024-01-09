@@ -20,13 +20,13 @@ To run:
 
 Notes:
 * The script will startup and create a default config.json file in energyutils/solar_monitor
-* point your browser at either http://localhost:8090 or http://<IP of computer>:8090 and you should see The banner "SolarMon" displayed with a settings cog wheel"
+* point your browser at either http://localhost:8090 or http://[IP of computer]:8090 and you should see The banner "SolarMon" displayed with a settings cog wheel"
 * Click the cog wheel or browse to http://localhost:8090/admin to bring up the admin page (when prompted, login as user "admin" and password "123456789")
 * Select the inverter/data source type and go from there inputing the credentials or your given device. 
    - Note: The inverter sources list Sofar and Huawei but only Shelly EM and Solis are supported for now.
 * Once you select the data source, various fields will be shown that need to be populated with the related credentials.
 * When ready to save, click the "Apply" button
-* To get back to the dashboard, click the "Show Dashboard" button or separately browse to http://localhost:8090 or http://<IP of computer>:8090
+* To get back to the dashboard, click the "Show Dashboard" button or separately browse to http://localhost:8090 or http://[IP of computer]:8090
 * If the Shelly or inverter credentials are correct, then actual usage data should soon appear on the main dashboard.
 * For now, only Shelly EM and Solis inverters are supported. Others such as Sofar, Huawei etc will be added over time
 * The script outputs logging details as it runs on the console. You can add --verbose to get this logging more detailed data if need be.
@@ -63,7 +63,7 @@ The layout here uses a donut chart on the left that graphs a metric set. Underne
 
 Then on the right are three column charts that graph the recent performance for the last 36 hours, last 30 days and last 12 months. This layout will be used when rendering the page on a larger screen in landscape mode. Best suited for HD/4K monitors and TVs.
 
-Every 10 seconds the donut chart and metrics will be cycled to the next metric. The specific set of metrics that get ued can be controlled from the admin page (<server ip/hostname>:8090/admin). 
+Every 10 seconds the donut chart and metrics will be cycled to the next metric. The specific set of metrics that get used can be controlled from the admin page
 
 ![Large Screen Live](screenshots/large_live.png)
 
