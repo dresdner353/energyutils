@@ -531,7 +531,9 @@ def get_live_data(config):
         gv_data_dict['metrics']['live']['import'] = 0
         gv_data_dict['metrics']['live']['export'] = grid * -1
 
-    if solar >= 0.010:
+    # solar can go negative as inverter draws power
+    # So we treat negative as 0
+    if solar >= 0:
         gv_data_dict['metrics']['live']['solar'] = solar
     else:
         gv_data_dict['metrics']['live']['solar'] = 0
@@ -539,8 +541,8 @@ def get_live_data(config):
     gv_data_dict['metrics']['live']['solar_consumed'] = gv_data_dict['metrics']['live']['solar'] - gv_data_dict['metrics']['live']['export']
     gv_data_dict['metrics']['live']['consumed'] = gv_data_dict['metrics']['live']['import'] + gv_data_dict['metrics']['live']['solar_consumed'] 
 
-    gv_data_dict['metrics']['live']['co2'] = (config['environment']['gco2_kwh'] * solar) / 1000
-    gv_data_dict['metrics']['live']['trees'] = config['environment']['trees_kwh'] * solar
+    gv_data_dict['metrics']['live']['co2'] = (config['environment']['gco2_kwh'] * gv_data_dict['metrics']['live']['solar']) / 1000
+    gv_data_dict['metrics']['live']['trees'] = config['environment']['trees_kwh'] * gv_data_dict['metrics']['live']['solar']
 
     utils.log_message(
             1,
