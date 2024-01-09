@@ -328,6 +328,9 @@ def get_inverter_day_data(config):
     gv_data_dict['metrics']['live']['solar_consumed'] = gv_data_dict['metrics']['live']['solar'] - gv_data_dict['metrics']['live']['export']
     gv_data_dict['metrics']['live']['consumed'] = gv_data_dict['metrics']['live']['import'] + gv_data_dict['metrics']['live']['solar_consumed'] 
 
+    gv_data_dict['metrics']['live']['co2'] = (config['environment']['gco2_kwh'] * solar) / 1000
+    gv_data_dict['metrics']['live']['trees'] = config['environment']['trees_kwh'] * solar
+
     return
 
 

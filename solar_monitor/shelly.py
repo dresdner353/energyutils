@@ -515,7 +515,7 @@ def get_live_data(config):
                 )
             )
 
-    # convert to kWh
+    # convert to kW
     grid = device_resp_dict['emeters'][0]['power'] / 1000
     solar = device_resp_dict['emeters'][1]['power'] / 1000
 
@@ -538,6 +538,9 @@ def get_live_data(config):
 
     gv_data_dict['metrics']['live']['solar_consumed'] = gv_data_dict['metrics']['live']['solar'] - gv_data_dict['metrics']['live']['export']
     gv_data_dict['metrics']['live']['consumed'] = gv_data_dict['metrics']['live']['import'] + gv_data_dict['metrics']['live']['solar_consumed'] 
+
+    gv_data_dict['metrics']['live']['co2'] = (config['environment']['gco2_kwh'] * solar) / 1000
+    gv_data_dict['metrics']['live']['trees'] = config['environment']['trees_kwh'] * solar
 
     utils.log_message(
             1,
