@@ -20,4 +20,11 @@ sleep 5
 # chromium kiosk
 echo "Starting Chromium in kiosk mode"
 killall -9 chromium-browser
-chromium-browser --kiosk http://localhost:8090
+chromium-browser \
+    --disable-translate \
+    --disable-infobars \
+    --disable-suggestions-service \
+    --disable-save-password-bubble \
+    --noerrdialogs \
+    --disable-component-update \
+    --kiosk http://localhost:8090
