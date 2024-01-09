@@ -527,9 +527,11 @@ def get_live_data(config):
         grid_import = 0
         grid_export = grid * -1
 
-    # solar can go negative as inverter draws power
-    # So we treat negative as 0
-    if solar < 0:
+    # solar treated as 0 for anything under 10w
+    # hides spurious values and negative inverter draw
+    if solar >= 0.010:
+        solar = solar
+    else:
         solar = 0
 
     # update live metrics
