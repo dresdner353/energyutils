@@ -354,13 +354,13 @@
                 value_dict['value'] = value.toFixed(2);
                 value_dict['unit'] = 'trees';
             }
-            else if (value > 0) {
+            else if (value >= 0.001) {
                 // 3dp
                 value_dict['value'] = value.toFixed(3);
                 value_dict['unit'] = 'trees';
             }
             else {
-                // 0 value, 0dp
+                // 0/neglible value, 0dp
                 value_dict['value'] = 0;
                 value_dict['unit'] = 'trees';
             }
