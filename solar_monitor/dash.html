@@ -354,9 +354,14 @@
                 value_dict['value'] = value.toFixed(2);
                 value_dict['unit'] = 'trees';
             }
-            else {
+            else if (value > 0) {
                 // 3dp
                 value_dict['value'] = value.toFixed(3);
+                value_dict['unit'] = 'trees';
+            }
+            else {
+                // 0 value, 0dp
+                value_dict['value'] = 0;
                 value_dict['unit'] = 'trees';
             }
 
