@@ -146,11 +146,6 @@ def get_inverter_day_data(config):
             "Updating Solis Day Data"
             )
 
-    today = datetime.date.today()
-    yesterday = today - datetime.timedelta(days = 1)
-
-    data_dict = {}
-
     # objective is the last 36 hours of data
     # with relative solar kWh per hour.
     # solis gives multiple records per hour
@@ -163,36 +158,35 @@ def get_inverter_day_data(config):
     # * fill in missing hours with zero solar generation records
     # * cull list to 36 hours up to last hour as reported by solis
 
+    # 36 hour back-reference period could be spanning 2-3 days
+    # so we offset by 36 hours and pull each day spanned
+    now = datetime.datetime.now()
+    start_dt = now - datetime.timedelta(hours = 36)
+    start_day = start_dt.date()
+    end_day = now.date()
+
+    data_dict = {}
     solis_snap_list = []
 
     request = {}
     request['sn'] = config['solis']['inverter_sn']
     request['TimeZone'] = 0
 
-    # yesterday
-    request['time'] = yesterday.strftime('%Y-%m-%d')
-    day_dict = get_solis_cloud_data(
-            config,
-            '/v1/api/inverterDay', 
-            request)
-    if not day_dict:
-        return 
+    while start_day <= end_day:
+        request['time'] = start_day.strftime('%Y-%m-%d')
+        day_dict = get_solis_cloud_data(
+                config,
+                '/v1/api/inverterDay', 
+                request)
+        if not day_dict:
+            return 
 
-    solis_snap_list += day_dict['data']
+        # append to list and increment day
+        solis_snap_list += day_dict['data']
+        start_day = start_day + datetime.timedelta(days = 1)
 
-    # delay between calls
-    time.sleep(2)
-
-    # today
-    request['time'] = today.strftime('%Y-%m-%d')
-    day_dict = get_solis_cloud_data(
-            config,
-            '/v1/api/inverterDay', 
-            request)
-    if not day_dict:
-        return 
-
-    solis_snap_list += day_dict['data']
+        # delay between calls
+        time.sleep(2)
 
     for solis_snap_rec in solis_snap_list:
         ts = int(solis_snap_rec['dataTimestamp']) // 1000
@@ -215,6 +209,8 @@ def get_inverter_day_data(config):
             usage_rec['export'] = 0
             usage_rec['consumed'] = 0
             usage_rec['solar_consumed'] = 0
+            usage_rec['battery_charge'] = 0
+            usage_rec['battery_discharge'] = 0
 
             data_dict[key] = usage_rec
 
@@ -224,6 +220,8 @@ def get_inverter_day_data(config):
         usage_rec['import'] = max(usage_rec['import'], solis_snap_rec['gridPurchasedTodayEnergy'])
         usage_rec['export'] = max(usage_rec['export'], solis_snap_rec['gridSellTodayEnergy'])
         usage_rec['consumed'] = max(usage_rec['consumed'], solis_snap_rec['homeLoadTodayEnergy'])
+        usage_rec['battery_charge'] = max(usage_rec['battery_charge'], solis_snap_rec['batteryTodayChargeEnergy'])
+        usage_rec['battery_discharge'] = max(usage_rec['battery_discharge'], solis_snap_rec['batteryTodayDischargeEnergy'])
         usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
 
     # adjust values to relative 
@@ -234,6 +232,8 @@ def get_inverter_day_data(config):
             'import',
             'export',
             'consumed',
+            'battery_charge',
+            'battery_discharge',
             'solar_consumed',
             ]
     offset_dict = {}
@@ -264,36 +264,6 @@ def get_inverter_day_data(config):
         usage_rec['co2'] = (config['environment']['gco2_kwh'] * usage_rec['solar']) / 1000
         usage_rec['trees'] = config['environment']['trees_kwh'] * usage_rec['solar']
 
-    # fill in empty records for absent hours
-    # but not beyond the latest record
-    latest_key = sorted(data_dict.keys())[-1]
-    last_day = data_dict[latest_key]['day']
-    last_hour = data_dict[latest_key]['hour']
-
-    for dt in [yesterday, today]:
-        for hour in range(0, 24):
-            key = '%02d-%02d' % (
-                    dt.day,
-                    hour)
-
-            if dt.day == last_day and hour > last_hour:
-                break
-
-            if not key in data_dict:
-                usage_rec = {}
-                data_dict[key] = usage_rec
-                usage_rec['year'] = dt.strftime('%Y')
-                usage_rec['month'] = dt.strftime('%b')
-                usage_rec['day'] = dt.day
-                usage_rec['hour'] = hour
-                usage_rec['solar'] = 0
-                usage_rec['import'] = 0
-                usage_rec['export'] = 0
-                usage_rec['consumed'] = usage_rec['import']
-                usage_rec['solar_consumed'] = 0
-                usage_rec['co2'] = 0
-                usage_rec['trees'] = 0
-
     # cull to last 36 hours
     sorted_keys = sorted(data_dict.keys())[-36:]
     culled_dict = {}
@@ -308,28 +278,50 @@ def get_inverter_day_data(config):
     gv_data_dict['day'] = data_list
 
     latest_snap_rec = solis_snap_list[-1]
-    solar = latest_snap_rec['pac'] / 1000
-    grid = latest_snap_rec['pSum'] / 1000
-
     gv_data_dict['last_updated'] = int(latest_snap_rec['dataTimestamp']) // 1000
+
+    solar = latest_snap_rec['pac'] / 1000
+    grid = latest_snap_rec['pSum'] / 1000 
+    consumed = latest_snap_rec['familyLoadPower'] / 1000 
+    battery = latest_snap_rec['batteryPower'] / 1000
+    battery_soc = latest_snap_rec['batteryCapacitySoc']
+
+    live_rec = gv_data_dict['metrics']['live']
     time_str = datetime.datetime.fromtimestamp(
             gv_data_dict['last_updated']).strftime('%H:%M:%S')
-    gv_data_dict['metrics']['live']['title'] = 'Live Usage @%s' % (time_str)
+    live_rec['title'] = 'Live Usage @%s' % (time_str)
 
-    if grid >= 0:
-        gv_data_dict['metrics']['live']['import'] = grid
-        gv_data_dict['metrics']['live']['export'] = 0
+    if grid <= 0:
+        live_rec['import'] = grid * -1
+        live_rec['export'] = 0
     else:
-        gv_data_dict['metrics']['live']['import'] = 0
-        gv_data_dict['metrics']['live']['export'] = grid * -1
+        live_rec['import'] = 0
+        live_rec['export'] = grid 
 
-    gv_data_dict['metrics']['live']['solar'] = solar
+    live_rec['solar'] = solar
 
-    gv_data_dict['metrics']['live']['solar_consumed'] = gv_data_dict['metrics']['live']['solar'] - gv_data_dict['metrics']['live']['export']
-    gv_data_dict['metrics']['live']['consumed'] = gv_data_dict['metrics']['live']['import'] + gv_data_dict['metrics']['live']['solar_consumed'] 
+    # populate charge and one of charge or discharge
 
-    gv_data_dict['metrics']['live']['co2'] = (config['environment']['gco2_kwh'] * solar) / 1000
-    gv_data_dict['metrics']['live']['trees'] = config['environment']['trees_kwh'] * solar
+    # purge charge and discharge initially
+    for field in ['battery_discharge', 'battery_charge']:
+        if field in live_rec:
+            del live_rec[field]
+
+    live_rec['battery_soc'] = battery_soc
+
+    if battery >= 0:
+        live_rec['battery_charge'] = battery
+    else:
+        live_rec['battery_discharge'] = battery * -1
+
+    live_rec['solar_consumed'] = 0
+    if live_rec['solar'] > 0:
+        live_rec['solar_consumed'] = live_rec['solar'] - live_rec['export']
+
+    live_rec['consumed'] = consumed
+
+    live_rec['co2'] = (config['environment']['gco2_kwh'] * solar) / 1000
+    live_rec['trees'] = config['environment']['trees_kwh'] * solar
 
     return
 
@@ -350,55 +342,62 @@ def get_inverter_month_data(config):
             "Updating Solis Month Data"
             )
 
-    dt_today = datetime.date.today()
-    dt_yesterday = dt_today - datetime.timedelta(days = 1)
-    dt_last_month = dt_today.replace(day = 1) - datetime.timedelta(days = 1)
+    # get a reference data 30 days back
+    # to determine first month to query
+    now_dt = datetime.datetime.now()
+    start_dt = now_dt - datetime.timedelta(days = 30)
+    start_month = start_dt.date()
+    end_month = now_dt.date()
+    # offset day to late in the month
+    end_month = end_month.replace(day = 28)
 
     data_dict = {}
-
-    # get 30 days of data
-    # will need to request 2 months and cull
     solis_day_list = []
 
     request = {}
     request['sn'] = config['solis']['inverter_sn']
     request['TimeZone'] = 0
 
-    # last month
-    request['month'] = dt_last_month.strftime('%Y-%m')
-    month_dict = get_solis_cloud_data(
-            config,
-            '/v1/api/inverterMonth', 
-            request)
-    if not month_dict:
-        return 
+    while start_month <= end_month:
+        request['month'] = start_month.strftime('%Y-%m')
 
-    solis_day_list += month_dict['data']
+        # get month
+        month_dict = get_solis_cloud_data(
+                config,
+                '/v1/api/inverterMonth', 
+                request)
+        if not month_dict:
+            return 
 
-    # delay between calls
-    time.sleep(2)
+        # append to list and increment month
+        # timedelta does not suport 
+        solis_day_list += month_dict['data']
 
-    # this month
-    request['month'] = dt_today.strftime('%Y-%m')
-    month_dict = get_solis_cloud_data(
-            config,
-            '/v1/api/inverterMonth', 
-            request)
-    if not month_dict:
-        return 
+        # transition to next month
+        # force day to earliest last day of any month
+        # add 5 days and will transition a month
+        # timedelta lacks a months option, hence this hack
+        # the jump from 28+5 will also be less than the 28 we asserted
+        # on the end_month above. this is for the while condition of
+        # the loop
+        start_month = start_month.replace(day = 28)
+        start_month = start_month + datetime.timedelta(days = 5)
 
-    solis_day_list += month_dict['data']
+        # delay between calls
+        time.sleep(2)
 
     for solis_day_rec in solis_day_list:
+        ts = solis_day_rec['date'] // 1000
+        ts_dt = datetime.datetime.fromtimestamp(ts)
         usage_rec = {}
-        usage_rec['ts'] = solis_day_rec['date'] // 1000
-        ts_dt = datetime.datetime.fromtimestamp(usage_rec['ts'])
         usage_rec['import'] = solis_day_rec['gridPurchasedEnergy']
         usage_rec['export'] = solis_day_rec['gridSellEnergy']
+        usage_rec['battery_charge'] = solis_day_rec['batteryChargeEnergy']
+        usage_rec['battery_discharge'] = solis_day_rec['batteryDischargeEnergy']
         usage_rec['solar'] = solis_day_rec['energy']
 
         usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
-        usage_rec['consumed'] = usage_rec['import'] + usage_rec['solar_consumed']
+        usage_rec['consumed'] = solis_day_rec['consumeEnergy']
         usage_rec['year'] = ts_dt.strftime('%Y')
         usage_rec['month'] = ts_dt.strftime('%b')
         usage_rec['day'] = ts_dt.day
@@ -407,7 +406,7 @@ def get_inverter_month_data(config):
         usage_rec['co2'] = (config['environment']['gco2_kwh'] * usage_rec['solar']) / 1000
         usage_rec['trees'] = config['environment']['trees_kwh'] * usage_rec['solar']
 
-        data_dict[usage_rec['ts']] = usage_rec
+        data_dict[ts] = usage_rec
 
     # cull to last 30 days
     sorted_keys = sorted(data_dict.keys())[-30:]
@@ -424,31 +423,18 @@ def get_inverter_month_data(config):
 
     # take todays totals from last recorded day in month
     today_rec = month_data[-1]
+    gv_data_dict['metrics']['today'] = month_data[-1]
     gv_data_dict['metrics']['today']['title'] = 'Today (%s %d %s)' % (
-            today_rec['month'], 
-            today_rec['day'], 
-            today_rec['year'])
-    gv_data_dict['metrics']['today']['import'] = today_rec['import']
-    gv_data_dict['metrics']['today']['solar'] = today_rec['solar']
-    gv_data_dict['metrics']['today']['solar_consumed'] = today_rec['solar_consumed']
-    gv_data_dict['metrics']['today']['export'] = today_rec['export']
-    gv_data_dict['metrics']['today']['consumed'] = today_rec['import'] +  today_rec['solar_consumed']
-    gv_data_dict['metrics']['today']['co2'] = today_rec['co2']
-    gv_data_dict['metrics']['today']['trees'] = today_rec['trees']
+            gv_data_dict['metrics']['today']['month'], 
+            gv_data_dict['metrics']['today']['day'], 
+            gv_data_dict['metrics']['today']['year'])
 
     if len(month_data) >= 2:
-        yesterday_rec = month_data[-2]
+        gv_data_dict['metrics']['yesterday'] = month_data[-2]
         gv_data_dict['metrics']['yesterday']['title'] = 'Yesterday (%s %d %s)' % (
-                yesterday_rec['month'], 
-                yesterday_rec['day'], 
-                yesterday_rec['year'])
-        gv_data_dict['metrics']['yesterday']['import'] = yesterday_rec['import']
-        gv_data_dict['metrics']['yesterday']['solar'] = yesterday_rec['solar']
-        gv_data_dict['metrics']['yesterday']['solar_consumed'] = yesterday_rec['solar_consumed']
-        gv_data_dict['metrics']['yesterday']['export'] = yesterday_rec['export']
-        gv_data_dict['metrics']['yesterday']['consumed'] = yesterday_rec['import'] + yesterday_rec['solar_consumed']
-        gv_data_dict['metrics']['yesterday']['co2'] = yesterday_rec['co2']
-        gv_data_dict['metrics']['yesterday']['trees'] = yesterday_rec['trees']
+                gv_data_dict['metrics']['yesterday']['month'], 
+                gv_data_dict['metrics']['yesterday']['day'], 
+                gv_data_dict['metrics']['yesterday']['year'])
 
     # new refresh time
     month_ts = ((70 - dt_now.minute) * 60) + now
@@ -510,15 +496,17 @@ def get_inverter_year_data(config):
     solis_month_list += year_dict['data']
 
     for solis_month_rec in solis_month_list:
+        ts = solis_month_rec['date'] // 1000
+        ts_dt = datetime.datetime.fromtimestamp(ts)
         usage_rec = {}
-        usage_rec['ts'] = solis_month_rec['date'] // 1000
-        ts_dt = datetime.datetime.fromtimestamp(usage_rec['ts'])
         usage_rec['import'] = solis_month_rec['gridPurchasedEnergy']
         usage_rec['export'] = solis_month_rec['gridSellEnergy']
+        usage_rec['battery_charge'] = solis_month_rec['batteryChargeEnergy']
+        usage_rec['battery_discharge'] = solis_month_rec['batteryDischargeEnergy']
         usage_rec['solar'] = solis_month_rec['energy']
 
         usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
-        usage_rec['consumed'] = usage_rec['import'] + usage_rec['solar_consumed']
+        usage_rec['consumed'] = solis_month_rec['consumeEnergy']
         usage_rec['year'] = ts_dt.strftime('%Y')
         usage_rec['month'] = ts_dt.strftime('%b')
 
@@ -526,7 +514,7 @@ def get_inverter_year_data(config):
         usage_rec['co2'] = (config['environment']['gco2_kwh'] * usage_rec['solar']) / 1000
         usage_rec['trees'] = config['environment']['trees_kwh'] * usage_rec['solar']
 
-        data_dict[usage_rec['ts']] = usage_rec
+        data_dict[ts] = usage_rec
 
     # cull to last 12 months
     sorted_keys = sorted(data_dict.keys())[-12:]
@@ -542,26 +530,16 @@ def get_inverter_year_data(config):
     gv_data_dict['year'] = year_data
 
     # take months totals from last recorded month in year
-    month_rec = year_data[-1]
-    gv_data_dict['metrics']['this_month']['title'] = 'This Month (%s %s)' % (month_rec['month'], month_rec['year'])
-    gv_data_dict['metrics']['this_month']['import'] = month_rec['import']
-    gv_data_dict['metrics']['this_month']['solar'] = month_rec['solar']
-    gv_data_dict['metrics']['this_month']['solar_consumed'] = month_rec['solar_consumed']
-    gv_data_dict['metrics']['this_month']['export'] = month_rec['export']
-    gv_data_dict['metrics']['this_month']['consumed'] = month_rec['import'] + month_rec['solar_consumed']
-    gv_data_dict['metrics']['this_month']['co2'] = month_rec['co2']
-    gv_data_dict['metrics']['this_month']['trees'] = month_rec['trees']
+    gv_data_dict['metrics']['this_month'] = year_data[-1]
+    gv_data_dict['metrics']['this_month']['title'] = 'This Month (%s %s)' % (
+            gv_data_dict['metrics']['this_month']['month'], 
+            gv_data_dict['metrics']['this_month']['year'])
 
     if len(year_data) >= 2:
-        last_month_rec = year_data[-2]
-        gv_data_dict['metrics']['last_month']['title'] = 'Last Month (%s %s)' % (last_month_rec['month'], last_month_rec['year'])
-        gv_data_dict['metrics']['last_month']['import'] = last_month_rec['import']
-        gv_data_dict['metrics']['last_month']['solar'] = last_month_rec['solar']
-        gv_data_dict['metrics']['last_month']['solar_consumed'] = last_month_rec['solar_consumed']
-        gv_data_dict['metrics']['last_month']['export'] = last_month_rec['export']
-        gv_data_dict['metrics']['last_month']['consumed'] = last_month_rec['import'] + last_month_rec['solar_consumed']
-        gv_data_dict['metrics']['last_month']['co2'] = last_month_rec['co2']
-        gv_data_dict['metrics']['last_month']['trees'] = last_month_rec['trees']
+        gv_data_dict['metrics']['last_month'] = year_data[-2]
+        gv_data_dict['metrics']['last_month']['title'] = 'Last Month (%s %s)' % (
+                gv_data_dict['metrics']['last_month']['month'], 
+                gv_data_dict['metrics']['last_month']['year'])
 
     # last 12 months year
     # add all month records 
@@ -573,6 +551,8 @@ def get_inverter_year_data(config):
     gv_data_dict['metrics']['last_12_months']['solar_consumed'] = 0
     gv_data_dict['metrics']['last_12_months']['export'] = 0
     gv_data_dict['metrics']['last_12_months']['consumed'] = 0
+    gv_data_dict['metrics']['last_12_months']['battery_charge'] = 0
+    gv_data_dict['metrics']['last_12_months']['battery_discharge'] = 0
     gv_data_dict['metrics']['last_12_months']['co2'] = 0
     gv_data_dict['metrics']['last_12_months']['trees'] = 0
 
@@ -582,6 +562,8 @@ def get_inverter_year_data(config):
         gv_data_dict['metrics']['last_12_months']['solar_consumed'] += month_rec['solar_consumed']
         gv_data_dict['metrics']['last_12_months']['export'] += month_rec['export']
         gv_data_dict['metrics']['last_12_months']['consumed'] += month_rec['import'] + month_rec['solar_consumed']
+        gv_data_dict['metrics']['last_12_months']['battery_charge'] += month_rec['battery_charge']
+        gv_data_dict['metrics']['last_12_months']['battery_discharge'] += month_rec['battery_discharge']
         gv_data_dict['metrics']['last_12_months']['co2'] += month_rec['co2']
         gv_data_dict['metrics']['last_12_months']['trees'] += month_rec['trees']
 
