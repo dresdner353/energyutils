@@ -132,6 +132,9 @@ def monitor_agent():
 
     global gv_data_dict
     global gv_config_dict
+    global gv_force_refresh
+    global gv_dev_mode
+    global gv_force_metric_cycle
 
     utils.log_message(
             1,
@@ -165,9 +168,17 @@ def monitor_agent():
         else:
             gv_data_dict['refresh_interval'] = sleep_interval 
 
+        # dev mode override
+        if (gv_dev_mode and gv_force_refresh):
+            gv_data_dict['refresh_interval'] = gv_force_refresh 
+
         # metric cycle interval
         # FIXME make configurable
         gv_data_dict['metric_cycle_interval'] = 10
+
+        # dev mode override
+        if (gv_dev_mode and gv_force_metric_cycle):
+            gv_data_dict['metric_cycle_interval'] = gv_force_metric_cycle 
 
         utils.log_message(
                 1,
@@ -438,6 +449,22 @@ parser.add_argument(
         )
 
 parser.add_argument(
+        '--force_refresh', 
+        help = 'Forced Refresh Interval (dev feature only)', 
+        type = int,
+        default = 0,
+        required = False
+        )
+
+parser.add_argument(
+        '--force_metric_cycle', 
+        help = 'Forced Metric Cycle Interval (dev feature only)', 
+        type = int,
+        default = 0,
+        required = False
+        )
+
+parser.add_argument(
         '--verbose', 
         help = 'Verbose Logging', 
         action = 'store_true'
@@ -445,8 +472,10 @@ parser.add_argument(
 
 
 args = vars(parser.parse_args())
-dev_mode = args['dev']
+gv_dev_mode = args['dev']
 gv_config_file = args['config']
+gv_force_refresh = args['force_refresh']
+gv_force_metric_cycle = args['force_metric_cycle']
 utils.gv_verbose = args['verbose']
 
 # Thread management 
@@ -472,7 +501,7 @@ future_dict['Monitor API Agent'] = executor.submit(
 future_dict['Web Server'] = executor.submit(
         thread_exception_wrapper,
         web_server,
-        dev_mode)
+        gv_dev_mode)
 
 # main loop
 while (True):
