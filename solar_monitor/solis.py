@@ -222,7 +222,6 @@ def get_inverter_day_data(config):
         usage_rec['consumed'] = max(usage_rec['consumed'], solis_snap_rec['homeLoadTodayEnergy'])
         usage_rec['battery_charge'] = max(usage_rec['battery_charge'], solis_snap_rec['batteryTodayChargeEnergy'])
         usage_rec['battery_discharge'] = max(usage_rec['battery_discharge'], solis_snap_rec['batteryTodayDischargeEnergy'])
-        usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
 
     # adjust values to relative 
     # difference from previous hours record
@@ -234,7 +233,6 @@ def get_inverter_day_data(config):
             'consumed',
             'battery_charge',
             'battery_discharge',
-            'solar_consumed',
             ]
     offset_dict = {}
     for field in field_list:
@@ -257,8 +255,8 @@ def get_inverter_day_data(config):
             # add relative value to offset for next hour
             offset_dict[field][offset_key] += usage_rec[field]
 
-        # re-calculate the solar consumed from the adjusted numbers
-        usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
+        # calculate the solar consumed from the adjusted numbers
+        usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export'] 
 
         # environmental metrics
         usage_rec['co2'] = (config['environment']['gco2_kwh'] * usage_rec['solar']) / 1000
@@ -395,9 +393,9 @@ def get_inverter_month_data(config):
         usage_rec['battery_charge'] = solis_day_rec['batteryChargeEnergy']
         usage_rec['battery_discharge'] = solis_day_rec['batteryDischargeEnergy']
         usage_rec['solar'] = solis_day_rec['energy']
-
-        usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
         usage_rec['consumed'] = solis_day_rec['consumeEnergy']
+
+        usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export'] 
         usage_rec['year'] = ts_dt.strftime('%Y')
         usage_rec['month'] = ts_dt.strftime('%b')
         usage_rec['day'] = ts_dt.day
@@ -504,9 +502,9 @@ def get_inverter_year_data(config):
         usage_rec['battery_charge'] = solis_month_rec['batteryChargeEnergy']
         usage_rec['battery_discharge'] = solis_month_rec['batteryDischargeEnergy']
         usage_rec['solar'] = solis_month_rec['energy']
-
-        usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
         usage_rec['consumed'] = solis_month_rec['consumeEnergy']
+
+        usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export'] 
         usage_rec['year'] = ts_dt.strftime('%Y')
         usage_rec['month'] = ts_dt.strftime('%b')
 
@@ -561,7 +559,7 @@ def get_inverter_year_data(config):
         gv_data_dict['metrics']['last_12_months']['solar'] += month_rec['solar']
         gv_data_dict['metrics']['last_12_months']['solar_consumed'] += month_rec['solar_consumed']
         gv_data_dict['metrics']['last_12_months']['export'] += month_rec['export']
-        gv_data_dict['metrics']['last_12_months']['consumed'] += month_rec['import'] + month_rec['solar_consumed']
+        gv_data_dict['metrics']['last_12_months']['consumed'] += month_rec['consumed'] 
         gv_data_dict['metrics']['last_12_months']['battery_charge'] += month_rec['battery_charge']
         gv_data_dict['metrics']['last_12_months']['battery_discharge'] += month_rec['battery_discharge']
         gv_data_dict['metrics']['last_12_months']['co2'] += month_rec['co2']
