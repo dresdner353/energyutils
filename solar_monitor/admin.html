@@ -63,6 +63,8 @@
                 $("#donut_solar").prop("checked", config_dict['dashboard']['donut']['solar']);
                 $("#donut_export").prop("checked", config_dict['dashboard']['donut']['export']);
                 $("#donut_solar_consumed").prop( "checked", config_dict['dashboard']['donut']['solar_consumed']);
+                $("#donut_battery_charge").prop("checked", config_dict['dashboard']['donut']['battery_charge']);
+                $("#donut_battery_discharge").prop("checked", config_dict['dashboard']['donut']['battery_discharge']);
 
                 // bar charts
                 $("#bar_chart_import").prop("checked", config_dict['dashboard']['bar_chart']['import']);
@@ -70,6 +72,8 @@
                 $("#bar_chart_solar").prop("checked", config_dict['dashboard']['bar_chart']['solar']);
                 $("#bar_chart_export").prop("checked", config_dict['dashboard']['bar_chart']['export']);
                 $("#bar_chart_solar_consumed").prop( "checked", config_dict['dashboard']['bar_chart']['solar_consumed']);
+                $("#bar_chart_battery_charge").prop("checked", config_dict['dashboard']['bar_chart']['battery_charge']);
+                $("#bar_chart_battery_discharge").prop("checked", config_dict['dashboard']['bar_chart']['battery_discharge']);
 
                 if ('environment' in config_dict){
                     $('#env_gco2_kwh').val(config_dict['environment']['gco2_kwh']);
@@ -152,6 +156,8 @@
             config_dict['dashboard']['donut']['solar'] = $('#donut_solar').prop('checked');
             config_dict['dashboard']['donut']['export'] = $('#donut_export').prop('checked');
             config_dict['dashboard']['donut']['solar_consumed'] = $('#donut_solar_consumed').prop('checked');
+            config_dict['dashboard']['donut']['battery_charge'] = $('#donut_battery_charge').prop('checked');
+            config_dict['dashboard']['donut']['battery_discharge'] = $('#donut_battery_discharge').prop('checked');
 
             config_dict['dashboard']['bar_chart'] = {}
             config_dict['dashboard']['bar_chart']['import'] = $('#bar_chart_import').prop('checked');
@@ -159,6 +165,8 @@
             config_dict['dashboard']['bar_chart']['solar'] = $('#bar_chart_solar').prop('checked');
             config_dict['dashboard']['bar_chart']['export'] = $('#bar_chart_export').prop('checked');
             config_dict['dashboard']['bar_chart']['solar_consumed'] = $('#bar_chart_solar_consumed').prop('checked');
+            config_dict['dashboard']['bar_chart']['battery_charge'] = $('#bar_chart_battery_charge').prop('checked');
+            config_dict['dashboard']['bar_chart']['battery_discharge'] = $('#bar_chart_battery_discharge').prop('checked');
 
             config_dict['environment'] = {}
             config_dict['environment']['gco2_kwh'] = Number($('#env_gco2_kwh').val());
@@ -336,6 +344,17 @@
                                         <input class="form-check-input" type="checkbox" id="donut_export">
                                         <label class="form-check-label" for="donut_export">PV Export</label>
                                     </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="donut_battery_charge">
+                                        <label class="form-check-label" for="donut_battery_charge">Battery Charge</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="donut_battery_discharge">
+                                        <label class="form-check-label" for="donut_battery_discharge">Battery Discharge</label>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -343,7 +362,7 @@
                         <div id="chart_config" class="col">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-title">Bar Chart Series</h5>
+                                    <h5 class="card-title">Column Chart Series</h5>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="bar_chart_import">
                                         <label class="form-check-label" for="bar_chart_import">Grid Import</label>
@@ -367,6 +386,16 @@
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="bar_chart_export">
                                         <label class="form-check-label" for="bar_chart_export">PV Export</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="bar_chart_battery_charge">
+                                        <label class="form-check-label" for="bar_chart_battery_charge">Battery Charge</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="bar_chart_battery_discharge">
+                                        <label class="form-check-label" for="bar_chart_battery_discharge">Battery Discharge</label>
                                     </div>
 
                                 </div>
