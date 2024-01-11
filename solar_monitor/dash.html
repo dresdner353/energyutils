@@ -32,7 +32,7 @@
     --legend-font-size-small-screen: 1.5vw;
     --legend-font-size-portrait-screen: 3.5vw;
 
-    --slice-font-size-large-screen: 1.5vw;
+    --slice-font-size-large-screen: 1.3vw;
     --slice-font-size-small-screen: 2.0vw;
     --slice-font-size-portrait-screen: 3.0vw;
 
@@ -79,6 +79,12 @@
         }
         .metric-blue{
             color: #00487F;
+        }
+        .metric-charge{
+            color: #5C985C;
+        }
+        .metric-discharge{
+            color: #925EAE;
         }
         .metric-unit{
             font-size: var(--metric-unit-font-size);
@@ -368,6 +374,32 @@
             return value_dict;
         }
 
+        function format_battery_icon(battery_soc) {
+
+            battery_icons = [
+                    'battery_0_bar',
+                    'battery_1_bar',
+                    'battery_2_bar',
+                    'battery_3_bar',
+                    'battery_4_bar',
+                    'battery_5_bar',
+                    'battery_6_bar',
+                    'battery_full',
+                ];
+
+            percent_per_band = 100 / battery_icons.length;
+
+            i = -1;
+            ref_soc = 0;
+
+            while (ref_soc < battery_soc) {
+                ref_soc += percent_per_band;
+                i++;
+            }
+
+            return(battery_icons[i]);
+        }
+
         var refresh_error_count = 0;
 
         // tracking the current agg
@@ -537,7 +569,70 @@
                     $("#agg_consumed_unit").removeClass().addClass("metric-unit metric-red");
                 }
 
-                $("#agg_co2_col").show();
+                if ('battery_charge' in agg_source) {
+                    $("#agg_battery_charge_col").show();
+                    value_dict = format_energy_value(agg_source.battery_charge, std_energy_unit, mega_energy_unit, milli_energy_unit);
+                    $("#agg_battery_charge").html(value_dict['value']);
+                    $("#agg_battery_charge_unit").html(value_dict['unit']);
+
+                    if (agg_source.battery_charge > 0) {
+                        $("#agg_battery_charge").removeClass().addClass("metric metric-charge");
+                        $("#agg_battery_charge_icon").removeClass().addClass("material-icons metric metric-charge");
+                        $("#agg_battery_charge_unit").removeClass().addClass("metric-unit metric-charge");
+                    }
+                    else {
+                        $("#agg_battery_charge").removeClass().addClass("metric metric-grey");
+                        $("#agg_battery_charge_icon").removeClass().addClass("material-icons metric metric-grey");
+                        $("#agg_battery_charge_unit").removeClass().addClass("metric-unit metric-grey");
+                    }
+                }
+                else {
+                    $("#agg_battery_charge_col").hide();
+                }
+
+                if ('battery_discharge' in agg_source) {
+                    $("#agg_battery_discharge_col").show();
+                    value_dict = format_energy_value(agg_source.battery_discharge, std_energy_unit, mega_energy_unit, milli_energy_unit);
+                    $("#agg_battery_discharge").html(value_dict['value']);
+                    $("#agg_battery_discharge_unit").html(value_dict['unit']);
+
+                    if (agg_source.battery_discharge > 0) {
+                        $("#agg_battery_discharge").removeClass().addClass("metric metric-discharge");
+                        $("#agg_battery_discharge_icon").removeClass().addClass("material-icons metric metric-discharge");
+                        $("#agg_battery_discharge_unit").removeClass().addClass("metric-unit metric-discharge");
+                    }
+                    else {
+                        $("#agg_battery_discharge").removeClass().addClass("metric metric-grey");
+                        $("#agg_battery_discharge_icon").removeClass().addClass("material-icons metric metric-grey");
+                        $("#agg_battery_discharge_unit").removeClass().addClass("metric-unit metric-grey");
+                    }
+                }
+                else {
+                    $("#agg_battery_discharge_col").hide();
+                }
+
+                if ('battery_soc' in agg_source) {
+                    $("#agg_battery_soc_col").show();
+                    battery_soc_icon = format_battery_icon(agg_source.battery_soc);
+                    $("#agg_battery_soc").html(agg_source.battery_soc);
+                    $("#agg_battery_soc_unit").html('%');
+                    $("#agg_battery_soc_icon").html(battery_soc_icon);
+
+                    if (agg_source.battery_soc >= 15) {
+                        $("#agg_battery_soc").removeClass().addClass("metric metric-green");
+                        $("#agg_battery_soc_icon").removeClass().addClass("material-icons metric metric-green");
+                        $("#agg_battery_soc_unit").removeClass().addClass("metric-unit metric-green");
+                    }
+                    else {
+                        $("#agg_battery_soc").removeClass().addClass("metric metric-red");
+                        $("#agg_battery_soc_icon").removeClass().addClass("material-icons metric metric-red");
+                        $("#agg_battery_soc_unit").removeClass().addClass("metric-unit metric-red");
+                    }
+                }
+                else {
+                    $("#agg_battery_soc_col").hide();
+                }
+
                 value_dict = format_energy_value(agg_source.co2, 'kg', 'mt', 'g');
                 $("#agg_co2").html(value_dict['value']);
                 $("#agg_co2_unit").html(value_dict['unit']);
@@ -553,7 +648,6 @@
                     $("#agg_co2_unit").removeClass().addClass("metric-unit metric-grey");
                 }
 
-                $("#agg_trees_col").show();
                 value_dict = format_trees(agg_source.trees);
                 $("#agg_trees").html(value_dict['value']);
 
@@ -592,7 +686,7 @@
                     break;
 
                 case "large":
-                    donut_chart_height = (window.innerHeight) * 0.5;
+                    donut_chart_height = (window.innerHeight) * 0.40;
                     break;
 
             }
@@ -630,7 +724,7 @@
             slice_font_px_size = (slice_font_vw_number * window.innerWidth) / 100;
 
             // series fields and colour assignments
-            const series_fields = ["import", "consumed", "solar", "solar_consumed", "export" ];
+            const series_fields = ["import", "consumed", "solar", "solar_consumed", "export", "battery_charge", "battery_discharge"];
 
             const series_labels_long = {
                 "import": "Grid Import",
@@ -638,6 +732,8 @@
                 "solar": "PV Yield",
                 "solar_consumed": "PV Consumption",
                 "export": "PV Export",
+                "battery_charge": "Battery Charge",
+                "battery_discharge": "Battery Discharge",
             };
 
             const series_labels_short = {
@@ -646,6 +742,8 @@
                 "solar": "PV",
                 "solar_consumed": "PV-Con",
                 "export": "PV-Exp",
+                "battery_charge": "Bat-Chg",
+                "battery_discharge": "Bat-Dis",
             };
 
             const series_colours = {
@@ -654,6 +752,8 @@
                 "solar": "#AAAA00",
                 "solar_consumed": "#006600",
                 "export": "#00487F",
+                "battery_charge": "#5C985C",
+                "battery_discharge": "#925EAE",
             };
 
             // live power distribution 
@@ -810,7 +910,9 @@
                         day_data.setCell(row, 0, item.hour.toString());
                         col = 1
                         for (series_field of bar_chart_series_list) {
-                            day_data.setCell(row, col, item[series_field].toFixed(2));
+                            if (series_field in item) {
+                                day_data.setCell(row, col, item[series_field].toFixed(2));
+                            }
                             col += 1;
                         }
                         row += 1;
@@ -847,7 +949,9 @@
                         month_data.setCell(row, 0, item.day.toString());
                         col = 1
                         for (series_field of bar_chart_series_list) {
-                            month_data.setCell(row, col, item[series_field].toFixed(2));
+                            if (series_field in item) {
+                                month_data.setCell(row, col, item[series_field].toFixed(2));
+                            }
                             col += 1;
                         }
                         row += 1;
@@ -881,7 +985,9 @@
                         year_data.setCell(row, 0, item.month);
                         col = 1
                         for (series_field of bar_chart_series_list) {
-                            year_data.setCell(row, col, item[series_field].toFixed(2));
+                            if (series_field in item) {
+                                year_data.setCell(row, col, item[series_field].toFixed(2));
+                            }
                             col += 1;
                         }
                         row += 1;
@@ -930,7 +1036,6 @@
             <div class="row row-cols-2">
 
                 <div class="col">
-
                     <div class="card-transparent text-center mt-0">
                         <div class="card-body">
                             <table border="0" align="center">
@@ -949,7 +1054,24 @@
                 </div>
 
                 <div class="col">
+                    <div class="card-transparent text-center mt-0">
+                        <div class="card-body">
+                            <table border="0" align="center">
+                                <tr>
+                                    <td style="vertical-align: middle;">
+                                        <span id="agg_export" style="metric metric-white">0</span>
+                                    </td>
+                                    <td style="vertical-align: middle;" align="center">
+                                        <div id="agg_export_icon" class="material-icons metric">logout</div>
+                                        <div id="agg_export_unit" class="metric-unit metric-white">kWh</div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="col">
                     <div class="card-transparent text-center mt-0">
                         <div class="card-body">
                             <table border="0" align="center">
@@ -968,7 +1090,6 @@
                 </div>
 
                 <div class="col">
-
                     <div class="card-transparent text-center mt-0">
                         <div class="card-body">
                             <table border="0" align="center">
@@ -986,18 +1107,17 @@
                     </div>
                 </div>
 
-                <div class="col">
-
+                <div id="agg_battery_charge_col" class="col">
                     <div class="card-transparent text-center mt-0">
                         <div class="card-body">
                             <table border="0" align="center">
                                 <tr>
                                     <td style="vertical-align: middle;">
-                                        <span id="agg_export" style="metric metric-white">0</span>
+                                        <span id="agg_battery_charge" style="metric metric-white">0</span>
                                     </td>
                                     <td style="vertical-align: middle;" align="center">
-                                        <div id="agg_export_icon" class="material-icons metric">logout</div>
-                                        <div id="agg_export_unit" class="metric-unit metric-white">kWh</div>
+                                        <div id="agg_battery_charge_icon" class="material-icons metric">battery_charging_full</div>
+                                        <div id="agg_battery_charge_unit" class="metric-unit metric-white">kWh</div>
                                     </td>
                                 </tr>
                             </table>
@@ -1005,8 +1125,43 @@
                     </div>
                 </div>
 
-                <div id="agg_co2_col" class="col">
+                <div id="agg_battery_discharge_col" class="col">
+                    <div class="card-transparent text-center mt-0">
+                        <div class="card-body">
+                            <table border="0" align="center">
+                                <tr>
+                                    <td style="vertical-align: middle;">
+                                        <span id="agg_battery_discharge" style="metric metric-white">0</span>
+                                    </td>
+                                    <td style="vertical-align: middle;" align="center">
+                                        <div id="agg_battery_discharge_icon" class="material-icons metric">battery_3_bar</div>
+                                        <div id="agg_battery_discharge_unit" class="metric-unit metric-white">kWh</div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
+                <div id="agg_battery_soc_col" class="col">
+                    <div class="card-transparent text-center mt-0">
+                        <div class="card-body">
+                            <table border="0" align="center">
+                                <tr>
+                                    <td style="vertical-align: middle;">
+                                        <span id="agg_battery_soc" style="metric metric-white">0</span>
+                                    </td>
+                                    <td style="vertical-align: middle;" align="center">
+                                        <div id="agg_battery_soc_icon" class="material-icons metric"></div>
+                                        <div id="agg_battery_soc_unit" class="metric-unit metric-white">%</div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
                     <div class="card-transparent text-center mt-0">
                         <div class="card-body">
                             <table border="0" align="center">
@@ -1024,8 +1179,7 @@
                     </div>
                 </div>
 
-                <div id="agg_trees_col" class="col">
-
+                <div class="col">
                     <div class="card-transparent text-center mt-0">
                         <div class="card-body">
                             <table border="0" align="center">
