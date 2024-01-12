@@ -437,8 +437,6 @@ def get_inverter_month_data(config):
     # new refresh time
     month_ts = ((70 - dt_now.minute) * 60) + now
 
-    # temp hack to refresh every 5 minutes
-    #month_ts = now + 280
     return 
 
 
@@ -567,6 +565,7 @@ def get_inverter_year_data(config):
 
     # new refresh time
     year_ts = ((70 - dt_now.minute) * 60) + now
+
     return 
 
 
