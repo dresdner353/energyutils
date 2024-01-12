@@ -181,10 +181,6 @@ def monitor_agent():
 def serve_dash_web_page():
     global gv_data_dict
 
-    utils.log_message(
-            utils.gv_verbose,
-            'Building /dashboard webpage')
-
     dash_filename = '%s/dash.html' % (
             os.path.dirname(os.path.realpath(__file__))
             )
@@ -205,8 +201,9 @@ class dash_handler(object):
 
         utils.log_message(
                 utils.gv_verbose,
-                '/ (%s)' % (
-                    cherrypy.request.params)
+                '/ %s %s' % (
+                    cherrypy.request.remote.ip,
+                    cherrypy.request.method)
                 )
 
         return serve_dash_web_page()
@@ -219,12 +216,6 @@ def serve_admin_web_page():
     global gv_data_dict
     global gv_config_dict
 
-    utils.log_message(
-            1,
-            '/admin page %s params:%s' % (
-                cherrypy.request.remote.ip,
-                cherrypy.request.params))
-
     admin_filename = '%s/admin.html' % (
             os.path.dirname(os.path.realpath(__file__))
             )
@@ -233,12 +224,6 @@ def serve_admin_web_page():
     admin_file = open(admin_filename, "r")
     admin_page_str = admin_file.read()
     admin_file.close()
-
-    # seed the config into place as a JSON
-    # string
-    admin_page_str = admin_page_str.replace(
-            '__init_config__', 
-            json.dumps(gv_config_dict))
 
     return admin_page_str
 
@@ -250,9 +235,9 @@ class admin_handler(object):
 
         utils.log_message(
                 utils.gv_verbose,
-                '/admin (%s) params:%s' % (
+                '/admin %s %s' % (
                     cherrypy.request.remote.ip,
-                    cherrypy.request.params)
+                    cherrypy.request.method)
                 )
 
         return serve_admin_web_page()
@@ -315,9 +300,9 @@ class data_handler(object):
 
         utils.log_message(
                 utils.gv_verbose,
-                '/data API %s params:%s' % (
+                '/data API %s %s' % (
                     cherrypy.request.remote.ip,
-                    cherrypy.request.params))
+                    cherrypy.request.method))
 
         # merge in config for dashboard
         gv_data_dict['dashboard'] = gv_config_dict['dashboard']
