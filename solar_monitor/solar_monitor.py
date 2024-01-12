@@ -26,6 +26,7 @@ gv_config_file = '%s/config.json' % (
 gv_data_dict = {}
 gv_data_dict['last_updated'] = 0
 
+gv_refresh_interval = 1
 
 def set_default_config():
 
@@ -45,6 +46,8 @@ def set_default_config():
 
     # dashboard
     json_config['dashboard'] = {}
+
+    json_config['dashboard']['cycle_interval'] = 10
 
     json_config['dashboard']['metrics'] = {}
     json_config['dashboard']['metrics']['live'] = True
@@ -135,6 +138,7 @@ def monitor_agent():
     global gv_force_refresh
     global gv_dev_mode
     global gv_force_metric_cycle
+    global gv_refresh_interval
 
     utils.log_message(
             1,
@@ -163,22 +167,7 @@ def monitor_agent():
         # refresh interval
         # we want a min of 10 but can go 
         # lower for more real-time values
-        if sleep_interval >= 10:
-            gv_data_dict['refresh_interval'] = 10 
-        else:
-            gv_data_dict['refresh_interval'] = sleep_interval 
-
-        # dev mode override
-        if (gv_dev_mode and gv_force_refresh):
-            gv_data_dict['refresh_interval'] = gv_force_refresh 
-
-        # metric cycle interval
-        # FIXME make configurable
-        gv_data_dict['metric_cycle_interval'] = 10
-
-        # dev mode override
-        if (gv_dev_mode and gv_force_metric_cycle):
-            gv_data_dict['metric_cycle_interval'] = gv_force_metric_cycle 
+        gv_refresh_interval = min(10, sleep_interval)
 
         utils.log_message(
                 1,
@@ -318,6 +307,11 @@ class data_handler(object):
     @cherrypy.tools.json_out()
 
     def index(self):
+        global gv_data_dict
+        global gv_config_dict
+        global gv_refresh_interval
+        global gv_force_refresh
+        global gv_force_metric_cycle
 
         utils.log_message(
                 utils.gv_verbose,
@@ -327,6 +321,17 @@ class data_handler(object):
 
         # merge in config for dashboard
         gv_data_dict['dashboard'] = gv_config_dict['dashboard']
+
+        # run-time over-ride of refresh (not really a config option)
+        gv_data_dict['dashboard']['refresh_interval'] = gv_refresh_interval
+
+        # dev mode override for refresh
+        if (gv_dev_mode and gv_force_refresh):
+            gv_data_dict['dashboard']['refresh_interval'] = gv_force_refresh
+
+        # dev mode override for metric cycle
+        if (gv_dev_mode and gv_force_metric_cycle):
+            gv_data_dict['dashboard']['cycle_interval'] = gv_force_metric_cycle 
 
         return json.dumps(gv_data_dict, indent = 4)
 
