@@ -118,8 +118,8 @@
 
         // metric cycle timer also initialised with a short
         // timer
-        var agg_metric_cycle_interval = 1000;
-        var metric_cycle_timer = setInterval(display_data, agg_metric_cycle_interval);
+        var metric_cycle_interval = 1000;
+        var metric_cycle_timer = setInterval(display_data, metric_cycle_interval);
 
         var agg_donut_html;
         var agg_metrics_html;
@@ -134,7 +134,7 @@
             console.log("ready()");
             // hide the dashboard and splash initially
             $("#dashboard").hide();
-            $("#splash").hide();
+            $("#splash").show();
 
             // extract dashboard elements
             // from the flat stack of divs in default body
@@ -161,7 +161,7 @@
             refresh_timer = setInterval(refresh_data, refresh_interval);
 
             clearInterval(metric_cycle_timer);
-            metric_cycle_timer = setInterval(display_data, agg_metric_cycle_interval);
+            metric_cycle_timer = setInterval(display_data, metric_cycle_interval);
 
             display_data();
 
@@ -439,8 +439,8 @@
 
                 // check data dict refresh and update if required
                 // Note: shown as second and JS operates on msecs
-                if ('refresh_interval' in data_dict) {
-                    data_dict_refresh = data_dict.refresh_interval * 1000;
+                if ('refresh_interval' in data_dict['dashboard']) {
+                    data_dict_refresh = data_dict.dashboard.refresh_interval * 1000;
                     if (refresh_interval != data_dict_refresh) {
                         refresh_interval = data_dict_refresh;
 
@@ -456,20 +456,20 @@
                     }
                 }
 
-                if ('metric_cycle_interval' in data_dict) {
-                    data_dict_metric_cycle = data_dict.metric_cycle_interval * 1000;
-                    if (data_dict_metric_cycle != agg_metric_cycle_interval) {
-                        agg_metric_cycle_interval = data_dict_metric_cycle;
+                if ('cycle_interval' in data_dict['dashboard']) {
+                    data_dict_metric_cycle_interval = data_dict.dashboard.cycle_interval * 1000;
+                    if (data_dict_metric_cycle_interval != metric_cycle_interval) {
+                        metric_cycle_interval = data_dict_metric_cycle_interval;
 
                         // protection of min 1 sec cycle
-                        if (agg_metric_cycle_interval < 1000) {
-                            agg_metric_cycle_interval = 1000;
+                        if (metric_cycle_interval < 1000) {
+                            metric_cycle_interval = 1000;
                         }
 
                         // reset timer
                         clearInterval(metric_cycle_timer);
-                        metric_cycle_timer = setInterval(display_data, agg_metric_cycle_interval);
-                        console.log('new metric cycle interval:' + agg_metric_cycle_interval);
+                        metric_cycle_timer = setInterval(display_data, metric_cycle_interval);
+                        console.log('new metric cycle interval:' + metric_cycle_interval);
                     }
                 }
             });
@@ -495,7 +495,7 @@
             // rotates every N msecs 
             var now = Date.now();
             if (agg_metric_index == -1 ||
-                now - agg_metric_cycle_ts >= agg_metric_cycle_interval) {
+                now - agg_metric_cycle_ts >= metric_cycle_interval) {
 
                 // always default to live
                 agg_metric_key = "live";
