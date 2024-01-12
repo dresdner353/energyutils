@@ -912,6 +912,13 @@
                     backgroundColor: { 
                         fill:'transparent' 
                     },
+                    focusTarget: 'category',
+                    tooltip: { 
+                        showColorCode: true,
+                        textStyle: {
+                            fontSize: legend_font_px_size
+                        }
+                    }
                 };
 
                 // day
@@ -935,9 +942,9 @@
                     day_data.addRows(data_dict.day.length);
                     row = 0
                     for (const item of data_dict.day) {
-                        // set hour value as string
-                        // prevents chart from splitting columns as fractions/averages
-                        day_data.setCell(row, 0, item.hour.toString());
+                        // format as hh:00
+                        time_str = item.hour.toString().padStart(2, '0') 
+                        day_data.setCell(row, 0, time_str);
                         col = 1
                         for (series_field of bar_chart_series_list) {
                             if (series_field in item) {
@@ -974,9 +981,9 @@
                     month_data.addRows(data_dict.month.length);
                     row = 0
                     for (const item of data_dict.month) {
-                        // force to string to prevent averaging of 
-                        // column values
-                        month_data.setCell(row, 0, item.day.toString());
+                        // Format as 'MMM dd'
+                        time_str = item.month + ' ' + item.day.toString().padStart(2, '0') 
+                        month_data.setCell(row, 0, time_str);
                         col = 1
                         for (series_field of bar_chart_series_list) {
                             if (series_field in item) {
@@ -1012,7 +1019,8 @@
                     year_data.addRows(data_dict.year.length);
                     row = 0
                     for (const item of data_dict.year) {
-                        year_data.setCell(row, 0, item.month);
+                        time_str = item.year + ' ' + item.month
+                        year_data.setCell(row, 0, time_str);
                         col = 1
                         for (series_field of bar_chart_series_list) {
                             if (series_field in item) {
