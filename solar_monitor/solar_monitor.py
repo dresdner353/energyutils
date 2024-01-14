@@ -277,6 +277,7 @@ class config_handler(object):
             # map like to like keys in config
             # this is a hack as its allowing config to exist that is not 
             # served back from the admin page
+            # users and ports are examples of fields like this
             for key in updated_config_dict:
                 gv_config_dict[key] = updated_config_dict[key]
 
