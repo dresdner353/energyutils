@@ -119,7 +119,7 @@
         // metric cycle timer also initialised with a short
         // timer
         var metric_cycle_interval = 1000;
-        var metric_cycle_timer = setInterval(display_data, metric_cycle_interval);
+        var metric_cycle_timer = setInterval(cycle_metric_index, metric_cycle_interval);
 
         var agg_donut_html;
         var agg_metrics_html;
@@ -130,6 +130,7 @@
         // global string for selected layout
         var layout;
 
+        // document load
         $( document ).ready(function() {
             console.log("ready()");
             // hide the dashboard and splash initially
@@ -153,15 +154,14 @@
             display_data();
         });
 
-        // Window focus activates/deactivates 
-        // the standard refresh timer
-        // avoids background activity when not in focus
+        // Window focus changes activates/deactivates 
+        // the timers to avoid background activity when not in focus
         $(window).focus(function() {
             clearInterval(refresh_timer);
             refresh_timer = setInterval(refresh_data, refresh_interval);
 
             clearInterval(metric_cycle_timer);
-            metric_cycle_timer = setInterval(display_data, metric_cycle_interval);
+            metric_cycle_timer = setInterval(cycle_metric_index, metric_cycle_interval);
 
             display_data();
 
@@ -172,12 +172,14 @@
 
         });
 
-        // forced fast refresh on resize to redraw
+        // forced redraw of everything on resize
         $(window).resize(function () { 
             set_layout();
             display_data();
         });
 
+        // determines the window dimensions and sets the 
+        // appropriate layout template
         function set_layout() {
             var window_height = window.innerHeight;
             var window_width = window.innerWidth;
@@ -318,6 +320,9 @@
             console.log("Set layout to " + layout);
         }
 
+        // formats an energy value into 
+        // standard, mega or milli format with 
+        // unit changes and decimal point adjustments
         function format_energy_value(value, std_unit, mega_unit, milli_unit) {
             value_dict = {};
 
@@ -350,6 +355,7 @@
             return value_dict;
         }
 
+        // formats the number of trees value based on value
         function format_trees(value) {
             value_dict = {};
 
@@ -377,6 +383,7 @@
             return value_dict;
         }
 
+        // selects a battery capacity unit based on the soc (percentage)
         function format_battery_icon(battery_soc) {
 
             battery_icons = [
@@ -403,15 +410,12 @@
             return(battery_icons[i]);
         }
 
+        // data refresh globals
         var refresh_error_count = 0;
-
-        // tracking the current agg
-        // metric series rotation
-        var agg_metric_index = -1; // init only
-        var agg_metric_key = '';
-        var agg_metric_cycle_ts = 0;
         var first_refresh = 1;
 
+        // refreshes API data for 
+        // constructing the dashboard
         function refresh_data() {
             console.log("refresh_data()");
 
@@ -468,18 +472,46 @@
 
                         // reset timer
                         clearInterval(metric_cycle_timer);
-                        metric_cycle_timer = setInterval(display_data, metric_cycle_interval);
+                        metric_cycle_timer = setInterval(cycle_metric_index, metric_cycle_interval);
                         console.log('new metric cycle interval:' + metric_cycle_interval);
                     }
                 }
             });
         }
 
+        // metric series rotation globals
+        var agg_metric_index = -1; // init only
+        var agg_metric_key = '';
+
+        // rotates the current metric index as 
+        // part of the timed cycling
+        function cycle_metric_index() {
+            console.log("cycle_metric_index()");
+
+            // always default to live
+            agg_metric_key = "live";
+
+            metric_list = Object.keys(data_dict.metrics);
+            for (i = 0; i < metric_list.length; i++) {
+                agg_metric_index = (agg_metric_index + 1) % metric_list.length;
+
+                // check its enabled in the config
+                if (data_dict.dashboard.metrics[metric_list[agg_metric_index]]) {
+                    agg_metric_key = metric_list[agg_metric_index];
+                    break;
+                }
+            }
+
+            display_data();
+        }                                               
+
+        // renders and displays the current dashboard
         function display_data() {
             console.log("display_data()");
 
             // switch from splash to dashboard 
             // only when we have data to show
+            // this is a once-off occurrence at the start
             if ('last_updated' in data_dict && data_dict.last_updated > 0) {
                 $("#splash").hide();
                 $("#dashboard").show();
@@ -490,28 +522,6 @@
 
             // reset error count
             refresh_error_count = 0;
-
-            // rotating metrics for "agg" section
-            // rotates every N msecs 
-            var now = Date.now();
-            if (agg_metric_index == -1 ||
-                now - agg_metric_cycle_ts >= metric_cycle_interval) {
-
-                // always default to live
-                agg_metric_key = "live";
-
-                metric_list = Object.keys(data_dict.metrics);
-                for (i = 0; i < metric_list.length; i++) {
-                    agg_metric_index = (agg_metric_index + 1) % metric_list.length;
-
-                    // check its enabled in the config
-                    if (data_dict.dashboard.metrics[metric_list[agg_metric_index]]) {
-                        agg_metric_key = metric_list[agg_metric_index];
-                        agg_metric_cycle_ts = now;
-                        break;
-                    }
-                }
-            }
 
             // Aggregate metrics
             agg_source = data_dict.metrics[agg_metric_key];
@@ -701,6 +711,7 @@
         var month_chart;
         var year_chart;
 
+        // render the Google charts
         function render_charts() {
             console.log("render_charts()");
 
