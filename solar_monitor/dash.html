@@ -30,7 +30,7 @@
 
     --legend-font-size-large-screen: 1.0vw;
     --legend-font-size-small-screen: 1.5vw;
-    --legend-font-size-portrait-screen: 3.5vw;
+    --legend-font-size-portrait-screen: 2.5vw;
 
     --slice-font-size-large-screen: 1.3vw;
     --slice-font-size-small-screen: 2.0vw;
@@ -658,7 +658,7 @@
                     $("#agg_battery_soc_icon").removeClass().addClass("material-icons metric metric-green");
                     $("#agg_battery_soc_unit").removeClass().addClass("metric-unit metric-green");
                 }
-                if (agg_source.battery_soc >= 30) {
+                else if (agg_source.battery_soc >= 30) {
                     $("#agg_battery_soc").removeClass().addClass("metric metric-orange");
                     $("#agg_battery_soc_icon").removeClass().addClass("material-icons metric metric-orange");
                     $("#agg_battery_soc_unit").removeClass().addClass("metric-unit metric-orange");
