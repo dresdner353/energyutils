@@ -32,12 +32,6 @@
         var metric_cycle_interval = 1000;
         var metric_cycle_timer = setInterval(cycle_metric_index, metric_cycle_interval);
 
-        var agg_donut_html;
-        var agg_metrics_html;
-        var day_column_chart_html;
-        var month_column_chart_html;
-        var year_column_chart_html;
-
         // global string for selected layout
         var layout;
 
@@ -47,14 +41,6 @@
             // hide the dashboard and splash initially
             $("#dashboard").hide();
             $("#splash").show();
-
-            // extract dashboard elements
-            // from the flat stack of divs in default body
-            agg_donut_html = $("#agg_donut_chart").html();
-            agg_metrics_html = $("#agg_metrics").html();
-            day_column_chart_html = $("#day_column_chart").html();
-            month_column_chart_html = $("#month_column_chart").html();
-            year_column_chart_html = $("#year_column_chart").html();
 
             // set dash to blank text
             // layout will over-ride this
@@ -98,6 +84,208 @@
             console.log("set_layout()");
             console.log("Window dims.. w:" + window_width + " h:" + window_height);
 
+            agg_donut_html = ` 
+            <div id="agg_donut_chart" class="card-transparent text-white text-center mt-2">
+                <div class="card-body text-center">
+                    <center>
+                        <a href="/admin"><div id="agg_donut_title" class="title"></div></a>
+                        <div id="donut_chart"></div>
+                    </center>
+                </div>
+            </div>
+            `;
+
+            agg_metrics_html = `
+                <div id="agg_metrics" class="container text-white text-center">
+                    <div class="row row-cols-2">
+
+                        <div class="col">
+                            <div class="card-transparent text-center mt-0">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="agg_import" style="metric metric-white">0</span>
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="agg_import_icon" class="material-icons metric">login</div>
+                                                <div id="agg_import_unit" class="metric-unit metric-white">kWh</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="card-transparent text-center mt-0">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="agg_export" style="metric metric-white">0</span>
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="agg_export_icon" class="material-icons metric">logout</div>
+                                                <div id="agg_export_unit" class="metric-unit metric-white">kWh</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="agg_battery_charge_col" class="col">
+                            <div class="card-transparent text-center mt-0">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="agg_battery_charge" style="metric metric-white">0</span>
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="agg_battery_charge_icon" class="material-icons metric">battery_charging_full</div>
+                                                <div id="agg_battery_charge_unit" class="metric-unit metric-white">kWh</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="agg_battery_discharge_col" class="col">
+                            <div class="card-transparent text-center mt-0">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="agg_battery_discharge" style="metric metric-white">0</span>
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="agg_battery_discharge_icon" class="material-icons metric">battery_4_bar</div>
+                                                <div id="agg_battery_discharge_unit" class="metric-unit metric-white">kWh</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="agg_battery_soc_col" class="col">
+                            <div class="card-transparent text-center mt-0">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="agg_battery_soc" style="metric metric-white">0</span>
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="agg_battery_soc_icon" class="material-icons metric"></div>
+                                                <div id="agg_battery_soc_unit" class="metric-unit metric-white">%</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="card-transparent text-center mt-0">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="agg_solar" style="metric metric-white">0</span>
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="agg_solar_icon" class="material-icons metric">solar_power</div>
+                                                <div id="agg_solar_unit" class="metric-unit metric-white">kWh</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="card-transparent text-center mt-0">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="agg_consumed" style="metric metric-white">0</span>
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="agg_consumed_icon" class="material-icons metric">home</div>
+                                                <div id="agg_consumed_unit" class="metric-unit metric-white">kWh</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="card-transparent text-center mt-0">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="agg_co2" style="metric metric-white">0</span>
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="agg_co2_icon" class="material-icons metric">co2</div>
+                                                <div id="agg_co2_unit" class="metric-unit metric-white">kg</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="card-transparent text-center mt-0">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="agg_trees" style="metric metric-white">0</span>
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="agg_trees_icon" class="material-icons metric">forest</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+
+            day_column_chart_html = `
+                <div id="day_column_chart" class="col mt-2">
+                    <center><div id="day_chart_title" class="title"></div></center>
+                    <div id="day_google_chart"></div>
+                </div>
+            `;
+
+            month_column_chart_html = `
+                <div id="month_column_chart"class="col mt-2">
+                    <center><div id="month_chart_title" class="title"></div></center>
+                    <div id="month_google_chart"></div>
+                </div>
+            `;
+
+            year_column_chart_html = `
+                <div id="year_column_chart"class="col mt-2">
+                    <center><div id="year_chart_title" class="title"></div></center>
+                    <div id="year_google_chart"></div>
+                </div>
+            `
+
             // layout templates
             // these will be substituted into the top-level 
             // body to complete re-arrange the screen according to the 
@@ -132,7 +320,7 @@
                         </div>
                     </div>
                 </div>
-            `
+            `;
 
             // small screen model
             // 5:7 split columns
@@ -146,7 +334,7 @@
                         </div>
                     </div>
                 </div>
-            `
+            `;
 
             // portrait screen model
             // vertical stack of everything
@@ -172,7 +360,8 @@
 
                     </div>
                 </div>
-            `
+            `;
+
             // layout checks
             if (window_width <= window_height) {
                 // portrait view
@@ -979,205 +1168,8 @@
         </div>
     </div>
 
-    <!-- dashboard -->
+    <!-- dashboard will be dynamically populated by set_layout()-->
     <div id="dashboard">
-        <!-- donut -->
-        <div id="agg_donut_chart" class="card-transparent text-white text-center mt-2">
-            <div class="card-body text-center">
-                <center>
-                    <a href="/admin"><div id="agg_donut_title" class="title"></div></a>
-                    <div id="donut_chart"></div>
-                </center>
-            </div>
-        </div>
-
-        <!-- agg metric cards -->
-        <div id="agg_metrics" class="container text-white text-center">
-            <div class="row row-cols-2">
-
-                <div class="col">
-                    <div class="card-transparent text-center mt-0">
-                        <div class="card-body">
-                            <table border="0" align="center">
-                                <tr>
-                                    <td style="vertical-align: middle;">
-                                        <span id="agg_import" style="metric metric-white">0</span>
-                                    </td>
-                                    <td style="vertical-align: middle;" align="center">
-                                        <div id="agg_import_icon" class="material-icons metric">login</div>
-                                        <div id="agg_import_unit" class="metric-unit metric-white">kWh</div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card-transparent text-center mt-0">
-                        <div class="card-body">
-                            <table border="0" align="center">
-                                <tr>
-                                    <td style="vertical-align: middle;">
-                                        <span id="agg_export" style="metric metric-white">0</span>
-                                    </td>
-                                    <td style="vertical-align: middle;" align="center">
-                                        <div id="agg_export_icon" class="material-icons metric">logout</div>
-                                        <div id="agg_export_unit" class="metric-unit metric-white">kWh</div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="agg_battery_charge_col" class="col">
-                    <div class="card-transparent text-center mt-0">
-                        <div class="card-body">
-                            <table border="0" align="center">
-                                <tr>
-                                    <td style="vertical-align: middle;">
-                                        <span id="agg_battery_charge" style="metric metric-white">0</span>
-                                    </td>
-                                    <td style="vertical-align: middle;" align="center">
-                                        <div id="agg_battery_charge_icon" class="material-icons metric">battery_charging_full</div>
-                                        <div id="agg_battery_charge_unit" class="metric-unit metric-white">kWh</div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="agg_battery_discharge_col" class="col">
-                    <div class="card-transparent text-center mt-0">
-                        <div class="card-body">
-                            <table border="0" align="center">
-                                <tr>
-                                    <td style="vertical-align: middle;">
-                                        <span id="agg_battery_discharge" style="metric metric-white">0</span>
-                                    </td>
-                                    <td style="vertical-align: middle;" align="center">
-                                        <div id="agg_battery_discharge_icon" class="material-icons metric">battery_4_bar</div>
-                                        <div id="agg_battery_discharge_unit" class="metric-unit metric-white">kWh</div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="agg_battery_soc_col" class="col">
-                    <div class="card-transparent text-center mt-0">
-                        <div class="card-body">
-                            <table border="0" align="center">
-                                <tr>
-                                    <td style="vertical-align: middle;">
-                                        <span id="agg_battery_soc" style="metric metric-white">0</span>
-                                    </td>
-                                    <td style="vertical-align: middle;" align="center">
-                                        <div id="agg_battery_soc_icon" class="material-icons metric"></div>
-                                        <div id="agg_battery_soc_unit" class="metric-unit metric-white">%</div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card-transparent text-center mt-0">
-                        <div class="card-body">
-                            <table border="0" align="center">
-                                <tr>
-                                    <td style="vertical-align: middle;">
-                                        <span id="agg_solar" style="metric metric-white">0</span>
-                                    </td>
-                                    <td style="vertical-align: middle;" align="center">
-                                        <div id="agg_solar_icon" class="material-icons metric">solar_power</div>
-                                        <div id="agg_solar_unit" class="metric-unit metric-white">kWh</div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card-transparent text-center mt-0">
-                        <div class="card-body">
-                            <table border="0" align="center">
-                                <tr>
-                                    <td style="vertical-align: middle;">
-                                        <span id="agg_consumed" style="metric metric-white">0</span>
-                                    </td>
-                                    <td style="vertical-align: middle;" align="center">
-                                        <div id="agg_consumed_icon" class="material-icons metric">home</div>
-                                        <div id="agg_consumed_unit" class="metric-unit metric-white">kWh</div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card-transparent text-center mt-0">
-                        <div class="card-body">
-                            <table border="0" align="center">
-                                <tr>
-                                    <td style="vertical-align: middle;">
-                                        <span id="agg_co2" style="metric metric-white">0</span>
-                                    </td>
-                                    <td style="vertical-align: middle;" align="center">
-                                        <div id="agg_co2_icon" class="material-icons metric">co2</div>
-                                        <div id="agg_co2_unit" class="metric-unit metric-white">kg</div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card-transparent text-center mt-0">
-                        <div class="card-body">
-                            <table border="0" align="center">
-                                <tr>
-                                    <td style="vertical-align: middle;">
-                                        <span id="agg_trees" style="metric metric-white">0</span>
-                                    </td>
-                                    <td style="vertical-align: middle;" align="center">
-                                        <div id="agg_trees_icon" class="material-icons metric">forest</div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-        <!-- agg metric cards -->
-
-        <!-- column charts -->
-        <div id="day_column_chart" class="col mt-2">
-            <center><div id="day_chart_title" class="title"></div></center>
-            <div id="day_google_chart"></div>
-        </div>
-
-        <div id="month_column_chart"class="col mt-2">
-            <center><div id="month_chart_title" class="title"></div></center>
-            <div id="month_google_chart"></div>
-        </div>
-
-        <div id="year_column_chart"class="col mt-2">
-            <center><div id="year_chart_title" class="title"></div></center>
-            <div id="year_google_chart"></div>
-        </div>
-        <!-- column charts -->
-
     </div>
 
 </body>
