@@ -22,6 +22,12 @@ gv_config_file = '%s/config.json' % (
             )
         )
 
+gv_root = '%s' % (
+        os.path.dirname(
+            os.path.realpath(__file__)
+            )
+        )
+
 # tracked device and API data
 gv_data_dict = {}
 gv_data_dict['last_updated'] = 0
@@ -178,74 +184,6 @@ def monitor_agent():
     return
 
 
-def serve_dash_web_page():
-    global gv_data_dict
-
-    dash_filename = '%s/dash.html' % (
-            os.path.dirname(os.path.realpath(__file__))
-            )
-
-    # read file in 
-    dash_file = open(dash_filename, "r")
-    dash_page_str = dash_file.read()
-    dash_file.close()
-
-    return dash_page_str
-
-
-class dash_handler(object):
-    @cherrypy.expose()
-
-    def index(
-            self):
-
-        utils.log_message(
-                utils.gv_verbose,
-                '/ %s %s' % (
-                    cherrypy.request.remote.ip,
-                    cherrypy.request.method)
-                )
-
-        return serve_dash_web_page()
-
-    # Force trailling slash off on called URL
-    index._cp_config = {'tools.trailing_slash.on': False}
-
-
-def serve_admin_web_page():
-    global gv_data_dict
-    global gv_config_dict
-
-    admin_filename = '%s/admin.html' % (
-            os.path.dirname(os.path.realpath(__file__))
-            )
-
-    # read file in 
-    admin_file = open(admin_filename, "r")
-    admin_page_str = admin_file.read()
-    admin_file.close()
-
-    return admin_page_str
-
-
-class admin_handler(object):
-    @cherrypy.expose()
-
-    def index(self):
-
-        utils.log_message(
-                utils.gv_verbose,
-                '/admin %s %s' % (
-                    cherrypy.request.remote.ip,
-                    cherrypy.request.method)
-                )
-
-        return serve_admin_web_page()
-
-    # Force trailling slash off on called URL
-    index._cp_config = {'tools.trailing_slash.on': False}
-
-
 class config_handler(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -350,49 +288,60 @@ def web_server(dev_mode):
     cherrypy.server.socket_host = '0.0.0.0'
     cherrypy.server.socket_port = gv_config_dict['web']['port']
 
-    # /images (for favicon)
-    images_dir = '%s/images' % (
+    # static hosting of www dir on /
+    # with default index being dash.html
+    www_dir = '%s/www' % (
             os.path.dirname(os.path.realpath(__file__))
             )
 
-    # / (dashboard)
-    dash_conf = {
-            '/favicon.png':
+    static_conf = {
+            '/':
             {
-                'tools.staticfile.on': True,
-                'tools.staticfile.filename': '%s/favicon.png' % (images_dir)
+                'tools.staticdir.on': True,
+                'tools.staticdir.dir': www_dir,
+                'tools.staticdir.index': 'dash.html',
                 }
             }
-    cherrypy.tree.mount(dash_handler(), '/', dash_conf)
+    cherrypy.tree.mount(None, '/', static_conf)
 
     # /data API
     api_conf = {}
     cherrypy.tree.mount(data_handler(), '/data', api_conf)
 
     # /admin (for config page)
-    # /config (API for reading/writing config)
-    admin_conf = {}
     users = gv_config_dict['web']['users']
-    if len(users) > 0:
-        ha1 = cherrypy.lib.auth_digest.get_ha1_dict_plain(users)
+    ha1 = cherrypy.lib.auth_digest.get_ha1_dict_plain(users)
 
-        # Generate a random digest auth key
-        # Might help against is getting compromised
-        random.seed()
-        digest_key = hex(random.randint(0x1000000000000000,
-                                        0xFFFFFFFFFFFFFFFF))
-        digest_conf = {
+    # Generate a random digest auth key
+    random.seed()
+    digest_key = hex(random.randint(0x1000000000000000,
+                                    0xFFFFFFFFFFFFFFFF))
+    admin_conf = {
+            '/': {
                 'tools.auth_digest.on': True,
                 'tools.auth_digest.realm': 'localhost',
                 'tools.auth_digest.get_ha1': ha1,
                 'tools.auth_digest.key': digest_key,
-        }
 
-        admin_conf = {
-            '/': digest_conf
-        }
-    cherrypy.tree.mount(admin_handler(), '/admin', admin_conf)
-    cherrypy.tree.mount(config_handler(), '/config', admin_conf)
+                'tools.staticdir.on': True,
+                'tools.staticdir.dir': www_dir,
+                'tools.staticdir.index': 'admin.html',
+                }
+
+            }    
+    cherrypy.tree.mount(None, '/admin', admin_conf)
+
+    # /config (API for reading/writing config)
+    # authenticated the same as /admin
+    config_conf = {
+            '/': {
+                'tools.auth_digest.on': True,
+                'tools.auth_digest.realm': 'localhost',
+                'tools.auth_digest.get_ha1': ha1,
+                'tools.auth_digest.key': digest_key,
+                }
+            }
+    cherrypy.tree.mount(config_handler(), '/config', config_conf)
 
     # Cherrypy main loop blocking
     cherrypy.engine.start()
