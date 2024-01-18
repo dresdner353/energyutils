@@ -522,11 +522,13 @@ def get_shelly_pro_em_live_data(config):
             "Updating Shelly Pro EM Live Data"
             )
 
-    # CT 0 (Grid)
-    device_url = 'http://%s/rpc/EM1.GetStatus?id=0' % (config['shelly']['device_host'])
-    basic =  requests.auth.HTTPBasicAuth(
+    # HTTP digest based auth
+    digest_auth =  requests.auth.HTTPDigestAuth(
             config['shelly']['device_username'], 
             config['shelly']['device_password']) 
+
+    # CT 0 (Grid)
+    device_url = 'http://%s/rpc/EM1.GetStatus?id=0' % (config['shelly']['device_host'])
 
     try:
         utils.log_message(
@@ -537,7 +539,7 @@ def get_shelly_pro_em_live_data(config):
                 )
         resp = requests.get(
                 device_url, 
-                auth = basic)
+                auth = digest_auth)
         device_resp_dict = resp.json()
     except:
         utils.log_message(
@@ -560,9 +562,6 @@ def get_shelly_pro_em_live_data(config):
 
     # CT 1 (Solar)
     device_url = 'http://%s/rpc/EM1.GetStatus?id=1' % (config['shelly']['device_host'])
-    basic =  requests.auth.HTTPBasicAuth(
-            config['shelly']['device_username'], 
-            config['shelly']['device_password']) 
 
     try:
         utils.log_message(
@@ -573,7 +572,7 @@ def get_shelly_pro_em_live_data(config):
                 )
         resp = requests.get(
                 device_url, 
-                auth = basic)
+                auth = digest_auth)
         device_resp_dict = resp.json()
     except:
         utils.log_message(
