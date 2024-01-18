@@ -104,6 +104,7 @@
             // then show the selected one
             switch(data_source) {
               case "shelly-em":
+              case "shelly-pro":
               $("#shelly_config").show();
               break;
 
@@ -206,6 +207,7 @@
                                     <span class="input-group-text">Inverter/Cloud Source</span>
                                     <select id="data_source" class="form-select" onchange="toggle_config()">
                                         <option value="shelly-em">Shelly EM Device & Shelly Cloud</option>
+                                        <option value="shelly-pro">Shelly Pro EM Device & Shelly Cloud</option>
                                         <option value="solis">Solis Cloud</option>
                                         <option value="sofar">Sofar Cloud</option>
                                         <option value="huawei">Huawei Cloud</option>
@@ -227,23 +229,23 @@
 
                                         <div class="form-floating mb-3">
                                             <input type="password" class="form-control" id="shelly_device_id" placeholder="xxxxxxxx">
-                                            <label for="shelly_device_id">Shelly EM Device ID</label>
+                                            <label for="shelly_device_id">Shelly Device ID</label>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="form-floating mb-3">
                                             <input type="password" class="form-control" id="shelly_device_host" placeholder="shellyem-xxxxxxxxxx.local">
-                                            <label for="shelly_device_host">Shelly EM Device Hostname/IP</label>
+                                            <label for="shelly_device_host">Shelly Device LAN Hostname/IP</label>
                                         </div>
 
                                         <div class="form-floating mb-3">
                                             <input class="form-control" id="shelly_device_username" placeholder="username">
-                                            <label for="shelly_device_username">Shelly EM Device Username</label>
+                                            <label for="shelly_device_username">Shelly Device Username</label>
                                         </div>
 
                                         <div class="form-floating mb-3">
                                             <input type="password" class="form-control" id="shelly_device_password" placeholder="password">
-                                            <label for="shelly_device_password">Shelly EM Device Password</label>
+                                            <label for="shelly_device_password">Shelly Device Password</label>
                                         </div>
                                     </div>
                                 </div>
