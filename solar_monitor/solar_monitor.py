@@ -154,7 +154,7 @@ def monitor_agent():
     sleep_interval = 5
 
     while True:
-        if gv_config_dict['data_source'] == 'shelly-em':
+        if gv_config_dict['data_source'] in ['shelly-em', 'shelly-pro']:
             gv_data_dict, sleep_interval = shelly.get_data(gv_config_dict)
         elif gv_config_dict['data_source'] == 'solis':
             gv_data_dict, sleep_interval = solis.get_data(gv_config_dict)
