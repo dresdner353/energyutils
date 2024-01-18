@@ -469,6 +469,134 @@ def get_cloud_data(config):
     return
 
 
+def get_shelly_em_live_data(config):
+
+    utils.log_message(
+            1,
+            "Updating Shelly EM Live Data"
+            )
+
+    device_url = 'http://%s/status' % (config['shelly']['device_host'])
+    basic =  requests.auth.HTTPBasicAuth(
+            config['shelly']['device_username'], 
+            config['shelly']['device_password']) 
+
+    try:
+        utils.log_message(
+                1,
+                'Calling Shelly EM Device API.. url:%s' % (
+                    device_url
+                    )
+                )
+        resp = requests.get(
+                device_url, 
+                auth = basic)
+        device_resp_dict = resp.json()
+    except:
+        utils.log_message(
+                1,
+                'Shelly EM Device API Call to %s failed' % (
+                    device_url,
+                    )
+                )
+        return None, None
+
+    utils.log_message(
+            utils.gv_verbose,
+            'Device API Response\n%s\n' % (
+                json.dumps(device_resp_dict, indent = 4),
+                )
+            )
+
+    # convert to kW
+    grid = device_resp_dict['emeters'][0]['power'] / 1000
+    solar = device_resp_dict['emeters'][1]['power'] / 1000
+
+    return grid, solar
+
+
+def get_shelly_pro_em_live_data(config):
+
+    utils.log_message(
+            1,
+            "Updating Shelly Pro EM Live Data"
+            )
+
+    # CT 0 (Grid)
+    device_url = 'http://%s/rpc/EM1.GetStatus?id=0' % (config['shelly']['device_host'])
+    basic =  requests.auth.HTTPBasicAuth(
+            config['shelly']['device_username'], 
+            config['shelly']['device_password']) 
+
+    try:
+        utils.log_message(
+                1,
+                'Calling Shelly Pro EM Device API.. url:%s' % (
+                    device_url
+                    )
+                )
+        resp = requests.get(
+                device_url, 
+                auth = basic)
+        device_resp_dict = resp.json()
+    except:
+        utils.log_message(
+                1,
+                'Shelly EM Device API Call to %s failed' % (
+                    device_url,
+                    )
+                )
+        return None, None
+
+    utils.log_message(
+            utils.gv_verbose,
+            'Device API Response\n%s\n' % (
+                json.dumps(device_resp_dict, indent = 4),
+                )
+            )
+
+    # convert to kW
+    grid = device_resp_dict['act_power'] / 1000
+
+    # CT 1 (Solar)
+    device_url = 'http://%s/rpc/EM1.GetStatus?id=1' % (config['shelly']['device_host'])
+    basic =  requests.auth.HTTPBasicAuth(
+            config['shelly']['device_username'], 
+            config['shelly']['device_password']) 
+
+    try:
+        utils.log_message(
+                1,
+                'Calling Shelly Pro EM Device API.. url:%s' % (
+                    device_url
+                    )
+                )
+        resp = requests.get(
+                device_url, 
+                auth = basic)
+        device_resp_dict = resp.json()
+    except:
+        utils.log_message(
+                1,
+                'Shelly EM Device API Call to %s failed' % (
+                    device_url,
+                    )
+                )
+        return None, None
+
+    utils.log_message(
+            utils.gv_verbose,
+            'Device API Response\n%s\n' % (
+                json.dumps(device_resp_dict, indent = 4),
+                )
+            )
+
+    # convert to kW
+    solar = device_resp_dict['act_power'] / 1000
+
+    return grid, solar
+
+
 def get_live_data(config):
 
     utils.log_message(
@@ -483,41 +611,18 @@ def get_live_data(config):
                 )
         return
 
-    device_url = 'http://%s/status' % (config['shelly']['device_host'])
-    basic =  requests.auth.HTTPBasicAuth(
-            config['shelly']['device_username'], 
-            config['shelly']['device_password']) 
-
-    try:
+    if config['data_source'] == 'shelly-em':
+        grid, solar = get_shelly_em_live_data(config)
+    elif config['data_source'] == 'shelly-pro':
+        grid, solar = get_shelly_pro_em_live_data(config)
+    else:
         utils.log_message(
                 1,
-                'Calling Shelly Device API.. url:%s' % (
-                    device_url
-                    )
-                )
-        resp = requests.get(
-                device_url, 
-                auth = basic)
-        device_resp_dict = resp.json()
-    except:
-        utils.log_message(
-                1,
-                'Shelly Device API Call to %s failed' % (
-                    device_url,
+                "Shelly variant (%s) is not valid.. skipping device call" % (
+                    config['data_source']
                     )
                 )
         return
-
-    utils.log_message(
-            utils.gv_verbose,
-            'Device API Response\n%s\n' % (
-                json.dumps(device_resp_dict, indent = 4),
-                )
-            )
-
-    # convert to kW
-    grid = device_resp_dict['emeters'][0]['power'] / 1000
-    solar = device_resp_dict['emeters'][1]['power'] / 1000
 
     # render into separate values for import and export
     if grid >= 0:
