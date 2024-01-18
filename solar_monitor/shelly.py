@@ -623,6 +623,13 @@ def get_live_data(config):
                 )
         return
 
+    if grid is None or solar is None:
+        utils.log_message(
+                1,
+                "Live data call failed"
+                )
+        return
+
     # render into separate values for import and export
     if grid >= 0:
         grid_import = grid
@@ -631,9 +638,9 @@ def get_live_data(config):
         grid_import = 0
         grid_export = grid * -1
 
-    # solar treated as 0 for anything under 10w
+    # solar treated as 0 for anything under 5W
     # hides spurious values and negative inverter draw
-    if solar >= 0.010:
+    if solar >= 0.005:
         solar = solar
     else:
         solar = 0
