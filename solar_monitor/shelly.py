@@ -97,7 +97,8 @@ def get_shelly_api_data(
         config,
         date_range,
         date_from,
-        date_to):
+        date_to,
+        solar_discard):
 
     # check if creds are set
     if (
@@ -245,7 +246,12 @@ def get_shelly_api_data(
         # add on solar generation
         # works with repeat hours in DST rollback
         usage_rec = data_dict[ts]
-        usage_rec['solar'] += shelly_rec['consumption'] / 1000
+
+        # zero any value below specified discard value
+        solar = shelly_rec['consumption'] / 1000
+        if solar <= solar_discard:
+            solar = 0
+        usage_rec['solar'] += solar
 
         # generate/re-generate the consumed fields
         usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
@@ -302,11 +308,13 @@ def get_cloud_data(config):
                     dt_today.day
                     )
         
+        # using a solar discard of 5Wh (per hour)
         day_data = get_shelly_api_data(
                 config,
                 date_range = 'custom',
                 date_from = day_ago_str,
-                date_to = day_end_str)
+                date_to = day_end_str,
+                solar_discard = 0.005)
         
         if day_data:
             # reset timestamp
@@ -337,11 +345,13 @@ def get_cloud_data(config):
                     dt_today.day
                     )
         
+        # using a solar discard of 100Wh (per day)
         month_data = get_shelly_api_data(
                 config,
                 date_range = 'custom',
                 date_from = month_start_str,
-                date_to = month_end_str)
+                date_to = month_end_str,
+                solar_discard = 0.100)
 
         if month_data:
             # reset timestamp
@@ -402,11 +412,14 @@ def get_cloud_data(config):
                     dt_today.year
                     )
         
+        # using a solar discard of 0 (per month)
+        # can't apply one here
         year_data = get_shelly_api_data(
                 config,
                 date_range = 'custom',
                 date_from = last_year_start_str,
-                date_to = year_end_str)
+                date_to = year_end_str,
+                solar_discard = 0)
         
         if year_data:
             # reset timestamp
