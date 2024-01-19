@@ -198,9 +198,10 @@ def get_day_data(
         # works with repeat hours in DST rollback
         usage_rec = data_dict[ts]
 
-        # zero any value below 0.005 (5Wh)
+        # zero any value <= 0.005 (5Wh)
+        # neglible error readings
         solar = shelly_rec['consumption'] / 1000
-        if solar < 0.005:
+        if solar <= 0.005:
             solar = 0
 
         usage_rec['solar'] += solar
