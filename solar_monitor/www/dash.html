@@ -89,7 +89,7 @@
                 <div class="card-body text-center">
                     <center>
                         <a href="/admin"><div id="agg_donut_title" class="title"></div></a>
-                        <div onclick="cycle_metric_index()" id="donut_chart"></div>
+                        <div onclick="ui_cycle_metric_index()" id="donut_chart"></div>
                     </center>
                 </div>
             </div>
@@ -604,6 +604,16 @@
 
             display_data();
         }                                               
+
+        // manual cycle of metyric index
+        // and restart of timer
+        // used for UI-based tap cycling
+        function ui_cycle_metric_index() {
+            console.log("force_cycle_metric_index()");
+            clearInterval(metric_cycle_timer);
+            cycle_metric_index();
+            metric_cycle_timer = setInterval(cycle_metric_index, metric_cycle_interval);
+        }
 
         // renders and displays the current dashboard
         function display_data() {
