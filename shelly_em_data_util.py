@@ -197,7 +197,13 @@ def get_day_data(
         # add on solar generation
         # works with repeat hours in DST rollback
         usage_rec = data_dict[ts]
-        usage_rec['solar'] += shelly_rec['consumption'] / 1000
+
+        # zero any value below 0.005 (5Wh)
+        solar = shelly_rec['consumption'] / 1000
+        if solar < 0.005:
+            solar = 0
+
+        usage_rec['solar'] += solar
 
         # generate/re-generate the consumed fields
         usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
