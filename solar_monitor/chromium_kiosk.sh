@@ -20,6 +20,7 @@ sleep 5
 # chromium kiosk
 echo "Starting Chromium in kiosk mode"
 killall -9 chromium-browser
+export DISPLAY=:0
 
 flags=(
    --kiosk
@@ -38,6 +39,7 @@ chromium-browser "${flags[@]}" --app=http://localhost:8090 &
 
 # get the mouse out of the way
 sleep 10
-echo "moving mouse out of the way"
+WID=$(xdotool search --onlyvisible --class chromium|head -1)
+xdotool windowactivate ${WID}
+xdotool key F11
 xdotool mousemove 0 9000
-
