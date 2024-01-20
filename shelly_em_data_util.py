@@ -198,13 +198,21 @@ def get_day_data(
         # works with repeat hours in DST rollback
         usage_rec = data_dict[ts]
 
+        # grab both consumption/reversed readings
+        # consumption is solar and reversed would be 
+        # inverter draw
+        solar = shelly_rec['consumption'] / 1000
+        reversed = shelly_rec['reversed'] / 1000
+
         # zero any value <= 0.005 (5Wh)
         # neglible error readings
-        solar = shelly_rec['consumption'] / 1000
         if solar <= 0.005:
             solar = 0
 
+        # append the solar value and subtract
+        # and draw amount
         usage_rec['solar'] += solar
+        usage_rec['solar'] -= reversed
 
         # generate/re-generate the consumed fields
         usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
