@@ -20,11 +20,24 @@ sleep 5
 # chromium kiosk
 echo "Starting Chromium in kiosk mode"
 killall -9 chromium-browser
-chromium-browser \
-    --noerrdialogs \
-    --disable-infobars \
-    --no-first-run \
-    --ozone-platform=wayland \
-    --enable-features=OverlayScrollbar \
-    --start-maximized \
-    --kiosk http://localhost:8090
+
+flags=(
+   --kiosk
+   --touch-events=enabled
+   --disable-pinch
+   --noerrdialogs
+   --enable-features=OverlayScrollbar
+   --disable-session-crashed-bubble
+   --simulate-outdated-no-au='Tue, 31 Dec 2099 23:59:59 GMT'
+   --disable-component-update
+   --disable-features=TranslateUI
+   --autoplay-policy=no-user-gesture-required
+)
+
+chromium-browser "${flags[@]}" --app=http://localhost:8090 &
+
+# get the mouse out of the way
+sleep 10
+echo "moving mouse out of the way"
+xdotool mousemove 0 9000
+
