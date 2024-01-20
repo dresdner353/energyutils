@@ -247,11 +247,20 @@ def get_shelly_api_data(
         # works with repeat hours in DST rollback
         usage_rec = data_dict[ts]
 
-        # zero any value below specified discard value
+        # grab both consumption/reversed readings
+        # consumption is solar and reversed would be 
+        # inverter draw
         solar = shelly_rec['consumption'] / 1000
+        reversed = shelly_rec['reversed'] / 1000
+
+        # zero any value below specified discard value
         if solar <= solar_discard:
             solar = 0
+
+        # append the solar value and subtract
+        # and draw amount
         usage_rec['solar'] += solar
+        usage_rec['solar'] -= reversed
 
         # generate/re-generate the consumed fields
         usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
