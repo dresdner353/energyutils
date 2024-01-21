@@ -36,10 +36,15 @@ flags=(
 )
 
 chromium-browser "${flags[@]}" --app=http://localhost:8090 &
+exit
 
-# get the mouse out of the way
-sleep 10
-WID=$(xdotool search --onlyvisible --class chromium|head -1)
-xdotool windowactivate ${WID}
-xdotool key F11
-xdotool mousemove 0 9000
+# disabled for now
+while true
+do
+    WID=$(xdotool search --onlyvisible --class chromium|head -1)
+    echo "activate ${WID}"
+    xdotool windowactivate ${WID}
+    xdotool key F11
+    xdotool mousemove 0 9000
+    sleep 10
+done
