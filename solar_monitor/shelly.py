@@ -212,6 +212,7 @@ def get_shelly_api_data(
             usage_rec['import'] = 0
             usage_rec['export'] = 0
             usage_rec['solar'] = 0
+            usage_rec['solar_discard'] = 0
 
             # formatted time periods
             usage_rec['year'] = '%04d' %(
@@ -247,20 +248,38 @@ def get_shelly_api_data(
         # works with repeat hours in DST rollback
         usage_rec = data_dict[ts]
 
-        # grab both consumption/reversed readings
-        # consumption is solar and reversed would be 
-        # inverter draw
+        # solar generation is the "consumption"
+        # positive value from CT clamp
         solar = shelly_rec['consumption'] / 1000
-        reversed = shelly_rec['reversed'] / 1000
 
-        # zero any value below specified discard value
-        if solar <= solar_discard:
-            solar = 0
+        # Apply discard
+        if solar_resp_dict['interval'] == 'hour':
+            # apply the discard only if the solar generation is 
+            # at least twice the discard value
+            # when production is below the discard, zero it
+            if solar <= solar_discard:
+                usage_rec['solar_discard'] += solar
+                solar = 0
+            elif solar >= solar_discard * 2:
+                solar -= solar_discard
+                usage_rec['solar_discard'] += solar_discard
 
-        # append the solar value and subtract
-        # and draw amount
+        if solar_resp_dict['interval'] == 'day':
+            # apply the discard only if the solar generation is 
+            # at least twice the discard value
+            if solar >= solar_discard * 2:
+                solar -= solar_discard
+                usage_rec['solar_discard'] += solar_discard
+
+        if solar_resp_dict['interval'] == 'month':
+            # apply the discard only if the solar generation is 
+            # at least twice the discard value
+            if solar >= solar_discard * 2:
+                solar -= solar_discard
+                usage_rec['solar_discard'] += solar_discard
+
+        # append the solar value 
         usage_rec['solar'] += solar
-        usage_rec['solar'] -= reversed
 
         # generate/re-generate the consumed fields
         usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
@@ -323,7 +342,7 @@ def get_cloud_data(config):
                 date_range = 'custom',
                 date_from = day_ago_str,
                 date_to = day_end_str,
-                solar_discard = 0.005)
+                solar_discard = config['shelly']['hour_discard_kwh'])
         
         if day_data:
             # reset timestamp
@@ -360,7 +379,7 @@ def get_cloud_data(config):
                 date_range = 'custom',
                 date_from = month_start_str,
                 date_to = month_end_str,
-                solar_discard = 0.100)
+                solar_discard = config['shelly']['day_discard_kwh'])
 
         if month_data:
             # reset timestamp
@@ -428,7 +447,7 @@ def get_cloud_data(config):
                 date_range = 'custom',
                 date_from = last_year_start_str,
                 date_to = year_end_str,
-                solar_discard = 0)
+                solar_discard = config['shelly']['day_discard_kwh'] * 30)
         
         if year_data:
             # reset timestamp
