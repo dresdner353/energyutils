@@ -265,15 +265,21 @@ def get_shelly_api_data(
                 usage_rec['solar_discard'] += solar_discard
 
         if solar_resp_dict['interval'] == 'day':
-            # apply the discard only if the solar generation is 
-            # at least twice the discard value
+            # for daily discard, check the slapsed time for 
+            # the dat timestamp to now. Use this to apply a scaled
+            # daily discard 
+            # this will only apply to the current today
             now = int(time.time())
             day_elapsed = now - ts
             if day_elapsed < 86400:
+                # incomplete day
                 effective_discard = solar_discard * day_elapsed / 86400
             else:
+                # +1 day past or older
                 effective_discard = solar_discard
                 
+            # apply the discard only if the solar generation is 
+            # at least twice the discard value
             if solar >= solar_discard * 2:
                 solar -= effective_discard
                 usage_rec['solar_discard'] += effective_discard
