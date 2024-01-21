@@ -207,8 +207,8 @@ def get_day_data(
         # caters for neglible error readings at night
         # Also subtract if value exceeds twice the discard
         if solar <= solar_discard:
-            solar = 0
             usage_rec['solar_discard'] += solar
+            solar = 0
         elif solar >= solar_discard * 2:
             solar -= solar_discard
             usage_rec['solar_discard'] += solar_discard
