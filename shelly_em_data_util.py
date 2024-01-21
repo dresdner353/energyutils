@@ -45,7 +45,8 @@ def get_day_data(
         auth_key,
         device_id,
         date_ref,
-        odir):
+        odir,
+        solar_discard):
 
     global gv_verbose
 
@@ -154,6 +155,7 @@ def get_day_data(
             usage_rec['import'] = 0
             usage_rec['export'] = 0
             usage_rec['solar'] = 0
+            usage_rec['solar_discard'] = 0
             usage_rec['ts'] = ts
             usage_rec['datetime'] = ts_dt.strftime('%Y/%m/%d %H:%M:%S')
 
@@ -198,21 +200,21 @@ def get_day_data(
         # works with repeat hours in DST rollback
         usage_rec = data_dict[ts]
 
-        # grab both consumption/reversed readings
-        # consumption is solar and reversed would be 
-        # inverter draw
+        # solar
         solar = shelly_rec['consumption'] / 1000
-        reversed = shelly_rec['reversed'] / 1000
 
-        # zero any value <= 0.005 (5Wh)
-        # neglible error readings
-        if solar <= 0.005:
+        # zero any value <= the solar discard
+        # caters for neglible error readings at night
+        # Also subtract if value exceeds twice the discard
+        if solar <= solar_discard:
             solar = 0
+            usage_rec['solar_discard'] += solar
+        elif solar >= solar_discard * 2:
+            solar -= solar_discard
+            usage_rec['solar_discard'] += solar_discard
 
-        # append the solar value and subtract
-        # and draw amount
+        # append the solar value 
         usage_rec['solar'] += solar
-        usage_rec['solar'] -= reversed
 
         # generate/re-generate the consumed fields
         usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
@@ -275,6 +277,14 @@ parser.add_argument(
         )
 
 parser.add_argument(
+        '--solar_discard', 
+        help = 'per-hour error discard for Solar (kWh)', 
+        type = float,
+        default = 0,
+        required = False
+        )
+
+parser.add_argument(
         '--id', 
         help = 'Device ID', 
         required = True
@@ -297,6 +307,7 @@ api_host = args['host']
 backfill_days = args['days']
 odir = args['odir']
 device_id = args['id']
+solar_discard = args['solar_discard']
 auth_key = args['auth_key']
 gv_verbose = args['verbose']
 
@@ -320,7 +331,8 @@ for i in range(0, backfill_days):
             auth_key = auth_key,
             device_id = device_id,
             date_ref = date_ref,
-            odir = odir)
+            odir = odir,
+            solar_discard = solar_discard)
 
     # move back to previous day
     date_ref = date_ref - datetime.timedelta(days = 1)
