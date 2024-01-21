@@ -193,7 +193,8 @@ def add_worksheet(
                     'currency_4dp', 
                     'currency_2dp', 
                     'percent', 
-                    'kwh']:
+                    'kwh',
+                    'kwh_3dp']:
                 if field in rec:
                     value = rec[field]
                 else:
@@ -809,6 +810,14 @@ kwh_format = workbook.add_format()
 kwh_format.set_num_format('#,##0.00 "kWh"') 
 format_dict['kwh'] = kwh_format
 
+# 3dp variant of kwh 
+# only needed for smaller offset-type fields
+# such as solar_discard
+kwh_3dp_format = workbook.add_format() 
+# with commas and 3 decimal places
+kwh_3dp_format.set_num_format('#,##0.000 "kWh"') 
+format_dict['kwh_3dp'] = kwh_3dp_format
+
 percent_format = workbook.add_format() 
 percent_format.set_num_format('0.0%') 
 format_dict['percent'] = percent_format
@@ -935,6 +944,13 @@ field_dict = {
             'width' : 12,
             'header_format' : 'header',
             'format' : 'kwh',
+            },
+
+        'solar_discard' : {
+            'title' : 'Solar Discard',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'kwh_3dp',
             },
 
         'battery_solar_charge' : {
