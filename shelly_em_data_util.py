@@ -209,7 +209,7 @@ def get_day_data(
         if solar <= solar_discard:
             usage_rec['solar_discard'] += solar
             solar = 0
-        elif solar >= solar_discard * 2:
+        elif solar >= solar_discard:
             solar -= solar_discard
             usage_rec['solar_discard'] += solar_discard
 
@@ -217,7 +217,10 @@ def get_day_data(
         usage_rec['solar'] += solar
 
         # generate/re-generate the consumed fields
+        # solar_consumed is zeroed if it goes negative due to the discard
         usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export']
+        if usage_rec['solar_consumed'] < 0:
+            usage_rec['solar_consumed'] = 0
         usage_rec['consumed'] = usage_rec['import'] + usage_rec['solar_consumed']
 
     # no data, nothing to do
