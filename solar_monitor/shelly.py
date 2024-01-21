@@ -230,6 +230,7 @@ def get_shelly_api_data(
         usage_rec['export'] += shelly_rec['reversed'] / 1000
 
     # merge in solar production
+    now = int(time.time())
     for shelly_rec in solar_resp_dict['history']:
         # skip any missing records
         # and note partial data scenario
@@ -243,9 +244,7 @@ def get_shelly_api_data(
                 shelly_rec['datetime'],
                 grid_resp_dict['timezone'])
 
-        # retrieve usage rec from dict and 
-        # add on solar generation
-        # works with repeat hours in DST rollback
+        # retrieve usage rec from dict 
         usage_rec = data_dict[ts]
 
         # solar generation is the "consumption"
@@ -265,22 +264,22 @@ def get_shelly_api_data(
                 usage_rec['solar_discard'] += solar_discard
 
         if solar_resp_dict['interval'] == 'day':
-            # for daily discard, check the slapsed time for 
-            # the dat timestamp to now. Use this to apply a scaled
-            # daily discard 
-            # this will only apply to the current today
-            now = int(time.time())
+            # for daily discard we calculate the elapsed time from
+            # start until now and scale the amount of discard applied 
+            # up to 4pm
             day_elapsed = now - ts
-            if day_elapsed < 86400:
-                # incomplete day
-                effective_discard = solar_discard * day_elapsed / 86400
+            cutoff_interval = 3600 * 16 # 16 hours, e.g. 4pm
+            if day_elapsed < cutoff_interval:
+                # incomplete day before 4pm
+                effective_discard = solar_discard * day_elapsed / cutoff_interval
             else:
-                # +1 day past or older
+                # 4pm today or an older day
+                # full discard applied
                 effective_discard = solar_discard
                 
             # apply the discard only if the solar generation is 
-            # at least twice the discard value
-            if solar >= solar_discard * 2:
+            # at least twice the calculated discard value
+            if solar >= effective_discard * 2:
                 solar -= effective_discard
                 usage_rec['solar_discard'] += effective_discard
 
