@@ -267,9 +267,16 @@ def get_shelly_api_data(
         if solar_resp_dict['interval'] == 'day':
             # apply the discard only if the solar generation is 
             # at least twice the discard value
+            now = int(time.time())
+            day_elapsed = now - ts
+            if day_elapsed < 86400:
+                effective_discard = solar_discard * day_elapsed / 86400
+            else:
+                effective_discard = solar_discard
+                
             if solar >= solar_discard * 2:
-                solar -= solar_discard
-                usage_rec['solar_discard'] += solar_discard
+                solar -= effective_discard
+                usage_rec['solar_discard'] += effective_discard
 
         if solar_resp_dict['interval'] == 'month':
             # apply the discard only if the solar generation is 
