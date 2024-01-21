@@ -37,6 +37,8 @@
                     $('#shelly_auth_key').val(config_dict['shelly']['auth_key']);
                     $('#shelly_api_host').val(config_dict['shelly']['api_host']);
                     $('#shelly_device_id').val(config_dict['shelly']['device_id']);
+                    $('#shelly_hour_discard_kwh').val(config_dict['shelly']['hour_discard_kwh']);
+                    $('#shelly_day_discard_kwh').val(config_dict['shelly']['day_discard_kwh']);
                     $('#shelly_device_host').val(config_dict['shelly']['device_host']);
                     $('#shelly_device_username').val(config_dict['shelly']['device_username']);
                     $('#shelly_device_password').val(config_dict['shelly']['device_password']);
@@ -132,6 +134,8 @@
             config_dict['shelly']['auth_key'] = $('#shelly_auth_key').val();
             config_dict['shelly']['api_host'] = $('#shelly_api_host').val();
             config_dict['shelly']['device_id'] = $('#shelly_device_id').val();
+            config_dict['shelly']['hour_discard_kwh'] = Number($('#shelly_hour_discard_kwh').val());
+            config_dict['shelly']['day_discard_kwh'] = Number($('#shelly_day_discard_kwh').val());
             config_dict['shelly']['device_host'] = $('#shelly_device_host').val();
             config_dict['shelly']['device_username'] = $('#shelly_device_username').val();
             config_dict['shelly']['device_password'] = $('#shelly_device_password').val();
@@ -231,6 +235,17 @@
                                             <input type="password" class="form-control" id="shelly_device_id" placeholder="xxxxxxxx">
                                             <label for="shelly_device_id">Shelly Device ID</label>
                                         </div>
+
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="shelly_hour_discard_kwh" placeholder="xxxxxxxx">
+                                            <label for="shelly_hour_discard">Hourly kWh discard</label>
+                                        </div>
+
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="shelly_day_discard_kwh" placeholder="xxxxxxxx">
+                                            <label for="shelly_day_discard">Daily kWh discard</label>
+                                        </div>
+
                                     </div>
                                     <div class="col">
                                         <div class="form-floating mb-3">
