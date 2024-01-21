@@ -336,7 +336,7 @@ def get_cloud_data(config):
                     dt_today.day
                     )
         
-        # using a solar discard of 5Wh (per hour)
+        # using configured hour discard
         day_data = get_shelly_api_data(
                 config,
                 date_range = 'custom',
@@ -373,7 +373,7 @@ def get_cloud_data(config):
                     dt_today.day
                     )
         
-        # using a solar discard of 100Wh (per day)
+        # using configured day discard
         month_data = get_shelly_api_data(
                 config,
                 date_range = 'custom',
@@ -440,8 +440,7 @@ def get_cloud_data(config):
                     dt_today.year
                     )
         
-        # using a solar discard of 0 (per month)
-        # can't apply one here
+        # using configured day discard times 30
         year_data = get_shelly_api_data(
                 config,
                 date_range = 'custom',
