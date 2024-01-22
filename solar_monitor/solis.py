@@ -286,11 +286,17 @@ def get_inverter_day_data(config):
             # adjust accumulated solar to relative
             usage_rec[field] = usage_rec[field] - offset_dict[field][offset_key]
 
+            # negative protection
+            if usage_rec[field] < 0:
+                usage_rec[field] = 0
+
             # add relative value to offset for next hour
             offset_dict[field][offset_key] += usage_rec[field]
 
         # calculate the solar consumed from the adjusted numbers
         usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export'] 
+        if usage_rec['solar_consumed'] < 0:
+            usage_rec['solar_consumed'] = 0
 
         # environmental metrics
         usage_rec['co2'] = (config['environment']['gco2_kwh'] * usage_rec['solar']) / 1000
