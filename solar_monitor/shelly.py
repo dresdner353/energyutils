@@ -277,16 +277,27 @@ def get_shelly_api_data(
                 # full discard applied
                 effective_discard = solar_discard
                 
-            # apply the discard only if the solar generation is 
-            # at least twice the calculated discard value
-            if solar >= effective_discard * 2:
+            # discard anything under 100Wh as this is not valid 
+            # for an entire day and indicated neglible values being 
+            # accumulated
+            # Then for larger values, apply the discard only if the 
+            # solar generation is at least twice the calculated discard value
+            if solar <= 0.1:
+                usage_rec['solar_discard'] += solar
+                solar = 0
+            elif solar >= effective_discard * 2:
                 solar -= effective_discard
                 usage_rec['solar_discard'] += effective_discard
 
         if solar_resp_dict['interval'] == 'month':
+            # same sanity of 100Wh.. throw away as its neglible
+            # would only apply here at the very first day of the month
             # apply the discard only if the solar generation is 
             # at least twice the discard value
-            if solar >= solar_discard * 2:
+            if solar <= 0.1:
+                usage_rec['solar_discard'] += solar
+                solar = 0
+            elif solar >= solar_discard * 2:
                 solar -= solar_discard
                 usage_rec['solar_discard'] += solar_discard
 
