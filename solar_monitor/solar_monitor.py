@@ -28,9 +28,12 @@ gv_root = '%s' % (
             )
         )
 
-# tracked device and API data
+# tracked inverter API data
 gv_data_dict = {}
 gv_data_dict['last_updated'] = 0
+
+# alternative grid data (for merging with inverter)
+gv_grid_dict = {}
 
 gv_refresh_interval = 1
 
@@ -137,9 +140,91 @@ def config_agent():
         time.sleep(10)
 
 
+def merge_grid_data():
+    global gv_data_dict
+    global gv_grid_dict
+    global gv_config_dict
+
+    # live metric
+    inverter_live_rec = gv_data_dict['metrics']['live']
+    grid_live_rec = gv_grid_dict['live']
+
+    # solar over-ride for old data
+    # The grid source (a shelly) is live
+    # The inverter is cloud-based and can go offline
+    # (string inverter). So if the grid source is older than 
+    # 15 mins, we zero solar
+    if (gv_grid_dict['last_updated'] - gv_data_dict['last_updated']) > 10 * 60:
+        inverter_live_rec['solar'] = 0
+
+    # direct over-rides (replacements)
+    inverter_live_rec['title'] = grid_live_rec['title']
+    inverter_live_rec['import'] = grid_live_rec['import']
+    inverter_live_rec['export'] = grid_live_rec['export']
+
+    # derived fields mixing grid and inverter sources
+    inverter_live_rec['solar_consumed'] = inverter_live_rec['solar'] - inverter_live_rec['export'] 
+    inverter_live_rec['consumed'] = inverter_live_rec['import'] + inverter_live_rec['solar_consumed']
+
+    # environmental metrics
+    inverter_live_rec['co2'] = (gv_config_dict['environment']['gco2_kwh'] * inverter_live_rec['solar']) / 1000
+    inverter_live_rec['trees'] = gv_config_dict['environment']['trees_kwh'] * inverter_live_rec['solar']
+
+    # last 12 months metric
+    # will be adjusted as we sweep year (month records) data
+    inverter_last_12_months_rec = gv_data_dict['metrics']['last_12_months']
+    inverter_last_12_months_rec['import'] = 0
+    inverter_last_12_months_rec['export'] = 0
+
+    # day, month and year record merges
+    # list records are keyed into a dict by 'key'
+    # and then related grid data merged in based on the common
+    # key. List records are automatically updated by reference
+    # no need to rebuild the lists
+    # metrics for today, yesterday, this_month and last_month
+    # get a free lunch here also as they are mere pointers to specifc 
+    # records in the other type lists
+    for record_type in ['day', 'month', 'year']:
+        inverter_dict = {}
+        for rec in gv_data_dict[record_type]:
+            inverter_dict[rec['key']] = rec
+
+        # merge pass from grid dict
+        for key in gv_grid_dict[record_type]:
+            if key in inverter_dict:
+                grid_rec = gv_grid_dict[record_type][key]
+                inverter_rec = inverter_dict[key]
+
+                # direct over-rides (replacements)
+                inverter_rec['import'] = grid_rec['import']
+                inverter_rec['export'] = grid_rec['export']
+
+                # derived fields mixing grid and inverter sources
+                inverter_rec['solar_consumed'] = inverter_rec['solar'] - inverter_rec['export'] 
+                inverter_rec['consumed'] = inverter_rec['import'] + inverter_rec['solar_consumed']
+
+                # environmental metrics
+                inverter_rec['co2'] = (gv_config_dict['environment']['gco2_kwh'] * inverter_rec['solar']) / 1000
+                inverter_rec['trees'] = gv_config_dict['environment']['trees_kwh'] * inverter_rec['solar']
+
+                # last 12 month adjustments
+                if record_type == 'year':
+                    inverter_last_12_months_rec['import'] += grid_rec['import']
+                    inverter_last_12_months_rec['export'] += grid_rec['export']
+
+    # finish up fixes to last 12 months
+    inverter_last_12_months_rec['solar_consumed'] = inverter_last_12_months_rec['solar'] - inverter_last_12_months_rec['export'] 
+    inverter_last_12_months_rec['consumed'] = inverter_last_12_months_rec['import'] + inverter_last_12_months_rec['solar_consumed']
+    inverter_last_12_months_rec['co2'] = (gv_config_dict['environment']['gco2_kwh'] * inverter_last_12_months_rec['solar']) / 1000
+    inverter_last_12_months_rec['trees'] = gv_config_dict['environment']['trees_kwh'] * inverter_last_12_months_rec['solar']
+
+    return
+
+
 def monitor_agent():
 
     global gv_data_dict
+    global gv_grid_dict
     global gv_config_dict
     global gv_force_refresh
     global gv_dev_mode
@@ -152,11 +237,10 @@ def monitor_agent():
             )
 
     sleep_interval = 5
+    grid_sleep_interval = 0
 
     while True:
-        if gv_config_dict['data_source'] in ['shelly-em', 'shelly-pro']:
-            gv_data_dict, sleep_interval = shelly.get_data(gv_config_dict)
-        elif gv_config_dict['data_source'] == 'solis':
+        if gv_config_dict['data_source'] == 'solis':
             gv_data_dict, sleep_interval = solis.get_data(gv_config_dict)
         else:
             utils.log_message(
@@ -165,6 +249,14 @@ def monitor_agent():
                     )
 
         # FIXME elseif others into place
+
+        if gv_config_dict['grid_source'] in ['shelly-em', 'shelly-pro']:
+            gv_grid_dict, grid_sleep_interval = shelly.get_data(gv_config_dict)
+            merge_grid_data()
+
+        # optional grid sleep interval over-ride
+        if grid_sleep_interval and grid_sleep_interval < sleep_interval:
+            sleep_interval = grid_sleep_interval
 
         # short sleep protection
         if sleep_interval < 5:
