@@ -31,14 +31,13 @@
 
                 // assert configured data source
                 $('#data_source').val(config_dict['data_source']);
+                $('#grid_source').val(config_dict['grid_source']);
                 toggle_config();
 
                 if ('shelly' in config_dict){
                     $('#shelly_auth_key').val(config_dict['shelly']['auth_key']);
                     $('#shelly_api_host').val(config_dict['shelly']['api_host']);
                     $('#shelly_device_id').val(config_dict['shelly']['device_id']);
-                    $('#shelly_hour_discard_kwh').val(config_dict['shelly']['hour_discard_kwh']);
-                    $('#shelly_day_discard_kwh').val(config_dict['shelly']['day_discard_kwh']);
                     $('#shelly_device_host').val(config_dict['shelly']['device_host']);
                     $('#shelly_device_username').val(config_dict['shelly']['device_username']);
                     $('#shelly_device_password').val(config_dict['shelly']['device_password']);
@@ -96,6 +95,7 @@
 
         function toggle_config() {
             var data_source = $('#data_source').find(":selected").val();
+            var grid_source = $('#grid_source').find(":selected").val();
 
             // hide all data source sections
             $("#shelly_config").hide();
@@ -103,7 +103,7 @@
             $("#sofar_config").hide();
             $("#huawei_config").hide();
 
-            // then show the selected one
+            // Display Inverter config
             switch(data_source) {
               case "shelly-em":
               case "shelly-pro":
@@ -122,6 +122,14 @@
               $("#huawei_config").show();
               break;
             }
+
+            // Display alternative Grid source config
+            switch(grid_source) {
+              case "shelly-em":
+              case "shelly-pro":
+              $("#shelly_config").show();
+              break;
+            }
         }
 
         // format action handler
@@ -129,13 +137,12 @@
             config_dict = {};
 
             config_dict['data_source'] = $('#data_source').val();
+            config_dict['grid_source'] = $('#grid_source').val();
 
             config_dict['shelly'] = {}
             config_dict['shelly']['auth_key'] = $('#shelly_auth_key').val();
             config_dict['shelly']['api_host'] = $('#shelly_api_host').val();
             config_dict['shelly']['device_id'] = $('#shelly_device_id').val();
-            config_dict['shelly']['hour_discard_kwh'] = Number($('#shelly_hour_discard_kwh').val());
-            config_dict['shelly']['day_discard_kwh'] = Number($('#shelly_day_discard_kwh').val());
             config_dict['shelly']['device_host'] = $('#shelly_device_host').val();
             config_dict['shelly']['device_username'] = $('#shelly_device_username').val();
             config_dict['shelly']['device_password'] = $('#shelly_device_password').val();
@@ -208,13 +215,18 @@
 
                             <div class="row">
                                 <div class="input-group mb-3">
-                                    <span class="input-group-text">Inverter/Cloud Source</span>
+                                    <span class="input-group-text">Inverter</span>
                                     <select id="data_source" class="form-select" onchange="toggle_config()">
-                                        <option value="shelly-em">Shelly EM Device & Shelly Cloud</option>
-                                        <option value="shelly-pro">Shelly Pro EM Device & Shelly Cloud</option>
                                         <option value="solis">Solis Cloud</option>
                                         <option value="sofar">Sofar Cloud</option>
                                         <option value="huawei">Huawei Cloud</option>
+                                    </select>
+
+                                    <span class="input-group-text">Import/Export Source</span>
+                                    <select id="grid_source" class="form-select" onchange="toggle_config()">
+                                        <option value="inverter">Inverter</option>
+                                        <option value="shelly-em">Shelly EM/Shelly Cloud</option>
+                                        <option value="shelly-pro">Shelly Pro EM/Shelly Cloud</option>
                                     </select>
                                 </div>
                             </div>
@@ -234,16 +246,6 @@
                                         <div class="form-floating mb-3">
                                             <input type="password" class="form-control" id="shelly_device_id" placeholder="xxxxxxxx">
                                             <label for="shelly_device_id">Shelly Device ID</label>
-                                        </div>
-
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control" id="shelly_hour_discard_kwh" placeholder="xxxxxxxx">
-                                            <label for="shelly_hour_discard">Hourly kWh discard</label>
-                                        </div>
-
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control" id="shelly_day_discard_kwh" placeholder="xxxxxxxx">
-                                            <label for="shelly_day_discard">Daily kWh discard</label>
                                         </div>
 
                                     </div>
