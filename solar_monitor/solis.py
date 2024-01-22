@@ -10,67 +10,71 @@ import base64
 import utils
 
 # tracked device and API data
-gv_data_dict = {}
-gv_data_dict['last_updated'] = 0
+gv_solis_dict = {}
+gv_solis_dict['last_updated'] = 0
 
 # day, month and year records
-gv_data_dict['day'] = []
-gv_data_dict['month'] = []
-gv_data_dict['year'] = []
+gv_solis_dict['day'] = []
+gv_solis_dict['month'] = []
+gv_solis_dict['year'] = []
 
 # metrics
-gv_data_dict['metrics'] = {}
-gv_data_dict['metrics']['live'] = {}
-gv_data_dict['metrics']['live']['title'] = 'Now'
-gv_data_dict['metrics']['live']['import'] = 0
-gv_data_dict['metrics']['live']['solar'] = 0
-gv_data_dict['metrics']['live']['solar_consumed'] = 0
-gv_data_dict['metrics']['live']['export'] = 0
-gv_data_dict['metrics']['live']['consumed'] = 0
+gv_solis_dict['metrics'] = {}
+gv_solis_dict['metrics']['live'] = {}
+gv_solis_dict['metrics']['live']['title'] = 'Now'
+gv_solis_dict['metrics']['live']['import'] = 0
+gv_solis_dict['metrics']['live']['solar'] = 0
+gv_solis_dict['metrics']['live']['solar_consumed'] = 0
+gv_solis_dict['metrics']['live']['export'] = 0
+gv_solis_dict['metrics']['live']['consumed'] = 0
 
-gv_data_dict['metrics']['today'] = {}
-gv_data_dict['metrics']['today']['title'] = 'Today'
-gv_data_dict['metrics']['today']['import'] = 0
-gv_data_dict['metrics']['today']['solar'] = 0
-gv_data_dict['metrics']['today']['solar_consumed'] = 0
-gv_data_dict['metrics']['today']['export'] = 0
-gv_data_dict['metrics']['today']['consumed'] = 0
+gv_solis_dict['metrics']['today'] = {}
+gv_solis_dict['metrics']['today']['title'] = 'Today'
+gv_solis_dict['metrics']['today']['import'] = 0
+gv_solis_dict['metrics']['today']['solar'] = 0
+gv_solis_dict['metrics']['today']['solar_consumed'] = 0
+gv_solis_dict['metrics']['today']['export'] = 0
+gv_solis_dict['metrics']['today']['consumed'] = 0
 
-gv_data_dict['metrics']['yesterday'] = {}
-gv_data_dict['metrics']['yesterday']['title'] = 'Yesterday'
-gv_data_dict['metrics']['yesterday']['import'] = 0
-gv_data_dict['metrics']['yesterday']['solar'] = 0
-gv_data_dict['metrics']['yesterday']['solar_consumed'] = 0
-gv_data_dict['metrics']['yesterday']['export'] = 0
-gv_data_dict['metrics']['yesterday']['consumed'] = 0
+gv_solis_dict['metrics']['yesterday'] = {}
+gv_solis_dict['metrics']['yesterday']['title'] = 'Yesterday'
+gv_solis_dict['metrics']['yesterday']['import'] = 0
+gv_solis_dict['metrics']['yesterday']['solar'] = 0
+gv_solis_dict['metrics']['yesterday']['solar_consumed'] = 0
+gv_solis_dict['metrics']['yesterday']['export'] = 0
+gv_solis_dict['metrics']['yesterday']['consumed'] = 0
 
-gv_data_dict['metrics']['this_month'] = {}
-gv_data_dict['metrics']['this_month']['title'] = 'This Month'
-gv_data_dict['metrics']['this_month']['import'] = 0
-gv_data_dict['metrics']['this_month']['solar'] = 0
-gv_data_dict['metrics']['this_month']['solar_consumed'] = 0
-gv_data_dict['metrics']['this_month']['export'] = 0
-gv_data_dict['metrics']['this_month']['consumed'] = 0
+gv_solis_dict['metrics']['this_month'] = {}
+gv_solis_dict['metrics']['this_month']['title'] = 'This Month'
+gv_solis_dict['metrics']['this_month']['import'] = 0
+gv_solis_dict['metrics']['this_month']['solar'] = 0
+gv_solis_dict['metrics']['this_month']['solar_consumed'] = 0
+gv_solis_dict['metrics']['this_month']['export'] = 0
+gv_solis_dict['metrics']['this_month']['consumed'] = 0
 
-gv_data_dict['metrics']['last_month'] = {}
-gv_data_dict['metrics']['last_month']['title'] = 'Last Month'
-gv_data_dict['metrics']['last_month']['import'] = 0
-gv_data_dict['metrics']['last_month']['solar'] = 0
-gv_data_dict['metrics']['last_month']['solar_consumed'] = 0
-gv_data_dict['metrics']['last_month']['export'] = 0
-gv_data_dict['metrics']['last_month']['consumed'] = 0
+gv_solis_dict['metrics']['last_month'] = {}
+gv_solis_dict['metrics']['last_month']['title'] = 'Last Month'
+gv_solis_dict['metrics']['last_month']['import'] = 0
+gv_solis_dict['metrics']['last_month']['solar'] = 0
+gv_solis_dict['metrics']['last_month']['solar_consumed'] = 0
+gv_solis_dict['metrics']['last_month']['export'] = 0
+gv_solis_dict['metrics']['last_month']['consumed'] = 0
 
-gv_data_dict['metrics']['last_12_months'] = {}
-gv_data_dict['metrics']['last_12_months']['title'] = 'Last 12 Months'
-gv_data_dict['metrics']['last_12_months']['import'] = 0
-gv_data_dict['metrics']['last_12_months']['solar'] = 0
-gv_data_dict['metrics']['last_12_months']['solar_consumed'] = 0
-gv_data_dict['metrics']['last_12_months']['export'] = 0
-gv_data_dict['metrics']['last_12_months']['consumed'] = 0
+gv_solis_dict['metrics']['last_12_months'] = {}
+gv_solis_dict['metrics']['last_12_months']['title'] = 'Last 12 Months'
+gv_solis_dict['metrics']['last_12_months']['import'] = 0
+gv_solis_dict['metrics']['last_12_months']['solar'] = 0
+gv_solis_dict['metrics']['last_12_months']['solar_consumed'] = 0
+gv_solis_dict['metrics']['last_12_months']['export'] = 0
+gv_solis_dict['metrics']['last_12_months']['consumed'] = 0
 
 # timestamps to track the next call
+day_ts = 0
 month_ts = 0
 year_ts = 0
+
+# battery presence tracking
+gv_battery_is_present = False
 
 # adapted from code
 # in https://github.com/Gentleman1983/ginlong_solis_api_connector
@@ -139,11 +143,18 @@ def get_solis_cloud_data(
 
 
 def get_inverter_day_data(config):
-    global gv_data_dict
+    global day_ts
+    global gv_solis_dict
+    global gv_battery_is_present
+
+    now = int(time.time())
+    # do not refresh before time
+    if now < day_ts:
+        return
 
     utils.log_message(
             1,
-            "Updating Solis Day Data"
+            "Updating Solis Day Data now:%d day_ts:%d" % (now, day_ts)
             )
 
     # objective is the last 36 hours of data
@@ -160,10 +171,10 @@ def get_inverter_day_data(config):
 
     # 36 hour back-reference period could be spanning 2-3 days
     # so we offset by 36 hours and pull each day spanned
-    now = datetime.datetime.now()
-    start_dt = now - datetime.timedelta(hours = 36)
+    dt_now = datetime.datetime.now()
+    start_dt = dt_now - datetime.timedelta(hours = 36)
     start_day = start_dt.date()
-    end_day = now.date()
+    end_day = dt_now.date()
 
     data_dict = {}
     solis_snap_list = []
@@ -192,6 +203,14 @@ def get_inverter_day_data(config):
         ts = int(solis_snap_rec['dataTimestamp']) // 1000
         ts_dt = datetime.datetime.fromtimestamp(ts)
 
+        # battery detection
+        # This is a tad crude but appears to be non-zero
+        # for a battery setup and zero otherwise
+        if solis_snap_rec['batteryChargingCurrent'] > 0:
+            gv_battery_is_present = True
+        else:
+            gv_battery_is_present = False
+
         # key day-hour
         key = ts_dt.strftime('%d-%H')
         if key in data_dict:
@@ -199,7 +218,13 @@ def get_inverter_day_data(config):
             usage_rec = data_dict[key]
         else:
             # init and index new record
+            key = '%04d-%02d-%02d-%02d' % (
+                    ts_dt.year,
+                    ts_dt.month,
+                    ts_dt.day,
+                    ts_dt.hour)
             usage_rec = {}
+            usage_rec['key'] = key
             usage_rec['year'] = ts_dt.strftime('%Y')
             usage_rec['month'] = ts_dt.strftime('%b')
             usage_rec['day'] = ts_dt.day
@@ -209,8 +234,10 @@ def get_inverter_day_data(config):
             usage_rec['export'] = 0
             usage_rec['consumed'] = 0
             usage_rec['solar_consumed'] = 0
-            usage_rec['battery_charge'] = 0
-            usage_rec['battery_discharge'] = 0
+
+            if gv_battery_is_present:
+                usage_rec['battery_charge'] = 0
+                usage_rec['battery_discharge'] = 0
 
             data_dict[key] = usage_rec
 
@@ -220,8 +247,9 @@ def get_inverter_day_data(config):
         usage_rec['import'] = max(usage_rec['import'], solis_snap_rec['gridPurchasedTodayEnergy'])
         usage_rec['export'] = max(usage_rec['export'], solis_snap_rec['gridSellTodayEnergy'])
         usage_rec['consumed'] = max(usage_rec['consumed'], solis_snap_rec['homeLoadTodayEnergy'])
-        usage_rec['battery_charge'] = max(usage_rec['battery_charge'], solis_snap_rec['batteryTodayChargeEnergy'])
-        usage_rec['battery_discharge'] = max(usage_rec['battery_discharge'], solis_snap_rec['batteryTodayDischargeEnergy'])
+        if gv_battery_is_present:
+            usage_rec['battery_charge'] = max(usage_rec['battery_charge'], solis_snap_rec['batteryTodayChargeEnergy'])
+            usage_rec['battery_discharge'] = max(usage_rec['battery_discharge'], solis_snap_rec['batteryTodayDischargeEnergy'])
 
     # adjust values to relative 
     # difference from previous hours record
@@ -242,6 +270,12 @@ def get_inverter_day_data(config):
         usage_rec = data_dict[key]
 
         for field in field_list:
+
+            # not all fields present 
+            # such as battery props
+            if not field in usage_rec:
+                continue
+
             # offset keyed per unique day
             # init offset to 0 for first
             # encounter of given day
@@ -273,10 +307,10 @@ def get_inverter_day_data(config):
     for key in sorted(culled_dict.keys()):
         data_list.append(culled_dict[key])
 
-    gv_data_dict['day'] = data_list
+    gv_solis_dict['day'] = data_list
 
     latest_snap_rec = solis_snap_list[-1]
-    gv_data_dict['last_updated'] = int(latest_snap_rec['dataTimestamp']) // 1000
+    gv_solis_dict['last_updated'] = int(latest_snap_rec['dataTimestamp']) // 1000
 
     solar = latest_snap_rec['pac'] / 1000
     grid = latest_snap_rec['pSum'] / 1000 
@@ -284,9 +318,9 @@ def get_inverter_day_data(config):
     battery = latest_snap_rec['batteryPower'] / 1000
     battery_soc = latest_snap_rec['batteryCapacitySoc']
 
-    live_rec = gv_data_dict['metrics']['live']
+    live_rec = gv_solis_dict['metrics']['live']
     time_str = datetime.datetime.fromtimestamp(
-            gv_data_dict['last_updated']).strftime('%H:%M:%S')
+            gv_solis_dict['last_updated']).strftime('%H:%M:%S')
     live_rec['title'] = 'Live Usage @%s' % (time_str)
 
     if grid <= 0:
@@ -298,19 +332,19 @@ def get_inverter_day_data(config):
 
     live_rec['solar'] = solar
 
-    # populate charge and one of charge or discharge
+    if gv_battery_is_present:
+        # populate charge and one of charge or discharge
+        # purge charge and discharge initially
+        for field in ['battery_discharge', 'battery_charge']:
+            if field in live_rec:
+                del live_rec[field]
 
-    # purge charge and discharge initially
-    for field in ['battery_discharge', 'battery_charge']:
-        if field in live_rec:
-            del live_rec[field]
+            live_rec['battery_soc'] = battery_soc
 
-    live_rec['battery_soc'] = battery_soc
-
-    if battery >= 0:
-        live_rec['battery_charge'] = battery
-    else:
-        live_rec['battery_discharge'] = battery * -1
+        if battery >= 0:
+            live_rec['battery_charge'] = battery
+        else:
+            live_rec['battery_discharge'] = battery * -1
 
     live_rec['solar_consumed'] = 0
     if live_rec['solar'] > 0:
@@ -321,12 +355,17 @@ def get_inverter_day_data(config):
     live_rec['co2'] = (config['environment']['gco2_kwh'] * solar) / 1000
     live_rec['trees'] = config['environment']['trees_kwh'] * solar
 
+    # new refresh time
+    # 5 mins, 20 secs after last official inverter update
+    day_ts = gv_solis_dict['last_updated'] + 300 + 20
+
     return
 
 
 def get_inverter_month_data(config):
     global month_ts
-    global gv_data_dict
+    global gv_solis_dict
+    global gv_battery_is_present
 
     now = int(time.time())
     dt_now = datetime.datetime.today() 
@@ -387,13 +426,19 @@ def get_inverter_month_data(config):
     for solis_day_rec in solis_day_list:
         ts = solis_day_rec['date'] // 1000
         ts_dt = datetime.datetime.fromtimestamp(ts)
+        key = '%04d-%02d-%02d-00' % (
+                ts_dt.year,
+                ts_dt.month,
+                ts_dt.day)
         usage_rec = {}
+        usage_rec['key'] = key
         usage_rec['import'] = solis_day_rec['gridPurchasedEnergy']
         usage_rec['export'] = solis_day_rec['gridSellEnergy']
-        usage_rec['battery_charge'] = solis_day_rec['batteryChargeEnergy']
-        usage_rec['battery_discharge'] = solis_day_rec['batteryDischargeEnergy']
         usage_rec['solar'] = solis_day_rec['energy']
         usage_rec['consumed'] = solis_day_rec['consumeEnergy']
+        if gv_battery_is_present:
+            usage_rec['battery_charge'] = solis_day_rec['batteryChargeEnergy']
+            usage_rec['battery_discharge'] = solis_day_rec['batteryDischargeEnergy']
 
         usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export'] 
         usage_rec['year'] = ts_dt.strftime('%Y')
@@ -417,22 +462,22 @@ def get_inverter_month_data(config):
     for key in sorted(culled_dict.keys()):
         month_data.append(culled_dict[key])
 
-    gv_data_dict['month'] = month_data
+    gv_solis_dict['month'] = month_data
 
     # take todays totals from last recorded day in month
     today_rec = month_data[-1]
-    gv_data_dict['metrics']['today'] = month_data[-1]
-    gv_data_dict['metrics']['today']['title'] = 'Today (%s %d %s)' % (
-            gv_data_dict['metrics']['today']['month'], 
-            gv_data_dict['metrics']['today']['day'], 
-            gv_data_dict['metrics']['today']['year'])
+    gv_solis_dict['metrics']['today'] = month_data[-1]
+    gv_solis_dict['metrics']['today']['title'] = 'Today (%s %d %s)' % (
+            gv_solis_dict['metrics']['today']['month'], 
+            gv_solis_dict['metrics']['today']['day'], 
+            gv_solis_dict['metrics']['today']['year'])
 
     if len(month_data) >= 2:
-        gv_data_dict['metrics']['yesterday'] = month_data[-2]
-        gv_data_dict['metrics']['yesterday']['title'] = 'Yesterday (%s %d %s)' % (
-                gv_data_dict['metrics']['yesterday']['month'], 
-                gv_data_dict['metrics']['yesterday']['day'], 
-                gv_data_dict['metrics']['yesterday']['year'])
+        gv_solis_dict['metrics']['yesterday'] = month_data[-2]
+        gv_solis_dict['metrics']['yesterday']['title'] = 'Yesterday (%s %d %s)' % (
+                gv_solis_dict['metrics']['yesterday']['month'], 
+                gv_solis_dict['metrics']['yesterday']['day'], 
+                gv_solis_dict['metrics']['yesterday']['year'])
 
     # new refresh time
     month_ts = ((70 - dt_now.minute) * 60) + now
@@ -442,7 +487,8 @@ def get_inverter_month_data(config):
 
 def get_inverter_year_data(config):
     global year_ts
-    global gv_data_dict
+    global gv_solis_dict
+    global gv_battery_is_present
 
     now = int(time.time())
     dt_now = datetime.datetime.today() 
@@ -494,13 +540,18 @@ def get_inverter_year_data(config):
     for solis_month_rec in solis_month_list:
         ts = solis_month_rec['date'] // 1000
         ts_dt = datetime.datetime.fromtimestamp(ts)
+        key = '%04d-%02d-01-00' % (
+                ts_dt.year,
+                ts_dt.month)
         usage_rec = {}
+        usage_rec['key'] = key
         usage_rec['import'] = solis_month_rec['gridPurchasedEnergy']
         usage_rec['export'] = solis_month_rec['gridSellEnergy']
-        usage_rec['battery_charge'] = solis_month_rec['batteryChargeEnergy']
-        usage_rec['battery_discharge'] = solis_month_rec['batteryDischargeEnergy']
         usage_rec['solar'] = solis_month_rec['energy']
         usage_rec['consumed'] = solis_month_rec['consumeEnergy']
+        if gv_battery_is_present:
+            usage_rec['battery_charge'] = solis_month_rec['batteryChargeEnergy']
+            usage_rec['battery_discharge'] = solis_month_rec['batteryDischargeEnergy']
 
         usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export'] 
         usage_rec['year'] = ts_dt.strftime('%Y')
@@ -523,45 +574,48 @@ def get_inverter_year_data(config):
     for key in sorted(culled_dict.keys()):
         year_data.append(culled_dict[key])
 
-    gv_data_dict['year'] = year_data
+    gv_solis_dict['year'] = year_data
 
     # take months totals from last recorded month in year
-    gv_data_dict['metrics']['this_month'] = year_data[-1]
-    gv_data_dict['metrics']['this_month']['title'] = 'This Month (%s %s)' % (
-            gv_data_dict['metrics']['this_month']['month'], 
-            gv_data_dict['metrics']['this_month']['year'])
+    gv_solis_dict['metrics']['this_month'] = year_data[-1]
+    gv_solis_dict['metrics']['this_month']['title'] = 'This Month (%s %s)' % (
+            gv_solis_dict['metrics']['this_month']['month'], 
+            gv_solis_dict['metrics']['this_month']['year'])
 
     if len(year_data) >= 2:
-        gv_data_dict['metrics']['last_month'] = year_data[-2]
-        gv_data_dict['metrics']['last_month']['title'] = 'Last Month (%s %s)' % (
-                gv_data_dict['metrics']['last_month']['month'], 
-                gv_data_dict['metrics']['last_month']['year'])
+        gv_solis_dict['metrics']['last_month'] = year_data[-2]
+        gv_solis_dict['metrics']['last_month']['title'] = 'Last Month (%s %s)' % (
+                gv_solis_dict['metrics']['last_month']['month'], 
+                gv_solis_dict['metrics']['last_month']['year'])
 
     # last 12 months year
     # add all month records 
 
     # reset
-    gv_data_dict['metrics']['last_12_months']['title'] = 'Last %d Months' % (len(year_data))
-    gv_data_dict['metrics']['last_12_months']['import'] = 0
-    gv_data_dict['metrics']['last_12_months']['solar'] = 0
-    gv_data_dict['metrics']['last_12_months']['solar_consumed'] = 0
-    gv_data_dict['metrics']['last_12_months']['export'] = 0
-    gv_data_dict['metrics']['last_12_months']['consumed'] = 0
-    gv_data_dict['metrics']['last_12_months']['battery_charge'] = 0
-    gv_data_dict['metrics']['last_12_months']['battery_discharge'] = 0
-    gv_data_dict['metrics']['last_12_months']['co2'] = 0
-    gv_data_dict['metrics']['last_12_months']['trees'] = 0
+    gv_solis_dict['metrics']['last_12_months']['title'] = 'Last %d Months' % (len(year_data))
+    gv_solis_dict['metrics']['last_12_months']['import'] = 0
+    gv_solis_dict['metrics']['last_12_months']['solar'] = 0
+    gv_solis_dict['metrics']['last_12_months']['solar_consumed'] = 0
+    gv_solis_dict['metrics']['last_12_months']['export'] = 0
+    gv_solis_dict['metrics']['last_12_months']['consumed'] = 0
+    gv_solis_dict['metrics']['last_12_months']['co2'] = 0
+    gv_solis_dict['metrics']['last_12_months']['trees'] = 0
+    if gv_battery_is_present:
+        gv_solis_dict['metrics']['last_12_months']['battery_charge'] = 0
+        gv_solis_dict['metrics']['last_12_months']['battery_discharge'] = 0
 
     for month_rec in year_data:
-        gv_data_dict['metrics']['last_12_months']['import'] += month_rec['import']
-        gv_data_dict['metrics']['last_12_months']['solar'] += month_rec['solar']
-        gv_data_dict['metrics']['last_12_months']['solar_consumed'] += month_rec['solar_consumed']
-        gv_data_dict['metrics']['last_12_months']['export'] += month_rec['export']
-        gv_data_dict['metrics']['last_12_months']['consumed'] += month_rec['consumed'] 
-        gv_data_dict['metrics']['last_12_months']['battery_charge'] += month_rec['battery_charge']
-        gv_data_dict['metrics']['last_12_months']['battery_discharge'] += month_rec['battery_discharge']
-        gv_data_dict['metrics']['last_12_months']['co2'] += month_rec['co2']
-        gv_data_dict['metrics']['last_12_months']['trees'] += month_rec['trees']
+        gv_solis_dict['metrics']['last_12_months']['import'] += month_rec['import']
+        gv_solis_dict['metrics']['last_12_months']['solar'] += month_rec['solar']
+        gv_solis_dict['metrics']['last_12_months']['solar_consumed'] += month_rec['solar_consumed']
+        gv_solis_dict['metrics']['last_12_months']['export'] += month_rec['export']
+        gv_solis_dict['metrics']['last_12_months']['consumed'] += month_rec['consumed'] 
+        gv_solis_dict['metrics']['last_12_months']['co2'] += month_rec['co2']
+        gv_solis_dict['metrics']['last_12_months']['trees'] += month_rec['trees']
+
+        if gv_battery_is_present:
+            gv_solis_dict['metrics']['last_12_months']['battery_charge'] += month_rec['battery_charge']
+            gv_solis_dict['metrics']['last_12_months']['battery_discharge'] += month_rec['battery_discharge']
 
     # new refresh time
     year_ts = ((70 - dt_now.minute) * 60) + now
@@ -571,7 +625,9 @@ def get_inverter_year_data(config):
 
 def get_data(config):
 
-    global gv_data_dict
+    global gv_solis_dict
+    global day_ts
+
     utils.log_message(
             1,
             "Updating Solis Data"
@@ -581,21 +637,30 @@ def get_data(config):
     get_inverter_month_data(config)
     get_inverter_year_data(config)
 
-    # update interval based on last_updated
-    # time. This gives a form of dynamic tie-in to 
-    # the Solis data by assuming the next refresh is ~5 mins after the 
-    # last data we had
+    # update interval based on next day_ts
+    # minus now
     now = int(time.time())
-    next_update_ts = gv_data_dict['last_updated'] + 300 + 20
-    update_interval = next_update_ts - now
+    update_interval = day_ts - now
 
     # negative scenarios
     # fall back to 2-min refresh
+    # This will happen as the string inverter stops 
+    # updating
     if update_interval < 0:
-        update_interval = 120
+        update_interval = 300
+        day_ts = now + update_interval
+
+    utils.log_message(
+            utils.gv_verbose,
+            'Solis Data Dict:\n%s' % (
+                json.dumps(
+                    gv_solis_dict, 
+                    indent = 4)
+                ) 
+            )
 
     # return data and fixed sleep of 5 minutes for refresh
-    return gv_data_dict, update_interval
+    return gv_solis_dict, update_interval
 
 
 
