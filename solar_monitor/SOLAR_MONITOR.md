@@ -4,10 +4,9 @@ This is a small web server designed to query live data from the likes of a Shell
 
 ## Requirements:
 * Computer capable of running Python3 (Any Linux, Mac or PC can do this but you may need to install Python3 and/or additional modules)
-* Either:
-    - A Shelly EM installed and wired with 2 CT clamps: 1:Mains import (positive import, negative export) and 2:Inverter output (positive solar generation)
-    - A Solis string or hybrid inverter with cloud API access enabled (you need to issue a support ticket to Solis to enable this access)
-* The script runs as a small web server and you configure the details for your Shelly EM or Solis inverter
+* A Solis string or hybrid inverter with cloud API access enabled (you need to issue a support ticket to Solis to enable this access)
+* An optional Shelly EM / EM Pro 50 installed and wired with 1 CT clamps for mains import (positive import, negative export) 
+* The script runs as a small web server and you configure the details for your inverter and optional Shelly device
 * If all goes to plan, you will get a nice dashboard that shows you live(ish) import and export and historical data from your inverter/monitor cloud API
 
 ## Basic steps to test
@@ -23,8 +22,9 @@ Notes:
 * point your browser at either http://localhost:8090 or http://[IP of computer]:8090 and you should see The banner "SolarMon" displayed with a settings cog wheel
 * Click the cog wheel or browse to http://localhost:8090/admin to bring up the admin page (when prompted, login as user "admin" and password "123456789")
 * Select the inverter/data source type and go from there inputing the credentials or your given device. 
-   - Note: The inverter sources list Sofar and Huawei but only Shelly EM and Solis are supported for now.
-* Once you select the data source, various fields will be shown that need to be populated with the related credentials.
+   - Note: The inverter sources list Sofar and Huawei but only Solis is supported for now.
+* If additionally using a Shelly EM/EM Pro, then select the grid source drop-down to enable the additional Shelly credententials
+* Once you select the data sources, various fields will be shown that need to be populated with the related credentials.
 * When ready to save, click the "Apply" button
 * To get back to the dashboard, click the "Show Dashboard" button or separately browse to http://localhost:8090 or http://[IP of computer]:8090
 * If the Shelly or inverter credentials are correct, then actual usage data should soon appear on the main dashboard.
@@ -63,7 +63,7 @@ The layout here uses a donut chart on the left that graphs a metric set. Underne
 
 Then on the right are three column charts that graph the recent performance for the last 36 hours, last 30 days and last 12 months. This layout will be used when rendering the page on a larger screen in landscape mode. Best suited for HD/4K monitors and TVs.
 
-Every 10 seconds the donut chart and metrics will be cycled to the next metric. The specific set of metrics that get used can be controlled from the admin page
+Every N seconds the donut chart and metrics will be cycled to the next metric. The specific set of metrics that get used can be controlled from the admin page
 
 ![Large Screen Live](screenshots/large_live.png)
 
@@ -74,7 +74,7 @@ Every 10 seconds the donut chart and metrics will be cycled to the next metric. 
 ### Small Screen Format (laptop/tablet)
 The small screen format will be used on smaller screens such as laptops and tablets. This layout removes the column charts due to limited space and places the donut chart on the left and metric values on the right.
 
-These metrics will cycle every 10 seconds from one set to the other. 
+These metrics will cycle every N seconds from one set to the other. 
 
 ![Small Screen Live](screenshots/small_live.png)
 
