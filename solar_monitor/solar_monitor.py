@@ -52,6 +52,7 @@ def set_default_config():
 
     # data source
     json_config['data_source'] = "none"
+    json_config['grid_source'] = "inverter"
 
     # dashboard
     json_config['dashboard'] = {}
