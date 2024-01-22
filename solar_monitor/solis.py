@@ -635,7 +635,7 @@ def get_data(config):
     global day_ts
 
     utils.log_message(
-            1,
+            utils.gv_verbose,
             "Updating Solis Data"
             )
 

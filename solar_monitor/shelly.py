@@ -84,7 +84,7 @@ def get_shelly_api_data(
     params['channel'] = 0
     try:
         utils.log_message(
-                1,
+                utils.gv_verbose,
                 'Calling Shelly Cloud API.. url:%s params:%s' % (
                     shelly_cloud_url,
                     params
@@ -172,25 +172,17 @@ def get_cloud_data(config):
     global year_ts
     global day_ts
 
-    utils.log_message(
-            1,
-            "Updating Shelly Cloud Data"
-            )
-
-    utils.log_message(
-            1,
-            'Cloud API Refresh timestamps.. day:%d month:%d year:%d' % (
-                day_ts,
-                month_ts,
-                year_ts)
-            )
-
     now = int(time.time())
     dt_today = datetime.datetime.today() 
     dt_yesterday = dt_today - datetime.timedelta(days = 1)
 
     if now >= day_ts:
         # last 36 hours
+        utils.log_message(
+                1,
+                "Updating Shelly Day Data"
+                )
+
         dt_36h_ago = dt_today - datetime.timedelta(hours = 36)
         day_ago_str = '%04d-%02d-%02d %02d:00:00' % (
                     dt_36h_ago.year, 
@@ -228,6 +220,11 @@ def get_cloud_data(config):
     
     if now >= month_ts:
         # last 30 days
+        utils.log_message(
+                1,
+                "Updating Shelly Month Data"
+                )
+
         dt_month_start = dt_today - datetime.timedelta(days = 30)
         month_start_str = '%04d-%02d-%02d 00:00:00' % (
                     dt_month_start.year, 
@@ -266,6 +263,11 @@ def get_cloud_data(config):
         # last several months or so
         # will query all of previous year to today 
         # seems to only work if stretch back 300 days
+        utils.log_message(
+                1,
+                "Updating Shelly Year Data"
+                )
+
         last_year = dt_month_start - datetime.timedelta(days = 300)
         last_year_start_str = '%04d-%02d-01 00:00:00' % (
                     last_year.year, 
@@ -313,7 +315,7 @@ def get_shelly_em_live_data(config):
 
     try:
         utils.log_message(
-                1,
+                utils.gv_verbose,
                 'Calling Shelly EM Device API.. url:%s' % (
                     device_url
                     )
@@ -361,7 +363,7 @@ def get_shelly_pro_em_live_data(config):
 
     try:
         utils.log_message(
-                1,
+                utils.gv_verbose,
                 'Calling Shelly Pro EM Device API.. url:%s' % (
                     device_url
                     )
@@ -394,11 +396,6 @@ def get_shelly_pro_em_live_data(config):
 
 def get_live_data(config):
     global gv_shelly_dict
-
-    utils.log_message(
-            1,
-            "Updating Shelly Live Data"
-            )
 
     if not config['shelly']['device_host']:
         utils.log_message(
@@ -462,7 +459,7 @@ def get_data(config):
     global gv_shelly_dict
 
     utils.log_message(
-            1,
+            utils.gv_verbose,
             "Updating Shelly Data"
             )
 
