@@ -152,12 +152,13 @@ def merge_grid_data():
     grid_live_rec = gv_grid_dict['live']
 
     # direct over-rides (replacements)
+    # for title, import, export and solar
     inverter_live_rec['title'] = grid_live_rec['title']
     inverter_live_rec['import'] = grid_live_rec['import']
     inverter_live_rec['export'] = grid_live_rec['export']
     inverter_live_rec['solar'] = grid_live_rec['solar']
 
-    # derived fields mixing grid and inverter sources
+    # derived fields recalcs
     inverter_live_rec['solar_consumed'] = inverter_live_rec['solar'] - inverter_live_rec['export'] 
     inverter_live_rec['consumed'] = inverter_live_rec['import'] + inverter_live_rec['solar_consumed']
 
@@ -174,17 +175,18 @@ def merge_grid_data():
     # day, month and year record merges
     # list records are keyed into a dict by 'key'
     # and then related grid data merged in based on the common
-    # key. List records are automatically updated by reference
-    # no need to rebuild the lists
-    # metrics for today, yesterday, this_month and last_month
-    # get a free lunch here also as they are mere pointers to specifc 
-    # records in the other type lists
+    # key. This can cause insertion of new records.
+    # results are reformed into lists and the metrics for today, 
+    # yesterday etc are reset due to that insertion possibly displacing them 
+
+    # cull lengths
     record_cull_dict = {
             'day' : 36,
             'month' : 30,
             'year' : 12,
             }
 
+    # merge the three dicts of historic data
     for record_type in ['day', 'month', 'year']:
         inverter_dict = {}
         for rec in gv_data_dict[record_type]:
@@ -194,7 +196,7 @@ def merge_grid_data():
         for key in gv_grid_dict[record_type]:
             grid_rec = gv_grid_dict[record_type][key]
 
-            # populate in the missing inverter rec from a 
+            # insert the missing inverter rec from a 
             # copy of the grid rec
             if not key in inverter_dict:
                 inverter_dict[key] = copy.deepcopy(grid_rec)
@@ -215,19 +217,21 @@ def merge_grid_data():
             inverter_rec['co2'] = (gv_config_dict['environment']['gco2_kwh'] * inverter_rec['solar']) / 1000
             inverter_rec['trees'] = gv_config_dict['environment']['trees_kwh'] * inverter_rec['solar']
 
-            # last 12 month adjustments
+            # last 12 month aggregate adjustments
             if record_type == 'year':
                 inverter_last_12_months_rec['import'] += grid_rec['import']
                 inverter_last_12_months_rec['export'] += grid_rec['export']
 
         # reconstruct list
         # and cull accordingly to the last N
+        # based on record_cull_dict
         rec_list = []
         for key in sorted(inverter_dict.keys())[-record_cull_dict[record_type]:]:
             rec_list.append(inverter_dict[key])
         gv_data_dict[record_type] = rec_list
 
-    # finish up fixes to last 12 months
+    # finish up fixes to last 12 months metric
+    inverter_last_12_months_rec['title'] = 'Last %d Months' % (len(gv_data_dict['year']))
     inverter_last_12_months_rec['solar_consumed'] = inverter_last_12_months_rec['solar'] - inverter_last_12_months_rec['export'] 
     inverter_last_12_months_rec['consumed'] = inverter_last_12_months_rec['import'] + inverter_last_12_months_rec['solar_consumed']
     inverter_last_12_months_rec['co2'] = (gv_config_dict['environment']['gco2_kwh'] * inverter_last_12_months_rec['solar']) / 1000
