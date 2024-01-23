@@ -484,8 +484,8 @@ def get_inverter_month_data(config):
                 gv_solis_dict['metrics']['yesterday']['year'])
 
     # new refresh time
-    # 20 mins from now
-    month_ts = now + (60 * 20)
+    # 15 mins from now
+    month_ts = now + (60 * 15)
 
     return 
 
