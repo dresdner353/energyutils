@@ -24,6 +24,7 @@ gv_shelly_dict['live'] = {}
 gv_shelly_dict['live']['title'] = 'Now'
 gv_shelly_dict['live']['import'] = 0
 gv_shelly_dict['live']['export'] = 0
+gv_shelly_dict['live']['solar'] = 0
 
 # timestamps to track the next call
 month_ts = 0
@@ -331,7 +332,7 @@ def get_shelly_em_live_data(config):
                     device_url,
                     )
                 )
-        return None
+        return None, None
 
     utils.log_message(
             utils.gv_verbose,
@@ -342,8 +343,9 @@ def get_shelly_em_live_data(config):
 
     # convert to kW
     grid = device_resp_dict['emeters'][0]['power'] / 1000
+    solar = device_resp_dict['emeters'][1]['power'] / 1000
 
-    return grid
+    return grid, solar
 
 
 def get_shelly_pro_em_live_data(config):
@@ -371,7 +373,7 @@ def get_shelly_pro_em_live_data(config):
         resp = requests.get(
                 device_url, 
                 auth = digest_auth)
-        device_resp_dict = resp.json()
+        grid_resp_dict = resp.json()
     except:
         utils.log_message(
                 1,
@@ -379,19 +381,49 @@ def get_shelly_pro_em_live_data(config):
                     device_url,
                     )
                 )
-        return None
+        return None, None
 
     utils.log_message(
             utils.gv_verbose,
             'Device API Response\n%s\n' % (
-                json.dumps(device_resp_dict, indent = 4),
+                json.dumps(grid_resp_dict, indent = 4),
                 )
             )
 
-    # convert to kW
-    grid = device_resp_dict['act_power'] / 1000
+    # CT 1 (Solar)
+    device_url = 'http://%s/rpc/EM1.GetStatus?id=1' % (config['shelly']['device_host'])
 
-    return grid
+    try:
+        utils.log_message(
+                utils.gv_verbose,
+                'Calling Shelly Pro EM Device API.. url:%s' % (
+                    device_url
+                    )
+                )
+        resp = requests.get(
+                device_url, 
+                auth = digest_auth)
+        solar_resp_dict = resp.json()
+    except:
+        utils.log_message(
+                1,
+                'Shelly EM Device API Call to %s failed' % (
+                    device_url,
+                    )
+                )
+        return None, None
+
+    utils.log_message(
+            utils.gv_verbose,
+            'Device API Response\n%s\n' % (
+                json.dumps(solar_resp_dict, indent = 4),
+                )
+            )
+    # convert to kW
+    grid = grid_resp_dict['act_power'] / 1000
+    solar = solar_resp_dict['act_power'] / 1000
+
+    return grid, solar
 
 
 def get_live_data(config):
@@ -405,9 +437,9 @@ def get_live_data(config):
         return
 
     if config['grid_source'] == 'shelly-em':
-        grid = get_shelly_em_live_data(config)
+        grid, solar = get_shelly_em_live_data(config)
     elif config['grid_source'] == 'shelly-pro':
-        grid = get_shelly_pro_em_live_data(config)
+        grid, solar = get_shelly_pro_em_live_data(config)
     else:
         utils.log_message(
                 1,
@@ -417,7 +449,7 @@ def get_live_data(config):
                 )
         return
 
-    if grid is None:
+    if grid is None and solar is None:
         utils.log_message(
                 1,
                 "Live data call failed"
@@ -432,6 +464,10 @@ def get_live_data(config):
         grid_import = 0
         grid_export = grid * -1
 
+    # for solar, zero readings below 10W
+    if solar <= 0.010:
+        solar = 0
+
     # update live metrics
     gv_shelly_dict['last_updated'] = int(time.time())
     live_metrics_rec = gv_shelly_dict['live']
@@ -442,12 +478,14 @@ def get_live_data(config):
 
     live_metrics_rec['import'] = grid_import
     live_metrics_rec['export'] = grid_export
+    live_metrics_rec['solar'] = solar
 
     utils.log_message(
             1,
-            "Shelly Device: import:%f export:%f" % (
+            "Shelly Device: import:%f export:%f solar:%f" % (
                 live_metrics_rec['import'],
                 live_metrics_rec['export'],
+                live_metrics_rec['solar'],
                 )
             )
 

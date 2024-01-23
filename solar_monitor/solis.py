@@ -471,7 +471,6 @@ def get_inverter_month_data(config):
     gv_solis_dict['month'] = month_data
 
     # take todays totals from last recorded day in month
-    today_rec = month_data[-1]
     gv_solis_dict['metrics']['today'] = month_data[-1]
     gv_solis_dict['metrics']['today']['title'] = 'Today (%s %d %s)' % (
             gv_solis_dict['metrics']['today']['month'], 

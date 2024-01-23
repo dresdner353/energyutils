@@ -151,18 +151,11 @@ def merge_grid_data():
     inverter_live_rec = gv_data_dict['metrics']['live']
     grid_live_rec = gv_grid_dict['live']
 
-    # solar over-ride for old data
-    # The grid source (a shelly) is live
-    # The inverter is cloud-based and can go offline
-    # (string inverter). So if the grid source is older than 
-    # 15 mins, we zero solar
-    if (gv_grid_dict['last_updated'] - gv_data_dict['last_updated']) > 10 * 60:
-        inverter_live_rec['solar'] = 0
-
     # direct over-rides (replacements)
     inverter_live_rec['title'] = grid_live_rec['title']
     inverter_live_rec['import'] = grid_live_rec['import']
     inverter_live_rec['export'] = grid_live_rec['export']
+    inverter_live_rec['solar'] = grid_live_rec['solar']
 
     # derived fields mixing grid and inverter sources
     inverter_live_rec['solar_consumed'] = inverter_live_rec['solar'] - inverter_live_rec['export'] 
@@ -240,6 +233,31 @@ def merge_grid_data():
     inverter_last_12_months_rec['co2'] = (gv_config_dict['environment']['gco2_kwh'] * inverter_last_12_months_rec['solar']) / 1000
     inverter_last_12_months_rec['trees'] = gv_config_dict['environment']['trees_kwh'] * inverter_last_12_months_rec['solar']
 
+    # reposition the other metrics
+    gv_data_dict['metrics']['today'] = gv_data_dict['month'][-1]
+    gv_data_dict['metrics']['today']['title'] = 'Today (%s %d %s)' % (
+            gv_data_dict['metrics']['today']['month'], 
+            gv_data_dict['metrics']['today']['day'], 
+            gv_data_dict['metrics']['today']['year'])
+
+    if len(gv_data_dict['month']) >= 2:
+        gv_data_dict['metrics']['yesterday'] = gv_data_dict['month'][-2]
+        gv_data_dict['metrics']['yesterday']['title'] = 'Yesterday (%s %d %s)' % (
+                gv_data_dict['metrics']['yesterday']['month'], 
+                gv_data_dict['metrics']['yesterday']['day'], 
+                gv_data_dict['metrics']['yesterday']['year'])
+
+    # take months totals from last recorded month in year
+    gv_data_dict['metrics']['this_month'] = gv_data_dict['year'][-1]
+    gv_data_dict['metrics']['this_month']['title'] = 'This Month (%s %s)' % (
+            gv_data_dict['metrics']['this_month']['month'], 
+            gv_data_dict['metrics']['this_month']['year'])
+
+    if len(gv_data_dict['year']) >= 2:
+        gv_data_dict['metrics']['last_month'] = gv_data_dict['year'][-2]
+        gv_data_dict['metrics']['last_month']['title'] = 'Last Month (%s %s)' % (
+                gv_data_dict['metrics']['last_month']['month'], 
+                gv_data_dict['metrics']['last_month']['year'])
     return
 
 
