@@ -633,10 +633,13 @@ def get_data(config):
     global day_ts
 
     utils.log_message(
-            utils.gv_verbose,
-            "Updating Solis Data"
+            1,
+            "Checking Solis Cloud Data.. timestamps: day:%s month:%s year:%s" % (
+                day_ts,
+                month_ts,
+                year_ts
+                )
             )
-
     get_inverter_day_data(config)
     get_inverter_month_data(config)
     get_inverter_year_data(config)

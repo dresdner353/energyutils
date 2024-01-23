@@ -496,12 +496,16 @@ def get_data(config):
 
     global gv_shelly_dict
 
-    utils.log_message(
-            utils.gv_verbose,
-            "Updating Shelly Data"
-            )
-
     get_live_data(config)
+
+    utils.log_message(
+            1,
+            "Checking Shelly Cloud Data for updates.. timestamps: day:%s month:%s year:%s" % (
+                day_ts,
+                month_ts,
+                year_ts
+                )
+            )
     get_cloud_data(config)
 
     utils.log_message(
