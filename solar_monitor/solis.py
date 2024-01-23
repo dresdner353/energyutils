@@ -154,7 +154,7 @@ def get_inverter_day_data(config):
 
     utils.log_message(
             1,
-            "Updating Solis Day Data now:%d day_ts:%d" % (now, day_ts)
+            "Updating Solis Day Data"
             )
 
     # objective is the last 36 hours of data
@@ -484,7 +484,8 @@ def get_inverter_month_data(config):
                 gv_solis_dict['metrics']['yesterday']['year'])
 
     # new refresh time
-    month_ts = ((70 - dt_now.minute) * 60) + now
+    # 20 mins from now
+    month_ts = now + (60 * 20)
 
     return 
 
@@ -622,7 +623,8 @@ def get_inverter_year_data(config):
             gv_solis_dict['metrics']['last_12_months']['battery_discharge'] += month_rec['battery_discharge']
 
     # new refresh time
-    year_ts = ((70 - dt_now.minute) * 60) + now
+    # 30 mins from now
+    year_ts = now + (60 * 30)
 
     return 
 
