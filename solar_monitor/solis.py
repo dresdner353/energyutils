@@ -211,18 +211,17 @@ def get_inverter_day_data(config):
         else:
             gv_battery_is_present = False
 
-        # key day-hour
-        key = ts_dt.strftime('%d-%H')
+        # unique key for hour
+        key = '%04d-%02d-%02d-%02d' % (
+                ts_dt.year,
+                ts_dt.month,
+                ts_dt.day,
+                ts_dt.hour)
         if key in data_dict:
             # retrieve existing
             usage_rec = data_dict[key]
         else:
             # init and index new record
-            key = '%04d-%02d-%02d-%02d' % (
-                    ts_dt.year,
-                    ts_dt.month,
-                    ts_dt.day,
-                    ts_dt.hour)
             usage_rec = {}
             usage_rec['key'] = key
             usage_rec['year'] = ts_dt.strftime('%Y')
