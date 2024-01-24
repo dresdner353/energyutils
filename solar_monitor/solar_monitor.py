@@ -32,6 +32,7 @@ gv_root = '%s' % (
 # tracked inverter API data
 gv_data_dict = {}
 gv_data_dict['last_updated'] = 0
+gv_data_dict['metrics'] = {}
 
 # alternative grid data (for merging with inverter)
 gv_grid_dict = {}
@@ -52,7 +53,7 @@ def set_default_config():
     json_config['web']['users']['admin'] = '123456789'
 
     # data source
-    json_config['data_source'] = "none"
+    json_config['data_source'] = ""
     json_config['grid_source'] = "inverter"
 
     # dashboard
@@ -378,6 +379,12 @@ class data_handler(object):
                 '/data API %s %s' % (
                     cherrypy.request.remote.ip,
                     cherrypy.request.method))
+
+        # Add in configured state
+        if gv_config_dict['data_source'] == '':
+            gv_data_dict['configured'] = False
+        else:
+            gv_data_dict['configured'] = True
 
         # merge in config for dashboard
         gv_data_dict['dashboard'] = gv_config_dict['dashboard']
