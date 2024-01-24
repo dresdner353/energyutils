@@ -627,6 +627,13 @@
                 $("#dashboard").show();
             }
             else {
+                // display messaage based on configured state
+                if (data_dict['configured'] == false) {
+                    $("#splash_text").html('Please click setup icon above to continue');
+                }
+                else {
+                    $("#splash_text").html('Waiting for data...');
+                }
                 return;
             }
 
@@ -1174,7 +1181,7 @@
                     <span class="metric metric-white">SolarMon </span>
                     <a href="/admin"><span class="material-icons metric metric-white">settings_applications</span></a>
                     <div>
-                        <span class="metric-unit metric-white">One moment please...</span>
+                        <span id="splash_text" class="metric-unit metric-white"></span>
                     </div>
                 </div>
             </div>
