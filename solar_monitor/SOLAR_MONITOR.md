@@ -5,7 +5,9 @@ This is a small web server designed to query live data from the likes of a Shell
 ## Requirements:
 * Computer capable of running Python3 (Any Linux, Mac or PC can do this but you may need to install Python3 and/or additional modules)
 * A Solis string or hybrid inverter with cloud API access enabled (you need to issue a support ticket to Solis to enable this access)
-* An optional Shelly EM / EM Pro 50 installed and wired with 1 CT clamps for mains import (positive import, negative export) 
+* An optional Shelly EM / EM Pro 50 installed and wired with 2 CT clamps. This would only be required for a string inverter that is unable to read grid import and export. Those CT clamps would be configured as follows on the Shelly EM device:
+   - 1) for mains import (positive import, negative export) 
+   - 2) for inverter output (positive solar generation, negative inverter draw)
 * The script runs as a small web server and you configure the details for your inverter and optional Shelly device
 * If all goes to plan, you will get a nice dashboard that shows you live(ish) import and export and historical data from your inverter/monitor cloud API
 
