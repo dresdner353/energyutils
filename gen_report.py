@@ -812,7 +812,6 @@ format_dict['kwh'] = kwh_format
 
 # 3dp variant of kwh 
 # only needed for smaller offset-type fields
-# such as solar_discard
 kwh_3dp_format = workbook.add_format() 
 # with commas and 3 decimal places
 kwh_3dp_format.set_num_format('#,##0.000 "kWh"') 
@@ -944,13 +943,6 @@ field_dict = {
             'width' : 12,
             'header_format' : 'header',
             'format' : 'kwh',
-            },
-
-        'solar_discard' : {
-            'title' : 'Solar Discard',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'kwh_3dp',
             },
 
         'battery_solar_charge' : {
