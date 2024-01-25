@@ -1,4 +1,4 @@
-Steps to get your ESB report generating on Mac/Linux:
+Steps to get your Shelly report generating on Mac/Linux:
 
 Note: This only works for people with a Shelly EM or pro variant energy monitor
 installed in their home. It should have 2 CT clamps fitted. The first on the mains 
