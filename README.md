@@ -5,6 +5,7 @@ This is a collection of scripts for use in energy monitoring. Each script or ser
 Specific Guides:
 * [ESB HDF Reader (Ireland)](./ESB_HDF_READER.md)  
 * [Shelly EM Utility](./SHELLY_EM_UTIL.md)  
+* [Solis Inverter Utility](./SOLIS_DATA_UTIL.md)  
 * [Report Generator Utility](./GEN_REPORT.md)  
 * [Battery Simulator](./BATTERY_SIM.md)  
 * [Solar Monitor Dashboard](./solar_monitor/SOLAR_MONITOR.md)  
