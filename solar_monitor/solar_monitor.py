@@ -49,6 +49,7 @@ def set_default_config():
     # web and default admin user
     json_config['web'] = {}
     json_config['web']['port'] = 8090
+    json_config['web']['dashboard_auth'] = False
     json_config['web']['users'] = {}
     json_config['web']['users']['admin'] = '123456789'
 
@@ -431,6 +432,12 @@ def web_server(dev_mode):
     cherrypy.server.socket_host = '0.0.0.0'
     cherrypy.server.socket_port = gv_config_dict['web']['port']
 
+    # web authentication
+    users = gv_config_dict['web']['users']
+    ha1 = cherrypy.lib.auth_digest.get_ha1_dict_plain(users)
+    random.seed()
+    digest_key = hex(random.randint(0x1000000000000000,
+                                    0xFFFFFFFFFFFFFFFF))
     # static hosting of www dir on /
     # with default index being dash.html
     www_dir = '%s/www' % (
@@ -438,27 +445,34 @@ def web_server(dev_mode):
             )
 
     static_conf = {
-            '/':
-            {
+            '/': {
                 'tools.staticdir.on': True,
                 'tools.staticdir.dir': www_dir,
                 'tools.staticdir.index': 'dash.html',
                 }
             }
+
+    if gv_config_dict['web']['dashboard_auth']:
+        static_conf['/']['tools.auth_digest.on'] = True
+        static_conf['/']['tools.auth_digest.realm'] = 'localhost'
+        static_conf['/']['tools.auth_digest.get_ha1'] = ha1
+        static_conf['/']['tools.auth_digest.key'] = digest_key
+
     cherrypy.tree.mount(None, '/', static_conf)
 
     # /data API
     api_conf = {}
+
+    if gv_config_dict['web']['dashboard_auth']:
+        api_conf['/'] = {}
+        api_conf['/']['tools.auth_digest.on'] = True
+        api_conf['/']['tools.auth_digest.realm'] = 'localhost'
+        api_conf['/']['tools.auth_digest.get_ha1'] = ha1
+        api_conf['/']['tools.auth_digest.key'] = digest_key
+
     cherrypy.tree.mount(data_handler(), '/data', api_conf)
 
     # /admin (for config page)
-    users = gv_config_dict['web']['users']
-    ha1 = cherrypy.lib.auth_digest.get_ha1_dict_plain(users)
-
-    # Generate a random digest auth key
-    random.seed()
-    digest_key = hex(random.randint(0x1000000000000000,
-                                    0xFFFFFFFFFFFFFFFF))
     admin_conf = {
             '/': {
                 'tools.auth_digest.on': True,
