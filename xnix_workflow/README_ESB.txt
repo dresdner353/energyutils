@@ -36,11 +36,11 @@ approach is to install these modules using pip:
 
 So either of these approaches should work:
 
-pip3 install --user tzdata requests xlsxwriter python-dateutil
+pip3 install --user tzdata requests xlsxwriter python-dateutil cherrypy
 
 or 
 
-python3 -m pip install --user tzdata requests xlsxwriter python-dateutil
+python3 -m pip install --user tzdata requests xlsxwriter python-dateutil cherrypy
 
 
 * Put the ESB HDF file in place
