@@ -957,6 +957,12 @@ field_dict = {
             'header_format' : 'header',
             'format' : 'kwh',
             },
+        'battery_charge' : {
+            'title' : 'Battery Charge',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'kwh',
+            },
         'battery_discharge' : {
             'title' : 'Battery Discharge',
             'width' : 12,
@@ -1138,6 +1144,10 @@ battery_charging_series = [
         {
             'field': 'battery_solar_charge',
             'colour': 'green',
+            },
+        {
+            'field': 'battery_charge',
+            'colour': 'purple',
             },
         {
             'field': 'battery_discharge',
