@@ -233,6 +233,7 @@ def get_solis_day_data(
 
     data_dict = {}
     solis_snap_list = solis_resp['data']
+    battery_is_present = False
 
     for solis_snap_rec in solis_snap_list:
         ts = int(solis_snap_rec['dataTimestamp']) // 1000
@@ -243,8 +244,6 @@ def get_solis_day_data(
         # for a battery setup and zero otherwise
         if solis_snap_rec['batteryChargingCurrent'] > 0:
             battery_is_present = True
-        else:
-            battery_is_present = False
 
         # unique key for hour
         # which is also an Excel-friendly datetime
@@ -344,111 +343,16 @@ def get_solis_day_data(
     return data_dict
 
 
-# main()
-
-# default storage dir for data
-home = os.path.expanduser('~')
-default_odir = home + '/.solisdata'   
-
-parser = argparse.ArgumentParser(
-        description = 'Solis Inverter Data Retrieval Utility'
-        )
-
-parser.add_argument(
-        '--odir', 
-        help = 'Output Directory for generated files', 
-        default = default_odir,
-        required = False
-        )
-
-parser.add_argument(
-        '--days', 
-        help = 'Backfill in days (def 30)', 
-        type = int,
-        default = 30,
-        required = False
-        )
-
-parser.add_argument(
-        '--solis_inverter_sn', 
-        help = 'Solis Inverter Serial Number', 
-        required = True
-        )
-
-parser.add_argument(
-        '--solis_api_host', 
-        help = 'Solis Inverter API Host', 
-        required = True
-        )
-
-parser.add_argument(
-        '--solis_key_id', 
-        help = 'Solis Inverter API Key ID', 
-        required = True
-        )
-
-parser.add_argument(
-        '--solis_key_secret', 
-        help = 'Solis Inverter API Key Secret', 
-        required = True
-        )
-
-parser.add_argument(
-        '--shelly_api_host', 
-        help = 'Shelly API Host', 
-        required = False
-        )
-
-parser.add_argument(
-        '--shelly_id', 
-        help = 'Shelly Device ID', 
-        required = False
-        )
-
-parser.add_argument(
-        '--shelly_auth_key', 
-        help = 'Shelly API Auth Key', 
-        required = False
-        )
-
-parser.add_argument(
-        '--verbose', 
-        help = 'Enable verbose output', 
-        action = 'store_true'
-        )
-
-args = vars(parser.parse_args())
-backfill_days = args['days']
-odir = args['odir']
-solis_inverter_sn = args['solis_inverter_sn']
-solis_api_host = args['solis_api_host']
-solis_key_id = args['solis_key_id']
-solis_key_secret = args['solis_key_secret']
-shelly_api_host = args['shelly_api_host']
-shelly_device_id = args['shelly_id']
-shelly_auth_key = args['shelly_auth_key']
-gv_verbose = args['verbose']
-
-# JSON encoder force decimal places to 5
-class RoundingFloat(float):
-    __repr__ = staticmethod(lambda x: format(x, '.5f'))
-
-json.encoder.c_make_encoder = None
-json.encoder.float = RoundingFloat
-
-if not os.path.exists(odir):
-    os.mkdir(odir)
-
-# Set first day as tomorrow
-# we decrement at start of loop
-# this is due to continue directives that will skip the loop at 
-# times
-date_ref = datetime.date.today() + datetime.timedelta(days = 1)
-
-for i in range(0, backfill_days):
-    # move back to previous day
-    # the first call will set it to today (decrementing from tomorrow)
-    date_ref = date_ref - datetime.timedelta(days = 1)
+def get_day_data(
+        odir,
+        date_ref,
+        solis_api_host,
+        solis_key_id,
+        solis_key_secret,
+        solis_inverter_sn,
+        shelly_api_host,
+        shelly_auth_key,
+        shelly_device_id):
 
     # local jsonl file
     dest_file_prefix = '%04d-%02d-%02d' % (
@@ -483,7 +387,7 @@ for i in range(0, backfill_days):
                         dest_jsonl_file
                         )
                     )
-            continue
+            return
 
         # Present as an update of 
         # a peviously incomplete file
@@ -500,12 +404,12 @@ for i in range(0, backfill_days):
 
     # delay between calls
     # solis will reject them otherwise
-    time.sleep(2)
+    time.sleep(3)
 
     if not solis_dict:
         # this only applies to API failure
         # so best to walk away and try again later
-        continue
+        return
 
     # partial check
     # number of recs can be < 24 here for a string
@@ -568,3 +472,120 @@ for i in range(0, backfill_days):
     with open(dest_jsonl_file, 'w') as f:
         for key in sorted(solis_dict.keys()):
             f.write(json.dumps(solis_dict[key]) + '\n')
+
+    return
+
+
+# main()
+
+# default storage dir for data
+home = os.path.expanduser('~')
+default_odir = home + '/.solisdata'   
+
+parser = argparse.ArgumentParser(
+        description = 'Solis Inverter Data Retrieval Utility'
+        )
+
+parser.add_argument(
+        '--odir', 
+        help = 'Output Directory for generated files', 
+        default = default_odir,
+        required = False
+        )
+
+parser.add_argument(
+        '--days', 
+        help = 'Backfill in days (def 30)', 
+        type = int,
+        default = 30,
+        required = False
+        )
+
+parser.add_argument(
+        '--solis_inverter_sn', 
+        help = 'Solis Inverter Serial Number', 
+        required = True
+        )
+
+parser.add_argument(
+        '--solis_api_host', 
+        help = 'Solis Inverter API Host', 
+        required = True
+        )
+
+parser.add_argument(
+        '--solis_key_id', 
+        help = 'Solis Inverter API Key ID', 
+        required = True
+        )
+
+parser.add_argument(
+        '--solis_key_secret', 
+        help = 'Solis Inverter API Key Secret', 
+        required = True
+        )
+
+parser.add_argument(
+        '--shelly_api_host', 
+        help = 'Shelly API Host', 
+        required = False
+        )
+
+parser.add_argument(
+        '--shelly_device_id', 
+        help = 'Shelly Device ID', 
+        required = False
+        )
+
+parser.add_argument(
+        '--shelly_auth_key', 
+        help = 'Shelly API Auth Key', 
+        required = False
+        )
+
+parser.add_argument(
+        '--verbose', 
+        help = 'Enable verbose output', 
+        action = 'store_true'
+        )
+
+args = vars(parser.parse_args())
+backfill_days = args['days']
+odir = args['odir']
+solis_inverter_sn = args['solis_inverter_sn']
+solis_api_host = args['solis_api_host']
+solis_key_id = args['solis_key_id']
+solis_key_secret = args['solis_key_secret']
+shelly_api_host = args['shelly_api_host']
+shelly_device_id = args['shelly_device_id']
+shelly_auth_key = args['shelly_auth_key']
+gv_verbose = args['verbose']
+
+# JSON encoder force decimal places to 5
+class RoundingFloat(float):
+    __repr__ = staticmethod(lambda x: format(x, '.5f'))
+
+json.encoder.c_make_encoder = None
+json.encoder.float = RoundingFloat
+
+if not os.path.exists(odir):
+    os.mkdir(odir)
+
+# Set first day as today
+date_ref = datetime.date.today()
+
+for i in range(0, backfill_days):
+
+    get_day_data(
+            odir,
+            date_ref,
+            solis_api_host,
+            solis_key_id,
+            solis_key_secret,
+            solis_inverter_sn,
+            shelly_api_host,
+            shelly_auth_key,
+            shelly_device_id)
+
+    # move back to previous day
+    date_ref = date_ref - datetime.timedelta(days = 1)
