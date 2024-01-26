@@ -4,7 +4,7 @@ set -e
 SOLIS_DATA='solis_data'
 SOLIS_SCRIPT=../solis_data_util.py
 GEN_REPORT_SCRIPT=../gen_report.py
-REPORTS=day week month year hour tariff 24h weekday
+REPORTS='day week month year hour tariff 24h weekday'
 
 # Solis API
 SOLIS_API_HOST=https://www.soliscloud.com:PPPPP
@@ -24,7 +24,7 @@ mkdir -p "${SOLIS_DATA}"
 # Retrieve data from Solis Cloud
 python3 ${SOLIS_SCRIPT} \
     --odir "${SOLIS_DATA}" \
-    --days 30 
+    --days 30 \
     --solis_api_host ${SOLIS_API_HOST} \
     --solis_key_id ${SOLIS_KEY_ID} \
     --solis_key_secret ${SOLIS_KEY_SECRET}  \
@@ -36,7 +36,7 @@ python3 ${SOLIS_SCRIPT} \
 # Example EV report
 python3 ${GEN_REPORT_SCRIPT} \
     --idir "${SOLIS_DATA}" \
-    --file shelly_report.xlsx \
+    --file solis_report.xlsx \
     --reports ${REPORTS} \
     --tariff_rate Day:0.4320 Night:0.2086 Boost:0.1225 \
     --tariff_interval 08-23:Day 23-08:Night 02-04:Boost \
