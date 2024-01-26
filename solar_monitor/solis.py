@@ -125,6 +125,7 @@ def get_solis_cloud_data(
         resp = requests.post(
                 config['solis']['api_host'] + url_part,
                 headers = headers,
+                timeout = 20,
                 json = request)
         utils.log_message(
                 utils.gv_verbose,

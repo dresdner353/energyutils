@@ -93,6 +93,7 @@ def get_shelly_api_data(
                 )
         resp = requests.get(
                 shelly_cloud_url, 
+                timeout = 20,
                 data = params)
         grid_resp_dict = resp.json()
 
@@ -323,6 +324,7 @@ def get_shelly_em_live_data(config):
                 )
         resp = requests.get(
                 device_url, 
+                timeout = 10,
                 auth = basic)
         device_resp_dict = resp.json()
     except:
@@ -372,6 +374,7 @@ def get_shelly_pro_em_live_data(config):
                 )
         resp = requests.get(
                 device_url, 
+                timeout = 10,
                 auth = digest_auth)
         grid_resp_dict = resp.json()
     except:
@@ -402,6 +405,7 @@ def get_shelly_pro_em_live_data(config):
                 )
         resp = requests.get(
                 device_url, 
+                timeout = 10,
                 auth = digest_auth)
         solar_resp_dict = resp.json()
     except:
