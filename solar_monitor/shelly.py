@@ -517,5 +517,5 @@ def get_data(config):
                 ) 
             )
 
-    # return data and fixed sleep of 10 seconds for refresh
-    return gv_shelly_dict, 10
+    # return data and fixed sleep of 5 seconds for refresh
+    return gv_shelly_dict, 5
