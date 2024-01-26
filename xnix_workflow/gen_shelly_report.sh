@@ -4,7 +4,7 @@ set -e
 SHELLY_DATA='shelly_data'
 SHELLY_SCRIPT=../shelly_em_data_util.py
 GEN_REPORT_SCRIPT=../gen_report.py
-REPORTS=day week month year hour tariff 24h weekday
+REPORTS='day week month year hour tariff 24h weekday'
 
 # Shelly API config
 SHELLY_HOST=example.com

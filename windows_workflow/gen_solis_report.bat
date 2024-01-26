@@ -35,7 +35,7 @@ REM    --shelly_auth_key %SHELLY_AUTH_KEY% ^
 REM Example EV report
 %PYTHON% %GEN_REPORT_SCRIPT% ^
     --idir %SOLIS_DATA% ^
-    --file shelly_report_ev.xlsx ^
+    --file solis_report_ev.xlsx ^
     --reports %REPORTS% ^
     --tariff_rate Day:0.4320 Night:0.2086 Boost:0.1225 ^
     --tariff_interval 08-23:Day 23-08:Night 02-04:Boost ^
