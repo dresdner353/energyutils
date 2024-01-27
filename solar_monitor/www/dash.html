@@ -1033,8 +1033,13 @@
                         },
                     },
                     chartArea:{
-                        left:50,
-                        right:20,
+                        left:100, // needed for the kWh counts to fit
+                        right:10,
+                        backgroundColor: {
+                            // chart border
+                            stroke: 'gray',
+                            strokeWidth: 0
+                        }
                     },
                     axisTitlesPosition: 'in',
                     isStacked: true,
