@@ -1127,7 +1127,7 @@
                     for (const item of data_dict.month) {
                         // Format as 'MMM dd'
                         time_str = item.month + ' ' + item.day.toString().padStart(2, '0') 
-                        time_str = item.day.toString().padStart(2, '0') 
+                        //time_str = item.day.toString().padStart(2, '0') 
                         month_data.setCell(row, 0, time_str);
                         col = 1
                         for (series_field of bar_chart_series_list) {
@@ -1166,7 +1166,7 @@
                     year_data.addRows(data_dict.year.length);
                     row = 0
                     for (const item of data_dict.year) {
-                        time_str = item.year + ' ' + item.month
+                        //time_str = item.year + ' ' + item.month
                         time_str = item.month
                         year_data.setCell(row, 0, time_str);
                         col = 1
