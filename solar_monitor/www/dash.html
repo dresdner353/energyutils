@@ -85,7 +85,7 @@
             console.log("Window dims.. w:" + window_width + " h:" + window_height);
 
             agg_donut_html = ` 
-            <div id="agg_donut_chart" class="card-transparent text-white text-center mt-2">
+            <div id="agg_donut_chart" class="card-transparent text-white text-center mt-0">
                 <div class="card-body text-center">
                     <center>
                         <a href="/admin"><div id="agg_donut_title" class="title"></div></a>
@@ -266,21 +266,21 @@
             `;
 
             day_column_chart_html = `
-                <div id="day_column_chart" class="col mt-2">
+                <div id="day_column_chart" class="col mt-0">
                     <center><div id="day_chart_title" class="title"></div></center>
                     <div id="day_google_chart"></div>
                 </div>
             `;
 
             month_column_chart_html = `
-                <div id="month_column_chart"class="col mt-2">
+                <div id="month_column_chart"class="col mt-0">
                     <center><div id="month_chart_title" class="title"></div></center>
                     <div id="month_google_chart"></div>
                 </div>
             `;
 
             year_column_chart_html = `
-                <div id="year_column_chart"class="col mt-2">
+                <div id="year_column_chart"class="col mt-0">
                     <center><div id="year_chart_title" class="title"></div></center>
                     <div id="year_google_chart"></div>
                 </div>
@@ -300,14 +300,14 @@
             large_screen_layout = `
                 <div class="container-fluid" data-bs-theme="dark">
                     <div class="row">
-                        <div class="col col-5 mt-2">
+                        <div class="col col-5 mt-0">
                             <div id="agg_donut_insert" class="row">
                             </div>
                             <div id="agg_metrics_insert" class="row">
                             </div>
                         </div>
 
-                        <div id="chart_column" class="col col-7 mt-2">
+                        <div id="chart_column" class="col col-7 mt-0">
                             <div id="day_column_chart_insert" class="row">
                             </div>
 
@@ -833,7 +833,7 @@
         function render_charts() {
             console.log("render_charts()");
 
-            column_chart_height = (window.innerHeight - 140) / 3;
+            column_chart_height = (window.innerHeight - 100) / 3;
 
             switch(layout) {
                 case "small":
@@ -1012,7 +1012,7 @@
                         },
                         textStyle: {
                             color: 'gray',
-                            fontSize: legend_font_px_size * 0.9,
+                            fontSize: legend_font_px_size * 1.0,
                         },
                     },
                     vAxis: {
@@ -1023,7 +1023,7 @@
                         },
                         textStyle: {
                             color: 'gray',
-                            fontSize: legend_font_px_size * 0.9,
+                            fontSize: legend_font_px_size * 1.0,
                         },
                         gridlines: {
                             color: '#404040', 
@@ -1127,6 +1127,7 @@
                     for (const item of data_dict.month) {
                         // Format as 'MMM dd'
                         time_str = item.month + ' ' + item.day.toString().padStart(2, '0') 
+                        time_str = item.day.toString().padStart(2, '0') 
                         month_data.setCell(row, 0, time_str);
                         col = 1
                         for (series_field of bar_chart_series_list) {
@@ -1139,6 +1140,8 @@
                     }
 
                     bar_chart_options.hAxis.title = 'Day';
+                    bar_chart_options.legend = 'none';
+                    bar_chart_options.chartArea.top = 10;
                     month_chart.draw(month_data, bar_chart_options);
 
                     chart_title = `Last ${data_dict.month.length} Days`;
@@ -1164,6 +1167,7 @@
                     row = 0
                     for (const item of data_dict.year) {
                         time_str = item.year + ' ' + item.month
+                        time_str = item.month
                         year_data.setCell(row, 0, time_str);
                         col = 1
                         for (series_field of bar_chart_series_list) {
@@ -1176,6 +1180,8 @@
                     }
 
                     bar_chart_options.hAxis.title = 'Month';
+                    bar_chart_options.legend = 'none';
+                    bar_chart_options.chartArea.top = 10;
                     year_chart.draw(year_data, bar_chart_options);
 
                     chart_title = `Last ${data_dict.year.length} Months`;
