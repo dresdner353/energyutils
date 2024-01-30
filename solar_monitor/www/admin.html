@@ -148,23 +148,28 @@
             config_dict['data_source'] = $('#data_source').val();
             config_dict['grid_source'] = $('#grid_source').val();
 
-            config_dict['shelly'] = {}
-            config_dict['shelly']['auth_key'] = $('#shelly_auth_key').val();
-            config_dict['shelly']['api_host'] = $('#shelly_api_host').val();
-            config_dict['shelly']['device_id'] = $('#shelly_device_id').val();
-            config_dict['shelly']['device_host'] = $('#shelly_device_host').val();
-            config_dict['shelly']['device_username'] = $('#shelly_device_username').val();
-            config_dict['shelly']['device_password'] = $('#shelly_device_password').val();
+            if (config_dict['grid_source'] == 'shelly-em' || 
+                config_dict['grid_source'] == 'shelly-pro') {
+                config_dict['shelly'] = {};
+                config_dict['shelly']['auth_key'] = $('#shelly_auth_key').val();
+                config_dict['shelly']['api_host'] = $('#shelly_api_host').val();
+                config_dict['shelly']['device_id'] = $('#shelly_device_id').val();
+                config_dict['shelly']['device_host'] = $('#shelly_device_host').val();
+                config_dict['shelly']['device_username'] = $('#shelly_device_username').val();
+                config_dict['shelly']['device_password'] = $('#shelly_device_password').val();
+            }
 
-            config_dict['solis'] = {}
-            config_dict['solis']['inverter_sn'] = $('#solis_inverter_sn').val();
-            config_dict['solis']['api_host'] = $('#solis_api_host').val();
-            config_dict['solis']['key_id'] = $('#solis_key_id').val();
-            config_dict['solis']['key_secret'] = $('#solis_key_secret').val();
+            if (config_dict['data_source'] == 'solis') {
+                config_dict['solis'] = {};
+                config_dict['solis']['inverter_sn'] = $('#solis_inverter_sn').val();
+                config_dict['solis']['api_host'] = $('#solis_api_host').val();
+                config_dict['solis']['key_id'] = $('#solis_key_id').val();
+                config_dict['solis']['key_secret'] = $('#solis_key_secret').val();
+            }
 
             config_dict['dashboard'] = {}
 
-            config_dict['dashboard']['metrics'] = {}
+            config_dict['dashboard']['metrics'] = {};
             config_dict['dashboard']['metrics']['live'] =  $('#metrics_live').prop('checked');
             config_dict['dashboard']['metrics']['today'] = $('#metrics_today').prop('checked');
             config_dict['dashboard']['metrics']['yesterday'] = $('#metrics_yesterday').prop('checked');
@@ -173,7 +178,7 @@
             config_dict['dashboard']['metrics']['last_12_months'] = $('#metrics_last_12_months').prop('checked');
             config_dict['dashboard']['cycle_interval'] = $('#metric_cycle_interval').val();
 
-            config_dict['dashboard']['donut'] = {}
+            config_dict['dashboard']['donut'] = {};
             config_dict['dashboard']['donut']['import'] = $('#donut_import').prop('checked');
             config_dict['dashboard']['donut']['consumed'] = $('#donut_consumed').prop('checked');
             config_dict['dashboard']['donut']['solar'] = $('#donut_solar').prop('checked');
@@ -182,7 +187,7 @@
             config_dict['dashboard']['donut']['battery_charge'] = $('#donut_battery_charge').prop('checked');
             config_dict['dashboard']['donut']['battery_discharge'] = $('#donut_battery_discharge').prop('checked');
 
-            config_dict['dashboard']['bar_chart'] = {}
+            config_dict['dashboard']['bar_chart'] = {};
             config_dict['dashboard']['bar_chart']['import'] = $('#bar_chart_import').prop('checked');
             config_dict['dashboard']['bar_chart']['consumed'] = $('#bar_chart_consumed').prop('checked');
             config_dict['dashboard']['bar_chart']['solar'] = $('#bar_chart_solar').prop('checked');
@@ -191,19 +196,19 @@
             config_dict['dashboard']['bar_chart']['battery_charge'] = $('#bar_chart_battery_charge').prop('checked');
             config_dict['dashboard']['bar_chart']['battery_discharge'] = $('#bar_chart_battery_discharge').prop('checked');
 
-            config_dict['environment'] = {}
+            config_dict['environment'] = {};
             config_dict['environment']['gco2_kwh'] = Number($('#env_gco2_kwh').val());
             config_dict['environment']['trees_kwh'] = Number($('#env_trees_kwh').val());
 
             // JSON POST to /config
-            post_body = JSON.stringify(config_dict)
+            post_body = JSON.stringify(config_dict);
             request = new XMLHttpRequest();
-            request.open('POST', '/config', true)
-            request.setRequestHeader('Content-type', 'application/json; charset=UTF-8')
+            request.open('POST', '/config', true);
+            request.setRequestHeader('Content-type', 'application/json; charset=UTF-8');
             request.send(post_body);
             request.onload = function () {
                 if(request.status == 200) {
-                    console.log("config update success") 
+                    console.log("config update success");
                 }
             }
         }
