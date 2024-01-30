@@ -1,3 +1,4 @@
+@echo off
 SET PYTHON=python3.exe
 SET SOLIS_DATA=solis_data
 SET SOLIS_SCRIPT=..\solis_data_util.py
@@ -11,11 +12,17 @@ SET SOLIS_KEY_SECRET=YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
 SET SOLIS_INVERTER_SN=ZZZZZZZZZZZZZZZZ
 
 REM Shelly API config
-REM Note: uncomment shelly_xxxxx lines below if using
-REM a Shelly device in conjunction with the Solis inverter
+REM Note: Only required if using a Shelly device in 
+REM conjunction with the Solis inverter
 SET SHELLY_API_HOST=example.com
 SET SHELLY_AUTH_KEY=ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
 SET SHELLY_DEVICE_ID=000000000000
+REM These lines below need to be added to the Solis script call
+REM best to drop them in after the --days line and remove
+REM the leading "REM" on each
+REM    --shelly_api_host %SHELLY_API_HOST% ^
+REM    --shelly_device_id %SHELLY_DEVICE_ID% ^
+REM    --shelly_auth_key %SHELLY_AUTH_KEY% ^
 
 REM prepare directory for parsed SOLIS JSON data
 IF not exist %SOLIS_DATA% (mkdir %SOLIS_DATA%)
@@ -27,10 +34,7 @@ REM Retrieve data from Shelly Cloud
     --solis_api_host %SOLIS_API_HOST% ^
     --solis_key_id %SOLIS_KEY_ID% ^
     --solis_key_secret %SOLIS_KEY_SECRET%  ^
-    --solis_inverter_sn %SOLIS_INVERTER_SN% ^
-REM    --shelly_api_host %SHELLY_API_HOST% ^
-REM    --shelly_device_id %SHELLY_DEVICE_ID% ^
-REM    --shelly_auth_key %SHELLY_AUTH_KEY% ^
+    --solis_inverter_sn %SOLIS_INVERTER_SN% 
 
 REM Example EV report
 %PYTHON% %GEN_REPORT_SCRIPT% ^
