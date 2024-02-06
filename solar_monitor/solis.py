@@ -321,7 +321,7 @@ def get_inverter_day_data(config):
             offset_dict[field][offset_key] += usage_rec[field]
 
         # calculate the solar consumed from the adjusted numbers
-        usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export'] 
+        usage_rec['solar_consumed'] = max(0, usage_rec['solar'] - usage_rec['export'])
         if usage_rec['solar_consumed'] < 0:
             usage_rec['solar_consumed'] = 0
 
@@ -350,6 +350,10 @@ def get_inverter_day_data(config):
     consumed = latest_snap_rec['familyLoadPower'] / 1000 
     battery = latest_snap_rec['batteryPower'] / 1000
     battery_soc = latest_snap_rec['batteryCapacitySoc']
+
+    # for solar, zero readings below 10W
+    if solar <= 0.010:
+        solar = 0
 
     live_rec = gv_solis_dict['metrics']['live']
     time_str = datetime.datetime.fromtimestamp(
@@ -381,7 +385,7 @@ def get_inverter_day_data(config):
 
     live_rec['solar_consumed'] = 0
     if live_rec['solar'] > 0:
-        live_rec['solar_consumed'] = live_rec['solar'] - live_rec['export']
+        live_rec['solar_consumed'] = max(0, live_rec['solar'] - live_rec['export'])
 
     live_rec['consumed'] = consumed
 
@@ -473,7 +477,7 @@ def get_inverter_month_data(config):
             usage_rec['battery_charge'] = solis_day_rec['batteryChargeEnergy']
             usage_rec['battery_discharge'] = solis_day_rec['batteryDischargeEnergy']
 
-        usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export'] 
+        usage_rec['solar_consumed'] = max(0, usage_rec['solar'] - usage_rec['export'])
         usage_rec['year'] = ts_dt.strftime('%Y')
         usage_rec['month'] = ts_dt.strftime('%b')
         usage_rec['day'] = ts_dt.day
@@ -586,7 +590,7 @@ def get_inverter_year_data(config):
             usage_rec['battery_charge'] = solis_month_rec['batteryChargeEnergy']
             usage_rec['battery_discharge'] = solis_month_rec['batteryDischargeEnergy']
 
-        usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export'] 
+        usage_rec['solar_consumed'] = max(0, usage_rec['solar'] - usage_rec['export'])
         usage_rec['year'] = ts_dt.strftime('%Y')
         usage_rec['month'] = ts_dt.strftime('%b')
 
