@@ -40,7 +40,6 @@ chromium-browser "${flags[@]}" --app=http://localhost:8090 &
 # mouse movement and window foreground
 sleep 10
 WID=$(xdotool search --onlyvisible --class chromium | head -1)
-echo "activate ${WID}"
 xdotool windowactivate ${WID}
 xdotool windowfocus ${WID}
-xdotool mousemove --sync 0 9000
+xdotool mousemove --sync 9000 0
