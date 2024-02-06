@@ -3,6 +3,7 @@ import time
 import requests
 import os
 import sys
+import traceback
 import hmac
 import json
 import hashlib
@@ -113,34 +114,59 @@ def get_solis_cloud_data(
             'Date': now,
             'Authorization': authorization,
             }
+    target_url = config['solis']['api_host'] + url_part
     utils.log_message(
             utils.gv_verbose,
             'API: \nURL:%s \nHeaders:%s \nrequest:\n%s\n' % (
-                config['solis']['api_host'] + url_part,
+                target_url,
                 json.dumps(headers, indent = 4),
                 json.dumps(request, indent = 4)
                 )
             )
+
     try:
         resp = requests.post(
-                config['solis']['api_host'] + url_part,
+                target_url,
                 headers = headers,
                 timeout = 20,
                 json = request)
-        utils.log_message(
-                utils.gv_verbose,
-                'Response:\n%s\n' % (
-                    json.dumps(resp.json(), indent = 4)
-                    )
-                )
 
-        return resp.json()
-    except:
+        if resp.status_code == 200:
+            utils.log_message(
+                    utils.gv_verbose,
+                    'Response:\n%s\n' % (
+                        json.dumps(resp.json(), indent = 4)
+                        )
+                    )
+            return resp.json()
+        else:
+            utils.log_message(
+                    1,
+                    'Solis API Failure.. URL:%s status:%d text:\n%s' % (
+                        target_url,
+                        resp.status_code,
+                        resp.text) 
+                    )
+            return None
+
+    # exceptions
+    except requests.exceptions.Timeout:
         utils.log_message(
                 1,
-                'Solis API failure.. URL:%s' % (config['solis']['api_host'] + url_part) 
+                'Solis API timeout.. URL:%s' % (target_url) 
                 )
-        return None
+
+    except Exception as ex:
+        utils.log_message(
+                1,
+                'Solis API exception.. URL:%s' % (target_url) 
+                )
+
+        # exception details
+        for tb_line in traceback.format_exception(ex.__class__, ex, ex.__traceback__):
+            utils.log_message(1, tb_line.strip('\n'))
+
+    return None
 
 
 def get_inverter_day_data(config):
@@ -207,10 +233,11 @@ def get_inverter_day_data(config):
         # battery detection
         # This is a tad crude but appears to be non-zero
         # for a battery setup and zero otherwise
+        # we also only set to True (from False) and never
+        # back to False is the batteryChargingCurrent can appear as 
+        # zero sometimes intermittently 
         if solis_snap_rec['batteryChargingCurrent'] > 0:
             gv_battery_is_present = True
-        else:
-            gv_battery_is_present = False
 
         # unique key for hour
         key = '%04d-%02d-%02d-%02d' % (
