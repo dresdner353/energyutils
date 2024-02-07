@@ -35,6 +35,16 @@ day_ts = 0
 def parse_time(
         datetime_str,
         timezone):
+    """
+    parses a local string timestamp into an epoch
+    value.
+
+    Args:
+    datetime_str    - date satring to be parsed
+    timezone        - timezone to apply for conversion
+
+    Returns: tuple of epoch timestamp, parsed datetime object
+    """
 
     # naive parse
     dt = dateutil.parser.parse(datetime_str)
@@ -54,7 +64,17 @@ def get_shelly_api_data(
         date_range,
         date_from,
         date_to):
+    """
+    Calls Shelly cloud API to retrieve import/export data. 
 
+    Args:
+    config     - config dict 
+    date_range - Shelly API date range arg
+    date_from  - start date
+    date_to    - end date
+
+    Returns: dict parsed from API JSON response
+    """
     # check if creds are set
     if (
             not config['shelly']['api_host'] or
@@ -168,6 +188,16 @@ def get_shelly_api_data(
 
 
 def get_cloud_data(config):
+    """
+    Combined function to retrieve the last 36 hours,
+    30 days and 12 months of historic grid import/export from 
+    Shelly cloud.
+
+    Args:
+    config     - config dict 
+
+    Populates the results directly in the gv_shelly_dict
+    """
 
     global gv_shelly_dict
     global month_ts
@@ -304,7 +334,15 @@ def get_cloud_data(config):
 
 
 def get_shelly_em_live_data(config):
+    """
+    Gets live grid and solar values from a Shelly EM
 
+    Args:
+    config     - config dict 
+
+    Returns: tuple of grid, solar values in kW
+             grid value will be negative for export scenario
+    """
     utils.log_message(
             1,
             "Updating Shelly EM Live Data"
@@ -351,7 +389,15 @@ def get_shelly_em_live_data(config):
 
 
 def get_shelly_pro_em_live_data(config):
+    """
+    Gets live grid and solar values from a Shelly Pro EM
 
+    Args:
+    config     - config dict 
+
+    Returns: tuple of grid, solar values in kW
+             grid value will be negative for export scenario
+    """
     utils.log_message(
             1,
             "Updating Shelly Pro EM Live Data"
@@ -431,6 +477,16 @@ def get_shelly_pro_em_live_data(config):
 
 
 def get_live_data(config):
+    """
+    Wrapper function to get live data. This will toggle the grid_source
+    field in config and call into the Shelly EM or Pro EM depending on which 
+    is in use
+
+    Args:
+    config     - config dict 
+
+    Writes results direct to the gv_shelly_dict
+    """
     global gv_shelly_dict
 
     if not config['shelly']['device_host']:
@@ -497,7 +553,17 @@ def get_live_data(config):
 
 
 def get_data(config):
+    """
+    Gets inverter data. This is the module common function 
+    called by the parent solar_monnitor.py script. It manages 
+    all lower level calls for day, month and year and returns the 
+    results in a common format dict object
 
+    Args:
+    config    - gloval config
+
+    Returns: tuple of the data dict and refresh interval (fixed at 5 seconds)
+    """
     global gv_shelly_dict
 
     get_live_data(config)

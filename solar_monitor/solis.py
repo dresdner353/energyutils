@@ -83,6 +83,17 @@ def get_solis_cloud_data(
         config,
         url_part, 
         request) -> dict:
+    """
+    Calls Solis cloud API to retrieve inverter data. Handles all 
+    the complex authentication steps required to generate headers etc
+
+    Args:
+    config    - config dict 
+    url_part  - API URL function/target appended to base URL
+    request   - API request body
+
+    Returns: dict parsed from API JSON response
+    """
 
     # Payload MD5
     payload_str = json.dumps(request)
@@ -170,6 +181,12 @@ def get_solis_cloud_data(
 
 
 def get_inverter_day_data(config):
+    """
+    Gets inverter data for the last 36 hours
+
+    Args:
+    config    - gloval config
+    """
     global day_ts
     global gv_solis_dict
     global gv_battery_is_present
@@ -400,6 +417,12 @@ def get_inverter_day_data(config):
 
 
 def get_inverter_month_data(config):
+    """
+    Gets inverter data for the last 30 days
+
+    Args:
+    config    - gloval config
+    """
     global month_ts
     global gv_solis_dict
     global gv_battery_is_present
@@ -523,6 +546,12 @@ def get_inverter_month_data(config):
 
 
 def get_inverter_year_data(config):
+    """
+    Gets inverter data for the last 12 months
+
+    Args:
+    config    - gloval config
+    """
     global year_ts
     global gv_solis_dict
     global gv_battery_is_present
@@ -662,7 +691,18 @@ def get_inverter_year_data(config):
 
 
 def get_data(config):
+    """
+    Gets inverter data. This is the module common function 
+    called by the parent solar_monnitor.py script. It manages 
+    all lower level calls for day, month and year and returns the 
+    results in a common format dict object
 
+    Args:
+    config    - gloval config
+
+    Returns: tuple of the data dict and refresh interval 
+             (derived from next predicted update time)
+    """
     global gv_solis_dict
     global day_ts
 
@@ -702,6 +742,3 @@ def get_data(config):
 
     # return data and fixed sleep of 5 minutes for refresh
     return gv_solis_dict, update_interval
-
-
-

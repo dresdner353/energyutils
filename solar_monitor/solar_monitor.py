@@ -40,6 +40,9 @@ gv_grid_dict = {}
 gv_refresh_interval = 1
 
 def set_default_config():
+    """
+    Sets default config for a vanilla setup
+    """
 
     utils.log_message(
             1,
@@ -92,13 +95,22 @@ def set_default_config():
 
 
 def load_config(config_file):
+    """
+    Loads config from the specified file
 
+    Args:
+    config_file    - full path of config file
+
+    Returns:
+    dict object of parsed config
+    """
     utils.log_message(
             1,
             "Loading config from %s" % (config_file))
     try:
         config_data = open(config_file).read()
         json_config = json.loads(config_data)
+        sanitise_config(json_config)
 
     except Exception as ex: 
         utils.log_message(
@@ -109,7 +121,45 @@ def load_config(config_file):
     return json_config
 
 
+def sanitise_config(json_config):
+    """
+    Sanitised config from the specified dict. Removes
+    leading/trailling whitespace and other artifacts like
+    trailling slashes in URLs
+
+    Args:
+    json_config    - dict representing config or a sub-object
+
+    Returns:
+    modifies the json_config by reference
+    """
+    for field in json_config.keys():
+        if type(json_config[field]) == str:
+            # clean any leading/trailing white space
+            json_config[field] = json_config[field].strip()
+
+            # remove trailling /
+            json_config[field] = json_config[field].rstrip('/')
+
+        # recursion into sub-objects
+        if type(json_config[field]) == dict:
+            sanitise_config(json_config[field])
+
+        # FIXME add support for arrays if they ever get
+        # added to config
+
+    return
+
+
 def save_config(json_config, config_file):
+    """
+    Saves config to the specified file
+
+    Args:
+    json_config    - dict object representing the config
+    config_file    - full path of config file to write
+    """
+    sanitise_config(json_config)
     utils.log_message(
             1,
             "Saving config to %s" % (config_file))
@@ -122,6 +172,12 @@ def save_config(json_config, config_file):
 
 
 def config_agent():
+    """
+    Config agent that runs in a 10-second loop monitoring 
+    the config file for changes. It will also initialise 
+    this file to defaults if it does not exist.
+    """
+
     global gv_config_dict
     global gv_config_file
     last_check = 0
@@ -145,6 +201,14 @@ def config_agent():
 
 
 def merge_grid_data():
+    """
+    Merges live and historic import/export data from the grid monitoring into the main data dict. 
+    Also merges live solar data into the 'live' metric record
+
+    This only applies when using a separate grid monitoring source from the main
+    inverter. Typically used when the inverter is a string model that cannot monitor 
+    grid import and export
+    """
     global gv_data_dict
     global gv_grid_dict
     global gv_config_dict
@@ -268,6 +332,15 @@ def merge_grid_data():
 
 
 def monitor_agent():
+    """
+    Agent to manage the retrieval of inverter and grid data. This will call into 
+    the relevant selected inverter module to retrieve the data and store in 
+    the gv_data_dict. It will also optionally call into a supplimentary grid source
+    such as a Shelly EM device and merge both sources of data.
+
+    A sleep interval is determined from the inverer/grid source and used to sleep the
+    agent loop until the next update call
+    """
 
     global gv_data_dict
     global gv_grid_dict
@@ -323,6 +396,10 @@ def monitor_agent():
 
 
 class config_handler(object):
+    """
+    Cherrypy class to manage the API retrieval and updating of 
+    config data
+    """
     @cherrypy.expose
     @cherrypy.tools.json_out()
     @cherrypy.tools.json_in()
@@ -365,6 +442,10 @@ class config_handler(object):
 
 
 class data_handler(object):
+    """
+    Cherrypy class to manage the retrieval of inverter/grid data 
+    to serve to the dashboard
+    """
     @cherrypy.expose()
     @cherrypy.tools.json_out()
 
@@ -408,6 +489,17 @@ class data_handler(object):
 
 
 def web_server(dev_mode):
+    """
+    Webserver agent to drive the setup and running of cherrypy resources
+    to manage the serving of static HTML assets and API data
+
+    Args:
+    dev_mode    - boolean to indicate dev mode that toggles diagnostic logging
+                  If set to false, the engine is started in production mode with 
+                  no diagnostics shown on erors. In dev mode, backtraces and other 
+                  diagnostics will appear on web pages and other interactions to assist in 
+                  troubleshooting
+    """
     global gv_config_dict
 
     utils.log_message(
@@ -452,6 +544,7 @@ def web_server(dev_mode):
                 }
             }
 
+    # optional authentication on the dashboard itself
     if gv_config_dict['web']['dashboard_auth']:
         static_conf['/']['tools.auth_digest.on'] = True
         static_conf['/']['tools.auth_digest.realm'] = 'localhost'
@@ -463,6 +556,7 @@ def web_server(dev_mode):
     # /data API
     api_conf = {}
 
+    # optional authentication on the /data API itself
     if gv_config_dict['web']['dashboard_auth']:
         api_conf['/'] = {}
         api_conf['/']['tools.auth_digest.on'] = True
@@ -473,6 +567,7 @@ def web_server(dev_mode):
     cherrypy.tree.mount(data_handler(), '/data', api_conf)
 
     # /admin (for config page)
+    # mandatory authentication in use
     admin_conf = {
             '/': {
                 'tools.auth_digest.on': True,
@@ -489,7 +584,7 @@ def web_server(dev_mode):
     cherrypy.tree.mount(None, '/admin', admin_conf)
 
     # /config (API for reading/writing config)
-    # authenticated the same as /admin
+    # mandatory authentication in use
     config_conf = {
             '/': {
                 'tools.auth_digest.on': True,
@@ -511,6 +606,12 @@ def thread_exception_wrapper(
         fn, 
         *args, 
         **kwargs):
+    """
+    This is a simple exception wrapper used for concurrent futures
+    to capture the actual exception and then raise a new one with the 
+    string detail of the original. Prevents loss of exception context
+    when using concurrent futures
+    """
 
     try:
         # call fn arg with other args
@@ -526,6 +627,7 @@ def thread_exception_wrapper(
         exception_str = ''.join(exception_list)
 
         raise Exception(exception_str)  
+
 
 # main()
 parser = argparse.ArgumentParser(
