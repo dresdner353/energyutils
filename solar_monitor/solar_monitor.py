@@ -427,6 +427,46 @@ class config_handler(object):
                     'config post %s' % (updated_config_dict)
                     )
 
+            # restart detection
+            # certain config changes trigger a restart of the script
+            # such as web params, grid/data source changes or parameters 
+            # in the given inverter/data source structures
+            config_check_list = [
+                    'data_source',
+                    'grid_source',
+                    'shelly',
+                    'solis',
+                    'web',
+                    ]
+
+            force_restart = False
+            for prop in config_check_list:
+                if (prop in updated_config_dict and 
+                    prop in gv_config_dict):
+
+                    # format both as JSON 
+                    # with sorted keys
+                    # strings will be the same if 
+                    # data is the same
+                    config_str = json.dumps(
+                            gv_config_dict[prop],
+                            sort_keys = True)
+                    update_str = json.dumps(
+                            updated_config_dict[prop],
+                            sort_keys = True)
+
+                    # if different, then we mark 
+                    # for restart
+                    if config_str != update_str:
+                        utils.log_message(
+                                1,
+                                'config change update:%s orig:%s' % (
+                                    update_str,
+                                    config_str)
+                                )
+                        force_restart = True
+                        break
+
             # map like to like keys in config
             # this is a hack as its allowing config to exist that is not 
             # served back from the admin page
@@ -435,6 +475,12 @@ class config_handler(object):
                 gv_config_dict[key] = updated_config_dict[key]
 
             save_config(gv_config_dict, gv_config_file)
+
+            # restart if we had earlier detected the need
+            # to restart
+            if force_restart:
+                restart()
+
             return ""
 
     # Force trailling slash off on called URL
@@ -627,6 +673,19 @@ def thread_exception_wrapper(
         exception_str = ''.join(exception_list)
 
         raise Exception(exception_str)  
+
+
+def restart():
+    """
+    function to complete restart the script by doing an exec on itself
+    Used to restart after major config changes
+    """
+    utils.log_message(
+            1, 
+            'Restarting script..'
+            )
+    os.execv(sys.executable, ['python'] + sys.argv)
+    return
 
 
 # main()
