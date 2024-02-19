@@ -492,7 +492,7 @@ def load_data(
                     while hh != end_hh:
                         if tariff_name in tariff_dict:
                             tarff_interval_dict[day][hh] = tariff_name
-                            hh = (hh + 1) % 24
+                        hh = (hh + 1) % 24
         log_message(
                 verbose,
                 'Tariff Intervals: %s' % (
