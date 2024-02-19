@@ -374,17 +374,17 @@ def monitor_agent():
             merge_grid_data()
 
         # optional grid sleep interval over-ride
-        if grid_sleep_interval and grid_sleep_interval < sleep_interval:
-            sleep_interval = grid_sleep_interval
+        if grid_sleep_interval:
+            sleep_interval = min(grid_sleep_interval, sleep_interval)
 
         # short sleep protection
         if sleep_interval < 5:
             sleep_interval = 5
 
         # refresh interval
-        # we want a min of 10 but can go 
+        # we want a typical value of 30 but can go 
         # lower for more real-time values
-        gv_refresh_interval = min(10, sleep_interval)
+        gv_refresh_interval = min(30, sleep_interval)
 
         utils.log_message(
                 1,
@@ -410,7 +410,7 @@ class config_handler(object):
         global gv_config_file
 
         utils.log_message(
-                utils.gv_verbose,
+                1,
                 '/config API %s %s' % (
                     cherrypy.request.remote.ip,
                     cherrypy.request.method))
@@ -503,7 +503,7 @@ class data_handler(object):
         global gv_force_metric_cycle
 
         utils.log_message(
-                utils.gv_verbose,
+                1,
                 '/data API %s %s' % (
                     cherrypy.request.remote.ip,
                     cherrypy.request.method))
