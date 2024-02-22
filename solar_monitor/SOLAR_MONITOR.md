@@ -74,6 +74,8 @@ Every N seconds the donut chart and metrics will be cycled to the next metric. T
 
 ![Large Screen Last 12 Months](screenshots/large_last_12_months.png)
 
+![Large Screen Yesterday](screenshots/large_yesterday.png)
+
 ### Small Screen Format (laptop/tablet)
 The small screen format will be used on smaller screens such as laptops and tablets. This layout removes the column charts due to limited space and places the donut chart on the left and metric values on the right.
 
