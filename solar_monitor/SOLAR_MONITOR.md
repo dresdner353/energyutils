@@ -57,7 +57,7 @@ The admin page is accessed from http://localhost:8090/admin and has default user
 
 This screen is used to first select the desired source/inverter variant and enter the API credentials. The same screen is used to customise the metrics sources that are cycled on the dashboard and also series fields for the donut and column charts.
 
-When changes are made, they are applied by clicking the "Apply Changes" button. It is also possible to export and comport config files from this page.
+When changes are made, they are applied by clicking the "Apply Changes" button. It is also possible to export and import config files from this page.
 
 ![Admin Page](screenshots/admin.png)
 
