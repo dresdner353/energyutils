@@ -8,6 +8,223 @@ import zoneinfo
 import sys
 import xlsxwriter
 
+field_dict = {
+        'datetime' : {
+            'title' : 'Date',
+            'width' : 15,
+            'header_format' : 'header',
+            'format' : 'str',
+            },
+        'ts' : {
+            'title' : 'Epoch',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'integer',
+            },
+        'year' : {
+            'title' : 'Year',
+            'width' : 5,
+            'header_format' : 'header',
+            'format' : 'str',
+            },
+        'month' : {
+            'title' : 'Month',
+            'width' : 8,
+            'header_format' : 'header',
+            'format' : 'str',
+            },
+        'week' : {
+            'title' : 'Week',
+            'width' : 8,
+            'header_format' : 'header',
+            'format' : 'str',
+            },
+        'day' : {
+            'title' : 'Day',
+            'width' : 10,
+            'header_format' : 'header',
+            'format' : 'str',
+            },
+        'weekday' : {
+            'title' : 'Weekday',
+            'width' : 8,
+            'header_format' : 'header',
+            'format' : 'str',
+            },
+        'hour' : {
+            'title' : 'Hour',
+            'width' : 5,
+            'header_format' : 'header',
+            'format' : 'integer',
+            },
+        'hours' : {
+            'title' : 'Hours',
+            'width' : 5,
+            'header_format' : 'header',
+            'format' : 'integer',
+            },
+
+        'tariff_name' : {
+            'title' : 'Import Tariff',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'str',
+            },
+        'tariff_rate' : {
+            'title' : 'Import Rate',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'currency_4dp',
+            },
+
+        'standing_rate' : {
+            'title' : 'Standing Rate',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'currency_4dp',
+            },
+
+        'standing_cost' : {
+            'title' : 'Standing Cost',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'currency_2dp',
+            },
+
+        'import' : {
+            'title' : 'Import',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'kwh',
+            'field' : 'import'
+            },
+        'import_cost' : {
+            'title' : 'Import Cost',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'currency_2dp',
+            },
+
+        'solar' : {
+            'title' : 'Solar Generation',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'kwh',
+            },
+
+        'battery_solar_charge' : {
+            'title' : 'Battery Solar Charge',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'kwh',
+            },
+        'battery_grid_charge' : {
+            'title' : 'Battery Grid Charge',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'kwh',
+            },
+        'battery_charge' : {
+            'title' : 'Battery Charge',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'kwh',
+            },
+        'battery_discharge' : {
+            'title' : 'Battery Discharge',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'kwh',
+            },
+        'battery_storage' : {
+            'title' : 'Battery Storage',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'kwh',
+            },
+        'battery_capacity' : {
+            'title' : 'Battery Capacity (%)',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'integer',
+            },
+
+        'solar_consumed' : {
+            'title' : 'Solar Consumed',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'kwh',
+            },
+        'solar_consumed_percent' : {
+            'title' : 'Solar Consumed %',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'percent',
+            },
+        'solar_credit' : {
+            'title' : 'Solar Credit',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'currency_2dp',
+            },
+        'export_rate' : {
+            'title' : 'Export Rate',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'currency_2dp',
+            },
+        'export' : {
+            'title' : 'Export',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'kwh',
+            },
+        'export_percent' : {
+            'title' : 'Export %',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'percent',
+            },
+        'export_credit' : {
+            'title' : 'Export Credit',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'currency_2dp',
+            },
+
+        'consumed' : {
+            'title' : 'Consumed',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'kwh',
+            },
+
+        'rel_import' : {
+            'title' : 'Relative Import',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'kwh',
+            'field' : 'import'
+            },
+        'savings' : {
+            'title' : 'Savings',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'currency_2dp',
+            },
+        'savings_percent' : {
+            'title' : 'Savings %',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'percent',
+            },
+        'bill_amount' : {
+            'title' : 'Bill Amount',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'currency_2dp',
+            },
+        }
 
 def log_message(
         verbose,
@@ -111,12 +328,21 @@ def add_worksheet(
                 field_rec['title'], 
                 format_dict[field_rec['header_format']])
     
+        col_options = {}
+
+        # column hiding
+        # but bypass hiding of first field
+        if (field != first_field and 
+            'hidden' in field_rec):
+            col_options['hidden'] = field_rec['hidden']
+
         # column width
         worksheet.set_column(
                 field_rec['col'], 
                 field_rec['col'], 
-                field_rec['width'])
-    
+                field_rec['width'],
+                options = col_options)
+
     # Freeze top row and 
     # set height to 2 rows
     worksheet.freeze_panes(1, 0)
@@ -146,23 +372,28 @@ def add_worksheet(
         # and its related column
         filtered_field = default_filter_dict[first_field]
         filtered_field_rec = field_dict[filtered_field]
-        filter_col = filtered_field_rec['col']
 
-        # get the last record in the data dict
-        # and take its value for the filtered field
-        # This will give us the current day, month, year etc
-        last_data_key = key_list[-1]
-        last_data_rec = data_dict[last_data_key]
-        filter_value = last_data_rec[filtered_field]
+        if 'hidden' in filtered_field_rec:
+            # filter field is hidden, auto-filter disabled
+            filtered_field = None
+        else:
+            filter_col = filtered_field_rec['col']
 
-        # populate the filter list with the 
-        # filter value
-        # Note: This sets up the filter 
-        # but the rows are not hidden
-        # see further on
-        worksheet.filter_column_list(
-                filter_col,
-                [filter_value])
+            # get the last record in the data dict
+            # and take its value for the filtered field
+            # This will give us the current day, month, year etc
+            last_data_key = key_list[-1]
+            last_data_rec = data_dict[last_data_key]
+            filter_value = last_data_rec[filtered_field]
+
+            # populate the filter list with the 
+            # filter value
+            # Note: This sets up the filter 
+            # but the rows are not hidden
+            # see further on
+            worksheet.filter_column_list(
+                    filter_col,
+                    [filter_value])
     
     # Populate Rows in sorted order
     row = 0
@@ -723,6 +954,15 @@ parser.add_argument(
         default = report_choices
         )
 
+parser.add_argument(
+        '--hide_columns', 
+        help = 'columns to hide',
+        nargs = '*',
+        required = False,
+        choices = list(field_dict.keys()),
+        default = []
+        )
+
 args = vars(parser.parse_args())
 report_file_name = args['file']
 tariff_list = args['tariff_rate']
@@ -736,12 +976,19 @@ end_date = args['end']
 timezone = args['timezone']
 currency_symbol = args['currency']
 report_list = args['reports']
+hide_column_list = args['hide_columns']
 verbose = args['verbose']
 
 # annual standing charge conversion
 # from year to hourly rate
 if annual_standing_charge:
     standing_rate = annual_standing_charge / (365 * 24)
+
+# hidden columns
+# populate hidden boolean into field dict
+for column_key in hide_column_list:
+    if column_key in field_dict:
+        field_dict[column_key]['hidden'] = True
 
 log_message(
         1,
@@ -840,225 +1087,6 @@ currency_2dp_format.set_num_format(
             )
         ) 
 format_dict['currency_2dp'] = currency_2dp_format
-
-field_dict = {
-        'datetime' : {
-            'title' : 'Date',
-            'width' : 15,
-            'header_format' : 'header',
-            'format' : 'str',
-            },
-        'ts' : {
-            'title' : 'Epoch',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'integer',
-            },
-        'year' : {
-            'title' : 'Year',
-            'width' : 5,
-            'header_format' : 'header',
-            'format' : 'str',
-            },
-        'month' : {
-            'title' : 'Month',
-            'width' : 8,
-            'header_format' : 'header',
-            'format' : 'str',
-            },
-        'week' : {
-            'title' : 'Week',
-            'width' : 8,
-            'header_format' : 'header',
-            'format' : 'str',
-            },
-        'day' : {
-            'title' : 'Day',
-            'width' : 10,
-            'header_format' : 'header',
-            'format' : 'str',
-            },
-        'weekday' : {
-            'title' : 'Weekday',
-            'width' : 8,
-            'header_format' : 'header',
-            'format' : 'str',
-            },
-        'hour' : {
-            'title' : 'Hour',
-            'width' : 5,
-            'header_format' : 'header',
-            'format' : 'integer',
-            },
-        'hours' : {
-            'title' : 'Hours',
-            'width' : 5,
-            'header_format' : 'header',
-            'format' : 'integer',
-            },
-
-        'tariff_name' : {
-            'title' : 'Import Tariff',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'str',
-            },
-        'tariff_rate' : {
-            'title' : 'Import Rate',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'currency_4dp',
-            },
-
-        'standing_rate' : {
-            'title' : 'Standing Rate',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'currency_4dp',
-            },
-
-        'standing_cost' : {
-            'title' : 'Standing Cost',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'currency_2dp',
-            },
-
-        'import' : {
-            'title' : 'Import',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'kwh',
-            'field' : 'import'
-            },
-        'import_cost' : {
-            'title' : 'Import Cost',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'currency_2dp',
-            },
-
-        'solar' : {
-            'title' : 'Solar Generation',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'kwh',
-            },
-
-        'battery_solar_charge' : {
-            'title' : 'Battery Solar Charge',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'kwh',
-            },
-        'battery_grid_charge' : {
-            'title' : 'Battery Grid Charge',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'kwh',
-            },
-        'battery_charge' : {
-            'title' : 'Battery Charge',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'kwh',
-            },
-        'battery_discharge' : {
-            'title' : 'Battery Discharge',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'kwh',
-            },
-        'battery_storage' : {
-            'title' : 'Battery Storage',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'kwh',
-            },
-        'battery_capacity' : {
-            'title' : 'Battery Capacity (%)',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'integer',
-            },
-
-        'solar_consumed' : {
-            'title' : 'Solar Consumed',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'kwh',
-            },
-        'solar_consumed_percent' : {
-            'title' : 'Solar Consumed %',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'percent',
-            },
-        'solar_credit' : {
-            'title' : 'Solar Credit',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'currency_2dp',
-            },
-        'export_rate' : {
-            'title' : 'Export Rate',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'currency_2dp',
-            },
-        'export' : {
-            'title' : 'Export',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'kwh',
-            },
-        'export_percent' : {
-            'title' : 'Export %',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'percent',
-            },
-        'export_credit' : {
-            'title' : 'Export Credit',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'currency_2dp',
-            },
-
-        'consumed' : {
-            'title' : 'Consumed',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'kwh',
-            },
-
-        'rel_import' : {
-            'title' : 'Relative Import',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'kwh',
-            'field' : 'import'
-            },
-        'savings' : {
-            'title' : 'Savings',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'currency_2dp',
-            },
-        'savings_percent' : {
-            'title' : 'Savings %',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'percent',
-            },
-        'bill_amount' : {
-            'title' : 'Bill Amount',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'currency_2dp',
-            },
-        }
-
 
 # aggregate dicts
 day_dict = gen_aggregate_dict(data_dict, 'day')
