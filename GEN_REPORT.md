@@ -36,6 +36,7 @@ optional arguments:
   --verbose             Enable verbose output
   --reports [{year,month,week,day,hour,tariff,weekday,24h} ...]
                         Reports to generate
+  --hide_columns [{datetime,ts,year,month,week,day,weekday,hour,hours,tariff_name,tariff_rate,standing_rate,standing_cost,import,import_cost,solar,battery_solar_charge,battery_grid_charge,battery_charge,battery_discharge,battery_storage,battery_capacity,solar_consumed,solar_consumed_percent,solar_credit,export_rate,export,export_percent,export_credit,consumed,rel_import,savings,savings_percent,bill_amount} ...]
 
 ```
 Notes:
@@ -49,6 +50,7 @@ Notes:
 * A hourly standing charge may be set via the --standing_rate option.
 * Alternatively use the --annual_standing_charge option to specify the standing charge as a yearly total.
 * The --reports option can be used to limit the set of generated reports to a desired subset of values. Multiple reports may be specified one after the other and in the order they should be written to the XLSX file. By default all reports are generated.
+* The --hide_columns option allows for a list of columns to be hidden in the generated file. Multiple columns can be specified by space separating the values. 
 
 
 ## Example Run
