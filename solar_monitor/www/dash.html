@@ -54,13 +54,17 @@
         // Window focus changes activates/deactivates 
         // the timers to avoid background activity when not in focus
         $(window).focus(function() {
+
+            // instant update
+            refresh_data();
+            display_data();
+
+            // restart timers
             clearInterval(refresh_timer);
             refresh_timer = setInterval(refresh_data, refresh_interval);
 
             clearInterval(metric_cycle_timer);
             metric_cycle_timer = setInterval(cycle_metric_index, metric_cycle_interval);
-
-            display_data();
 
         }).blur(function() {
 
