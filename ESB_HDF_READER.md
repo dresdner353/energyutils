@@ -13,7 +13,8 @@ ESB HDF Reader
 
 optional arguments:
   -h, --help           show this help message and exit
-  --file FILE          ESB HDF file
+  --file FILE [FILE ...]
+                       ESB HDF file list
   --odir ODIR          Output Directory
   --timezone TIMEZONE  Timezone
   --partial_days       Include incomplete partial days (skipped by default)
@@ -22,6 +23,7 @@ optional arguments:
 
 Notes:
 * The script is run and pointed at a HDF file as downloaded from the ESB (--file file.csv)
+* Multiple files can be specified with the --file option to allow a merge of several files that overlap
 * The output directory is set to control where the script dumps all generated JSONL files (--odir <dir>)
 * Timezone can be asserted with the --timezone option. By default, this is set to Europe/Dublin. The ESB HDF data comes in local Europe/Dublin timezone. So this option should not be required.
 * The --partial_days option will include incomplete days in the processing. These are days that do not have the full 24h representation. By default such says are skipped as their data tends to be unreliable.

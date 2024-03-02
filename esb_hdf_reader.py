@@ -77,8 +77,8 @@ def get_hours_in_day(
     return daylen_hours
 
 
-def process_esb_hdf_file(
-        hdf_file,
+def process_esb_hdf_files(
+        hdf_file_list,
         timezone,
         odir,
         partial_days):
@@ -91,56 +91,113 @@ def process_esb_hdf_file(
             'type', 
             'datetime'
             ]
-    
-    reader = csv.DictReader(
-            open(hdf_file),
-            delimiter = ',',
-            quotechar = '"',
-            fieldnames = fields
-            )
-    
-    usage_dict = {}
-    
-    row_num = -1
-    for esb_rec in reader:
-        row_num += 1
-    
-        # skip header row
-        if row_num == 0:
-            continue
-    
-        # parse the ESB local time
-        ts, dt = parse_esb_time(
-                esb_rec['datetime'],
-                timezone
+
+    # parse all ESB HDF files into a dict of the 30-min records
+    # some records will overwrite each other
+    esb_dict = {}
+    for hdf_file in hdf_file_list:
+        reader = csv.DictReader(
+                open(hdf_file),
+                delimiter = ',',
+                quotechar = '"',
+                fieldnames = fields
                 )
         
-        # Adjust time to common hour from within usage occurred
-        # ESB report time at end of measurement
-        # So we roll :30 -> :00 and :00 back to previous hour
-        if dt.minute == 30:
-            # roll back to start of hour
-            dt_ref = dt.replace(
-                minute = 0,
+        row_num = -1
+        for hdf_rec in reader:
+            row_num += 1
+        
+            # skip header row
+            if row_num == 0:
+                continue
+        
+            # parse the ESB local time
+            ts, dt = parse_esb_time(
+                    hdf_rec['datetime'],
+                    timezone
+                    )
+            
+            # Adjust time to common hour from within usage occurred
+            # ESB report time at end of measurement
+            # So we roll :30 -> :00 and :00 back to previous hour
+            if dt.minute == 30:
+                # :30 -> roll back to start of hour
+                dt_ref = dt.replace(
+                    minute = 0,
+                    )
+            else:
+                # :00 -> roll back 1 hour
+                dt_ref = dt - datetime.timedelta(hours = 1)
+        
+            # Get epoch of the common reference hour
+            ts_ref = int(dt_ref.timestamp())
+        
+            # get usage rec (create or retrieve)
+            # this uses the original ESB timestamp
+            # not the ts_ref (that comes later)
+            if not ts in esb_dict:
+                # init usage rec
+                esb_rec = {}
+                esb_dict[ts] = esb_rec
+                esb_rec['ts'] = ts
+                esb_rec['ts_ref'] = ts_ref
+                esb_rec['dt_ref'] = dt_ref
+                esb_rec['import'] = 0
+                esb_rec['export'] = 0
+            else:
+                # retrieve usage rec
+                esb_rec = esb_dict[ts]
+
+            # record maximum import/export values encountered 
+            # for this period
+            # caters for multiple overlapping and contradicting files 
+            # but we accept the largest value as the likely valid one
+
+            # FIXME
+            # DST winter rollback (yes that little chesnut)
+            # the repetition of one hour when the clocks roll back
+            # means that this hour is recorded as the larger of two 
+            # hours instead of the combination of both
+            # messy to try and cater for this while parsing multiple 
+            # overlapping files also
+
+            # Import usage
+            if hdf_rec['type'] == 'Active Import Interval (kW)':
+                esb_rec['import'] = max(esb_rec['import'], float(hdf_rec['value']) / 2)
+        
+            # Export
+            if hdf_rec['type'] == 'Active Export Interval (kW)':
+                esb_rec['export'] = max(esb_rec['export'], float(hdf_rec['value']) / 2)
+
+    log_message(
+            1,
+            'Parsed %d half-hourly records from %s' % (
+                len(esb_dict),
+                hdf_file_list,
                 )
-        else:
-            # roll back 1 hour
-            dt_ref = dt - datetime.timedelta(hours = 1)
-    
-        # Get epoch of the reference hour
-        ts_ref = int(dt_ref.timestamp())
-    
-        # get usage rec (create or retrieve)
-        if not ts_ref in usage_dict:
-            # init usage rec
-            usage_rec = {}
-            usage_dict[ts_ref] = usage_rec
+            )
+
+    # merge into hour periods
+    # using the common ts_ref we had recorded
+    # from the ESB 3-min intervals
+    hour_dict = {}
+
+    for ts in esb_dict:
+        esb_rec = esb_dict[ts]
+        ts_ref = esb_rec['ts_ref']
+        dt_ref = esb_rec['dt_ref']
+
+        if not ts_ref in hour_dict:
+            hour_dict[ts_ref] = {}
+            usage_rec = hour_dict[ts_ref]
+
+            # time fields for the common 
+            # hour
+            usage_rec['import'] = 0
+            usage_rec['export'] = 0
             usage_rec['ts'] = ts_ref
             usage_rec['datetime'] = dt_ref.strftime('%Y/%m/%d %H:%M:%S')
-            usage_rec['import'] = 0
-            usage_rec['consumed'] = 0
-            usage_rec['export'] = 0
-    
+
             # aggregation keys
             usage_rec['hour'] = dt_ref.hour
             usage_rec['day'] = '%04d-%02d-%02d' % (
@@ -154,34 +211,31 @@ def process_esb_hdf_file(
                     dt_ref.year)
             usage_rec['weekday'] = dt_ref.strftime('%u %a')
             usage_rec['week'] = dt_ref.strftime('%Y-%W')
+
         else:
-            # retrieve usage rec
-            usage_rec = usage_dict[ts_ref]
-    
-        # Import usage
-        if esb_rec['type'] == 'Active Import Interval (kW)':
-            # append 30-min usage value / 2 
-            usage_rec['import'] += float(esb_rec['value']) / 2
-            # align consumed to current value
-            usage_rec['consumed'] = usage_rec['import']
-    
-        # Export
-        if esb_rec['type'] == 'Active Export Interval (kW)':
-            # append 30-min usage value / 2 
-            usage_rec['export'] += float(esb_rec['value']) / 2
-    
+            # pull the existing record
+            usage_rec = hour_dict[ts_ref]
+
+        # merge the ESB records
+        # the same usage rec will be updated by two separate esb
+        # records for the 2 30-min periods
+        usage_rec['import'] += esb_rec['import']
+        usage_rec['export'] += esb_rec['export']
+
+        # align consumed to same import value
+        usage_rec['consumed'] = usage_rec['import']
+
     log_message(
             1,
-            'Parsed %d hourly records from %s' % (
-                len(usage_dict),
-                hdf_file,
+            'Merged 30-min data into %d hourly records' % (
+                len(hour_dict),
                 )
             )
     
     # split into separate dicts per day
     day_dict = {}
-    for ts in usage_dict:
-        usage_rec = usage_dict[ts]
+    for ts in hour_dict:
+        usage_rec = hour_dict[ts]
         day = usage_rec['day']
         if not day in day_dict:
             day_dict[day] = {}
@@ -246,7 +300,8 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument(
         '--file', 
-        help = 'ESB HDF file', 
+        help = 'ESB HDF file list', 
+        nargs = '+',
         required = True
         )
 
@@ -276,7 +331,7 @@ parser.add_argument(
         )
 
 args = vars(parser.parse_args())
-hdf_file = args['file']
+hdf_file_list = args['file']
 odir = args['odir']
 timezone = args['timezone']
 partial_days = args['partial_days']
@@ -289,8 +344,8 @@ class RoundingFloat(float):
 json.encoder.c_make_encoder = None
 json.encoder.float = RoundingFloat
 
-process_esb_hdf_file(
-        hdf_file,
+process_esb_hdf_files(
+        hdf_file_list,
         timezone,
         odir,
         partial_days)
