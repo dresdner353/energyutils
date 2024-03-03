@@ -92,10 +92,13 @@ def process_esb_hdf_files(
             'datetime'
             ]
 
-    # parse all ESB HDF files into a dict of the 30-min records
-    # some records will overwrite each other
-    esb_dict = {}
+    # master hour dict being generated
+    # merged from all files processed
+    hour_dict = {}
+
+    # parse each ESB HDF files into a esb_dict
     for hdf_file in hdf_file_list:
+        esb_dict = {}
         reader = csv.DictReader(
                 open(hdf_file),
                 delimiter = ',',
@@ -132,102 +135,86 @@ def process_esb_hdf_files(
             # Get epoch of the common reference hour
             ts_ref = int(dt_ref.timestamp())
         
-            # get usage rec (create or retrieve)
-            # this uses the original ESB timestamp
-            # not the ts_ref (that comes later)
-            if not ts in esb_dict:
+            # init esb rec or retrieve from dict
+            if not ts_ref in esb_dict:
                 # init usage rec
                 esb_rec = {}
-                esb_dict[ts] = esb_rec
-                esb_rec['ts'] = ts
-                esb_rec['ts_ref'] = ts_ref
+                esb_dict[ts_ref] = esb_rec
+                esb_rec['ts'] = ts_ref
                 esb_rec['dt_ref'] = dt_ref
                 esb_rec['import'] = 0
                 esb_rec['export'] = 0
+                esb_rec['datetime'] = dt_ref.strftime('%Y/%m/%d %H:%M:%S')
             else:
                 # retrieve usage rec
-                esb_rec = esb_dict[ts]
+                esb_rec = esb_dict[ts_ref]
 
-            # record maximum import/export values encountered 
-            # for this period
-            # caters for multiple overlapping and contradicting files 
-            # but we accept the largest value as the likely valid one
-
-            # FIXME
-            # DST winter rollback (yes that little chesnut)
-            # the repetition of one hour when the clocks roll back
-            # means that this hour is recorded as the larger of two 
-            # hours instead of the combination of both
-            # messy to try and cater for this while parsing multiple 
-            # overlapping files also
+            # add on import/export values
+            # this caters or the merging of both 30-min intervals 
+            # and also for any repeat hours (winter DST rollback)
 
             # Import usage
             if hdf_rec['type'] == 'Active Import Interval (kW)':
-                esb_rec['import'] = max(esb_rec['import'], float(hdf_rec['value']) / 2)
+                esb_rec['import'] += float(hdf_rec['value']) / 2
         
             # Export
             if hdf_rec['type'] == 'Active Export Interval (kW)':
-                esb_rec['export'] = max(esb_rec['export'], float(hdf_rec['value']) / 2)
+                esb_rec['export'] += float(hdf_rec['value']) / 2
 
-    log_message(
-            1,
-            'Parsed %d half-hourly records from %s' % (
-                len(esb_dict),
-                hdf_file_list,
+        log_message(
+                1,
+                'Parsed %d half-hourly records from %s' % (
+                    len(esb_dict),
+                    hdf_file,
+                    )
                 )
-            )
 
-    # merge into hour periods
-    # using the common ts_ref we had recorded
-    # from the ESB 3-min intervals
-    hour_dict = {}
+        # merge into master hour_dict
+        for ts_ref in esb_dict:
+            esb_rec = esb_dict[ts_ref]
+            dt_ref = esb_rec['dt_ref']
 
-    for ts in esb_dict:
-        esb_rec = esb_dict[ts]
-        ts_ref = esb_rec['ts_ref']
-        dt_ref = esb_rec['dt_ref']
+            if not ts_ref in hour_dict:
+                hour_dict[ts_ref] = {}
+                usage_rec = hour_dict[ts_ref]
 
-        if not ts_ref in hour_dict:
-            hour_dict[ts_ref] = {}
-            usage_rec = hour_dict[ts_ref]
+                # time fields for the common 
+                # hour
+                usage_rec['import'] = 0
+                usage_rec['export'] = 0
+                usage_rec['ts'] = ts_ref
+                usage_rec['datetime'] = esb_rec['datetime']
 
-            # time fields for the common 
-            # hour
-            usage_rec['import'] = 0
-            usage_rec['export'] = 0
-            usage_rec['ts'] = ts_ref
-            usage_rec['datetime'] = dt_ref.strftime('%Y/%m/%d %H:%M:%S')
+                # aggregation keys
+                usage_rec['hour'] = dt_ref.hour
+                usage_rec['day'] = '%04d-%02d-%02d' % (
+                        dt_ref.year, 
+                        dt_ref.month, 
+                        dt_ref.day)
+                usage_rec['month'] = '%04d-%02d' % (
+                        dt_ref.year, 
+                        dt_ref.month) 
+                usage_rec['year'] = '%04d' %(
+                        dt_ref.year)
+                usage_rec['weekday'] = dt_ref.strftime('%u %a')
+                usage_rec['week'] = dt_ref.strftime('%Y-%W')
 
-            # aggregation keys
-            usage_rec['hour'] = dt_ref.hour
-            usage_rec['day'] = '%04d-%02d-%02d' % (
-                    dt_ref.year, 
-                    dt_ref.month, 
-                    dt_ref.day)
-            usage_rec['month'] = '%04d-%02d' % (
-                    dt_ref.year, 
-                    dt_ref.month) 
-            usage_rec['year'] = '%04d' %(
-                    dt_ref.year)
-            usage_rec['weekday'] = dt_ref.strftime('%u %a')
-            usage_rec['week'] = dt_ref.strftime('%Y-%W')
+            else:
+                # pull the existing master record
+                usage_rec = hour_dict[ts_ref]
 
-        else:
-            # pull the existing record
-            usage_rec = hour_dict[ts_ref]
+            # merge data using max value recorded
+            # this will record the largest single value for import and 
+            # export if the exact same hour was covered in multiple files
+            usage_rec['import'] = max(usage_rec['import'], esb_rec['import'])
+            usage_rec['export'] = max(usage_rec['export'], esb_rec['export'])
 
-        # merge the ESB records
-        # the same usage rec will be updated by two separate esb
-        # records for the 2 30-min periods
-        usage_rec['import'] += esb_rec['import']
-        usage_rec['export'] += esb_rec['export']
-
-        # align consumed to same import value
-        usage_rec['consumed'] = usage_rec['import']
+            # align consumed to same import value
+            usage_rec['consumed'] = usage_rec['import']
 
     log_message(
             1,
-            'Merged 30-min data into %d hourly records' % (
+            'Merged all ESB data into %d hourly records' % (
                 len(hour_dict),
                 )
             )
