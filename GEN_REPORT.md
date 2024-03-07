@@ -50,6 +50,7 @@ Notes:
 * A hourly standing charge may be set via the --standing_rate option.
 * Alternatively use the --annual_standing_charge option to specify the standing charge as a yearly total.
 * The --reports option can be used to limit the set of generated reports to a desired subset of values. Multiple reports may be specified one after the other and in the order they should be written to the XLSX file. By default all reports are generated.
+* The --start and --end options can be used to limit the report to a specific date range. The values are specified in YYYYMMDD. For example --start 20230912 will start from September 12th 2023 and --end 20240103 would end on Jan 3rd 2024. You can use either field or both depending on the desired limits.
 * The --hide_columns option allows for a list of columns to be hidden in the generated file. Multiple columns can be specified by space separating the values. 
 
 
