@@ -41,7 +41,7 @@ Solis Cloud API Instructions:
 * Copy the KeyID to the SOLIS_KEY_ID field
 * Copy the KeySecret to the SOLIS_KEY_SECRET field
 * Get your inverter serial number from your web login or inverter app 
-  and copy it to te SOLIS_INVERTER_SN field
+  and copy it to the SOLIS_INVERTER_SN field
 
 In the end, these four lines will look something like this...
 
@@ -50,7 +50,9 @@ SET SOLIS_KEY_ID=1355555555676955555
 SET SOLIS_KEY_SECRET=4dddddddd1ee46bcccccc182aaaaa5f4
 SET SOLIS_INVERTER_SN=155555555A055555
 
-Shelly Cloud API Instructions (optional):
+Save the file with your edits.
+
+Shelly Cloud API Instructions (only for Solis string inverters + Shelly EM):
 * Sign into control.shelly.cloud using your account credentials
 * Navigate to Settings -> User Settings -> Access And Permissions -> Authorization Cloud Key and click Get
 * This will display two pieces of information:
@@ -82,4 +84,22 @@ You can customise the --days option on the script call to pull back a larger bac
 
 * Customise the Report pricing detail
 ----------------------------------------------------------------------------
-Follow the detailed in README_ESB.txt on how to customise the report and pricing details
+This "gen_solis_report" script performs two functions:
+* Downloads data from Solis Cloud
+* Generates the Excel file report
+
+Part of the script includes the ability to set pricing details:
+
+REM Example EV report
+%PYTHON% %GEN_REPORT_SCRIPT% ^
+    --idir %SOLIS_DATA% ^
+    --file solis_report_ev.xlsx ^
+    --reports %REPORTS% ^
+    --tariff_rate Day:0.4320 Night:0.2086 Boost:0.1225 ^
+    --tariff_interval 08-23:Day 23-08:Night 02-04:Boost ^
+    --annual_standing_charge 303 ^
+    --fit_rate 0.21 
+
+The --tariff_rate and --tariff_interval options desing the tariffs in use and the time periods that they apply. The --annual_standing_charge option specifies the annual standing charge for your plan. 
+
+See https://github.com/dresdner353/energyutils/blob/main/GEN_REPORT.md for full options on this report generator
