@@ -43,23 +43,23 @@ optional arguments:
 ```
 
 Options:
---odir /path/to/store/JSONL files  
+* --odir /path/to/store/JSONL files  
 This specifies the directory to store the generated JSONL files. On subsequent invokes of the script, only new. partial or missing days are retrieved for efficiency.
---days DAYS  
+* --days DAYS  
 The number of backlog days to retrieve. Typically this should be set to something like 30 to allow the script go back an entire month to retrieve any missing data since the last invoke. On the first invoke, this might be set to larger value to retrieve everything since the inverter was first deployed.
---solis_inverter_sn SOLIS_INVERTER_SN  
+* --solis_inverter_sn SOLIS_INVERTER_SN  
 The Solis inverter serial number
---solis_api_host SOLIS_API_HOST  
+* --solis_api_host SOLIS_API_HOST  
 The Solis Cloud API host 
---solis_key_id SOLIS_KEY_ID . 
+* --solis_key_id SOLIS_KEY_ID . 
 The Solis API cloud key as given to you by Solis support
---solis_key_secret SOLIS_KEY_SECRET  
+* --solis_key_secret SOLIS_KEY_SECRET  
 The Solis API cloud secret as given to you by Solis support
---shelly_api_host SHELLY_API_HOST  
+* --shelly_api_host SHELLY_API_HOST  
 Optional Shelly API host if you are using a Solis string inverter in conjunction with a Shelly EM/Pro
---shelly_device_id SHELLY_DEVICE_ID  
+* --shelly_device_id SHELLY_DEVICE_ID  
 Optional Shelly Cloud device ID
---shelly_auth_key SHELLY_AUTH_KEY  
+* --shelly_auth_key SHELLY_AUTH_KEY  
 Optional Shelly Cloud auth key
 
 ## Operation
