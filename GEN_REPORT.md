@@ -39,19 +39,33 @@ optional arguments:
   --hide_columns [{datetime,ts,year,month,week,day,weekday,hour,hours,tariff_name,tariff_rate,standing_rate,standing_cost,import,import_cost,solar,battery_solar_charge,battery_grid_charge,battery_charge,battery_discharge,battery_storage,battery_capacity,solar_consumed,solar_consumed_percent,solar_credit,export_rate,export,export_percent,export_credit,consumed,rel_import,savings,savings_percent,bill_amount} ...]
 
 ```
-Notes:
-* The script is run and pointed at a directory of input files (YYYY-MM-DD.jsonl)
-* The output file is the destination Excel (.xlsx) file
-* Electricity tariffs can be set using the --tariff_rate option and provided multiple times per separate tariff
-* Tariff intervals are defined using the --tariff_interval option that sets the optional day range (numbered 1-7), start/end hours and tariff name
+Options:
+* --file /path/to/report.xlsx  
+This sets where to write the generated Excel report
+* --idir /path/to/input/files
+This defines the directory of input JSONL files for the report.
+* --start YYYYMMDD --end YYYYMMDD  
+Optional start and end times for the report. If omitted, the report will span the full time period covered by the input files. These options allow for limiting the report to the days between the start and end dates. For example --start 20230607 --end 20240708 will include days between June 7th 2023 and July 8th 2024 inclusive. You may also just specify just one of these options to limit the behaviour to a specific start or end date.
+* --timezone TIMEZONE  
+Allows for specifying of a timezone. The default is Europe/Dublin and should be fine for any processing within Ireland the UK. 
+* --currency CURRENCY   
+Defines the currency symbol. This defaults to €
+* --tariff_rate <name>:<value>  
+This sets the tariff rates in use. Each tariff is defined by a <name>:<value> and multiple tariffs can be sepcified. For example --tariff_rate Day:0.35 Night:0.20 Peak:0.45 .. would define three tariffs Day, Night and Peak. The values specified are in whole currency units (Euro, not cent)
+* --tariff_interval <[D-D:]HH-HH:Tariff Name> ..  
+The tariff intervals set the optional day range (numbered 1-7) and start/end hours and mapped tariff name
   - 17-19:Peak ... 7 days a week between 5pm and 7pm, the Peak tariff applies
   - 6-7:08-23:Weekend ... Between Saturday(6) and Sunday(7), 8am-11pm, Weekend tariff applies 
-* A FIT rate for microgen export may be set using the --fit_rate
-* A hourly standing charge may be set via the --standing_rate option.
-* Alternatively use the --annual_standing_charge option to specify the standing charge as a yearly total.
-* The --reports option can be used to limit the set of generated reports to a desired subset of values. Multiple reports may be specified one after the other and in the order they should be written to the XLSX file. By default all reports are generated.
-* The --start and --end options can be used to limit the report to a specific date range. The values are specified in YYYYMMDD. For example --start 20230912 will start from September 12th 2023 and --end 20240103 would end on Jan 3rd 2024. You can use either field or both depending on the desired limits.
-* The --hide_columns option allows for a list of columns to be hidden in the generated file. Multiple columns can be specified by space separating the values. 
+* --fit_rate <value>  
+This is the hourly rate for FIT specific in whole unit currency (Euro)
+* --standing_rate <value>  
+This option specifies the per hour standing charge in whole unit currency (Euro)
+* --annual_standing_charge <value>  
+This option specifies the per year standing charge in whole unit currency (Euro). This option over-rides the --standing_rate option. Internally the annual value is divided by 365*24 to render it into a per-hour value.
+* --reports [{year,month,week,day,hour,tariff,weekday,24h} ...]  
+This option specifies the individual sheet reports to generate andf the order in which they appear in the Excel file. Multiple reports are space separated. For example --report "day hour" will only generate the day and hour sheets and in that order. The default set of reports is "year month week day hour tariff weekday 24h".
+* --hide_columns [list of columns to hide]  
+This option hides a list of fields from all generated sheets. The full list of posibilities is displayed above in the usage detail. The values are space separated. Example --hide_columns "weekday standing_rate" will hide the weekday and standing rate columns in the generated sheets. These columns are still in the generated file but hidden by default.
 
 
 ## Example Run

@@ -21,6 +21,16 @@ optional arguments:
   --verbose            Enable verbose output
 ```
 
+Options:
+* --file FILE [FILE ...]  
+This specifies the ESB HDF file to use as input. You can also specifiy multiple files here or use a wildcard like HDF*.csv as a way of passing in the pattern of files to process. The data from each file is combined accordingly. 
+* --odir /path/to/output/directory  
+This specifies the output directory for the processed data. Each day is written to a separate JSONL file, with each hour being a line in that file
+* --timezone TIMEZONE  
+Allows for specifying of a timezone. The default is Europe/Dublin and should be fine for any processing within Ireland the UK. 
+* --partial_days  
+This optional flag instructs the script to include incomplete days where the full 24 hours of data is not present. If this option is omitted, so will any incomplete days from the generated files. Usually with ESB HDF files, they both begin and terminate with incomplete days, so it is recommended you omit this flag unless a larger number of incomplete days are present and you still want a best effort calculation.
+
 Notes:
 * The script is run and pointed at a HDF file as downloaded from the ESB (--file file.csv)
 * Multiple files can be specified with the --file option to allow a merge of several files that overlap

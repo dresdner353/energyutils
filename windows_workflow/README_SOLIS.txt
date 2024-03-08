@@ -53,6 +53,7 @@ SET SOLIS_INVERTER_SN=155555555A055555
 Save the file with your edits.
 
 Shelly Cloud API Instructions (only for Solis string inverters + Shelly EM):
+Note: skip this entirely if you have a Solis Hybrid inverter
 * Sign into control.shelly.cloud using your account credentials
 * Navigate to Settings -> User Settings -> Access And Permissions -> Authorization Cloud Key and click Get
 * This will display two pieces of information:
@@ -100,6 +101,6 @@ REM Example EV report
     --annual_standing_charge 303 ^
     --fit_rate 0.21 
 
-The --tariff_rate and --tariff_interval options desing the tariffs in use and the time periods that they apply. The --annual_standing_charge option specifies the annual standing charge for your plan. 
+The --tariff_rate and --tariff_interval options designate the tariffs in use and the time periods that they apply. The --annual_standing_charge option specifies the annual standing charge for your plan. 
 
 See https://github.com/dresdner353/energyutils/blob/main/GEN_REPORT.md for full options on this report generator
