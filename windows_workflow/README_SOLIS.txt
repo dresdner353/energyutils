@@ -101,6 +101,7 @@ REM Example EV report
     --annual_standing_charge 303 ^
     --fit_rate 0.21 
 
-The --tariff_rate and --tariff_interval options designate the tariffs in use and the time periods that they apply. The --annual_standing_charge option specifies the annual standing charge for your plan. 
+The --tariff_rate and --tariff_interval options designate the tariffs in use and the time periods that they apply. 
+The --annual_standing_charge option specifies the annual standing charge for your plan. 
 
 See https://github.com/dresdner353/energyutils/blob/main/GEN_REPORT.md for full options on this report generator
