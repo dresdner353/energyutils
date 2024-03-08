@@ -4,7 +4,7 @@ The Shelly EM is a small ESP8266-based device that can be used to monitor 1-2 AC
 
 The device operates as a client on a WiFi network and may either be accessed directly or via the Shelly Cloud APIs. 
 
-The ```shelly_em_data_util.py``` script is designed to retrieve Shelly EM data from the Shelly Cloud service. For this to be possible, you need to:
+The ```shelly_em_data_util.py``` script is designed to retrieve Shelly EM or Pro EM data from the Shelly Cloud service. For this to be possible, you need to:
 * Enable your Shelly EM for cloud (so it can upload usage data to the cloud)
 * Obtain a cloud API auth key from your Shelly account.
 * Obtain your Shelly EM device ID
@@ -29,14 +29,21 @@ optional arguments:
   --auth_key AUTH_KEY  API Auth Key
   --verbose            Enable verbose output
 ```
-Notes:
-* The API host is set by the --host arg. 
-* The --auth_key is the API key you retrieved from your account
-* The --id option sets the device ID to query
-* The output directory is set by --odir but this also defaults to ~/.shellyemdata
-* The --days option sets the number of full days to retrieve from today
-* Retrieval acts incrementally, only pulling data for day files you do not already have. 
-* Incomplete days are also detected by means of a "partial" property in the file and pulled again automatically
+Options:
+* --host HOST  
+The Shelly Cloud API host as provided to you by your Shelly cloud account 
+* --odir ODIR  
+The destination directory for the generated JSONL files
+* --days DAYS  
+The number of days to retrieve from today
+* --id ID  
+The Sgelly Device ID for the EM/Pro EM device
+* --auth_key AUTH_KEY  
+The Shelly cloud API auth key
+
+## Operation
+Retrieval acts incrementally, only pulling data for day files you do not already have. 
+Incomplete days are also detected by means of a "partial" property in the file and pulled again automatically
   - When recording data for the current day (today), the file records are marked with a "partial" Boolean property
   - If such files are detected when checking for existing data, the full day is retrieved again
   - This will ensure imcomplete data is fully retrieved when possible
