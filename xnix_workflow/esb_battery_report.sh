@@ -6,9 +6,9 @@ HDF_PATH='esb_hdf'
 ESB_DATA='esb_data'
 BATTERY_DATA='battery_data'
 REPORTS='reports'
-ESB_SCRIPT=~/work/energyutils/esb_hdf_reader.py
-BATTERY_SIM_SCRIPT=~/work/energyutils/battery_sim.py
-GEN_REPORT_SCRIPT=~/work/energyutils/gen_report.py
+ESB_SCRIPT=../esb_hdf_reader.py
+BATTERY_SIM_SCRIPT=../battery_sim.py
+GEN_REPORT_SCRIPT=../gen_report.py
 
 mkdir -p "${ESB_DATA}"
 rm -f "${ESB_DATA}"/*
@@ -25,7 +25,8 @@ END=20241231
 # Energia Smart Data plan (Oct 2023)
 SMART_TARIFF_RATES="Day:0.3660 Night:0.1960 Peak:0.3836"
 # Energia Smart Data plan (Mar 2024)
-SMART_TARIFF_RATES="Day:0.3047 Night:0.1631 Peak:0.3194"
+#SMART_TARIFF_RATES="Day:0.3047 Night:0.1631 Peak:0.3194"
+#
 SMART_TARIFF_INTERVALS="00-23:Day 23-08:Night 17-19:Peak "
 SMART_ANNUAL_STANDING_CHARGE="236.62"
 SMART_FIT_RATE="0.24"
@@ -33,7 +34,8 @@ SMART_FIT_RATE="0.24"
 # Energia EV plan (Oct 2023)
 EV_TARIFF_RATES="Day:0.3661 EV:0.0815"
 # Energia EV plan (Mar 2024)
-EV_TARIFF_RATES="Day:0.3386 EV:0.0754"
+#EV_TARIFF_RATES="Day:0.3386 EV:0.0754"
+#
 EV_TARIFF_INTERVALS="00-00:Day 02-06:EV"
 EV_ANNUAL_STANDING_CHARGE="236.62"
 EV_FIT_RATE="0.24"
