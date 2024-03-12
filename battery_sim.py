@@ -376,9 +376,12 @@ for key in key_list:
         rec['consumed'] = rec['import']
         overall_charge_total += grid_charge_amount
 
-    # discharge is conditional to time of day
-    discharge_amount = 0
-    if not rec['hour'] in discharge_bypass_set:
+    # discharge is conditional to 
+    # grid shift and discharge bypass times
+    import_discharge_amount = 0
+    fit_discharge_amount = 0
+    if (not rec['hour'] in discharge_bypass_set and 
+        not rec['hour'] in grid_shift_set):
         # determine how much charge we have to use
         available_discharge_capacity = current_battery_storage - (battery_capacity * min_charge_percent/100)
         if available_discharge_capacity < 0:
@@ -388,42 +391,41 @@ for key in key_list:
         max_discharge_amount = min(available_discharge_capacity, discharge_rate)
 
         # determine actual charge amount
-        discharge_amount = min(rec['import'], max_discharge_amount)
+        import_discharge_amount = min(rec['import'], max_discharge_amount)
 
         # Discharge battery and Reduce import 
-        current_battery_storage -= discharge_amount
-        rec['import'] -= discharge_amount
+        current_battery_storage -= import_discharge_amount
+        rec['import'] -= import_discharge_amount
         rec['consumed'] = rec['import']
-        overall_discharge_total += discharge_amount
+        overall_discharge_total += import_discharge_amount
 
-    # FIT discharge 
-    if rec['hour'] in fit_discharge_set:
-        # determine how much charge we have to use
-        available_discharge_capacity = current_battery_storage - (battery_capacity * min_charge_percent/100)
-        if available_discharge_capacity < 0:
-            available_discharge_capacity = 0
+        # Forced FIT discharge 
+        # trying to flush the battery to the grid
+        if rec['hour'] in fit_discharge_set:
+            # determine additional discharge possible
+            # taking off any existing import discharge we had applied
+            fit_discharge_amount = max_discharge_amount - import_discharge_amount
 
-        # determine discharge
-        max_discharge_amount = min(available_discharge_capacity, discharge_rate)
-
-        # Discharge battery and increase export
-        current_battery_storage -= max_discharge_amount
-        rec['export'] += max_discharge_amount
-        overall_discharge_total += max_discharge_amount
+            # Additionally discharge battery to max and increase export
+            current_battery_storage -= fit_discharge_amount
+            rec['export'] += fit_discharge_amount
+            overall_discharge_total += fit_discharge_amount
 
     # record activity and charge status in record
     rec['battery_solar_charge'] = solar_charge_amount
     rec['battery_grid_charge'] = grid_charge_amount
-    rec['battery_discharge'] = discharge_amount
+    rec['battery_discharge'] = import_discharge_amount + fit_discharge_amount
     rec['battery_storage'] = current_battery_storage
     rec['battery_capacity'] = round(current_battery_storage / battery_capacity * 100)
 
     log_message(
             verbose,
-            '%s charge:+%.2fkWh discharge:-%.2fkWh batt:%.2fkWh (%d%%)' % (
+            '%s charge:+%.2fkWh discharge:-%.2fkWh imp-dis:-%.2fkWh fit-dis:-%.2fkWh batt:%.2fkWh (%d%%)' % (
                 rec['datetime'],
                 solar_charge_amount + grid_charge_amount,
                 rec['battery_discharge'],
+                import_discharge_amount,
+                fit_discharge_amount,
                 rec['battery_storage'],
                 rec['battery_capacity']
                 )
