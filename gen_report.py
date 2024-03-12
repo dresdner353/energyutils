@@ -148,6 +148,12 @@ field_dict = {
             'header_format' : 'header',
             'format' : 'integer',
             },
+        'battery_cycles' : {
+            'title' : 'Battery Cycles',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'float',
+            },
 
         'solar_consumed' : {
             'title' : 'Solar Consumed',
