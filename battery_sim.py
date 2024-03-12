@@ -319,6 +319,7 @@ fit_discharge_set = gen_time_interval_set(fit_discharge_interval)
 current_battery_storage = 0
 overall_charge_total = 0
 overall_discharge_total = 0
+overall_battery_cycles = 0
 
 # factor to convert battery storage into the equivalent
 # of grid or solar draw
@@ -417,6 +418,9 @@ for key in key_list:
     rec['battery_discharge'] = import_discharge_amount + fit_discharge_amount
     rec['battery_storage'] = current_battery_storage
     rec['battery_capacity'] = round(current_battery_storage / battery_capacity * 100)
+    total_charge_discharge = solar_charge_amount + grid_charge_amount + import_discharge_amount + fit_discharge_amount
+    rec['battery_cycles'] = total_charge_discharge / (max_charge_capacity * 2)
+    overall_battery_cycles += rec['battery_cycles']
 
     log_message(
             verbose,
@@ -456,16 +460,13 @@ for day in sorted(day_dict.keys()):
             decimal_places)   
 
 
-# determine total charge cycles to date
-charge_cycles = overall_charge_total / (battery_capacity * max_charge_percent/100)
-
 log_message(
         1,
-        'Final battery state.. charge:%.2fkWh (%d%%) ovl_charge:%.2fkWh (%d cycles) ovl_discharge:%.2fkWh' % (
+        'Final battery state.. charge:%.2fkWh (%d%%) ovl_charge:%.2fkWh ovl_discharge:%.2fkWh (%d cycles)' % (
             current_battery_storage,
             round(current_battery_storage / battery_capacity * 100),
             overall_charge_total,
-            charge_cycles,
-            overall_discharge_total
+            overall_discharge_total,
+            overall_battery_cycles,
             )
         )
