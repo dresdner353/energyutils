@@ -1196,6 +1196,13 @@ battery_storage_series = [
             },
         ]
 
+battery_cycles_series = [
+        {
+            'field': 'battery_cycles',
+            'colour': 'blue',
+            },
+        ]
+
 battery_capacity_series = [
         {
             'field': 'battery_capacity',
@@ -1253,6 +1260,14 @@ for report in report_list:
                         'x_rotation' : -45,
                         'y_title' : 'kWh',
                         'series' : battery_storage_series,
+                        },
+                    {
+                        'title' : 'Battery Cycles',
+                        'type' : 'column',
+                        'x_title' : 'Hour',
+                        'x_rotation' : -45,
+                        'y_title' : 'Cycles',
+                        'series' : battery_cycles_series,
                         },
                     {
                         'title' : 'Battery Capacity',
@@ -1319,6 +1334,14 @@ for report in report_list:
                         'series' : battery_charging_series,
                         },
                     {
+                        'title' : 'Battery Cycles',
+                        'type' : 'column',
+                        'x_title' : 'Day',
+                        'x_rotation' : -45,
+                        'y_title' : 'Cycles',
+                        'series' : battery_cycles_series,
+                        },
+                    {
                         'title' : 'Power Value',
                         'type' : 'column',
                         'sub_type' : 'stacked',
@@ -1372,6 +1395,14 @@ for report in report_list:
                         'x_rotation' : -45,
                         'y_title' : 'kWh',
                         'series' : battery_charging_series,
+                        },
+                    {
+                        'title' : 'Battery Cycles',
+                        'type' : 'column',
+                        'x_title' : 'Week',
+                        'x_rotation' : -45,
+                        'y_title' : 'Cycles',
+                        'series' : battery_cycles_series,
                         },
                     {
                         'title' : 'Power Value',
@@ -1429,6 +1460,14 @@ for report in report_list:
                         'series' : battery_charging_series,
                         },
                     {
+                        'title' : 'Battery Cycles',
+                        'type' : 'column',
+                        'x_title' : 'Month',
+                        'x_rotation' : -45,
+                        'y_title' : 'Cycles',
+                        'series' : battery_cycles_series,
+                        },
+                    {
                         'title' : 'Power Value',
                         'type' : 'column',
                         'sub_type' : 'stacked',
@@ -1484,6 +1523,14 @@ for report in report_list:
                         'series' : battery_charging_series,
                         },
                     {
+                        'title' : 'Battery Cycles',
+                        'type' : 'column',
+                        'x_title' : 'Year',
+                        'x_rotation' : -45,
+                        'y_title' : 'Cycles',
+                        'series' : battery_cycles_series,
+                        },
+                    {
                         'title' : 'Power Value',
                         'type' : 'column',
                         'sub_type' : 'stacked',
@@ -1535,6 +1582,14 @@ for report in report_list:
                         'x_rotation' : -45,
                         'y_title' : 'kWh',
                         'series' : battery_charging_series,
+                        },
+                    {
+                        'title' : 'Battery Cycles',
+                        'type' : 'column',
+                        'x_title' : 'Weekday',
+                        'x_rotation' : -45,
+                        'y_title' : 'Cycles',
+                        'series' : battery_cycles_series,
                         },
                     {
                         'title' : 'Power Value',
@@ -1590,6 +1645,14 @@ for report in report_list:
                         'series' : battery_charging_series,
                         },
                     {
+                        'title' : 'Battery Cycles',
+                        'type' : 'column',
+                        'x_title' : 'Hour',
+                        'x_rotation' : -45,
+                        'y_title' : 'Cycles',
+                        'series' : battery_cycles_series,
+                        },
+                    {
                         'title' : 'Power Value',
                         'type' : 'column',
                         'sub_type' : 'stacked',
@@ -1631,6 +1694,14 @@ for report in report_list:
                         'x_title' : 'Tariff',
                         'y_title' : 'kWh',
                         'series' : battery_charging_series,
+                        },
+                    {
+                        'title' : 'Battery Cycles',
+                        'type' : 'column',
+                        'x_title' : 'Tariff',
+                        'x_rotation' : -45,
+                        'y_title' : 'Cycles',
+                        'series' : battery_cycles_series,
                         },
                     {
                         'title' : 'Power Value',
