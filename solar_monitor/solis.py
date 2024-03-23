@@ -720,11 +720,16 @@ def get_data(config):
 
     # update interval based on next day_ts
     # minus now
-    now = int(time.time())
-    update_interval = day_ts - now
+    # check for <= 0 to indicate API failure 
+    # and default to a 30-second update
+    if day_ts <= 0:
+        update_interval = 30
+    else:
+        now = int(time.time())
+        update_interval = day_ts - now
 
     # negative scenarios
-    # fall back to 2-min refresh
+    # fall back to 5-min refresh
     # This will happen as the string inverter stops 
     # updating
     if update_interval < 0:
