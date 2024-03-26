@@ -1,15 +1,19 @@
-# Solar Monitor
+# SolarMon (Solar Monitor)
 
-This is a small web server designed to query live data from the likes of a Shelly EM or inverter cloud API and present it on a reactive web page that could be displayed on a monitor, TV or tablet screen. 
+This is a small web server designed to query live data from an inverter cloud API and present it on a reactive web page that could be displayed on a monitor, TV or tablet screen. The script runs as a small web server configures with the API details for your inverter. If all goes to plan, you will get a nice dashboard that shows you a combination of live and historical solar, import and export data from your inverter.
 
 ## Requirements:
-* Computer capable of running Python3 (Any Linux, Mac or PC can do this but you may need to install Python3 and/or additional modules)
+* Computer capable of running Python3 (Any Linux, Mac, PC, Raspberry Pi can do this but you may need to install Python3 and/or additional modules)
 * A Solis string or hybrid inverter with cloud API access enabled (you need to issue a support ticket to Solis to enable this access)
-* An optional Shelly EM / EM Pro 50 installed and wired with 2 CT clamps. This would only be required for a string inverter that is unable to read grid import and export. Those CT clamps would be configured as follows on the Shelly EM device:
+
+## Optional Requirements for Solis String Inverters
+* Unlike the hybrid variants, Solis string inverters do not moninitor grid import and export
+* An optional Shelly EM / EM Pro 50 can be installed and wired with 2 CT clamps to make up for this gap. 
+* Those CT clamps would be configured as follows on the Shelly device:
    - 1) for mains import (positive import, negative export) 
    - 2) for inverter output (positive solar generation, negative inverter draw)
-* The script runs as a small web server and you configure the details for your inverter and optional Shelly device
-* If all goes to plan, you will get a nice dashboard that shows you live(ish) import and export and historical data from your inverter/monitor cloud API
+* In normal operation, the monitor will source live import, export and solar data from the Shelly device directly (every 5 seconds)
+* Historical import and export data is then sourced from the Shelly Cloud API (every hour) and merged with the historical PV-only data from the Solis Cloud API
 
 ## Basic steps to test
 * git clone https://github.com/dresdner353/energyutils.git (or download the Zip file)
@@ -88,4 +92,4 @@ These metrics will cycle every N seconds from one set to the other.
 ### Portrait Screen Format (portrait tablet/phone)
 The portrait format will apply for any portrait monitor where the height > width and this includes mobile phones etc. All charts and metrics are shown in this format and can be scrolled as required. If using a tablet in landscape mode, then rotating it to portrait should result in this portrait mode being activated. When rotated back to landscape, the small screen layout will resume.
 
-![Portrait Screen Live](screenshots/portrait_live.jpg)
+![Portrait Screen Live](screenshots/portrait_live.png)
