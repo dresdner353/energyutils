@@ -365,7 +365,9 @@ def get_solis_day_data(
         # ratio from the total kWh (best effort)
         for string_id in range(1,5): # 1-4 incl
             pv_field = 'solar_pv%d' % (string_id)
-            pv_power_ratio = usage_rec[pv_field] / total_dc_power
+            pv_power_ratio = 0
+            if total_dc_power > 0:
+                pv_power_ratio = usage_rec[pv_field] / total_dc_power
             usage_rec[pv_field] = usage_rec['solar'] * pv_power_ratio
 
     return data_dict
