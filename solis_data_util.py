@@ -293,6 +293,20 @@ def get_solis_day_data(
             usage_rec['battery_charge'] = max(usage_rec['battery_charge'], solis_snap_rec['batteryTodayChargeEnergy'])
             usage_rec['battery_discharge'] = max(usage_rec['battery_discharge'], solis_snap_rec['batteryTodayDischargeEnergy'])
 
+        # DC power analytis across 4 strings
+        for string_id in range(1,5): # 1-4 incl
+            pv_field = 'solar_pv%d' % (string_id)
+            voltage_field = 'uPv%d' % (string_id)
+            current_field = 'iPv%d' % (string_id)
+
+            if not pv_field in usage_rec:
+                usage_rec[pv_field] = 0
+
+            # calculate the snapshot power and append to 
+            # running total
+            string_power = solis_snap_rec[voltage_field] * solis_snap_rec[current_field]
+            usage_rec[pv_field] += string_power
+
     # adjust values to relative 
     # difference from previous hours record
     # offset scope is for given day only
@@ -339,6 +353,20 @@ def get_solis_day_data(
         usage_rec['solar_consumed'] = usage_rec['solar'] - usage_rec['export'] 
         if usage_rec['solar_consumed'] < 0:
             usage_rec['solar_consumed'] = 0
+
+        # DC power distribution for strings
+        # total across all 4 strings
+        total_dc_power = 0
+        for string_id in range(1,5): # 1-4 incl
+            pv_field = 'solar_pv%d' % (string_id)
+            total_dc_power += usage_rec[pv_field]
+
+        # overwrite of solar_pvX field with the overall power
+        # ratio from the total kWh (best effort)
+        for string_id in range(1,5): # 1-4 incl
+            pv_field = 'solar_pv%d' % (string_id)
+            pv_power_ratio = usage_rec[pv_field] / total_dc_power
+            usage_rec[pv_field] = usage_rec['solar'] * pv_power_ratio
 
     return data_dict
 
