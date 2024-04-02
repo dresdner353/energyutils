@@ -43,6 +43,40 @@ def parse_time(
     return time_stamp, dt
 
 
+def get_hours_in_day(
+        datetime_str,
+        timezone):
+
+    # naive parse of our datetime field
+    dt = datetime.datetime.strptime(datetime_str, '%Y/%m/%d %H:%M:%S')
+
+    # assert local timezone
+    dt = dt.replace(tzinfo = zoneinfo.ZoneInfo(timezone))
+
+    # reset to current day midnight
+    # and get dt for the next day 
+    dt_midnight = dt.replace(
+            hour = 0,
+            minute = 0,
+            second = 0,
+            )
+    dt_next_midnight = dt_midnight + datetime.timedelta(days = 1)
+
+    # to epoch second timestamps and subtract
+    # and get actual number of local hours in day
+    daylen_secs = int(dt_next_midnight.timestamp()) - int(dt_midnight.timestamp())
+    daylen_hours = daylen_secs / 3600
+
+    # set to min of 24 and calculated hours
+    # A winter DST adjustment day will have 25
+    # hours because of the rollback. 
+    # But ESB data reports that extra hour as one time
+    # so we will only see 24 hours reported
+    daylen_hours = min(24, daylen_hours)
+
+    return daylen_hours
+
+
 def get_shelly_day_data(
         api_host,
         auth_key,
@@ -375,6 +409,7 @@ def get_solis_day_data(
 
 def get_day_data(
         odir,
+        timezone,
         date_ref,
         solis_api_host,
         solis_key_id,
@@ -461,10 +496,21 @@ def get_day_data(
                 device_id = shelly_device_id,
                 date_ref = date_ref)
 
-        # Shelly either has 24 records 
-        # or not for partal determination. 
+        # get datetime of first item in dict
+        # actual one we pick does not matter
+        # we need to then determine how long that day
+        # is in hours
+        first_key = next(iter(shelly_dict))
+        first_datetime = shelly_dict[first_key]['datetime']
+        expected_day_hours = get_hours_in_day(
+                first_datetime,
+                timezone)
+    
+        # then check how many hours we actually have tracked
+        tracked_hours = len(shelly_dict)
+
         if (not shelly_dict or 
-            len(shelly_dict) < 24):
+            tracked_hours != expected_day_hours):
             partial_data = True
 
         # merge
@@ -532,6 +578,13 @@ parser.add_argument(
         )
 
 parser.add_argument(
+        '--timezone', 
+        help = 'Timezone', 
+        default = 'Europe/Dublin',
+        required = False
+        )
+
+parser.add_argument(
         '--solis_inverter_sn', 
         help = 'Solis Inverter Serial Number', 
         required = True
@@ -582,6 +635,7 @@ parser.add_argument(
 args = vars(parser.parse_args())
 backfill_days = args['days']
 odir = args['odir']
+timezone = args['timezone']
 solis_inverter_sn = args['solis_inverter_sn']
 solis_api_host = args['solis_api_host']
 solis_key_id = args['solis_key_id']
@@ -608,6 +662,7 @@ for i in range(0, backfill_days):
 
     get_day_data(
             odir,
+            timezone,
             date_ref,
             solis_api_host,
             solis_key_id,
