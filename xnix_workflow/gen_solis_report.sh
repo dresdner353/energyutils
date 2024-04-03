@@ -18,6 +18,7 @@ SOLIS_INVERTER_SN=ZZZZZZZZZZZZZZZZ
 SHELLY_API_HOST=example.com
 SHELLY_AUTH_KEY=ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
 SHELLY_DEVICE_ID=000000000000
+SOLIS_STRINGS=0
 
 mkdir -p "${SOLIS_DATA}"
 
@@ -29,6 +30,7 @@ python3 ${SOLIS_SCRIPT} \
     --solis_key_id ${SOLIS_KEY_ID} \
     --solis_key_secret ${SOLIS_KEY_SECRET}  \
     --solis_inverter_sn ${SOLIS_INVERTER_SN} \
+    --solis_strings ${SOLIS_STRINGS} \
     #--shelly_api_host ${SHELLY_API_HOST} \
     #--shelly_device_id ${SHELLY_DEVICE_ID} \
     #--shelly_auth_key ${SHELLY_AUTH_KEY} \

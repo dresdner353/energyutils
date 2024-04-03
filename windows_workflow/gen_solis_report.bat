@@ -10,6 +10,7 @@ SET SOLIS_API_HOST=https://www.soliscloud.com:PPPPP
 SET SOLIS_KEY_ID=XXXXXXXXXXXXXXXXXXX
 SET SOLIS_KEY_SECRET=YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
 SET SOLIS_INVERTER_SN=ZZZZZZZZZZZZZZZZ
+SET SOLIS_STRINGS=0
 
 REM Shelly API config
 REM Note: Only required if using a Shelly device in 
@@ -34,7 +35,8 @@ REM Retrieve data from Shelly Cloud
     --solis_api_host %SOLIS_API_HOST% ^
     --solis_key_id %SOLIS_KEY_ID% ^
     --solis_key_secret %SOLIS_KEY_SECRET%  ^
-    --solis_inverter_sn %SOLIS_INVERTER_SN% 
+    --solis_inverter_sn %SOLIS_INVERTER_SN% ^ 
+    --solis_strings %SOLIS_STRINGS% ^ 
 
 REM Example EV report
 %PYTHON% %GEN_REPORT_SCRIPT% ^
