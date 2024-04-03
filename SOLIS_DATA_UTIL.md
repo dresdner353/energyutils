@@ -13,8 +13,10 @@ The ```solis_data_util.py``` script is designed to retrieve inverter data from t
 ```
 usage: solis_data_util.py [-h] [--odir ODIR] [--days DAYS] --solis_inverter_sn
                           SOLIS_INVERTER_SN --solis_api_host SOLIS_API_HOST
-                          --solis_key_id SOLIS_KEY_ID --solis_key_secret
-                          SOLIS_KEY_SECRET [--shelly_api_host SHELLY_API_HOST]
+                          --solis_key_id SOLIS_KEY_ID 
+                          --solis_key_secret SOLIS_KEY_SECRET 
+                          [--solis_strings {0,1,2,3,4,5,6,7,8}]
+                          [--shelly_api_host SHELLY_API_HOST]
                           [--shelly_device_id SHELLY_DEVICE_ID]
                           [--shelly_auth_key SHELLY_AUTH_KEY] [--verbose]
 
@@ -32,6 +34,8 @@ optional arguments:
                         Solis Inverter API Key ID
   --solis_key_secret SOLIS_KEY_SECRET
                         Solis Inverter API Key Secret
+  --solis_strings {0,1,2,3,4,5,6,7,8}
+                        Number of Separate Strings to track def:0 (disabled)
   --shelly_api_host SHELLY_API_HOST
                         Shelly API Host
   --shelly_device_id SHELLY_DEVICE_ID
@@ -55,6 +59,8 @@ The Solis Cloud API host
 The Solis API cloud key as given to you by Solis support
 * --solis_key_secret SOLIS_KEY_SECRET  
 The Solis API cloud secret as given to you by Solis support
+* --solis_strings <num_strings>  
+Optional number of separate strings to track. This defaults to 0 (disabled). If set to a value 1-8, it will try to additionally separate the reporting of solar generation into separate kWh values per hour per string. The fields are added in as "solar_pv1", "solar_pv2" etc in conjunction with the total "solar" value. It does this calculation using an averaging mechanism performed on the snapshot (kW) values that Solis provides in its 5-minute snapshots. So its not a rocket-proof calculation but statistically should be close.
 * --shelly_api_host SHELLY_API_HOST  
 Optional Shelly API host if you are using a Solis string inverter in conjunction with a Shelly EM/Pro
 * --shelly_device_id SHELLY_DEVICE_ID  

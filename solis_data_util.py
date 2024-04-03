@@ -248,6 +248,7 @@ def get_solis_day_data(
             solis_key_id,
             solis_key_secret,
             solis_inverter_sn,
+            solis_strings,
             date_ref):
 
     request = {}
@@ -327,8 +328,8 @@ def get_solis_day_data(
             usage_rec['battery_charge'] = max(usage_rec['battery_charge'], solis_snap_rec['batteryTodayChargeEnergy'])
             usage_rec['battery_discharge'] = max(usage_rec['battery_discharge'], solis_snap_rec['batteryTodayDischargeEnergy'])
 
-        # DC power analytis across 4 strings
-        for string_id in range(1,5): # 1-4 incl
+        # DC power analysis across separate strings
+        for string_id in range(1, solis_strings + 1): 
             pv_field = 'solar_pv%d' % (string_id)
             voltage_field = 'uPv%d' % (string_id)
             current_field = 'iPv%d' % (string_id)
@@ -391,13 +392,13 @@ def get_solis_day_data(
         # DC power distribution for strings
         # total across all 4 strings
         total_dc_power = 0
-        for string_id in range(1,5): # 1-4 incl
+        for string_id in range(1, solis_strings + 1): 
             pv_field = 'solar_pv%d' % (string_id)
             total_dc_power += usage_rec[pv_field]
 
         # overwrite of solar_pvX field with the overall power
         # ratio from the total kWh (best effort)
-        for string_id in range(1,5): # 1-4 incl
+        for string_id in range(1, solis_strings + 1): 
             pv_field = 'solar_pv%d' % (string_id)
             pv_power_ratio = 0
             if total_dc_power > 0:
@@ -415,6 +416,7 @@ def get_day_data(
         solis_key_id,
         solis_key_secret,
         solis_inverter_sn,
+        solis_strings,
         shelly_api_host,
         shelly_auth_key,
         shelly_device_id):
@@ -465,6 +467,7 @@ def get_day_data(
             solis_key_id,
             solis_key_secret,
             solis_inverter_sn,
+            solis_strings,
             date_ref)
 
     # delay between calls
@@ -609,6 +612,15 @@ parser.add_argument(
         )
 
 parser.add_argument(
+        '--solis_strings', 
+        help = 'Number of Separate Strings to track def:0 (disabled)', 
+        type = int,
+        choices = range(0, 9), # 0-8, 0 implies off
+        default = 0, # off by default
+        required = False
+        )
+
+parser.add_argument(
         '--shelly_api_host', 
         help = 'Shelly API Host', 
         required = False
@@ -640,6 +652,7 @@ solis_inverter_sn = args['solis_inverter_sn']
 solis_api_host = args['solis_api_host']
 solis_key_id = args['solis_key_id']
 solis_key_secret = args['solis_key_secret']
+solis_strings = args['solis_strings']
 shelly_api_host = args['shelly_api_host']
 shelly_device_id = args['shelly_device_id']
 shelly_auth_key = args['shelly_auth_key']
@@ -668,6 +681,7 @@ for i in range(0, backfill_days):
             solis_key_id,
             solis_key_secret,
             solis_inverter_sn,
+            solis_strings,
             shelly_api_host,
             shelly_auth_key,
             shelly_device_id)
