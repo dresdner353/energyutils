@@ -44,7 +44,7 @@ Solis Cloud API Instructions:
 * Get your inverter serial number from your web login or inverter app 
   and copy it to the SOLIS_INVERTER_SN field
 * You can optionally set the SOLIS_STRINGS field to 1, 2, 3, etc to represent the number of strings you have in your setup. 
-  Leave set to 0 if you only want to see the total sdolar generated and no per-string separation
+  Leave set to 0 if you only want to see the total solar generated and no per-string separation
 
 In the end, these four lines might look something like this...
 
