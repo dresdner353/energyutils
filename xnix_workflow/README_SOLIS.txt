@@ -20,6 +20,7 @@ SOLIS_API_HOST=https://www.soliscloud.com:PPPPP
 SOLIS_KEY_ID=XXXXXXXXXXXXXXXXXXX
 SOLIS_KEY_SECRET=YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
 SOLIS_INVERTER_SN=ZZZZZZZZZZZZZZZZ
+SOLIS_STRINGS=0
 
 # Shelly API config
 # Note: uncomment shelly_xxxxx lines below if using
@@ -44,6 +45,8 @@ Solis Cloud API Instructions:
 * Copy the KeySecret to the SOLIS_KEY_SECRET field
 * Get your inverter serial number from your web login or inverter app 
   and copy it to te SOLIS_INVERTER_SN field
+* You can optionally set the SOLIS_STRINGS field to 1, 2, 3, etc to represent the number of strings you have in your setup. 
+  Leave set to 0 if you only want to see the total solar generated and no per-string separation
 
 In the end, these four lines will look something like this...
 

@@ -20,6 +20,7 @@ SET SOLIS_API_HOST=https://www.soliscloud.com:PPPPP
 SET SOLIS_KEY_ID=XXXXXXXXXXXXXXXXXXX
 SET SOLIS_KEY_SECRET=YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
 SET SOLIS_INVERTER_SN=ZZZZZZZZZZZZZZZZ
+SET SOLIS_STRINGS=0
 
 REM Shelly API config
 SET SHELLY_API_HOST=example.com
@@ -42,13 +43,16 @@ Solis Cloud API Instructions:
 * Copy the KeySecret to the SOLIS_KEY_SECRET field
 * Get your inverter serial number from your web login or inverter app 
   and copy it to the SOLIS_INVERTER_SN field
+* You can optionally set the SOLIS_STRINGS field to 1, 2, 3, etc to represent the number of strings you have in your setup. 
+  Leave set to 0 if you only want to see the total sdolar generated and no per-string separation
 
-In the end, these four lines will look something like this...
+In the end, these four lines might look something like this...
 
 SET SOLIS_API_HOST=https://www.soliscloud.com:13333
 SET SOLIS_KEY_ID=1355555555676955555
 SET SOLIS_KEY_SECRET=4dddddddd1ee46bcccccc182aaaaa5f4
 SET SOLIS_INVERTER_SN=155555555A055555
+SET SOLIS_STRINGS=2
 
 Save the file with your edits.
 
