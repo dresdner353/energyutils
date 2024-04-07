@@ -2,7 +2,7 @@ SET PYTHON=python3.exe
 SET HDF_DATA=hdf_data
 SET ESB_HDF_SCRIPT=..\esb_hdf_reader.py
 SET GEN_REPORT_SCRIPT=..\gen_report.py
-SET ESB_HDF_FILE=esb_hdf.csv
+SET HDF_DIR=esb_hdf.csv
 SET REPORTS=day week month year hour tariff 24h weekday
 
 REM prepare directory for parsed HDF JSON data
@@ -11,7 +11,7 @@ del /s /q %HDF_DATA%\*.*
 
 REM Read ESB HDF file and export JSONL files
 %PYTHON% %ESB_HDF_SCRIPT% ^
-    --file %ESB_HDF_FILE% ^
+    --file %HDF_DIR%\HDF*.csv ^
     --odir %HDF_DATA%
 
 REM Example 24h report

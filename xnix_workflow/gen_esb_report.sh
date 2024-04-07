@@ -1,18 +1,22 @@
 #!/bin/bash
 set -e
 
-HDF_FILE='esb_hdf.csv'
+HDF_DIR='hdf_files'
 HDF_DATA='hdf_data'
 ESB_SCRIPT=../esb_hdf_reader.py
 GEN_REPORT_SCRIPT=../gen_report.py
 REPORTS='day week month year hour tariff 24h weekday'
+
+# cd to path of script
+SCRIPT_DIR=$(dirname "$(readlink -f $0)")
+cd "${SCRIPT_DIR}"
 
 mkdir -p "${HDF_DATA}"
 rm -f "${HDF_DATA}"/*
 
 # Read ESB HDF file and export JSONL files
 python3 ${ESB_SCRIPT} \
-    --file "${HDF_FILE}"  \
+    --file "${HDF_DIR}"/HDF*.csv  \
     --odir "${HDF_DATA}"
 
 # Example EV report
