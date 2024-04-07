@@ -6,6 +6,7 @@ import datetime
 import zoneinfo
 import sys
 import csv
+import glob
 
 
 def log_message(
@@ -330,6 +331,13 @@ class RoundingFloat(float):
 
 json.encoder.c_make_encoder = None
 json.encoder.float = RoundingFloat
+
+# directory expansion into file list
+# needed for Windows only as underlying shell
+# cannot expand the wildcards
+if (len(hdf_file_list) == 1 and 
+    os.path.isdir(hdf_file_list[0])):
+    hdf_file_list = glob.glob(hdf_file_list[0] + '/*.csv')
 
 process_esb_hdf_files(
         hdf_file_list,
