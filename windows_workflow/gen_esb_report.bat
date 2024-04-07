@@ -1,8 +1,8 @@
 SET PYTHON=python3.exe
+SET HDF_DIR=hdf_files
 SET HDF_DATA=hdf_data
 SET ESB_HDF_SCRIPT=..\esb_hdf_reader.py
 SET GEN_REPORT_SCRIPT=..\gen_report.py
-SET HDF_DIR=esb_hdf.csv
 SET REPORTS=day week month year hour tariff 24h weekday
 
 REM prepare directory for parsed HDF JSON data
