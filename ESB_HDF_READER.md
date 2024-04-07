@@ -14,7 +14,7 @@ ESB HDF Reader
 optional arguments:
   -h, --help           show this help message and exit
   --file FILE [FILE ...]
-                       ESB HDF file list
+                       ESB HDF file list or directory
   --odir ODIR          Output Directory
   --timezone TIMEZONE  Timezone
   --partial_days       Include incomplete partial days (skipped by default)
@@ -23,7 +23,7 @@ optional arguments:
 
 Options:
 * --file FILE [FILE ...]  
-This specifies the ESB HDF file to use as input. You can also specifiy multiple files here or use a wildcard like HDF*.csv as a way of passing in the pattern of files to process. The data from each file is combined accordingly. 
+This specifies the ESB HDF file to use as input. You can also specifiy multiple files here or use a wildcard like HDF*.csv as a way of passing in the pattern of files to process. Another approach is to specifiy a directory and the script will load all .csv files it finds in that directory. The data from each separate file is combined accordingly and any duplicates will automatically overwrite each other. 
 * --odir /path/to/output/directory  
 This specifies the output directory for the processed data. Each day is written to a separate JSONL file, with each hour being a line in that file
 * --timezone TIMEZONE  

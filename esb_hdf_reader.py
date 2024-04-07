@@ -288,7 +288,7 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument(
         '--file', 
-        help = 'ESB HDF file list', 
+        help = 'ESB HDF file list or directory', 
         nargs = '+',
         required = True
         )

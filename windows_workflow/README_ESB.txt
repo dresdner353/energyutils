@@ -32,20 +32,30 @@ This script only runs Python3 and install required modules for
 the report scripts. 
 
 
-* Put the ESB HDF file in place
-----------------------------------------------------------------------------
-Download your latest ESB HDF file and drop it into 
-this folder and rename as esb_hdf.csv. You can also work with 
-the sample file that is included to start if preferred and delete it later on once
-you have your own HDF file. 
-
-
 * Run the Report Generation Script
 ----------------------------------------------------------------------------
 In this folder, double-click on "gen_esb_report". This should parse out data from the 
-ESB HDF file and then generate report files in the same directory 
+sample file "HDF_EXAMPLE.csv" in the "hdf_files" sub-folder and then generate 
+Excel report files in the windows_workflow folder. 
 
 Note: You will likely get the same warnings before running this script as above
+
+
+* Put your own ESB HDF file(s) in place
+----------------------------------------------------------------------------
+Download your latest ESB HDF file and drop it into the "hdf_files" sub-folder.
+
+Note: Make sure that once you have your own file in place, that you should delete 
+the "HDF_EXAMPLE.csv" file. If you leave that file there, its data will be merged with 
+your own data and give inaccurate results.
+
+Note: Going forward, you can download new HDF files from ESBN and drop these into this
+"hdf_files" sub-folder. You have the option of leaving the old files there or deleting them.
+The script reads all CSV files in this "hdf_files" sub-folder and combines the data, over-writing
+duplicate days automatically. This can be useful if you switch provider as the ESBN wipe 
+you older HDF data, only serving you up new data since the switch. So having the ability to 
+process multiple files works around this. 
+
 
 * Customise the Report pricing detail
 ----------------------------------------------------------------------------
