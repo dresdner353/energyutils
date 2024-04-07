@@ -11,7 +11,7 @@ del /s /q %HDF_DATA%\*.*
 
 REM Read ESB HDF file and export JSONL files
 %PYTHON% %ESB_HDF_SCRIPT% ^
-    --file %HDF_DIR%\HDF*.csv ^
+    --file %HDF_DIR% ^
     --odir %HDF_DATA%
 
 REM Example 24h report
