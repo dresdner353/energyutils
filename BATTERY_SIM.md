@@ -16,6 +16,7 @@ usage: battery_sim.py [-h] --idir IDIR --odir ODIR [--start START] [--end END]
                       --charge_rate CHARGE_RATE --discharge_rate
                       DISCHARGE_RATE
                       [--charge_loss_percent]
+                      [--discharge_loss_percent]
                       [--discharge_bypass_interval DISCHARGE_BYPASS_INTERVAL]
                       [--grid_shift_interval GRID_SHIFT_INTERVAL]
                       [--fit_discharge_interval FIT_DISCHARGE_INTERVAL]
@@ -42,7 +43,9 @@ optional arguments:
   --discharge_rate DISCHARGE_RATE
                         Battery Discharge Rate (kWh/hour)
   --charge_loss_percent 0-100
-                        Charge Loss Percentage (1..100) def:10
+                        Charge Loss Percentage (1..100) def:7
+  --discharge_loss_percent 0-100
+                        Discharge Loss Percentage (1..100) def:7
   --discharge_bypass_interval DISCHARGE_BYPASS_INTERVAL
                         Time Interval for Discharge Bypass <HH-HH>
   --grid_shift_interval GRID_SHIFT_INTERVAL
@@ -79,7 +82,9 @@ This is the rate of charge in kWh units per hour. A value of --charge_rate 2.5 w
 * --discharge_rate DISCHARGE_RATE . 
 This defines the discharge rate in kWh. A value of 1.5 would define a discharge rate of 1.5kWh per hour
 * --charge_loss_percent 0-100 . 
-This defines an overall charge percentage loss applied to the battery charging. The value is in percent. So if --charge_loss_percent 15 was used, it would mean that 15% of every battery charge would be dropped. This means that 3kWh of solar diverted to the battery would result in max 2.55kWh charge getting into the battery. The lost 0.45kWh represents 15% of the charge amount. Technically there are losses at both charge and discharge. However this simulation aplies the loss once at the charge time. So whenn setting a value here, consider the overall charge loss in play and not just the charging loss.  
+This defines a loss percentage applied to the battery charging. The value is in percent. So if --charge_loss_percent 7 was used, it would mean that 7% of AC used for the charge would be lost. For example 3kWh of AC diverted to the battery would result in 2.93kWh charge getting into the battery. The lost 0.21kWh represents 7% of the lost charge.
+* --discharge_loss_percent 0-100 . 
+This defines a loss percentage applied to the battery discharging. The value is in percent. So if --discharge_loss_percent 7 was used, it would mean that 7% of battery discharge would be lost. For example 3kWh discharged from the battery would result in 2.93kWh AC. The lost 0.21 represents 7% of the lost charge.
 * --grid_shift_interval HH-HH .  
 This is the optional daily grid shift interval. To set the simulated grid shift to run from 2-6 AM each day, then use --grid_shift_interval 02-06. 
 * --discharge_bypass_interval HH-HH  
