@@ -236,10 +236,19 @@ parser.add_argument(
 
 parser.add_argument(
         '--charge_loss_percent', 
-        help = 'Charge Loss Percentage (1..100) def:10', 
+        help = 'Charge Loss Percentage (1..100) def:7', 
         type = int,
         choices = range(0, 101),
-        default = 10,
+        default = 7,
+        required = False
+        )
+
+parser.add_argument(
+        '--discharge_loss_percent', 
+        help = 'Discharge Loss Percentage (1..100) def:7', 
+        type = int,
+        choices = range(0, 101),
+        default = 7,
         required = False
         )
 
@@ -299,6 +308,7 @@ min_charge_percent = args['min_charge_percent']
 charge_rate = args['charge_rate']
 discharge_rate = args['discharge_rate']
 charge_loss_percent = args['charge_loss_percent']
+discharge_loss_percent = args['discharge_loss_percent']
 discharge_bypass_interval = args['discharge_bypass_interval']
 grid_shift_interval = args['grid_shift_interval']
 fit_discharge_interval = args['fit_discharge_interval']
@@ -321,11 +331,13 @@ overall_charge_total = 0
 overall_discharge_total = 0
 overall_battery_cycles = 0
 
-# factor to convert battery storage into the equivalent
-# of grid or solar draw
-# we multiple what we want to store in the battery by this value
-battery_to_ac_factor = 1 + (charge_loss_percent / 100)
-ac_to_battery_factor = (100 - charge_loss_percent) / 100 
+# charging factors
+battery_to_ac_charge_factor = 1 + (charge_loss_percent / 100)
+ac_to_battery_charge_factor = (100 - charge_loss_percent) / 100 
+
+# discharging factors
+battery_to_ac_discharge_factor = (100 - discharge_loss_percent) / 100
+ac_to_battery_discharge_factor = 1 + (discharge_loss_percent / 100)
 
 max_charge_capacity = battery_capacity * max_charge_percent/100
 
@@ -338,49 +350,68 @@ for key in key_list:
 
     # solar charge only applies when export reaches min boundary
     # helps avoid invalid phantom charges overnight
-    solar_charge_amount = 0
+    battery_solar_charge = 0
     if rec['export'] >= export_charge_boundary:
         # determine how much storage space we have 
         available_charge_capacity = max_charge_capacity - current_battery_storage
 
         # determine what can be charged
         # the min of charge rate and available capacity
-        max_charge_amount = min(available_charge_capacity, charge_rate)
+        max_export_charge = min(available_charge_capacity, charge_rate)
 
-        # loss conversions
-        adjusted_charge_amount = max_charge_amount * battery_to_ac_factor
-        solar_divert_amount = min(rec['export'], adjusted_charge_amount)
-        solar_charge_amount = solar_divert_amount * ac_to_battery_factor
+        # charge loss conversions
+        ac_charge = max_export_charge * battery_to_ac_charge_factor
+        solar_export_divert = min(rec['export'], ac_charge)
+        battery_solar_charge = solar_export_divert * ac_to_battery_charge_factor
+
+        log_message(
+                verbose,
+                '[%s] export charge:.. exp:%.4f max:%.4f exp_div:%.4f bat_chg:%.4f' % (
+                    rec['datetime'],
+                    rec['export'],
+                    max_export_charge,
+                    solar_export_divert,
+                    battery_solar_charge
+                    )
+                )
 
         # Reduce export and charge battery
-        current_battery_storage += solar_charge_amount
-        rec['export'] -= solar_divert_amount
-        overall_charge_total += solar_charge_amount
+        current_battery_storage += battery_solar_charge
+        rec['export'] -= solar_export_divert
+        overall_charge_total += battery_solar_charge
 
     # grid shift charge
-    grid_charge_amount = 0
+    battery_grid_shift_charge = 0
     if rec['hour'] in grid_shift_set:
         # determine how much storage space we have 
         available_charge_capacity = max_charge_capacity - current_battery_storage
 
         # determine what can be charged
         # the min of charge rate and available capacity
-        max_charge_amount = min(available_charge_capacity, charge_rate)
+        battery_grid_shift_charge = min(available_charge_capacity, charge_rate)
 
-        # loss conversions
-        adjusted_charge_amount = max_charge_amount * battery_to_ac_factor
+        # charge loss conversions
+        import_grid_shift_charge = battery_grid_shift_charge * battery_to_ac_charge_factor
+
+        log_message(
+                verbose,
+                '[%s] grid charge:.. bat_chg:%.4f imp_chg:%.4f' % (
+                    rec['datetime'],
+                    battery_grid_shift_charge,
+                    import_grid_shift_charge,
+                    )
+                )
 
         # charge battery from grid
-        grid_charge_amount = max_charge_amount
-        current_battery_storage += grid_charge_amount
-        rec['import'] += adjusted_charge_amount
+        current_battery_storage += battery_grid_shift_charge
+        rec['import'] += import_grid_shift_charge
         rec['consumed'] = rec['import']
-        overall_charge_total += grid_charge_amount
+        overall_charge_total += battery_grid_shift_charge
 
     # discharge is conditional to 
     # grid shift and discharge bypass times
-    import_discharge_amount = 0
-    fit_discharge_amount = 0
+    import_discharge = 0
+    export_discharge = 0
     if (not rec['hour'] in discharge_bypass_set and 
         not rec['hour'] in grid_shift_set):
         # determine how much charge we have to use
@@ -388,52 +419,64 @@ for key in key_list:
         if available_discharge_capacity < 0:
             available_discharge_capacity = 0
 
-        # determine discharge
-        max_discharge_amount = min(available_discharge_capacity, discharge_rate)
+        # determine max discharge
+        max_discharge = min(available_discharge_capacity, discharge_rate)
 
-        # determine actual charge amount
-        import_discharge_amount = min(rec['import'], max_discharge_amount)
+        # discharge loss conversions
+        ac_discharge = max_discharge * battery_to_ac_discharge_factor
+        import_discharge = min(rec['import'], ac_discharge)
+        battery_import_discharge = import_discharge * ac_to_battery_discharge_factor
 
-        # Discharge battery and Reduce import 
-        current_battery_storage -= import_discharge_amount
-        rec['import'] -= import_discharge_amount
+        log_message(
+                verbose,
+                '[%s] import discharge:.. imp:%.4f max:%.4f imp_dis:%.4f bat_dis:%.4f' % (
+                    rec['datetime'],
+                    rec['import'],
+                    max_discharge,
+                    import_discharge,
+                    battery_import_discharge
+                    )
+                )
+
+        # Discharge battery and reduce import 
+        current_battery_storage -= battery_import_discharge
+        rec['import'] -= import_discharge
         rec['consumed'] = rec['import']
-        overall_discharge_total += import_discharge_amount
+        overall_discharge_total += battery_import_discharge
 
         # Forced FIT discharge 
         # trying to flush the battery to the grid
+        battery_fit_discharge = 0
         if rec['hour'] in fit_discharge_set:
             # determine additional discharge possible
             # taking off any existing import discharge we had applied
-            fit_discharge_amount = max_discharge_amount - import_discharge_amount
+            battery_fit_discharge = max_discharge - battery_import_discharge
+            export_discharge = battery_fit_discharge * battery_to_ac_discharge_factor
+
+            log_message(
+                    verbose,
+                    '[%s] fit discharge:.. exp_dis:%.4f bat_dis:%.4f' % (
+                        rec['datetime'],
+                        export_discharge,
+                        battery_fit_discharge
+                        )
+                    )
 
             # Additionally discharge battery to max and increase export
-            current_battery_storage -= fit_discharge_amount
-            rec['export'] += fit_discharge_amount
-            overall_discharge_total += fit_discharge_amount
+            current_battery_storage -= battery_fit_discharge
+            rec['export'] += export_discharge
+            overall_discharge_total += battery_fit_discharge
 
     # record activity and charge status in record
-    rec['battery_solar_charge'] = solar_charge_amount
-    rec['battery_grid_charge'] = grid_charge_amount
-    rec['battery_discharge'] = import_discharge_amount + fit_discharge_amount
+    rec['battery_solar_charge'] = battery_solar_charge
+    rec['battery_grid_charge'] = battery_grid_shift_charge
+    rec['battery_discharge'] = battery_import_discharge + battery_fit_discharge
     rec['battery_storage'] = current_battery_storage
     rec['battery_capacity'] = round(current_battery_storage / battery_capacity * 100)
-    total_charge_discharge = solar_charge_amount + grid_charge_amount + import_discharge_amount + fit_discharge_amount
+    total_charge_discharge = battery_solar_charge + battery_grid_shift_charge + import_discharge + battery_fit_discharge
     rec['battery_cycles'] = total_charge_discharge / (max_charge_capacity * 2)
     overall_battery_cycles += rec['battery_cycles']
 
-    log_message(
-            verbose,
-            '%s charge:+%.2fkWh discharge:-%.2fkWh imp-dis:-%.2fkWh fit-dis:-%.2fkWh batt:%.2fkWh (%d%%)' % (
-                rec['datetime'],
-                solar_charge_amount + grid_charge_amount,
-                rec['battery_discharge'],
-                import_discharge_amount,
-                fit_discharge_amount,
-                rec['battery_storage'],
-                rec['battery_capacity']
-                )
-            )
 
 # split into separate dicts per day
 day_dict = {}
@@ -462,7 +505,7 @@ for day in sorted(day_dict.keys()):
 
 log_message(
         1,
-        'Final battery state.. charge:%.2fkWh (%d%%) ovl_charge:%.2fkWh ovl_discharge:%.2fkWh (%d cycles)' % (
+        'Final battery state.. charge:%.4fkWh (%d%%) ovl_charge:%.4fkWh ovl_discharge:%.4fkWh (%d cycles)' % (
             current_battery_storage,
             round(current_battery_storage / battery_capacity * 100),
             overall_charge_total,
