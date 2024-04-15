@@ -82,9 +82,9 @@ This is the rate of charge in kWh units per hour. A value of --charge_rate 2.5 w
 * --discharge_rate DISCHARGE_RATE . 
 This defines the discharge rate in kWh. A value of 1.5 would define a discharge rate of 1.5kWh per hour
 * --charge_loss_percent 0-100 . 
-This defines a loss percentage applied to the battery charging. The value is in percent. So if --charge_loss_percent 7 was used, it would mean that 7% of AC used for the charge would be lost. For example 3kWh of AC diverted to the battery would result in 2.79 charge getting into the battery. The lost 0.21kWh represents 7% of the lost charge.
+This defines a loss percentage applied to the battery charging. The value is in percent. So if a value of 7 was used, it would mean that 7% of AC used for the charge would be lost. For example 3kWh of AC diverted to the battery would result in 2.79 charge getting into the battery. The lost 0.21kWh represents 7% of the lost charge.
 * --discharge_loss_percent 0-100 . 
-This defines a loss percentage applied to the battery discharging. The value is in percent. So if --discharge_loss_percent 7 was used, it would mean that 7% of battery discharge would be lost. For example 3kWh discharged from the battery would result in 2.79 AC. The lost 0.21 represents 7% of the lost charge.
+This defines a loss percentage applied to the battery discharging. The value is in percent. So if a value of 7 was used, it would mean that 7% of battery discharge would be lost. For example 3kWh discharged from the battery would result in 2.79 AC. The lost 0.21 represents 7% of the lost charge.
 * --grid_shift_interval HH-HH .  
 This is the optional daily grid shift interval. To set the simulated grid shift to run from 2-6 AM each day, then use --grid_shift_interval 02-06. 
 * --discharge_bypass_interval HH-HH  
