@@ -99,3 +99,5 @@ Some examples here of the kind of data generated in the Excel files.
 
 * [ESB Report (Import/Export Only)](https://github.com/dresdner353/energyutils/raw/main/sample_reports/esb_report.xlsx)
 * [Shelly Report (Import, Export & Solar)](https://github.com/dresdner353/energyutils/raw/main/sample_reports/shelly_report.xlsx)
+* [Solis Hybrid Inverter Report (Import, Export & Solar)](https://github.com/dresdner353/energyutils/raw/main/sample_reports/solis_hybrid_report.xlsx)
+* [Solis String Inverter + Shelly Report (Import, Export & Solar)](https://github.com/dresdner353/energyutils/raw/main/sample_reports/solis_shelly_report.xlsx)
