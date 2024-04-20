@@ -11,6 +11,17 @@
     <title>Solar Monitor</title>
 
     <script>
+        // get query arg from page
+        function get_query_arg(arg) {
+            value = undefined;
+            value_start = location.search.split(arg + '=')[1];
+            if (value_start != undefined) {
+                value = value_start.split('&')[0];
+            }
+
+            return value;
+        }
+
         // Google charts
         google.charts.load('current', {'packages': ['corechart']});
         google.charts.load('current', {'packages':['gauge']});
@@ -33,7 +44,9 @@
         var metric_cycle_timer = setInterval(cycle_metric_index, metric_cycle_interval);
 
         // global string for selected layout
+        // and forced layout from query args
         var layout;
+        var forced_layout = undefined;
 
         // document load
         $( document ).ready(function() {
@@ -45,6 +58,9 @@
             // set dash to blank text
             // layout will over-ride this
             $("#dashboard").html("");
+
+            // try to determine optional forced layout
+            forced_layout = get_query_arg("layout");
 
             set_layout();
             refresh_data();
@@ -367,9 +383,31 @@
             `;
 
             // layout checks
-            if (window_width <= window_height) {
+            layout = undefined;
+
+            // forced layout
+            if (forced_layout != undefined) {
+                if (["small", "large", "portrait"].includes(forced_layout)) {
+                    layout = forced_layout;
+                }
+            }
+
+            // auto-calculated layout
+            if (layout == undefined) {
+                if (window_width <= window_height) {
+                    layout = "portrait";
+                }
+                else if (window_width < 1600 || 
+                         window_height < 1080) {
+                    layout = "small";
+                }
+                else {
+                    layout = "large";
+                }
+            }
+
+            if (layout == "portrait") {
                 // portrait view
-                layout = "portrait";
                 $("#dashboard").html(portrait_screen_layout);
                 $("#agg_donut_insert").html(agg_donut_html);
                 $("#agg_metrics_insert").html(agg_metrics_html);
@@ -385,40 +423,39 @@
                 document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-portrait-screen)');
                 document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-portrait-screen)');
             }
-            else {
-                if (window_width < 1600 || window_height < 1080) {
-                    // small screen landscape
-                    layout = "small";
-                    $("#dashboard").html(small_screen_layout);
-                    $("#agg_donut_insert").html(agg_donut_html);
-                    $("#agg_metrics_insert").html(agg_metrics_html);
 
-                    // set the small screen font sizes
-                    document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-small-screen)');
-                    document.body.style.setProperty("--icon-font-size", 'var(--icon-font-size-small-screen)');
-                    document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-small-screen)');
-                    document.body.style.setProperty("--title-font-size", 'var(--title-font-size-small-screen)');
-                    document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-small-screen)');
-                    document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-small-screen)');
-                }
-                else {
-                    // large screen landscape
-                    layout = "large";
-                    $("#dashboard").html(large_screen_layout);
-                    $("#agg_donut_insert").html(agg_donut_html);
-                    $("#agg_metrics_insert").html(agg_metrics_html);
-                    $("#day_column_chart_insert").html(day_column_chart_html);
-                    $("#month_column_chart_insert").html(month_column_chart_html);
-                    $("#year_column_chart_insert").html(year_column_chart_html);
+            if (layout == "small") {
+                // small screen landscape
+                layout = "small";
+                $("#dashboard").html(small_screen_layout);
+                $("#agg_donut_insert").html(agg_donut_html);
+                $("#agg_metrics_insert").html(agg_metrics_html);
 
-                    // set the large screen smaller font sizes
-                    document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-large-screen)');
-                    document.body.style.setProperty("--icon-font-size", 'var(--icon-font-size-large-screen)');
-                    document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-large-screen)');
-                    document.body.style.setProperty("--title-font-size", 'var(--title-font-size-large-screen)');
-                    document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-large-screen)');
-                    document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-large-screen)');
-                }
+                // set the small screen font sizes
+                document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-small-screen)');
+                document.body.style.setProperty("--icon-font-size", 'var(--icon-font-size-small-screen)');
+                document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-small-screen)');
+                document.body.style.setProperty("--title-font-size", 'var(--title-font-size-small-screen)');
+                document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-small-screen)');
+                document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-small-screen)');
+            }
+
+            if (layout == "large") {
+                // large screen landscape
+                $("#dashboard").html(large_screen_layout);
+                $("#agg_donut_insert").html(agg_donut_html);
+                $("#agg_metrics_insert").html(agg_metrics_html);
+                $("#day_column_chart_insert").html(day_column_chart_html);
+                $("#month_column_chart_insert").html(month_column_chart_html);
+                $("#year_column_chart_insert").html(year_column_chart_html);
+
+                // set the large screen smaller font sizes
+                document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-large-screen)');
+                document.body.style.setProperty("--icon-font-size", 'var(--icon-font-size-large-screen)');
+                document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-large-screen)');
+                document.body.style.setProperty("--title-font-size", 'var(--title-font-size-large-screen)');
+                document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-large-screen)');
+                document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-large-screen)');
             }
 
             console.log("Set layout to " + layout);
