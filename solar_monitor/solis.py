@@ -424,6 +424,7 @@ def get_inverter_month_data(config):
     config    - gloval config
     """
     global month_ts
+    global day_ts
     global gv_solis_dict
     global gv_battery_is_present
 
@@ -540,7 +541,11 @@ def get_inverter_month_data(config):
 
     # new refresh time
     # 10 mins from now
-    month_ts = now + (60 * 10)
+    #month_ts = now + (60 * 10)
+
+    # get month data the same time as hourly data
+    # ensures the "today" record updates quickly
+    month_ts = day_ts
 
     return 
 
