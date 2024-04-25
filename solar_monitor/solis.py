@@ -539,13 +539,9 @@ def get_inverter_month_data(config):
                 gv_solis_dict['metrics']['yesterday']['day'], 
                 gv_solis_dict['metrics']['yesterday']['year'])
 
-    # new refresh time
-    # 10 mins from now
-    #month_ts = now + (60 * 10)
-
-    # get month data the same time as hourly data
+    # get month data 20 seconds after the day update
     # ensures the "today" record updates quickly
-    month_ts = day_ts
+    month_ts = day_ts + 20
 
     return 
 
@@ -689,8 +685,8 @@ def get_inverter_year_data(config):
             gv_solis_dict['metrics']['last_12_months']['battery_discharge'] += month_rec['battery_discharge']
 
     # new refresh time
-    # 20 mins from now
-    year_ts = now + (60 * 20)
+    # 15 mins from now
+    year_ts = now + (60 * 15)
 
     return 
 
