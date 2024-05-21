@@ -377,12 +377,14 @@ def get_inverter_day_data(config):
             gv_solis_dict['last_updated']).strftime('%H:%M:%S')
     live_rec['title'] = 'Live Usage @%s' % (time_str)
 
-    if grid <= 0:
-        live_rec['import'] = grid * -1
-        live_rec['export'] = 0
-    else:
+    if grid < 0:
+        # negative => exporting
+        live_rec['export'] = grid * -1
         live_rec['import'] = 0
-        live_rec['export'] = grid 
+    else:
+        # positive => importing
+        live_rec['export'] = 0
+        live_rec['import'] = grid 
 
     live_rec['solar'] = solar
 
