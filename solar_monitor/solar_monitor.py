@@ -411,9 +411,10 @@ class config_handler(object):
 
         utils.log_message(
                 1,
-                '/config API %s %s' % (
-                    cherrypy.request.remote.ip,
-                    cherrypy.request.method))
+                '%s /config API %s@%s' % (
+                    cherrypy.request.method,
+                    cherrypy.request.login,
+                    cherrypy.request.remote.ip))
 
         if cherrypy.request.method == 'GET':
             # retrieve config
@@ -504,9 +505,9 @@ class data_handler(object):
 
         utils.log_message(
                 1,
-                '/data API %s %s' % (
-                    cherrypy.request.remote.ip,
-                    cherrypy.request.method))
+                '%s /data API %s' % (
+                    cherrypy.request.method,
+                    cherrypy.request.remote.ip))
 
         # Add in configured state
         if gv_config_dict['data_source'] == '':
