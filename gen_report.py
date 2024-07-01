@@ -401,11 +401,24 @@ def add_worksheet(
             'month' : 'year',
             }
 
+    # number of recent period 
+    # values to filter 
+    # e.g. day maps to 2... last 2 months
+    # as above default_filter_dict maps day to 
+    # a month filter
+    default_filter_periods = {
+            'datetime' : 1,
+            'day' : 2,
+            'week' : 1,
+            'month' : 2,
+            }
+
     if first_field in default_filter_dict:
         # determine the name of the field to filter
         # and its related column
         filtered_field = default_filter_dict[first_field]
         filtered_field_rec = field_dict[filtered_field]
+        max_filter_periods = default_filter_periods[first_field]
 
         if 'hidden' in filtered_field_rec:
             # filter field is hidden, auto-filter disabled
@@ -413,21 +426,24 @@ def add_worksheet(
         else:
             filter_col = filtered_field_rec['col']
 
-            # get the last record in the data dict
-            # and take its value for the filtered field
-            # This will give us the current day, month, year etc
-            last_data_key = key_list[-1]
-            last_data_rec = data_dict[last_data_key]
-            filter_value = last_data_rec[filtered_field]
+            # unique set of selected filter key values
+            filter_field_set = set()
+            for k in data_dict:
+                filter_field_set.add(data_dict[k][filtered_field])
+
+            # sort key list and reduce to last N items
+            filter_key_list = list(filter_field_set)
+            filter_key_list.sort()
+            filter_key_list = filter_key_list[-max_filter_periods:]
 
             # populate the filter list with the 
-            # filter value
+            # selected list of values
             # Note: This sets up the filter 
             # but the rows are not hidden
             # see further on
             worksheet.filter_column_list(
                     filter_col,
-                    [filter_value])
+                    filter_key_list)
     
     # Populate Rows in sorted order
     row = 0
@@ -476,10 +492,10 @@ def add_worksheet(
                 pass
 
         # auto-hide row for filtered scenario
-        # applies only if the given row's filtered field value
-        # does not match the filter
+        # applies only if the given row's filter field value
+        # is not in the filter value list
         if (filtered_field and 
-            rec[filtered_field] != filter_value):
+            not rec[filtered_field] in filter_key_list):
             worksheet.set_row(row, options={"hidden": True})
 
     # Charts
