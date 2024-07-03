@@ -244,17 +244,16 @@ def get_inverter_day_data(config):
         time.sleep(2)
 
     for solis_snap_rec in solis_snap_list:
+        # battery detection
+        # can flick on and off depending on system
+        # issues.. so we scan all data first and turn it 
+        # on when first encountered
+        if solis_snap_rec['batteryType'] != 0:
+            gv_battery_is_present = True
+
+    for solis_snap_rec in solis_snap_list:
         ts = int(solis_snap_rec['dataTimestamp']) // 1000
         ts_dt = datetime.datetime.fromtimestamp(ts)
-
-        # battery detection
-        # This is a tad crude but appears to be non-zero
-        # for a battery setup and zero otherwise
-        # we also only set to True (from False) and never
-        # back to False is the batteryChargingCurrent can appear as 
-        # zero sometimes intermittently 
-        if solis_snap_rec['batteryChargingCurrent'] > 0:
-            gv_battery_is_present = True
 
         # unique key for hour
         key = '%04d-%02d-%02d-%02d' % (

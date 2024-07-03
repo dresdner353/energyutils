@@ -268,17 +268,19 @@ def get_solis_day_data(
 
     data_dict = {}
     solis_snap_list = solis_resp['data']
+
+    # battery detection
+    # can flick on and off depending on system
+    # issues.. so we scan all data first and turn it 
+    # on when first encountered
     battery_is_present = False
+    for solis_snap_rec in solis_snap_list:
+        if solis_snap_rec['batteryType'] != 0:
+            battery_is_present = True
 
     for solis_snap_rec in solis_snap_list:
         ts = int(solis_snap_rec['dataTimestamp']) // 1000
         ts_dt = datetime.datetime.fromtimestamp(ts)
-
-        # battery detection
-        # This is a tad crude but appears to be non-zero
-        # for a battery setup and zero otherwise
-        if solis_snap_rec['batteryChargingCurrent'] > 0:
-            battery_is_present = True
 
         # unique key for hour
         # which is also an Excel-friendly datetime
