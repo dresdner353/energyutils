@@ -140,6 +140,8 @@ def get_shelly_day_data(
             usage_rec['ts'] = ts
             usage_rec['import'] = 0
             usage_rec['export'] = 0
+            usage_rec['grid_voltage_min'] = 99999999999
+            usage_rec['grid_voltage_max'] = 0
 
             # ts and aggregation keys
             usage_rec['hour'] = ts_dt.hour
@@ -162,6 +164,10 @@ def get_shelly_day_data(
         # works with repeat hours in DST rollback
         usage_rec['import'] += shelly_rec['consumption'] / 1000
         usage_rec['export'] += shelly_rec['reversed'] / 1000
+
+        # grid voltage
+        usage_rec['grid_voltage_min'] = min(usage_rec['grid_voltage_min'], shelly_rec['min_voltage'])
+        usage_rec['grid_voltage_max'] = max(usage_rec['grid_voltage_max'], shelly_rec['max_voltage'])
 
     # no data, nothing to do
     if len(data_dict) == 0:
@@ -249,6 +255,7 @@ def get_solis_day_data(
             solis_key_secret,
             solis_inverter_sn,
             solis_strings,
+            solis_ac_phase,
             date_ref):
 
     request = {}
@@ -300,6 +307,23 @@ def get_solis_day_data(
             usage_rec['consumed'] = 0
             usage_rec['solar_consumed'] = 0
 
+            # optional AC 
+            if solis_ac_phase == 1:
+
+                usage_rec['grid_voltage_min'] = 999999999
+                usage_rec['grid_voltage_max'] = 0
+
+            if solis_ac_phase == 3:
+
+                usage_rec['grid_voltage_1_min'] = 999999999
+                usage_rec['grid_voltage_1_max'] = 0
+
+                usage_rec['grid_voltage_2_min'] = 999999999
+                usage_rec['grid_voltage_2_max'] = 0
+
+                usage_rec['grid_voltage_3_min'] = 999999999
+                usage_rec['grid_voltage_3_max'] = 0
+
             usage_rec['hour'] = ts_dt.hour
             usage_rec['day'] = '%04d-%02d-%02d' % (
                     ts_dt.year, 
@@ -343,6 +367,21 @@ def get_solis_day_data(
             # running total
             string_power = solis_snap_rec[voltage_field] * solis_snap_rec[current_field]
             usage_rec[pv_field] += string_power
+
+        # optional AC 
+        if solis_ac_phase == 1:
+            usage_rec['grid_voltage_min'] = min(usage_rec['grid_voltage_min'], solis_snap_rec['uAc1'])
+            usage_rec['grid_voltage_max'] = max(usage_rec['grid_voltage_max'], solis_snap_rec['uAc1'])
+
+        if solis_ac_phase == 3:
+            usage_rec['grid_voltage_1_min'] = min(usage_rec['grid_voltage_1_min'], solis_snap_rec['uAc1'])
+            usage_rec['grid_voltage_1_max'] = max(usage_rec['grid_voltage_1_max'], solis_snap_rec['uAc1'])
+
+            usage_rec['grid_voltage_2_min'] = min(usage_rec['grid_voltage_2_min'], solis_snap_rec['uAc2'])
+            usage_rec['grid_voltage_2_max'] = max(usage_rec['grid_voltage_2_max'], solis_snap_rec['uAc2'])
+
+            usage_rec['grid_voltage_3_min'] = min(usage_rec['grid_voltage_3_min'], solis_snap_rec['uAc3'])
+            usage_rec['grid_voltage_3_max'] = max(usage_rec['grid_voltage_3_max'], solis_snap_rec['uAc3'])
 
     # adjust values to relative 
     # difference from previous hours record
@@ -419,6 +458,7 @@ def get_day_data(
         solis_key_secret,
         solis_inverter_sn,
         solis_strings,
+        solis_ac_phase,
         shelly_api_host,
         shelly_auth_key,
         shelly_device_id):
@@ -470,6 +510,7 @@ def get_day_data(
             solis_key_secret,
             solis_inverter_sn,
             solis_strings,
+            solis_ac_phase,
             date_ref)
 
     # delay between calls
@@ -524,10 +565,15 @@ def get_day_data(
                 shelly_rec = shelly_dict[key]
                 if key in solis_dict:
                     # merge import and export
+                    # and grid voltages
                     solis_rec = solis_dict[key]
 
                     solis_rec['import'] = shelly_rec['import']
                     solis_rec['export'] = shelly_rec['export']
+
+                    solis_rec['grid_voltage_min'] = shelly_rec['grid_voltage_min']
+                    solis_rec['grid_voltage_max'] = shelly_rec['grid_voltage_max']
+
                     solis_rec['ts'] = shelly_rec['ts']
                     solis_rec['solar_consumed'] = solis_rec['solar'] - solis_rec['export']
                     solis_rec['consumed'] = solis_rec['import'] + solis_rec['solar_consumed']
@@ -623,6 +669,15 @@ parser.add_argument(
         )
 
 parser.add_argument(
+        '--solis_ac_phase', 
+        help = 'AC Grid Voltage (1:single phase, 3:3-phase', 
+        type = int,
+        choices = [1, 3],
+        default = 1, # single phase
+        required = False
+        )
+
+parser.add_argument(
         '--shelly_api_host', 
         help = 'Shelly API Host', 
         required = False
@@ -655,6 +710,7 @@ solis_api_host = args['solis_api_host']
 solis_key_id = args['solis_key_id']
 solis_key_secret = args['solis_key_secret']
 solis_strings = args['solis_strings']
+solis_ac_phase = args['solis_ac_phase']
 shelly_api_host = args['shelly_api_host']
 shelly_device_id = args['shelly_device_id']
 shelly_auth_key = args['shelly_auth_key']
@@ -684,6 +740,7 @@ for i in range(0, backfill_days):
             solis_key_secret,
             solis_inverter_sn,
             solis_strings,
+            solis_ac_phase,
             shelly_api_host,
             shelly_auth_key,
             shelly_device_id)
