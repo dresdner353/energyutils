@@ -96,7 +96,6 @@ field_dict = {
             'width' : 12,
             'header_format' : 'header',
             'format' : 'kwh',
-            'field' : 'import'
             },
         'import_cost' : {
             'title' : 'Import Cost',
@@ -105,27 +104,74 @@ field_dict = {
             'format' : 'currency_2dp',
             },
 
+        'grid_voltage_min' : {
+            'title' : 'Min Grid AC',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'vac',
+            },
+        'grid_voltage_1_min' : {
+            'title' : 'Min Grid Phase 1 AC',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'vac',
+            },
+        'grid_voltage_2_min' : {
+            'title' : 'Min Grid Phase 2 AC',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'vac',
+            },
+        'grid_voltage_3_min' : {
+            'title' : 'Min Grid Phase 3 AC',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'vac',
+            },
+
+        'grid_voltage_max' : {
+            'title' : 'Max Grid AC',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'vac',
+            },
+        'grid_voltage_1_max' : {
+            'title' : 'Max Grid Phase 1 AC',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'vac',
+            },
+        'grid_voltage_2_max' : {
+            'title' : 'Max Grid Phase 2 AC',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'vac',
+            },
+        'grid_voltage_3_max' : {
+            'title' : 'Max Grid Phase 3 AC',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'vac',
+            },
+
         'solar' : {
             'title' : 'Solar Generation',
             'width' : 12,
             'header_format' : 'header',
             'format' : 'kwh',
             },
-
         'solar_pv1' : {
             'title' : 'PV1 Generation',
             'width' : 12,
             'header_format' : 'header',
             'format' : 'kwh',
             },
-
         'solar_pv2' : {
             'title' : 'PV2 Generation',
             'width' : 12,
             'header_format' : 'header',
             'format' : 'kwh',
             },
-
         'solar_pv3' : {
             'title' : 'PV3 Generation',
             'width' : 12,
@@ -238,7 +284,6 @@ field_dict = {
             'width' : 12,
             'header_format' : 'header',
             'format' : 'kwh',
-            'field' : 'import'
             },
         'savings' : {
             'title' : 'Savings',
@@ -474,6 +519,7 @@ def add_worksheet(
                     'currency_4dp', 
                     'currency_2dp', 
                     'percent', 
+                    'vac',
                     'kwh',
                     'kwh_3dp']:
                 if field in rec:
@@ -595,6 +641,14 @@ def gen_aggregate_dict(
             'savings_percent',
             'solar_consumed_percent',
             'export_percent',
+            'grid_voltage_min',
+            'grid_voltage_max',
+            'grid_voltage_1_min',
+            'grid_voltage_2_min',
+            'grid_voltage_3_min',
+            'grid_voltage_1_max',
+            'grid_voltage_2_max',
+            'grid_voltage_3_max',
             ]
     field_skip_list.append(agg_field)
 
@@ -1113,6 +1167,11 @@ kwh_3dp_format = workbook.add_format()
 # with commas and 3 decimal places
 kwh_3dp_format.set_num_format('#,##0.000 "kWh"') 
 format_dict['kwh_3dp'] = kwh_3dp_format
+
+vac_format = workbook.add_format() 
+# with commas and 2 decimal place
+vac_format.set_num_format('#,##0.00 "V"') 
+format_dict['vac'] = vac_format
 
 percent_format = workbook.add_format() 
 percent_format.set_num_format('0.0%') 
