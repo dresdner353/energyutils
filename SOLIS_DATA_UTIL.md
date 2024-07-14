@@ -36,6 +36,8 @@ optional arguments:
                         Solis Inverter API Key Secret
   --solis_strings {0,1,2,3,4,5,6,7,8}
                         Number of Separate Strings to track def:0 (disabled)
+  --solis_ac_phase {1,3}
+                        AC Grid Voltage (1:single phase, 3:3-phase
   --shelly_api_host SHELLY_API_HOST
                         Shelly API Host
   --shelly_device_id SHELLY_DEVICE_ID
@@ -61,6 +63,8 @@ The Solis API cloud key as given to you by Solis support
 The Solis API cloud secret as given to you by Solis support
 * --solis_strings <num_strings>  
 Optional number of separate strings to track. This defaults to 0 (disabled). If set to a value 1-8, it will try to additionally separate the reporting of solar generation into separate kWh values per hour per string. The fields are added in as "solar_pv1", "solar_pv2" etc in conjunction with the total "solar" value. It does this calculation using an averaging mechanism performed on the snapshot (kW) values that Solis provides in its 5-minute snapshots. So its not a rocket-proof calculation but statistically should be close.
+* --solis_ac_phase PHASE  
+This sets the AC phase to single (1) or three-phase (3) and controls the min/max grid voltage readings that are captured for each hour. If not set, the default assumed is single phase. The fields are captured in "grid_voltage_min" and "grid_voltage_max" for single-phase and "grid_voltage_1_min", "grid_voltage_2_min", "grid_voltage_3_min", "grid_voltage_1_max", "grid_voltage_2_max", "grid_voltage_3_max" for 3-phase.
 * --shelly_api_host SHELLY_API_HOST  
 Optional Shelly API host if you are using a Solis string inverter in conjunction with a Shelly EM/Pro
 * --shelly_device_id SHELLY_DEVICE_ID  
