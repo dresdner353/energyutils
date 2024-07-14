@@ -36,7 +36,7 @@ optional arguments:
   --verbose             Enable verbose output
   --reports [{year,month,week,day,hour,tariff,weekday,24h} ...]
                         Reports to generate
-  --hide_columns [{datetime,ts,year,month,week,day,weekday,hour,hours,tariff_name,tariff_rate,standing_rate,standing_cost,import,import_cost,solar,solar_pv1,solar_pv2,solar_pv3,solar_pv4,battery_solar_charge,battery_grid_charge,battery_charge,battery_discharge,battery_storage,battery_capacity,solar_consumed,solar_consumed_percent,solar_credit,export_rate,export,export_percent,export_credit,consumed,rel_import,savings,savings_percent,bill_amount} ...]
+  --hide_columns [{datetime,ts,year,month,week,day,weekday,hour,hours,tariff_name,tariff_rate,standing_rate,standing_cost,import,import_cost,grid_voltage_min,grid_voltage_1_min,grid_voltage_2_min,grid_voltage_3_min,grid_voltage_max,grid_voltage_1_max,grid_voltage_2_max,grid_voltage_3_max,solar,solar_pv1,solar_pv2,solar_pv3,solar_pv4,battery_solar_charge,battery_grid_charge,battery_charge,battery_discharge,battery_storage,battery_capacity,battery_cycles,solar_consumed,solar_consumed_percent,solar_credit,export_rate,export,export_percent,export_credit,consumed,rel_import,savings,savings_percent,bill_amount} ...]
 
 ```
 Options:
