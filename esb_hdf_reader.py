@@ -154,13 +154,19 @@ def process_esb_hdf_files(
             # this caters or the merging of both 30-min intervals 
             # and also for any repeat hours (winter DST rollback)
 
-            # Import usage
+            # Import usage both kW and kWh variants
             if hdf_rec['type'] == 'Active Import Interval (kW)':
                 esb_rec['import'] += float(hdf_rec['value']) / 2
+
+            if hdf_rec['type'] == 'Active Import Interval (kWh)':
+                esb_rec['import'] += float(hdf_rec['value'])
         
-            # Export
+            # Export both kW and kWh variants
             if hdf_rec['type'] == 'Active Export Interval (kW)':
                 esb_rec['export'] += float(hdf_rec['value']) / 2
+
+            if hdf_rec['type'] == 'Active Export Interval (kWh)':
+                esb_rec['export'] += float(hdf_rec['value'])
 
         log_message(
                 1,

@@ -2,6 +2,10 @@
 
 The Electricity Supply Board in Ireland have a data download service available to customers with smart meters. They refer to this data as their harmonised data format. It's essentially power import and export data provided in 30-minute intervals and downloaded in CSV files. It has been an awkward data source in general as the power usage values are timestamped in local time when the usage period ended and also need to be summed up per half-hour and divided by 2 to get real kWh values.
 
+Note: In July 2024, ESBN released updates to the download formats and now HDF files may be downloaded in the original 30-min kW and now in 30-min kWh calculations. Either variant will work with this script as it detects the variant automatically. 
+
+30-minute readings in calculated kWh
+
 The ```esb_hdf_reader.py``` script can be used to parse this data into a more analytics or spreadsheet-friendly intermediate form. 
 
 ## Usage
