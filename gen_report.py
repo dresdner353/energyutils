@@ -438,32 +438,41 @@ def add_worksheet(
     # certain first_field values 
     # will trigger a default auto-filter
     # to try and reduce the displayed value set
+    #
+    # datetime (hour sheet) will filter the last 1 day
+    # day will filter the last 40 days
+    # week will filter the last 1 year
+    # etc
     filtered_field = None
+    max_filter_periods = None
     default_filter_dict = {
-            'datetime' : 'day',
-            'day' : 'month',
-            'week' : 'year',
-            'month' : 'year',
-            }
+            'datetime' : {
+                'field' : 'day',
+                'periods' : 1
+                },
 
-    # number of recent period 
-    # values to filter 
-    # e.g. day maps to 2... last 2 months
-    # as above default_filter_dict maps day to 
-    # a month filter
-    default_filter_periods = {
-            'datetime' : 1,
-            'day' : 2,
-            'week' : 1,
-            'month' : 2,
+            'day' : {
+                'field' : 'day',
+                'periods' : 40
+                },
+
+            'week' : {
+                'field' : 'year',
+                'periods' : 1
+                },
+
+            'month' : {
+                'field' : 'year',
+                'periods' : 2
+                },
             }
 
     if first_field in default_filter_dict:
         # determine the name of the field to filter
         # and its related column
-        filtered_field = default_filter_dict[first_field]
+        filtered_field = default_filter_dict[first_field]['field']
+        max_filter_periods = default_filter_dict[first_field]['periods']
         filtered_field_rec = field_dict[filtered_field]
-        max_filter_periods = default_filter_periods[first_field]
 
         if 'hidden' in filtered_field_rec:
             # filter field is hidden, auto-filter disabled
