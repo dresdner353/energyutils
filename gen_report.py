@@ -1413,7 +1413,7 @@ for report in report_list:
                         'series' : power_series,
                         },
                     {
-                        'title' : 'PV String Performance',
+                        'title' : 'PV Generation',
                         'type' : 'column',
                         'x_title' : 'Hour',
                         'x_rotation' : -45,
@@ -1421,7 +1421,7 @@ for report in report_list:
                         'series' : pv_perf_series,
                         },
                     {
-                        'title' : 'Relative Import (kWh)',
+                        'title' : 'Relative Import',
                         'type' : 'column',
                         'x_title' : 'Hour',
                         'x_rotation' : -45,
@@ -1532,7 +1532,7 @@ for report in report_list:
                         'series' : power_series,
                         },
                     {
-                        'title' : 'PV String Performance',
+                        'title' : 'PV Generation',
                         'type' : 'column',
                         'x_title' : 'Day',
                         'x_rotation' : -45,
@@ -1540,7 +1540,7 @@ for report in report_list:
                         'series' : pv_perf_series,
                         },
                     {
-                        'title' : 'Relative Import (kWh)',
+                        'title' : 'Relative Import',
                         'type' : 'column',
                         'x_title' : 'Day',
                         'x_rotation' : -45,
@@ -1603,7 +1603,7 @@ for report in report_list:
                         'series' : power_series,
                         },
                     {
-                        'title' : 'PV String Performance',
+                        'title' : 'PV Generation',
                         'type' : 'column',
                         'x_title' : 'Week',
                         'x_rotation' : -45,
@@ -1611,7 +1611,7 @@ for report in report_list:
                         'series' : pv_perf_series,
                         },
                     {
-                        'title' : 'Relative Import (kWh)',
+                        'title' : 'Relative Import',
                         'type' : 'column',
                         'x_title' : 'Week',
                         'x_rotation' : -45,
@@ -1674,7 +1674,7 @@ for report in report_list:
                         'series' : power_series,
                         },
                     {
-                        'title' : 'PV String Performance',
+                        'title' : 'PV Generation',
                         'type' : 'column',
                         'x_title' : 'Month',
                         'x_rotation' : -45,
@@ -1682,7 +1682,7 @@ for report in report_list:
                         'series' : pv_perf_series,
                         },
                     {
-                        'title' : 'Relative Import (kWh)',
+                        'title' : 'Relative Import',
                         'type' : 'column',
                         'x_title' : 'Month',
                         'x_rotation' : -45,
@@ -1745,7 +1745,7 @@ for report in report_list:
                         'series' : power_series,
                         },
                     {
-                        'title' : 'PV String Performance',
+                        'title' : 'PV Generation',
                         'type' : 'column',
                         'x_title' : 'Year',
                         'x_rotation' : -45,
@@ -1753,7 +1753,7 @@ for report in report_list:
                         'series' : pv_perf_series,
                         },
                     {
-                        'title' : 'Relative Import (kWh)',
+                        'title' : 'Relative Import',
                         'type' : 'column',
                         'x_title' : 'Year',
                         'x_rotation' : -45,
@@ -1814,7 +1814,7 @@ for report in report_list:
                         'series' : power_series
                         },
                     {
-                        'title' : 'PV String Performance',
+                        'title' : 'PV Generation',
                         'type' : 'column',
                         'x_title' : 'Weekday',
                         'x_rotation' : -45,
@@ -1822,7 +1822,7 @@ for report in report_list:
                         'series' : pv_perf_series,
                         },
                     {
-                        'title' : 'Relative Import (kWh)',
+                        'title' : 'Relative Import',
                         'type' : 'column',
                         'x_title' : 'Weekday',
                         'x_rotation' : -45,
@@ -1883,7 +1883,7 @@ for report in report_list:
                         'series' : power_series,
                         },
                     {
-                        'title' : 'PV String Performance',
+                        'title' : 'PV Generation',
                         'type' : 'column',
                         'x_title' : 'Hour',
                         'x_rotation' : -45,
@@ -1891,7 +1891,7 @@ for report in report_list:
                         'series' : pv_perf_series,
                         },
                     {
-                        'title' : 'Relative Import (kWh)',
+                        'title' : 'Relative Import',
                         'type' : 'column',
                         'x_title' : 'Hour',
                         'x_rotation' : -45,
@@ -1944,7 +1944,7 @@ for report in report_list:
                         'series' : bill_series,
                         },
                     {
-                        'title' : 'Relative Import (kWh)',
+                        'title' : 'Relative Import',
                         'type' : 'column',
                         'x_title' : 'Tariff',
                         'y_title' : 'kWh',
