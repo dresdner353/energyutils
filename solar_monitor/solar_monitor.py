@@ -509,6 +509,11 @@ class data_handler(object):
                     cherrypy.request.method,
                     cherrypy.request.remote.ip))
 
+        utils.log_message(
+                1,
+                'Headers:\n%s' % (
+                    cherrypy.request.headers))
+
         # Add in configured state
         if gv_config_dict['data_source'] == '':
             gv_data_dict['configured'] = False
