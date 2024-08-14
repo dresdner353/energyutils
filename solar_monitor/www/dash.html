@@ -560,6 +560,14 @@
         function refresh_data() {
             console.log("refresh_data()");
 
+            $.ajaxSetup(
+                {
+                    headers: {
+                                 'X-screen-width': window.innerWidth,
+                                 'X-screen-height': window.innerHeight,
+                             }
+                });
+
             // get the latest data
             var data_request = $.get('/data');
 
