@@ -35,7 +35,9 @@ flags=(
    --autoplay-policy=no-user-gesture-required
 )
 
-chromium-browser "${flags[@]}" --app=http://localhost:8090 &
+# launch chrome against the Solarmon dashboard 
+# with layout forced to large
+chromium-browser "${flags[@]}" --app='http://localhost:8090?layout=large' &
 
 # mouse movement and window foreground
 sleep 10
