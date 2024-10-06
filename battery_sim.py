@@ -412,6 +412,8 @@ for key in key_list:
     # grid shift and discharge bypass times
     import_discharge = 0
     export_discharge = 0
+    battery_import_discharge = 0
+    battery_fit_discharge = 0
     if (not rec['hour'] in discharge_bypass_set and 
         not rec['hour'] in grid_shift_set):
         # determine how much charge we have to use
