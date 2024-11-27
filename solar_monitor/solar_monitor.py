@@ -225,7 +225,7 @@ def merge_grid_data():
     inverter_live_rec['solar'] = grid_live_rec['solar']
 
     # derived fields recalcs
-    inverter_live_rec['solar_consumed'] = inverter_live_rec['solar'] - inverter_live_rec['export'] 
+    inverter_live_rec['solar_consumed'] = max(0, inverter_live_rec['solar'] - inverter_live_rec['export'])
     inverter_live_rec['consumed'] = inverter_live_rec['import'] + inverter_live_rec['solar_consumed']
 
     # environmental metrics
@@ -276,7 +276,7 @@ def merge_grid_data():
             inverter_rec['export'] = grid_rec['export']
 
             # derived fields mixing grid and inverter sources
-            inverter_rec['solar_consumed'] = inverter_rec['solar'] - inverter_rec['export'] 
+            inverter_rec['solar_consumed'] = max(0, inverter_rec['solar'] - inverter_rec['export'])
             inverter_rec['consumed'] = inverter_rec['import'] + inverter_rec['solar_consumed']
 
             # environmental metrics
@@ -298,7 +298,7 @@ def merge_grid_data():
 
     # finish up fixes to last 12 months metric
     inverter_last_12_months_rec['title'] = 'Last %d Months' % (len(gv_data_dict['year']))
-    inverter_last_12_months_rec['solar_consumed'] = inverter_last_12_months_rec['solar'] - inverter_last_12_months_rec['export'] 
+    inverter_last_12_months_rec['solar_consumed'] = max(0, inverter_last_12_months_rec['solar'] - inverter_last_12_months_rec['export'])
     inverter_last_12_months_rec['consumed'] = inverter_last_12_months_rec['import'] + inverter_last_12_months_rec['solar_consumed']
     inverter_last_12_months_rec['co2'] = (gv_config_dict['environment']['gco2_kwh'] * inverter_last_12_months_rec['solar']) / 1000
     inverter_last_12_months_rec['trees'] = gv_config_dict['environment']['trees_kwh'] * inverter_last_12_months_rec['solar']
