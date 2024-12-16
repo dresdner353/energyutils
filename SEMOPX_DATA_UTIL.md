@@ -96,7 +96,7 @@ Under normal circumstances, each JSONL file will contain 24 lines, one line per 
 
 The following examples highlight this behaviour:
 
-### March 31st 2024 (DST Activates, day is 23 hours long)
+### March 31st 2024 (day is 23 hours long, 1AM skipped)
 ```json
 {"ts": 1711839600, "datetime": "2024/03/30 23:00:00", "market_area": "ROI-DA", "euro": 94.6, "gbp": 80.993}
 {"ts": 1711843200, "datetime": "2024/03/31 00:00:00", "market_area": "ROI-DA", "euro": 94.5, "gbp": 80.91}
@@ -123,7 +123,7 @@ The following examples highlight this behaviour:
 {"ts": 1711918800, "datetime": "2024/03/31 22:00:00", "market_area": "ROI-DA", "euro": 80.1, "gbp": 68.579}
 ```
 
-### October 27th 2024 (DST Deactivates, day is 25 hours long)
+### October 27th 2024 (day is 25 hours long, two 1AM periods)
 ```json
 {"ts": 1729980000, "datetime": "2024/10/26 23:00:00", "market_area": "ROI-DA", "euro": 171.11, "gbp": 142.544}
 {"ts": 1729983600, "datetime": "2024/10/27 00:00:00", "market_area": "ROI-DA", "euro": 180.2, "gbp": 150.117}
