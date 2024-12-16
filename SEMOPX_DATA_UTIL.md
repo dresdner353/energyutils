@@ -4,7 +4,7 @@ SEMOpx provides day-ahead and intra-day electricity market trading for Ireland a
 
 Power auctions are run in several forms varying from Day-ahead to three separate intra-day auctions. The data in relation to these auctions is made available via reports from the [semopx.com](https://semopx.com) website and also via their API.
 
-This script implements the SMOpx API and specifically targets the day-ahead (DA) data. The script calls the SEMOpx API to first collect data on available DA reports for the specified ROI or NI market and then pulls that report data per given day. The data is reformatted and written to JSONL files stored in a target directory. 
+This script implements the SEMOpx API and specifically targets the day-ahead (DA) data. When invoked, the script calls the API to first collect data on available DA reports for the specified ROI or NI market and then pulls that report data per given day. The data is converted fronm the SEMOpx format and written to JSONL files stored in a target directory. 
 
 ## Usage
 ```
