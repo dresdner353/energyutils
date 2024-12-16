@@ -50,6 +50,9 @@ def retrieve_market_results(
 
     global gv_verbose
 
+    semopx_api_query_url = 'https://reports.semopx.com/api/v1/documents/static-reports'
+    semopx_api_retrieval_url = 'https://reports.semopx.com/api/v1/documents'
+
     # Report Search API URL and params
     log_message(
             1,
@@ -60,7 +63,6 @@ def retrieve_market_results(
 
     page = 0 # starts at 1 but incremented before GET
     total_pages = 0
-    semopx_api_url = 'https://reports.semopx.com/api/v1/documents/static-reports'
 
     # Params to get DA (Day Ahead) reports only
     # Also retrieving the latest (non-published) report
@@ -75,6 +77,8 @@ def retrieve_market_results(
     report_list = []
 
     while not done:
+        # 1-sec call interval to avoid 
+        # stress on the API
         time.sleep(1)
 
         # incr and set page
@@ -91,7 +95,7 @@ def retrieve_market_results(
                 )
 
         resp = requests.get(
-                semopx_api_url, 
+                semopx_api_query_url, 
                 params = params)
         semopx_resp_dict = resp.json()
 
@@ -122,16 +126,14 @@ def retrieve_market_results(
 
     log_message(
             gv_verbose,
-            'Full Doc List (pages:%d docs:%d)\n%s\n' % (
+            'Full report list (pages:%d docs:%d)\n%s\n' % (
                 page,
                 len(report_list),
                 json.dumps(report_list, indent = 4),
                 )
             )
 
-    # Report Retrieval
-    semopx_api_url = 'https://reports.semopx.com/api/v1/documents'
-
+    # Report Data Retrieval
     report_count = 0
     skip_count = 0
     retrieved_count = 0
@@ -149,6 +151,7 @@ def retrieve_market_results(
             skip_count += 1
             continue
 
+        # 1-sec delay between API calls
         time.sleep(1)
 
         report_count += 1
@@ -161,8 +164,9 @@ def retrieve_market_results(
                     )
                 )
 
+        # get specific report appending resource name to base URL
         resp = requests.get(
-                semopx_api_url + '/' + report['resource_name'], 
+                semopx_api_retrieval_url + '/' + report['resource_name'], 
                 params = params)
         semopx_resp_dict = resp.json()
         retrieved_count += 1
@@ -175,11 +179,11 @@ def retrieve_market_results(
                     )
                 )
 
-        # parse document details into data object
+        # parse document details into list of objects
         rec_list = []
 
-        # This is a terrible layout of lists
-        # within lists in the API
+        # This is an awkward response layout of lists
+        # within lists 
         for data_set_list in semopx_resp_dict['rows']:
 
             # skip if not desired market area
