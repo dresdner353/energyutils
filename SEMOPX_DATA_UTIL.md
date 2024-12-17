@@ -1,10 +1,10 @@
 # SEMOpx Market Data Utility
 
-SEMOpx provides day-ahead and intra-day electricity market trading for Ireland and Northern Ireland as part of the Single Electricity Market (SEM).
+SEMOpx provides day-ahead and intra-day electricity market trading for the Republic of Ireland and Northern Ireland as part of the Single Electricity Market (SEM).
 
-Power auctions are run in several forms varying from Day-ahead to three separate intra-day auctions. The data in relation to these auctions is made available via reports from the [semopx.com](https://semopx.com) website and also via their API.
+Power auctions are run in several forms varying from day-ahead to three separate intra-day auctions. The data in relation to these auctions is made available via reports from the [semopx.com](https://semopx.com) website and also via their API.
 
-This script implements the SEMOpx API and specifically targets the day-ahead (DA) data. When invoked, the script calls the API to first collect data on available DA reports for the specified ROI or NI market and then pulls that report data per given day. The data is converted fronm the SEMOpx format and written to JSONL files stored in a target directory. 
+This script implements the SEMOpx API and specifically targets the day-ahead (DA) data. When invoked, the script calls the API to first collect data on available DA reports for the specified ROI or NI market and then pulls that report data per given day. The data is converted from the SEMOpx format and written to JSONL files stored in a target directory. 
 
 ## Usage
 ```
@@ -36,7 +36,7 @@ Allows for specifying of a timezone. The default is Europe/Dublin and should be 
 ## Operation
 * Retrieval acts incrementally, only pulling data for day files you do not already have. 
 * So it you invoke the script with --days 100, it will use the API to get and write files for the last 100 days
-* If you immediately re-run the script, it will compute the last 100 reports but not retrieve any data after discovering that the files already exist in the --odir location.  
+* If you immediately re-run the script, it will compute the last 100 reports but not retrieve any data after discovering that the files already exist in the --odir location.
 * This allows for incremental usage of the script on a daily basis, including handling of gaps if the script were not run for some time.
 * The data is written in JSONL files, one per day
 * Each line in a file is the GBP & Euro trading price for a given hour in the day.
