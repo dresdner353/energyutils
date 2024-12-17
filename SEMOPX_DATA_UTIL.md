@@ -35,12 +35,11 @@ Allows for specifying of a timezone. The default is Europe/Dublin and should be 
 
 ## Operation
 * Retrieval acts incrementally, only pulling data for day files you do not already have. 
-* So it you invoke the script with --days 100, it will use the API to get and write files for the last 100 days
+* If you invoke the script with --days 100, it will use the API to get and write files for the last 100 days
 * If you immediately re-run the script, it will compute the last 100 reports but not retrieve any data after discovering that the files already exist in the --odir location.
 * This allows for incremental usage of the script on a daily basis, including handling of gaps if the script were not run for some time.
-* The data is written in JSONL files, one per day
-* Each line in a file is the GBP & Euro mWh trading price for a given hour in the day. 
-* Prices are also shown in kWh for convenience.
+* The data is written in JSONL files, one file per day, one line per hour.
+* Prices are listed in mWh and kWh amounts for both Euro and GBP currencies.
 * Time is presented in both EPOCH format (UTC seconds in 1970-01-01) and in local string format (YYYY/MM/DD HH:MM:SS) based on the selected timezone
 
 
