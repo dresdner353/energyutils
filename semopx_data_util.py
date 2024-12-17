@@ -101,7 +101,8 @@ def retrieve_market_results(
 
         log_message(
                 gv_verbose,
-                'API Response (%s)\n%s\n' % (
+                'API Response %s (%s)\n%s\n' % (
+                    semopx_api_query_url,
                     params, 
                     json.dumps(semopx_resp_dict, indent = 4),
                     )
@@ -165,16 +166,17 @@ def retrieve_market_results(
                 )
 
         # get specific report appending resource name to base URL
+        url = semopx_api_retrieval_url + '/' + report['resource_name']
         resp = requests.get(
-                semopx_api_retrieval_url + '/' + report['resource_name'], 
+                url,
                 params = params)
         semopx_resp_dict = resp.json()
         retrieved_count += 1
 
         log_message(
                 gv_verbose,
-                'API Response (%s)\n%s\n' % (
-                    report['resource_name'], 
+                'API Response %s\n%s\n' % (
+                    url,
                     json.dumps(semopx_resp_dict, indent = 4),
                     )
                 )
