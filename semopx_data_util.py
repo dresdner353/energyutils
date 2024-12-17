@@ -207,13 +207,15 @@ def retrieve_market_results(
             i = -1
             for euro_price in data_set_list[3]:
                 i += 1
-                rec_list[i]['euro'] = euro_price
+                rec_list[i]['mwh_euro'] = euro_price
+                rec_list[i]['kwh_euro'] = euro_price / 1000
 
             # Merge in GBP prices (7th list)
             i = -1
             for gbp_price in data_set_list[6]:
                 i += 1
-                rec_list[i]['gbp'] = gbp_price
+                rec_list[i]['mwh_gbp'] = gbp_price
+                rec_list[i]['kwh_gbp'] = gbp_price / 1000
 
         log_message(
                 1,
@@ -288,6 +290,13 @@ backfill_days = args['days']
 market_area = args['market']
 timezone = args['timezone']
 gv_verbose = args['verbose']
+
+# JSON encoder force decimal places to 4
+class RoundingFloat(float):
+    __repr__ = staticmethod(lambda x: format(x, '.4f'))
+
+json.encoder.c_make_encoder = None
+json.encoder.float = RoundingFloat
 
 if not os.path.exists(odir):
     os.mkdir(odir)
