@@ -6,6 +6,7 @@ import time
 import datetime
 import dateutil.parser
 import zoneinfo
+import sys
 
 
 def log_message(
@@ -56,7 +57,7 @@ def retrieve_market_results(
     # Report Search API URL and params
     log_message(
             1,
-            'Retrieving DA report details for days:%d' % (
+            'Retrieving SEMOpx report details for days:%d' % (
                 days
                 )
             )
@@ -64,17 +65,16 @@ def retrieve_market_results(
     page = 0 # starts at 1 but incremented before GET
     total_pages = 0
 
-    # Params to get DA (Day Ahead) reports only
+    # Params to get market data (Day Ahead + IDA1-3) reports only
     # Also retrieving the latest (non-published) report
     params = {}
     params['DPuG_ID'] = 'EA-001'
     params['sort_by'] = 'Date'
     params['order_by'] = 'DESC'
     params['ExcludeDelayedPublication'] = '0'
-    params['ResourceName'] = 'MarketResult_SEM-DA_PWR-MRC-D'
 
     done = False
-    report_list = []
+    report_dict = {}
 
     while not done:
         # 1-sec call interval to avoid 
@@ -87,10 +87,10 @@ def retrieve_market_results(
 
         log_message(
                 1,
-                'Retrieving report page %d/%d (reports:%d)' % (
+                'Retrieving report page %d/%d (days:%d)' % (
                     page,
                     total_pages,
-                    len(report_list)
+                    len(report_dict)
                     )
                 )
 
@@ -110,10 +110,18 @@ def retrieve_market_results(
 
         # parse report items
         for item_rec in semopx_resp_dict['items']:
-            report = {}
-            report['resource_name'] = item_rec['ResourceName']
-            report['date'] = item_rec['Date'][:10] # strip to YYYY-MM-DD
-            report_list.append(report)
+            # key by YYYY-MM-DD
+            key_date = item_rec['Date'][:10] # strip to YYYY-MM-DD
+            if not key_date in report_dict:
+                report = {}
+                report['date'] = key_date
+                report['resources'] = []
+                report_dict[key_date] = report
+            else:
+                report = report_dict[key_date]
+
+            # append report resource name to list
+            report['resources'].append(item_rec['ResourceName'])
 
         # pagination
         total_pages = semopx_resp_dict['pagination']['totalPages']
@@ -121,16 +129,25 @@ def retrieve_market_results(
             done = True
 
         # backfill limit
-        if len(report_list) >= days:
+        # we allow it to exceed the limit (> desired days)
+        # instead of >=. That helps to get a complete day as much as 
+        # possible.
+        # Then we get the sorted key list, skip the leading number of keys
+        # and purge the rest
+        if len(report_dict) > days:
             done = True
-            report_list = report_list[:days]
+            key_list = list(report_dict.keys())
+            key_list.sort(reverse = True)
+            key_list = key_list[days:]
+            for purge_key in key_list:
+                del report_dict[purge_key]
 
     log_message(
             gv_verbose,
-            'Full report list (pages:%d docs:%d)\n%s\n' % (
+            'Full report list (pages:%d days:%d)\n%s' % (
                 page,
-                len(report_list),
-                json.dumps(report_list, indent = 4),
+                len(report_dict),
+                json.dumps(report_dict, indent = 4),
                 )
             )
 
@@ -138,93 +155,217 @@ def retrieve_market_results(
     report_count = 0
     skip_count = 0
     retrieved_count = 0
-    total_reports = len(report_list)
-    for report in report_list:
+    total_reports = len(report_dict)
+    for key in report_dict:
+        report_count += 1
+        report = report_dict[key]
+
         # JSON output file
         json_filename = '%s/%s.jsonl' % (odir, report['date'])
 
-        # check for existing files and skip
+        # check for complete data sets
         if os.path.exists(json_filename):
-            log_message(
-                    gv_verbose,
-                    'Skipping %s (cached)' % (json_filename)
-                    )
-            skip_count += 1
-            continue
+            # load file into dict
+            with open(json_filename, 'r') as f:
+                # parse into dict
+                rec_dict = {}
+                for line in f:
+                    rec = json.loads(line)
+                    ts = rec['ts']
+                    rec_dict[ts] = rec
+
+                da_present = False
+                ida1_present = False
+                ida2_present = False
+                ida3_present = False
+
+                for ts in rec_dict:
+                    rec = rec_dict[ts]
+                    if 'da_kwh_rate' in rec:
+                        da_present = True
+                    if 'ida1_kwh_rate' in rec:
+                        ida1_present = True
+                    if 'ida2_kwh_rate' in rec:
+                        ida2_present = True
+                    if 'ida3_kwh_rate' in rec:
+                        ida3_present = True
+
+                log_message(gv_verbose,
+                            'Counts: filename:%s DA:%d IDA1:%d IDA2:%d IDA3:%d' % (
+                                json_filename,
+                                da_present,
+                                ida1_present,
+                                ida2_present,
+                                ida3_present
+                                )
+                            )
+
+                # complete record is 48 entries
+                # with all auction values accounted for
+                if (len(rec_dict) == 48 and
+                    da_present and 
+                    ida1_present and
+                    ida2_present and
+                    ida3_present):
+                    log_message(
+                            gv_verbose,
+                            'Skipping %s (cached)' % (json_filename)
+                            )
+                    skip_count += 1
+                    continue
 
         # 1-sec delay between API calls
         time.sleep(1)
 
-        report_count += 1
         log_message(
                 gv_verbose,
-                'Retrieving report %d/%d.. %s' % (
+                'Retrieving %d resources for report %d/%d.. %s' % (
+                    len(report['resources']),
                     report_count,
                     total_reports,
                     report['date'],
                     )
                 )
 
-        # get specific report appending resource name to base URL
-        url = semopx_api_retrieval_url + '/' + report['resource_name']
-        resp = requests.get(
-                url,
-                params = params)
-        semopx_resp_dict = resp.json()
-        retrieved_count += 1
+        # parse document details into dict of objects, one per timestamp
+        rec_dict = {}
 
-        log_message(
-                gv_verbose,
-                'API Response %s\n%s\n' % (
+        for resource_name in report['resources']:
+            # get specific report appending resource name to base URL
+            url = semopx_api_retrieval_url + '/' + resource_name
+            resp = requests.get(
                     url,
-                    json.dumps(semopx_resp_dict, indent = 4),
+                    params = params)
+            semopx_resp_dict = resp.json()
+            retrieved_count += 1
+
+            log_message(
+                    gv_verbose,
+                    'API Response %s\n%s\n' % (
+                        url,
+                        json.dumps(semopx_resp_dict, indent = 4),
+                        )
                     )
-                )
 
-        # parse document details into list of objects
-        rec_list = []
-
-        # This is an awkward response layout of lists
-        # within lists 
-        for data_set_list in semopx_resp_dict['rows']:
-
-            # skip if not desired market area
-            # specified as 2nd item in first list
-            if data_set_list[0][1] != market_area:
+            # data context
+            if 'SEM-DA' in resource_name:
+                context_prefix = 'da_'
+            elif 'SEM-IDA1' in resource_name:
+                context_prefix = 'ida1_'
+            elif 'SEM-IDA2' in resource_name:
+                context_prefix = 'ida2_'
+            elif 'SEM-IDA3' in resource_name:
+                context_prefix = 'ida3_'
+            else:
+                # ignore this unrecognised resource
+                log_message(
+                        gv_verbose,
+                        'Ignoring unsupported resource %s' % (
+                            resource_name,
+                            )
+                        )
                 continue
 
-            # init sub-objects per date/timestamp (string)
-            # dates taken from 3rd list
-            for date_str in data_set_list[2]:
-                data_rec = {}
-                ts, local_dt = parse_semopx_time(date_str, timezone)
-                data_rec['ts'] = ts
-                data_rec['datetime'] = local_dt.strftime('%Y/%m/%d %H:%M:%S')
-                data_rec['market_area'] = market_area
-                rec_list.append(data_rec)
+            # This is an awkward response layout of lists
+            # within lists 
+            for data_set_list in semopx_resp_dict['rows']:
 
-            # Merge in Euro prices (4th list)
-            i = -1
-            for euro_price in data_set_list[3]:
-                i += 1
-                rec_list[i]['mwh_euro'] = euro_price
-                rec_list[i]['kwh_euro'] = euro_price / 1000
+                # skip if not desired market area
+                # specified in 2nd item in first list
+                # The values are <AREA>-DA, <AREA>-IDA1, 
+                # <AREA>-IDA2, <AREA>-IDA3
+                # so we test for sub-string
+                if not market_area in data_set_list[0][1]:
+                    continue
 
-            # Merge in GBP prices (7th list)
-            i = -1
-            for gbp_price in data_set_list[6]:
-                i += 1
-                rec_list[i]['mwh_gbp'] = gbp_price
-                rec_list[i]['kwh_gbp'] = gbp_price / 1000
+                # init sub-objects per date/timestamp (string)
+                # dates taken from 3rd list
+                # These vary from per-hour or per-30-min boundaries
+                key_list = []
+                for date_str in data_set_list[2]:
+                    ts, local_dt = parse_semopx_time(date_str, timezone)
+
+                    # track list of keys in this encountered order
+                    # as other related lists are index-synced to these timestamps
+                    key_list.append(ts)
+
+                    # init record in main dict if not present
+                    if not ts in rec_dict:
+                        data_rec = {}
+                        data_rec['ts'] = ts
+                        data_rec['datetime'] = local_dt.strftime('%Y/%m/%d %H:%M:%S')
+                        data_rec['market_area'] = market_area
+                        rec_dict[ts] = data_rec
+
+                # Merge in Euro prices (4th list)
+                if market_area == 'ROI':
+                    i = -1
+                    for euro_price in data_set_list[3]:
+                        i += 1
+                        ts = key_list[i]
+                        rec_dict[ts]['currency'] = 'euro'
+                        rec_dict[ts][context_prefix + 'kwh_rate'] = euro_price / 1000
+
+                # Merge in GBP prices (7th list)
+                if market_area == 'NI':
+                    i = -1
+                    for gbp_price in data_set_list[6]:
+                        i += 1
+                        ts = key_list[i]
+                        rec_dict[ts]['currency'] = 'gbp'
+                        rec_dict[ts][context_prefix + 'kwh_rate'] = gbp_price / 1000
+
+
+        # day-ahead merge into :30-min records
+        # check each record if it ends with :00:00 (on the hour)
+        # find the next :30 record and copy the DA prices
+        for ts in sorted(rec_dict.keys()):
+            rec = rec_dict[ts]
+            if rec['datetime'].endswith(':00:00'):
+                # next :30 timestamp and datetime
+                next_ts = ts + 1800
+                utc_dt = datetime.datetime.fromtimestamp(next_ts, datetime.UTC)
+                next_dt = utc_dt.astimezone(zoneinfo.ZoneInfo(timezone))
+
+                if next_ts in rec_dict:
+                    next_rec = rec_dict[next_ts]
+                else:
+                    next_rec = {}
+                    next_rec['ts'] = next_ts
+                    next_rec['datetime'] = next_dt.strftime('%Y/%m/%d %H:%M:%S')
+                    next_rec['market_area'] = market_area
+                    rec_dict[next_ts] = next_rec
+
+                # copy forward the DA price if present
+                if 'da_kwh_rate' in rec:
+                    next_rec['da_kwh_rate'] = rec['da_kwh_rate']
+
+
+        # set final rate based on pecking order
+        # from IDA3 to DA
+        for ts in rec_dict.keys():
+            rec = rec_dict[ts]
+            if 'ida3_kwh_rate' in rec_dict[ts]:
+                rec['final_kwh_rate'] = rec['ida3_kwh_rate']
+            elif 'ida2_kwh_rate' in rec_dict[ts]:
+                rec['final_kwh_rate'] = rec['ida2_kwh_rate']
+            elif 'ida1_kwh_rate' in rec_dict[ts]:
+                rec['final_kwh_rate'] = rec['ida1_kwh_rate']
+            elif 'da_kwh_rate' in rec_dict[ts]:
+                rec['final_kwh_rate'] = rec['da_kwh_rate']
+
 
         log_message(
                 1,
-                'Writing.. %s' % (
+                'Writing.. %d/%d %s' % (
+                    report_count,
+                    total_reports,
                     json_filename
                     )
                 )
         with open(json_filename, 'w') as f:
-            for rec in rec_list:
+            for ts in sorted(rec_dict.keys()):
+                rec = rec_dict[ts]
                 f.write(json.dumps(rec) + '\n')
 
     log_message(
@@ -265,9 +406,9 @@ parser.add_argument(
 
 parser.add_argument(
         '--market', 
-        help = 'Market Area (def ROI-DA) ', 
-        default = 'ROI-DA',
-        choices = ['ROI-DA', 'NI-DA'],
+        help = 'Market Area (def ROI) ', 
+        default = 'ROI',
+        choices = ['ROI', 'NI'],
         required = False
         )
 
