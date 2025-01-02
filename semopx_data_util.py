@@ -85,15 +85,6 @@ def retrieve_market_results(
         page += 1
         params['page'] = page
 
-        log_message(
-                1,
-                'Retrieving report page %d/%d (days:%d)' % (
-                    page,
-                    total_pages,
-                    len(report_dict)
-                    )
-                )
-
         resp = requests.get(
                 semopx_api_query_url, 
                 params = params)
@@ -141,6 +132,15 @@ def retrieve_market_results(
             key_list = key_list[days:]
             for purge_key in key_list:
                 del report_dict[purge_key]
+
+        log_message(
+                1,
+                'Retrieved page %d/%d (days:%d)' % (
+                    page,
+                    total_pages,
+                    len(report_dict)
+                    )
+                )
 
     log_message(
             gv_verbose,
