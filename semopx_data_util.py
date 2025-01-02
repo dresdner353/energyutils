@@ -191,7 +191,7 @@ def retrieve_market_results(
                         ida3_present = True
 
                 log_message(gv_verbose,
-                            'Counts: filename:%s DA:%d IDA1:%d IDA2:%d IDA3:%d' % (
+                            'Checks: filename:%s DA:%s IDA1:%s IDA2:%s IDA3:%s' % (
                                 json_filename,
                                 da_present,
                                 ida1_present,
@@ -200,10 +200,8 @@ def retrieve_market_results(
                                 )
                             )
 
-                # complete record is 48 entries
-                # with all auction values accounted for
-                if (len(rec_dict) == 48 and
-                    da_present and 
+                # complete record has data from all auctions
+                if (da_present and 
                     ida1_present and
                     ida2_present and
                     ida3_present):
