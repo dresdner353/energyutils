@@ -41,7 +41,7 @@ Allows for specifying of a timezone. The default is Europe/Dublin and should be 
 * SEMOpx actually provides data in mWh amounts in both Euro and GBP pricing but this script simplifies this to kWh and a single currency based on target market.
 * Time is presented in both EPOCH format (UTC seconds in 1970-01-01) and in local string format (YYYY/MM/DD HH:MM:SS) based on the selected timezone
 * SEMOpx provides day-ahead data in hourly records and intra-day data in 30-min intervals. This script will always present a day as a set of 48 30-min records and double-up the DA data into 2 30-min records
-* For daylight savings scenarios, some days will have 46 or 48 records based on the skipped or repeated hour
+* For daylight savings scenarios, some days will have 46 or 50 records based on the skipped or repeated hour
 * Some of the intra-day prices will be missing from records either because the given auction was not performed or it did not apply to the given 30-min interval
 * The script also calculates a final kwh rate based on a first available of IDA3, IDA2, IDA1 and DA rate. This order reflects the latest price for the given time period
 
