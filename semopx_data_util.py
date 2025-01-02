@@ -215,6 +215,7 @@ def retrieve_market_results(
         # 1-sec delay between API calls
         time.sleep(1)
 
+        retrieved_count += 1
         log_message(
                 gv_verbose,
                 'Retrieving %d resources for report %d/%d.. %s' % (
@@ -235,7 +236,6 @@ def retrieve_market_results(
                     url,
                     params = params)
             semopx_resp_dict = resp.json()
-            retrieved_count += 1
 
             log_message(
                     gv_verbose,
@@ -355,7 +355,7 @@ def retrieve_market_results(
 
         log_message(
                 1,
-                'Writing.. %d/%d %s' % (
+                'Writing.. file %d/%d %s' % (
                     report_count,
                     total_reports,
                     json_filename
@@ -368,7 +368,7 @@ def retrieve_market_results(
 
     log_message(
             1,
-            'Done.. retrieved %d/%d reports, skipped %d' % (
+            'Done.. retrieved %d/%d reports, skipped %d (cached)' % (
                 retrieved_count,
                 total_reports,
                 skip_count
