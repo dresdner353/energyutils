@@ -32,13 +32,17 @@ The market can be one of two values only.. ROI or NI. If a user wanted to track 
 Allows for specifying of a timezone. The default is Europe/Dublin and should be fine for any processing within ROI/NI. 
 
 ## Operation
+* The script is invoked with the selected market (--market), output directory (--odir) and number of days (--days) to retrieve
+* When it calls the SEMOpx API, it does so in two stages:
+   - The 1st stage paginates through a series of reports and collects a list of reports for the target number of days
+   - The 2nd stage then retrieves each report, parsing the data and merging into a single file of merged data for each given day
 * Retrieval acts incrementally, only pulling data for day files you do not already have or where the existing data was incomplete. 
-* If you invoke the script with --days 100, it will use the API to get and write files for the last 100 days
+* If you invoke the script with --days 100, it will retrieve data for the last 100 days
 * If you immediately re-run the script, it will compute the last 100 reports but not retrieve any data after discovering that the files already exist in the --odir location. It may still retrieve the data for the day ahead because that data is incomplete (missing some or all of the intra-day data)
-* This allows for incremental usage of the script on a daily basis, including handling of gaps if the script were not run for some time.
+* This allows for incremental usage of the script on a daily basis or several times a day where it will only pull new data
 * The data is written in JSONL files, one file per day, one line per 30-min interval.
 * Prices are listed in Euro or GBP (based on the selected --market value of ROI or NI) and represent kWh values only. 
-* SEMOpx actually provides data in mWh amounts in both Euro and GBP pricing but this script simplifies this to kWh and a single currency based on target market.
+* SEMOpx actually provides data in mWh amounts in both Euro and GBP pricing but this script simplifies this to kWh and a single currency based on the target market.
 * Time is presented in both EPOCH format (UTC seconds in 1970-01-01) and in local string format (YYYY/MM/DD HH:MM:SS) based on the selected timezone
 * SEMOpx provides day-ahead data in hourly records and intra-day data in 30-min intervals. This script will always present a day as a set of 48 30-min records and double-up the DA data into 2 30-min records
 * For daylight savings scenarios, some days will have 46 or 50 records based on the skipped or repeated hour
