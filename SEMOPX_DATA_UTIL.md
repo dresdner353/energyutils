@@ -48,6 +48,7 @@ Allows for specifying of a timezone. The default is Europe/Dublin and should be 
 * For daylight savings scenarios, some days will have 46 or 50 records based on the skipped or repeated hour
 * Some of the intra-day prices will be missing from records either because the given auction was not performed or it did not apply to the given 30-min interval
 * The script also calculates a final kwh rate based on a first available of IDA3, IDA2, IDA1 and DA rate. This order reflects the latest price for the given time period
+* All rates in these files are ex-VAT
 * For use in planning battery charging, the understanding is that you would use the "da_kwh_rate" value for this purpose. Based on current CRU doucments, the intention for the ROI is that suppliers set the dynamic market rate to the day-ahead (DA) values and not the IDA1-3 values.
 
 
