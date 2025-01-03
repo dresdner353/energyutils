@@ -35,7 +35,7 @@ Allows for specifying of a timezone. The default is Europe/Dublin and should be 
 * The script is invoked with the selected market (--market), output directory (--odir) and number of days (--days) to retrieve
 * When it calls the SEMOpx API, it does so in two stages:
    - The 1st stage paginates through a series of reports and collects a list of reports for the target number of days
-   - The 2nd stage then retrieves each report, parsing the data and merging into a single file of merged data for each given day
+   - The 2nd stage then retrieves each report, parsing the data and merging into a single file of records for each given day
 * Retrieval acts incrementally, only pulling data for day files you do not already have or where the existing data was incomplete. 
 * If you invoke the script with --days 100, it will retrieve data for the last 100 days
 * If you immediately re-run the script, it will compute the last 100 reports but not retrieve any data after discovering that the files already exist in the --odir location. It may still retrieve the data for the day ahead because that data is incomplete (missing some or all of the intra-day data)
