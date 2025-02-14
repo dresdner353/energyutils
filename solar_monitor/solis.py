@@ -287,6 +287,9 @@ def get_inverter_day_data(config):
         # overwrite acumulated solar generation 
         # to date with max value
         usage_rec['solar'] = max(usage_rec['solar'], solis_snap_rec['eToday'])
+        # FIXME it seems on 3ph API data, both gridPurchasedTodayEnergy and gridSellTodayEnergy are reported as Wh
+        # as they seem to be much higher. In fact gridSellTodayEnergy might be x100 versus gridPurchasedTodayEnergy x1000
+        # observed on goofy values on pgannon site but also showing on cloud website
         usage_rec['import'] = max(usage_rec['import'], solis_snap_rec['gridPurchasedTodayEnergy'])
         usage_rec['export'] = max(usage_rec['export'], solis_snap_rec['gridSellTodayEnergy'])
         usage_rec['consumed'] = max(usage_rec['consumed'], solis_snap_rec['homeLoadTodayEnergy'])
