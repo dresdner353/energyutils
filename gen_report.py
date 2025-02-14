@@ -917,24 +917,27 @@ def load_data(
                     rec['import_cost'] = rec['import'] * rec['tariff_rate']
                     rec['bill_amount'] = rec['import_cost']
 
-                    if standing_rate:
-                        # both fields same value here
-                        # but standing_cost will live on in aggregations
-                        # rate only appears in hour record
-                        rec['standing_rate'] = standing_rate
-                        rec['standing_cost'] = standing_rate
-                        rec['bill_amount'] += rec['standing_cost']
+                    if not standing_rate:
+                        standing_rate = 0
+                    # both fields same value here
+                    # but standing_cost will live on in aggregations
+                    # rate only appears in hour record
+                    rec['standing_rate'] = standing_rate
+                    rec['standing_cost'] = standing_rate
+                    rec['bill_amount'] += rec['standing_cost']
 
                     # FIT (export_credit)
                     # calculates the credit and export and 
                     # adjusts relative cost to match
-                    if fit_rate:
-                        rec['export_rate'] = fit_rate
-                        rec['export_credit'] = rec['export'] * fit_rate
-                        rec['bill_amount'] -= rec['export_credit'] 
+                    if not fit_rate:
+                        fit_rate = 0
+                    rec['export_rate'] = fit_rate
+                    rec['export_credit'] = rec['export'] * fit_rate
+                    rec['bill_amount'] -= rec['export_credit'] 
+                    rec['savings'] = rec['export_credit'] 
 
                     # Solar Self-consumption
-                    # Solar credit is calculated based on the aplicable tariff
+                    # Solar credit is calculated based on the applicable tariff
                     # for ther given hour (import costs we avoided).
                     # Relative import is further offset by this self-consumption.
                     # Savings is then calculated as the sum of solar and export
@@ -949,8 +952,13 @@ def load_data(
                         rec['solar_credit'] = rec['solar_consumed'] * rec['tariff_rate']
                         rec['rel_import'] -= rec['solar_consumed']
 
-                        if fit_rate:
-                            rec['savings'] = rec['solar_credit'] + rec['export_credit'] 
+                        # reset savings for solar credit
+                        rec['savings'] = rec['solar_credit'] + rec['export_credit'] 
+
+                    # savings %
+                    original_bill_value = rec['bill_amount'] + rec['savings']
+                    savings_percent = (rec['savings'] / original_bill_value)
+                    rec['savings_percent'] = savings_percent
     
     log_message(
             1,
