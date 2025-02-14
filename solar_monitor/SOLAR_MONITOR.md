@@ -23,37 +23,20 @@ This is a small web server designed to query live data from an inverter cloud AP
 To run:
 * python3 energyutils/solar_monitor/solar_monitor.py 
 
-Notes:
+## Configuration
 * The script will startup and create a default config.json file in energyutils/solar_monitor
 * point your browser at either http://localhost:8090 or http://[IP of computer]:8090 and you should see The banner "SolarMon" displayed with a settings cog wheel
 * Click the cog wheel or browse to http://localhost:8090/admin to bring up the admin page (when prompted, login as user "admin" and password "123456789")
 * Select the inverter/data source type and go from there inputing the credentials or your given device. 
-   - Note: The inverter sources list Sofar and Huawei but only Solis is supported for now.
+   - Note: Only Solis is supported for now.
 * If additionally using a Shelly EM/EM Pro, then select the grid source drop-down to enable the additional Shelly credententials
 * Once you select the data sources, various fields will be shown that need to be populated with the related credentials.
 * When ready to save, click the "Apply" button
 * To get back to the dashboard, click the "Show Dashboard" button or separately browse to http://localhost:8090 or http://[IP of computer]:8090
 * If the Shelly or inverter credentials are correct, then actual usage data should soon appear on the main dashboard.
-* For now, only Shelly EM and Solis inverters are supported. Others such as Sofar, Huawei etc will be added over time
+* For now, only Shelly EM and Solis inverters are supported. Other inverters may be added in the future.
 * The script outputs logging details as it runs on the console. You can add --verbose to get this logging more detailed data if need be.
 
-
-## Install steps for a Raspberry pi kiosk
-If you have a raspberry pi that has a recent image installed, then these steps will download an install script and install everything automatically. 
-
-Login as pi to the rpi and open a terminal, running the following command:
-```
- curl -s https://raw.githubusercontent.com/dresdner353/energyutils/master/solar_monitor/rpi_install.sh | sudo bash
-```
-
-This step will do the following:
-* Install python3 modules "requests", "dateutil" and "cherrypy" 
-* download the code to the home directory of user "pi"
-* Set up a systemctl service called solar_monitor to auto start the service on boot
-* Copy a kiosk shell script into ~/.config/autostart which starts chromium bowser on login and points to the http://localhost:8090 page
-
-The idea here is to use the rpi as a kiosk. You would also need to configure the pi to auto-login as user pi everytime it boots and the end result should be a functioning kiosk that shows the dashboard
- 
 ## Sample Screenshots
 
 ### Admin Page
