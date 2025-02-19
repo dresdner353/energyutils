@@ -32,7 +32,6 @@ gv_root = '%s' % (
 # tracked inverter API data
 gv_data_dict = {}
 gv_data_dict['last_updated'] = 0
-gv_data_dict['metrics'] = {}
 
 # alternative grid data (for merging with inverter)
 gv_grid_dict = {}
@@ -203,7 +202,6 @@ def config_agent():
 def merge_grid_data():
     """
     Merges live and historic import/export data from the grid monitoring into the main data dict. 
-    Also merges live solar data into the 'live' metric record
 
     This only applies when using a separate grid monitoring source from the main
     inverter. Typically used when the inverter is a string model that cannot monitor 
@@ -213,39 +211,12 @@ def merge_grid_data():
     global gv_grid_dict
     global gv_config_dict
 
-    # live metric
-    inverter_live_rec = gv_data_dict['metrics']['live']
-    grid_live_rec = gv_grid_dict['live']
-
-    # direct over-rides (replacements)
-    # for title, import, export and solar
-    inverter_live_rec['title'] = grid_live_rec['title']
-    inverter_live_rec['import'] = grid_live_rec['import']
-    inverter_live_rec['export'] = grid_live_rec['export']
-    inverter_live_rec['solar'] = grid_live_rec['solar']
-
-    # derived fields recalcs
-    inverter_live_rec['solar_consumed'] = max(0, inverter_live_rec['solar'] - inverter_live_rec['export'])
-    inverter_live_rec['consumed'] = inverter_live_rec['import'] + inverter_live_rec['solar_consumed']
-
-    # environmental metrics
-    inverter_live_rec['co2'] = (gv_config_dict['environment']['gco2_kwh'] * inverter_live_rec['solar']) / 1000
-    inverter_live_rec['trees'] = gv_config_dict['environment']['trees_kwh'] * inverter_live_rec['solar']
-
-    # last 12 months metric
-    # will be adjusted as we sweep year (month records) data
-    inverter_last_12_months_rec = gv_data_dict['metrics']['last_12_months']
-    inverter_last_12_months_rec['import'] = 0
-    inverter_last_12_months_rec['export'] = 0
-
-    # day, month and year record merges
-    # list records are keyed into a dict by 'key'
-    # and then related grid data merged in based on the common
-    # key. This can cause insertion of new records.
-    # results are reformed into lists and the metrics for today, 
-    # yesterday etc are reset due to that insertion possibly displacing them 
+    # live data direct overwrite
+    gv_data_dict['live'] = gv_grid_dict['live']
 
     # cull lengths
+    # number of hours, days and montths may 
+    # be different for grid data causing new records to be added
     record_cull_dict = {
             'day' : 36,
             'month' : 30,
@@ -254,13 +225,15 @@ def merge_grid_data():
 
     # merge the three dicts of historic data
     for record_type in ['day', 'month', 'year']:
+
+        # move list into dict by key field
         inverter_dict = {}
         for rec in gv_data_dict[record_type]:
             inverter_dict[rec['key']] = rec
 
         # merge pass from grid dict
-        for key in gv_grid_dict[record_type]:
-            grid_rec = gv_grid_dict[record_type][key]
+        for grid_rec in gv_grid_dict[record_type]:
+            key = grid_rec['key']
 
             # insert the missing inverter rec from a 
             # copy of the grid rec
@@ -269,47 +242,50 @@ def merge_grid_data():
                 inverter_dict[key]['key'] = key
                 inverter_dict[key]['solar'] = 0
 
+            # get reference target record
             inverter_rec = inverter_dict[key]
 
-            # direct over-rides (replacements)
+            # direct over-rides from grid
             inverter_rec['import'] = grid_rec['import']
             inverter_rec['export'] = grid_rec['export']
 
             # derived fields mixing grid and inverter sources
+            # which have now changed
             inverter_rec['solar_consumed'] = max(0, inverter_rec['solar'] - inverter_rec['export'])
             inverter_rec['consumed'] = inverter_rec['import'] + inverter_rec['solar_consumed']
 
-            # environmental metrics
-            inverter_rec['co2'] = (gv_config_dict['environment']['gco2_kwh'] * inverter_rec['solar']) / 1000
-            inverter_rec['trees'] = gv_config_dict['environment']['trees_kwh'] * inverter_rec['solar']
-
-            # last 12 month aggregate adjustments
-            if record_type == 'year':
-                inverter_last_12_months_rec['import'] += grid_rec['import']
-                inverter_last_12_months_rec['export'] += grid_rec['export']
-
-        # reconstruct list
-        # and cull accordingly to the last N
-        # based on record_cull_dict
+        # reconstruct to list
+        # and cull accordingly to the last N records
         rec_list = []
         for key in sorted(inverter_dict.keys())[-record_cull_dict[record_type]:]:
             rec_list.append(inverter_dict[key])
         gv_data_dict[record_type] = rec_list
 
-    # finish up fixes to last 12 months metric
-    inverter_last_12_months_rec['title'] = 'Last %d Months' % (len(gv_data_dict['year']))
-    inverter_last_12_months_rec['solar_consumed'] = max(0, inverter_last_12_months_rec['solar'] - inverter_last_12_months_rec['export'])
-    inverter_last_12_months_rec['consumed'] = inverter_last_12_months_rec['import'] + inverter_last_12_months_rec['solar_consumed']
-    inverter_last_12_months_rec['co2'] = (gv_config_dict['environment']['gco2_kwh'] * inverter_last_12_months_rec['solar']) / 1000
-    inverter_last_12_months_rec['trees'] = gv_config_dict['environment']['trees_kwh'] * inverter_last_12_months_rec['solar']
+    return
 
-    # reposition the other metrics
-    gv_data_dict['metrics']['today'] = gv_data_dict['month'][-1]
-    gv_data_dict['metrics']['today']['title'] = 'Today (%s %d %s)' % (
-            gv_data_dict['metrics']['today']['month'], 
-            gv_data_dict['metrics']['today']['day'], 
-            gv_data_dict['metrics']['today']['year'])
 
+def set_metrics():
+    """
+    Sets metrics for today, yesterday, month, etc
+    """
+    global gv_data_dict
+
+    gv_data_dict['metrics'] = {}
+
+    if 'live' in gv_data_dict:
+        # move live record into the metrics section
+        gv_data_dict['metrics']['live'] = gv_data_dict['live']
+        del gv_data_dict['live']
+
+    # take todays totals from last recorded day in month
+    if len(gv_data_dict['month']) >= 1:
+        gv_data_dict['metrics']['today'] = gv_data_dict['month'][-1]
+        gv_data_dict['metrics']['today']['title'] = 'Today (%s %d %s)' % (
+                gv_data_dict['metrics']['today']['month'], 
+                gv_data_dict['metrics']['today']['day'], 
+                gv_data_dict['metrics']['today']['year'])
+
+    # one more day for yesterday if we have it
     if len(gv_data_dict['month']) >= 2:
         gv_data_dict['metrics']['yesterday'] = gv_data_dict['month'][-2]
         gv_data_dict['metrics']['yesterday']['title'] = 'Yesterday (%s %d %s)' % (
@@ -318,16 +294,34 @@ def merge_grid_data():
                 gv_data_dict['metrics']['yesterday']['year'])
 
     # take months totals from last recorded month in year
-    gv_data_dict['metrics']['this_month'] = gv_data_dict['year'][-1]
-    gv_data_dict['metrics']['this_month']['title'] = 'This Month (%s %s)' % (
-            gv_data_dict['metrics']['this_month']['month'], 
-            gv_data_dict['metrics']['this_month']['year'])
+    if len(gv_data_dict['year']) >= 1:
+        gv_data_dict['metrics']['this_month'] = gv_data_dict['year'][-1]
+        gv_data_dict['metrics']['this_month']['title'] = 'This Month (%s %s)' % (
+                gv_data_dict['metrics']['this_month']['month'], 
+                gv_data_dict['metrics']['this_month']['year'])
 
     if len(gv_data_dict['year']) >= 2:
         gv_data_dict['metrics']['last_month'] = gv_data_dict['year'][-2]
         gv_data_dict['metrics']['last_month']['title'] = 'Last Month (%s %s)' % (
                 gv_data_dict['metrics']['last_month']['month'], 
                 gv_data_dict['metrics']['last_month']['year'])
+
+    # last N months 
+    if len(gv_data_dict['year']) >= 1:
+        gv_data_dict['metrics']['last_12_months'] = {}
+        gv_data_dict['metrics']['last_12_months']['title'] = 'Last %d Months' % (len(gv_data_dict['year']))
+
+        for month_rec in gv_data_dict['year']:
+            for field in month_rec:
+
+                # skip non-numeric fields
+                if type(month_rec[field]) == str:
+                    continue
+
+                if not field in gv_data_dict['metrics']['last_12_months']:
+                    gv_data_dict['metrics']['last_12_months'][field] = 0
+
+                gv_data_dict['metrics']['last_12_months'][field] += month_rec[field]
     return
 
 
@@ -359,19 +353,30 @@ def monitor_agent():
     grid_sleep_interval = 0
 
     while True:
+        # inverter source
         if gv_config_dict['data_source'] == 'solis':
             gv_data_dict, sleep_interval = solis.get_data(gv_config_dict)
+
+        elif gv_config_dict['data_source'] in ['shelly-em', 'shelly-pro', 'shelly-3em-pro']:
+            gv_data_dict, sleep_interval = shelly.get_data(gv_config_dict)
+
         else:
             utils.log_message(
                     1,
                     "No data source is configured"
                     )
 
-        # FIXME elseif others into place
+        # grid source (separate from inverter data)
+        if (gv_config_dict['grid_source'] and 
+            gv_config_dict['grid_source'] != gv_config_dict['data_source']):
 
-        if gv_config_dict['grid_source'] in ['shelly-em', 'shelly-pro']:
-            gv_grid_dict, grid_sleep_interval = shelly.get_data(gv_config_dict)
-            merge_grid_data()
+
+            if gv_config_dict['grid_source'] in ['shelly-em', 'shelly-pro', 'shelly-3em-pro']:
+                gv_grid_dict, grid_sleep_interval = shelly.get_data(gv_config_dict)
+                merge_grid_data()
+
+        # set metrics
+        set_metrics()
 
         # optional grid sleep interval over-ride
         if grid_sleep_interval:
@@ -510,7 +515,7 @@ class data_handler(object):
                     cherrypy.request.remote.ip))
 
         utils.log_message(
-                1,
+                utils.gv_verbose,
                 'Headers:\n%s' % (
                     cherrypy.request.headers))
 
