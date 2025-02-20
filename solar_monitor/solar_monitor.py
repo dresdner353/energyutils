@@ -272,12 +272,19 @@ def set_metrics():
 
     gv_data_dict['metrics'] = {}
 
+    # move live record into the metrics section
     if 'live' in gv_data_dict:
         # move live record into the metrics section
         gv_data_dict['metrics']['live'] = gv_data_dict['live']
         del gv_data_dict['live']
 
-    # take todays totals from last recorded day in month
+    # month and year metrics
+    # will not be present unless if cloud API calls
+    # have not baan made or failed
+    if (not 'month' in gv_data_dict or 
+        not 'year' in gv_data_dict):
+        return
+
     if len(gv_data_dict['month']) >= 1:
         gv_data_dict['metrics']['today'] = gv_data_dict['month'][-1]
         gv_data_dict['metrics']['today']['title'] = 'Today (%s %d %s)' % (
@@ -318,9 +325,11 @@ def set_metrics():
                 if type(month_rec[field]) == str:
                     continue
 
+                # instatiate if not exists
                 if not field in gv_data_dict['metrics']['last_12_months']:
                     gv_data_dict['metrics']['last_12_months'][field] = 0
 
+                # aggregate value
                 gv_data_dict['metrics']['last_12_months'][field] += month_rec[field]
     return
 
