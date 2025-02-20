@@ -482,10 +482,9 @@ def get_shelly_em_live_data(config):
                     )
                 )
 
-        # dummy error values
-        # nod to Apollo 1201 and 1202 alarms
-        grid = 12.01
-        solar = 12.02
+        # set failure values
+        grid = None
+        solar = None
 
     return grid, solar
 
@@ -541,9 +540,7 @@ def get_shelly_pro_em_live_data(config):
                     device_url,
                     )
                 )
-        # dummy error values
-        # nod to Apollo 1201 and 1202 alarms
-        grid = 12.01
+        grid = None
 
     # CT 1 (Solar)
     device_url = 'http://%s/rpc/EM1.GetStatus?id=1' % (config['shelly']['device_host'])
@@ -576,9 +573,7 @@ def get_shelly_pro_em_live_data(config):
                     device_url,
                     )
                 )
-        # dummy error values
-        # nod to Apollo 1201 and 1202 alarms
-        solar = 12.02
+        solar = None
 
     return grid, solar
 
@@ -633,9 +628,7 @@ def get_shelly_pro_3em_live_data(config):
                     device_url,
                     )
                 )
-        # dummy error values
-        # nod to Apollo 1201 and 1202 alarms
-        grid = 12.01
+        grid = None
 
     # Second Optional Device (Solar)
     solar = 0
@@ -668,17 +661,15 @@ def get_shelly_pro_3em_live_data(config):
                         device_url,
                         )
                     )
-            # dummy error values
-            # nod to Apollo 1201 and 1202 alarms
-            solar = 12.02
+            solar = None
 
     return grid, solar
 
 
 def get_live_data(config):
     """
-    Wrapper function to get live data. This will toggle the grid_source
-    field in config and call into the Shelly EM or Pro EM depending on which 
+    Wrapper function to get live data. This will check the grid_source
+    field in config and call into the Shelly EM/Pro/3EM depending on which 
     is in use
 
     Args:
@@ -710,12 +701,31 @@ def get_live_data(config):
                 )
         return
 
-    if grid is None and solar is None:
+    # update live data
+    gv_shelly_dict['last_updated'] = int(time.time())
+    live_rec = gv_shelly_dict['live']
+
+    time_str = datetime.datetime.fromtimestamp(
+            gv_shelly_dict['last_updated']).strftime('%H:%M:%S')
+    live_rec['title'] = 'Live Usage @%s' % (time_str)
+
+    if grid is None:
+        grid = 12.01 # Apollo alarm :)
         utils.log_message(
                 1,
-                "Live data call failed"
+                "Live data call failed for grid.. substituted fake value %f" % (
+                    grid)
                 )
-        return
+        live_rec['title'] = 'Live Data Error @%s' % (time_str)
+
+    if solar is None:
+        solar = 12.02 # Apollo alarm :)
+        utils.log_message(
+                1,
+                "Live data call failed for solar.. substituted fake value %f" % (
+                    solar)
+                )
+        live_rec['title'] = 'Live Data Error @%s' % (time_str)
 
     # render into separate values for import and export
     if grid >= 0:
@@ -726,17 +736,11 @@ def get_live_data(config):
         grid_export = grid * -1
 
     # for solar, zero readings below 10W
+    # gets rid of noise readings at night
     if solar <= 0.010:
         solar = 0
 
-    # update live data
-    gv_shelly_dict['last_updated'] = int(time.time())
-    live_rec = gv_shelly_dict['live']
-
-    time_str = datetime.datetime.fromtimestamp(
-            gv_shelly_dict['last_updated']).strftime('%H:%M:%S')
-    live_rec['title'] = 'Live Usage @%s' % (time_str)
-
+    # populate the sanitised and derived values
     live_rec['import'] = grid_import
     live_rec['export'] = grid_export
     live_rec['solar'] = solar
