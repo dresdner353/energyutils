@@ -337,7 +337,7 @@ def get_cloud_data(config):
             for key in sorted(day_data.keys()):
                 day_data_list.append(day_data[key])
 
-            gv_shelly_dict['day'] = day_data_list
+            gv_shelly_dict['day'] = day_data_list[-36:]
     
     if now >= month_ts:
         # last 30 days
@@ -383,7 +383,7 @@ def get_cloud_data(config):
             for key in sorted(month_data.keys()):
                 month_data_list.append(month_data[key])
 
-            gv_shelly_dict['month'] = month_data_list
+            gv_shelly_dict['month'] = month_data_list[-30:]
 
     if now >= year_ts:
         # last several months or so
@@ -427,7 +427,7 @@ def get_cloud_data(config):
             for key in sorted(year_data.keys()):
                 year_data_list.append(year_data[key])
 
-            gv_shelly_dict['year'] = year_data_list
+            gv_shelly_dict['year'] = year_data_list[-12:]
 
     return
 
