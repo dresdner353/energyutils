@@ -40,7 +40,7 @@ Note: You will likely get the same warnings before running this script as above
 
 Note: Windows may prompt about firewall access. You need to allow access for the script to work. You should select the option to allow other hosts on your network to access this service.
 
-The script listens on port 8090. So if manually enabling a firewall for local LAN access, you want to be allowing incoming connectiosn to port 8090 on your computer.
+The script listens on port 8090. So if manually enabling a firewall for local LAN access, you want to be allowing incoming connections to port 8090 on your computer.
 
 ## Configuration
 * Point your browser at either http://localhost:8090 or http://[IP of computer]:8090 and you should see The banner "SolarMon" displayed with a settings cog wheel
