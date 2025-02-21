@@ -379,8 +379,7 @@ def monitor_agent():
         if (gv_config_dict['grid_source'] and 
             gv_config_dict['grid_source'] != gv_config_dict['data_source']):
 
-
-            if gv_config_dict['grid_source'] in ['shelly-em', 'shelly-pro', 'shelly-3em-pro']:
+            if gv_config_dict['grid_source'] in ['shelly-em', 'shelly-pro']:
                 gv_grid_dict, grid_sleep_interval = shelly.get_data(gv_config_dict)
                 merge_grid_data()
 

@@ -41,13 +41,18 @@
             $('#grid_source').val(config_dict['grid_source']);
 
             if ('shelly' in config_dict){
-                $('#shelly_auth_key').val(config_dict['shelly']['auth_key']);
                 $('#shelly_api_host').val(config_dict['shelly']['api_host']);
+                $('#shelly_auth_key').val(config_dict['shelly']['auth_key']);
+
                 $('#shelly_device_id').val(config_dict['shelly']['device_id']);
                 $('#shelly_device_host').val(config_dict['shelly']['device_host']);
-                $('#shelly_device_host_pv').val(config_dict['shelly']['device_host_pv']);
                 $('#shelly_device_username').val(config_dict['shelly']['device_username']);
                 $('#shelly_device_password').val(config_dict['shelly']['device_password']);
+
+                $('#shelly_device_id_pv').val(config_dict['shelly']['device_id_pv']);
+                $('#shelly_device_host_pv').val(config_dict['shelly']['device_host_pv']);
+                $('#shelly_device_username_pv').val(config_dict['shelly']['device_username_pv']);
+                $('#shelly_device_password_pv').val(config_dict['shelly']['device_password_pv']);
             }
 
             if ('solis' in config_dict){
@@ -109,17 +114,26 @@
             // hide all data source sections
             $("#shelly_config").hide();
             $("#solis_config").hide();
+            $("#shelly_config_3em2").hide();
 
             // Display Inverter config
             switch(data_source) {
               case "shelly-em":
               case "shelly-pro":
+              $("#shelly_config").show();
+              $("#shelly_config_3em2").hide();
+              $("#grid_source_config").hide();
+              break;
+
               case "shelly-3em-pro":
               $("#shelly_config").show();
+              $("#shelly_config_3em2").show();
+              $("#grid_source_config").hide();
               break;
 
               case "solis":
               $("#solis_config").show();
+              $("#grid_source_config").show();
               break;
             }
 
@@ -127,7 +141,6 @@
             switch(grid_source) {
               case "shelly-em":
               case "shelly-pro":
-              case "shelly-3em-pro":
               $("#shelly_config").show();
               break;
 
@@ -142,17 +155,24 @@
             config_dict['data_source'] = $('#data_source').val();
             config_dict['grid_source'] = $('#grid_source').val();
 
-            if (config_dict['grid_source'] == 'shelly-em' || 
-                config_dict['grid_source'] == 'shelly-pro' ||
-                config_dict['grid_source'] == 'shelly-3em-pro') {
+            if (config_dict['data_source'] == 'shelly-em' || 
+                config_dict['data_source'] == 'shelly-pro' ||
+                config_dict['data_source'] == 'shelly-3em-pro' ||
+                config_dict['grid_source'] == 'shelly-em' ||
+                config_dict['grid_source'] == 'shelly-pro') {
                 config_dict['shelly'] = {};
-                config_dict['shelly']['auth_key'] = $('#shelly_auth_key').val();
                 config_dict['shelly']['api_host'] = $('#shelly_api_host').val();
+                config_dict['shelly']['auth_key'] = $('#shelly_auth_key').val();
+
                 config_dict['shelly']['device_id'] = $('#shelly_device_id').val();
                 config_dict['shelly']['device_host'] = $('#shelly_device_host').val();
-                config_dict['shelly']['device_host_pv'] = $('#shelly_device_host_pv').val();
                 config_dict['shelly']['device_username'] = $('#shelly_device_username').val();
                 config_dict['shelly']['device_password'] = $('#shelly_device_password').val();
+
+                config_dict['shelly']['device_id_pv'] = $('#shelly_device_id_pv').val();
+                config_dict['shelly']['device_host_pv'] = $('#shelly_device_host_pv').val();
+                config_dict['shelly']['device_username_pv'] = $('#shelly_device_username_pv').val();
+                config_dict['shelly']['device_password_pv'] = $('#shelly_device_password_pv').val();
             }
 
             if (config_dict['data_source'] == 'solis') {
@@ -278,56 +298,77 @@
                                         <option value="solis">Solis</option>
                                         <option value="shelly-em">Shelly EM</option>
                                         <option value="shelly-pro">Shelly Pro EM</option>
-                                        <option value="shelly-3em-pro">Shelly Pro 3EM</option>
+                                        <option value="shelly-3em-pro">Dual Shelly Pro 3EM</option>
                                     </select>
 
+                                </div>
+                                <div id="grid_source_config" class="input-group mb-3">
                                     <span class="input-group-text">Import/Export Source</span>
                                     <select id="grid_source" class="form-select" onchange="toggle_config()">
-                                        <option value="inverter">Inverter</option>
+                                        <option value="inverter">Inverter (default)</option>
                                         <option value="shelly-em">Shelly EM</option>
                                         <option value="shelly-pro">Shelly Pro EM</option>
-                                        <option value="shelly-3em-pro">Shelly Pro 3EM</option>
                                     </select>
                                 </div>
                             </div>
 
                             <div id="shelly_config">
                                 <div class="form-floating mb-3">
+                                    <input class="form-control" id="shelly_api_host" placeholder="shelly-XX-eu.shelly.cloud">
+                                    <label for="shelly_api_host">Shelly Cloud API Hostname</label>
+                                </div>
+                                <div class="form-floating mb-3">
                                     <input type="password" class="form-control" id="shelly_auth_key" placeholder="XXXXXXXX">
                                     <label for="shelly_auth_key">Shelly Cloud Authentication Key</label>
                                 </div>
                                 <div class="row">
+
                                     <div class="col">
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" id="shelly_api_host" placeholder="shelly-XX-eu.shelly.cloud">
-                                            <label for="shelly_api_host">Shelly Cloud API Hostname</label>
-                                        </div>
-
-                                        <div class="form-floating mb-3">
-                                            <input type="password" class="form-control" id="shelly_device_id" placeholder="xxxxxxxx">
+                                            <input class="form-control" id="shelly_device_id" placeholder="xxxxxxxx">
                                             <label for="shelly_device_id">Shelly Device ID</label>
                                         </div>
 
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="shelly_device_username" placeholder="username">
+                                            <label for="shelly_device_username">Shelly Device Username</label>
+                                        </div>
+
                                     </div>
+
                                     <div class="col">
                                         <div class="form-floating mb-3">
                                             <input class="form-control" id="shelly_device_host" placeholder="shellyem-xxxxxxxxxx.local">
                                             <label for="shelly_device_host">Shelly Device Hostname/IP</label>
                                         </div>
-
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control" id="shelly_device_host_pv" placeholder="shellyem-xxxxxxxxxx.local">
-                                            <label for="shelly_device_host_pv">Shelly PV Device Hostname/IP (3ph Only)</label>
-                                        </div>
-
-                                        <div class="form-floating mb-3">
-                                            <input type="password" class="form-control" id="shelly_device_username" placeholder="username">
-                                            <label for="shelly_device_username">Shelly Device Username</label>
-                                        </div>
-
                                         <div class="form-floating mb-3">
                                             <input type="password" class="form-control" id="shelly_device_password" placeholder="password">
                                             <label for="shelly_device_password">Shelly Device Password</label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div id="shelly_config_3em2" class="row">
+                                    <div class="col">
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="shelly_device_id_pv" placeholder="xxxxxxxx">
+                                            <label for="shelly_device_id_pv">Shelly PV Device ID</label>
+                                        </div>
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="shelly_device_username_pv" placeholder="username">
+                                            <label for="shelly_device_username_pv">Shelly PV Device Username</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col">
+
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="shelly_device_host_pv" placeholder="shellyem-xxxxxxxxxx.local">
+                                            <label for="shelly_device_host_pv">Shelly PV Device Hostname/IP</label>
+                                        </div>
+                                        <div class="form-floating mb-3">
+                                            <input type="password" class="form-control" id="shelly_device_password_pv" placeholder="password">
+                                            <label for="shelly_device_password_pv">Shelly PV Device Password</label>
                                         </div>
                                     </div>
                                 </div>

@@ -87,18 +87,33 @@ def get_shelly_api_data(
     shelly_cloud_url = 'https://%s/v2/statistics/power-consumption/em-1p' % (
             config['shelly']['api_host'])
     params = {}
-    params['id'] = config['shelly']['device_id']
     params['auth_key'] = config['shelly']['auth_key']
-    params['date_range'] = date_range
 
+    # date range
+    params['date_range'] = date_range
     if date_from:
         params['date_from'] = date_from
 
     if date_to:
         params['date_to'] = date_to
 
-    # channel 0 (grid consumption and return)
-    params['channel'] = 0
+    # grid consumption
+
+    # Shell EM/pro can be used as inverter or grid source
+    if (config['data_source'] in ['shelly-em', 'shelly-pro'] or 
+        config['grid_source'] in ['shelly-em', 'shelly-pro']):
+        # single device, 2 channels
+        # grid is channel 0
+        params['id'] = config['shelly']['device_id']
+        params['channel'] = 0
+
+    # 3EM-Pro is only as an inverter (data_source)
+    if config['data_source'] in ['shelly-3em-pro']:
+        # dual devices, 1 channel each
+        # grid is device 1, channel 0
+        params['id'] = config['shelly']['device_id']
+        params['channel'] = 0
+
     try:
         utils.log_message(
                 utils.gv_verbose,
@@ -131,8 +146,23 @@ def get_shelly_api_data(
                 )
             )
 
-    # channel 1 (solar production)
-    params['channel'] = 1
+    # solar production
+
+    # Shell EM/pro can be used as inverter or grid source
+    if (config['data_source'] in ['shelly-em', 'shelly-pro'] or 
+        config['grid_source'] in ['shelly-em', 'shelly-pro']):
+        # single device, 2 channels
+        # solar is channel 1
+        params['id'] = config['shelly']['device_id']
+        params['channel'] = 1
+
+    # 3EM-Pro is only as an inverter (data_source)
+    if config['data_source'] in ['shelly-3em-pro']:
+        # dual devices, 1 channel each
+        # solar is device 2, channel 0
+        params['id'] = config['shelly']['device_id_pv']
+        params['channel'] = 0
+
     try:
         utils.log_message(
                 utils.gv_verbose,
@@ -593,10 +623,14 @@ def get_shelly_pro_3em_live_data(config):
             "Updating Shelly Pro 3EM Live Data"
             )
 
-    # HTTP digest based auth
-    digest_auth =  requests.auth.HTTPDigestAuth(
+    # HTTP digest based auth for 2 devices
+    digest_auth_grid =  requests.auth.HTTPDigestAuth(
             config['shelly']['device_username'], 
             config['shelly']['device_password']) 
+
+    digest_auth_pv =  requests.auth.HTTPDigestAuth(
+            config['shelly']['device_username_pv'], 
+            config['shelly']['device_password_pv']) 
 
     # Main Device (Grid)
     device_url = 'http://%s/rpc/EM.GetStatus?id=0' % (config['shelly']['device_host'])
@@ -611,7 +645,7 @@ def get_shelly_pro_3em_live_data(config):
         resp = requests.get(
                 device_url, 
                 timeout = 10,
-                auth = digest_auth)
+                auth = digest_auth_grid)
         grid_resp_dict = resp.json()
         utils.log_message(
                 utils.gv_verbose,
@@ -631,37 +665,35 @@ def get_shelly_pro_3em_live_data(config):
         grid = None
 
     # Second Optional Device (Solar)
-    solar = 0
-    if 'device_host_pv' in config['shelly']:
-        device_url = 'http://%s/rpc/EM.GetStatus?id=0' % (config['shelly']['device_host_pv'])
+    device_url = 'http://%s/rpc/EM.GetStatus?id=0' % (config['shelly']['device_host_pv'])
 
-        try:
-            utils.log_message(
-                    utils.gv_verbose,
-                    'Calling Shelly Pro EM Device API (solar).. url:%s' % (
-                        device_url
-                        )
-                    )
-            resp = requests.get(
-                    device_url, 
-                    timeout = 10,
-                    auth = digest_auth)
-            solar_resp_dict = resp.json()
-            utils.log_message(
+    try:
+        utils.log_message(
                 utils.gv_verbose,
-                'Device API Response (solar)\n%s\n' % (
-                    json.dumps(solar_resp_dict, indent = 4),
+                'Calling Shelly Pro EM Device API (solar).. url:%s' % (
+                    device_url
                     )
                 )
-            solar = solar_resp_dict['total_act_power'] / 1000
-        except:
-            utils.log_message(
-                    1,
-                    'Shelly EM Device API solar call to %s failed' % (
-                        device_url,
-                        )
+        resp = requests.get(
+                device_url, 
+                timeout = 10,
+                auth = digest_auth_pv)
+        solar_resp_dict = resp.json()
+        utils.log_message(
+            utils.gv_verbose,
+            'Device API Response (solar)\n%s\n' % (
+                json.dumps(solar_resp_dict, indent = 4),
+                )
+            )
+        solar = solar_resp_dict['total_act_power'] / 1000
+    except:
+        utils.log_message(
+                1,
+                'Shelly EM Device API solar call to %s failed' % (
+                    device_url,
                     )
-            solar = None
+                )
+        solar = None
 
     return grid, solar
 
@@ -686,12 +718,18 @@ def get_live_data(config):
                 )
         return
 
-    if config['grid_source'] == 'shelly-em':
+    # Live data is based on data source of any shelly variant
+    # or grid source of the shelly-em or shelly-pro
+    if config['data_source'] == 'shelly-em':
+        grid, solar = get_shelly_em_live_data(config)
+    elif config['data_source'] == 'shelly-pro':
+        grid, solar = get_shelly_pro_em_live_data(config)
+    elif config['data_source'] == 'shelly-3em-pro':
+        grid, solar = get_shelly_pro_3em_live_data(config)
+    elif config['grid_source'] == 'shelly-em':
         grid, solar = get_shelly_em_live_data(config)
     elif config['grid_source'] == 'shelly-pro':
         grid, solar = get_shelly_pro_em_live_data(config)
-    elif config['grid_source'] == 'shelly-3em-pro':
-        grid, solar = get_shelly_pro_3em_live_data(config)
     else:
         utils.log_message(
                 1,
