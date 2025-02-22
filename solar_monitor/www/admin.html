@@ -16,6 +16,11 @@
                 e.preventDefault();
             });
 
+            // hide all config sections
+            $("#shelly_config").hide();
+            $("#solis_config").hide();
+            $("#shelly_config_3em2").hide();
+
             // custom handler function for apply button 
             $("#apply_button").click(function() {
                 apply_config();
