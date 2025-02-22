@@ -109,7 +109,7 @@
                 <div class="card-body text-center">
                     <center>
                         <a href="/admin"><div id="agg_donut_title" class="title"></div></a>
-                        <div onclick="ui_cycle_metric_index()" id="donut_chart"></div>
+                        <div onclick="ui_cycle_forced_layout()" id="donut_chart"></div>
                     </center>
                 </div>
             </div>
@@ -655,14 +655,30 @@
             display_data();
         }                                               
 
-        // manual cycle of metyric index
+        // manual cycle of metric index
         // and restart of timer
         // used for UI-based tap cycling
         function ui_cycle_metric_index() {
-            console.log("force_cycle_metric_index()");
+            console.log("ui_cycle_metric_index()");
             clearInterval(metric_cycle_timer);
             cycle_metric_index();
             metric_cycle_timer = setInterval(cycle_metric_index, metric_cycle_interval);
+        }
+
+        // forced layout cycling index
+        var forced_layout_index = -1; // init only
+
+        // manual cycle of forced layout
+        // used for UI-based tap cycling
+        // only cycles between small and large
+        function ui_cycle_forced_layout() {
+            console.log("ui_cycle_forced_layout()");
+            forced_layout_list = ['small', 'large'];
+            forced_layout_index = (forced_layout_index + 1) % forced_layout_list.length;
+            forced_layout = forced_layout_list[forced_layout_index];
+            console.log("forced layout to:" + forced_layout);
+            set_layout();
+            display_data();
         }
 
         // renders and displays the current dashboard
