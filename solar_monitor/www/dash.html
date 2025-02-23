@@ -641,17 +641,19 @@
             // always default to live
             agg_metric_key = "live";
 
-            metric_list = Object.keys(data_dict.metrics);
-            for (i = 0; i < metric_list.length; i++) {
-                agg_metric_index = (agg_metric_index + 1) % metric_list.length;
+            if ('metrics' in data_dict) {
+                metric_list = Object.keys(data_dict.metrics);
+                for (i = 0; i < metric_list.length; i++) {
+                    agg_metric_index = (agg_metric_index + 1) % metric_list.length;
 
-                // check its enabled in the config
-                if (data_dict.dashboard.metrics[metric_list[agg_metric_index]]) {
-                    agg_metric_key = metric_list[agg_metric_index];
-                    break;
+                    // check its enabled in the config
+                    if (data_dict.dashboard.metrics[metric_list[agg_metric_index]]) {
+                        agg_metric_key = metric_list[agg_metric_index];
+                        break;
+                    }
                 }
-            }
 
+            }
             display_data();
         }                                               
 
@@ -688,12 +690,14 @@
             // switch from splash to dashboard 
             // only when we have data to show
             // this is a once-off occurrence at the start
-            if ('last_updated' in data_dict && data_dict.last_updated > 0) {
+            if ('last_updated' in data_dict && 
+                'metrics' in data_dict && 
+                data_dict.last_updated > 0) {
                 $("#splash").hide();
                 $("#dashboard").show();
             }
             else {
-                // display messaage based on configured state
+                // display message based on configured state
                 if (data_dict['configured'] == false) {
                     $("#splash_text").html('Please click setup icon above to continue');
                 }
