@@ -93,6 +93,6 @@ If you click or tap on the donut chart, the layout will cycle between the small 
 This feature also allows for a small layout to be used with say a tablet display which is best suited for distance reading but then a single tap will quickly switch to the large layout when you are standing closer to the screen.
 
 #### Forced Layout in the URL
-If you append ?layout=small or ?layout=large or ?layout=portrait to the dashboard URL, then the layout will be forced to that specific variant. This is useful if you want to bookmark a specific layout or if you are using screen that does not auto-select the desired layout by default. 
+If you append ?layout=small or ?layout=large or ?layout=portrait to the dashboard URL, then the layout will be forced to that specific variant. This is useful if you want to bookmark a specific layout or if you are using a screen that does not auto-select the desired layout by default. 
 
-For example, if using a smart TV to display the dashboard via browser app, it is possible that the dashboard may select the small layout instead of the desired large layout. Then by using e.g. http://1.2.3.4:8090?layout=large as the URL, you be guaranteed that the large layout will be used.
+For example, if using a smart TV to display the dashboard via browser app, it is possible that the dashboard may select the small layout instead of the desired large layout. Then by using e.g. http://1.2.3.4:8090?layout=large as the URL, you will be guaranteed that the large layout will be used.
