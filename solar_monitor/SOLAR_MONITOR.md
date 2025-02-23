@@ -3,17 +3,16 @@
 This is a small web server designed to query live data from an inverter cloud API and present it on a reactive web page that could be displayed on a monitor, TV or tablet screen. The script runs as a small web server configures with the API details for your inverter. If all goes to plan, you will get a nice dashboard that shows you a combination of live and historical solar, import and export data from your inverter.
 
 ## Requirements:
-* Computer capable of running Python3 (Any Linux, Mac, PC, Raspberry Pi can do this but you may need to install Python3 and/or additional modules)
-* A Solis string or hybrid inverter with cloud API access enabled (you need to issue a support ticket to Solis to enable this access)
+* Computer capable of running Python3 (Any Linux, Mac, PC, Raspberry Pi can do this but you may need to install Python3 and additional library modules)
+* Either:
+    - A Solis hybrid inverter with integrated monitoring of import/export
+    - A Shelly EM or EM Pro 50 with 2 CT clamps (one wired to grid, the other to any string inverter output)
+    - Two Shelly 3EM Pro 3-phase devices (one set of CT clamps wired to grid, the other set to any 3-phase string inverter output)
+* Cloud API support enabled for your Solis inverter and/or Shelly devices depending on your setup
 
 ## Optional Requirements for Solis String Inverters
 * Unlike the hybrid variants, Solis string inverters do not moninitor grid import and export
 * An optional Shelly EM / EM Pro 50 can be installed and wired with 2 CT clamps to make up for this gap. 
-* Those CT clamps would be configured as follows on the Shelly device:
-   - 1) for mains import (positive import, negative export) 
-   - 2) for inverter output (positive solar generation, negative inverter draw)
-* In normal operation, the monitor will source live import, export and solar data from the Shelly device directly (every 5 seconds)
-* Historical import and export data is then sourced from the Shelly Cloud API (every hour) and merged with the historical PV-only data from the Solis Cloud API
 
 ## Basic steps to test
 * git clone https://github.com/dresdner353/energyutils.git (or download the Zip file)
@@ -27,14 +26,15 @@ To run:
 * The script will startup and create a default config.json file in energyutils/solar_monitor
 * point your browser at either http://localhost:8090 or http://[IP of computer]:8090 and you should see The banner "SolarMon" displayed with a settings cog wheel
 * Click the cog wheel or browse to http://localhost:8090/admin to bring up the admin page (when prompted, login as user "admin" and password "123456789")
-* Select the inverter/data source type and go from there inputing the credentials or your given device. 
-   - Note: Only Solis is supported for now.
-* If additionally using a Shelly EM/EM Pro, then select the grid source drop-down to enable the additional Shelly credententials
+* Select the inverter source type and go from there inputing the credentials or your given device. 
+* If additionally using a Shelly EM/EM Pro for grid monitoring, then select the grid source drop-down to select the desired Shelly variant and enter the additional Shelly credententials
 * Once you select the data sources, various fields will be shown that need to be populated with the related credentials.
 * When ready to save, click the "Apply" button
 * To get back to the dashboard, click the "Show Dashboard" button or separately browse to http://localhost:8090 or http://[IP of computer]:8090
 * If the Shelly or inverter credentials are correct, then actual usage data should soon appear on the main dashboard.
-* For now, only Shelly EM and Solis inverters are supported. Other inverters may be added in the future.
+* For the only native inverter support is for Solis. Other inverters may be added in the future.
+* The use of a Shelly EM/EM Pro device with mains and PV clamps allows for deploying this monitor against any single-phase string inverter or micro-inverter setup
+* The use of two Shelly 3EM Pro devices with mains and PV 3-phase clamps allows for deploying this monitor against any 3-phase string inverter setup
 * The script outputs logging details as it runs on the console. You can add --verbose to get this logging more detailed data if need be.
 
 ## Sample Screenshots
@@ -76,3 +76,18 @@ These metrics will cycle every N seconds from one set to the other.
 The portrait format will apply for any portrait monitor where the height > width and this includes mobile phones etc. All charts and metrics are shown in this format and can be scrolled as required. If using a tablet in landscape mode, then rotating it to portrait should result in this portrait mode being activated. When rotated back to landscape, the small screen layout will resume.
 
 ![Portrait Screen Live](screenshots/portrait_live.png)
+
+### Interactive Features
+
+#### Bar Chart Metrics Panel
+If you hover the mouse over any specific bar on the charts or tap this area on a tablet/phone, a panel will appear that displays specific values each displayed metric value. 
+
+![Bar Chart Metrics Panel](screenshots/bar_chart_hover.png)
+
+#### Manual Metrics Cycling
+If you click or tap anywhere on the numeric metrics section, the metrics will immediately cycle to the next set. This is useful if you want to see a specific metric without waiting for the automatic cycling to occur.
+
+#### Small/Large Screen Layout Cycling
+If you click or tap on the donut chart, the layout will cycle between the small and large screen layouts. This is useful if want to force a specific layout to be used over the automatic layout that was first selected. 
+
+This feature also allows for a small layout to be used with say a tablet display which is best suited for distance reading but then a single tap will quickly switch to the large layout when you are standing closer to the screen.
