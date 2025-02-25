@@ -276,12 +276,22 @@ def get_shelly_api_data(
         # solar
         solar = shelly_rec['consumption'] / 1000
 
-        # zero any value <= the solar discard
-        # caters for neglible error readings at night
-        # Also subtract if value exceeds twice the discard
-        solar_discard = 0.010
-        if solar <= solar_discard:
-            solar = 0
+        # solar discard
+        # allows for a kwh amount per hour to be thrown away to
+        # account for an error on the PV reading
+        # has been observed to be ab out 0.004 kwh per hour
+        solar_kwh_discard = config['shelly']['pv_kwh_discard']
+        interval = solar_resp_dict['interval']
+        if interval == 'day':
+            # scale to 24 hours
+            solar_kwh_discard *= 24
+        elif interval == 'month':
+            # scale to 30 days
+            solar_kwh_discard *= (24 * 30)
+
+        # apply discard and zero if negative
+        solar -= solar_kwh_discard
+        solar = max(0, solar)
 
         # append the solar value 
         usage_rec['solar'] += solar
@@ -295,6 +305,7 @@ def get_shelly_api_data(
 
         usage_rec['co2'] = (config['environment']['gco2_kwh'] * usage_rec['solar']) / 1000
         usage_rec['trees'] = config['environment']['trees_kwh'] * usage_rec['solar']
+
 
     return data_dict
 
