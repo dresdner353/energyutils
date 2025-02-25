@@ -53,6 +53,7 @@
                 $('#shelly_device_host').val(config_dict['shelly']['device_host']);
                 $('#shelly_device_username').val(config_dict['shelly']['device_username']);
                 $('#shelly_device_password').val(config_dict['shelly']['device_password']);
+                $('#shelly_pv_kwh_discard').val(config_dict['shelly']['pv_kwh_discard']);
 
                 $('#shelly_device_id_pv').val(config_dict['shelly']['device_id_pv']);
                 $('#shelly_device_host_pv').val(config_dict['shelly']['device_host_pv']);
@@ -173,6 +174,7 @@
                 config_dict['shelly']['device_host'] = $('#shelly_device_host').val();
                 config_dict['shelly']['device_username'] = $('#shelly_device_username').val();
                 config_dict['shelly']['device_password'] = $('#shelly_device_password').val();
+                config_dict['shelly']['pv_kwh_discard'] = Number($('#shelly_pv_kwh_discard').val());
 
                 config_dict['shelly']['device_id_pv'] = $('#shelly_device_id_pv').val();
                 config_dict['shelly']['device_host_pv'] = $('#shelly_device_host_pv').val();
@@ -343,12 +345,19 @@
 
                                     <div class="col">
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" id="shelly_device_host" placeholder="shellyem-xxxxxxxxxx.local">
-                                            <label for="shelly_device_host">Shelly Device Hostname/IP</label>
+                                            <input class="form-control" id="shelly_device_host" placeholder="x.x.x.xl">
+                                            <label for="shelly_device_host">Shelly Device IP</label>
                                         </div>
                                         <div class="form-floating mb-3">
                                             <input type="password" class="form-control" id="shelly_device_password" placeholder="password">
                                             <label for="shelly_device_password">Shelly Device Password</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col">
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="shelly_pv_kwh_discard" placeholder="0.00n">
+                                            <label for="shelly_pv_kwh_discard">PV kWh Discard</label>
                                         </div>
                                     </div>
 
@@ -368,8 +377,8 @@
                                     <div class="col">
 
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" id="shelly_device_host_pv" placeholder="shellyem-xxxxxxxxxx.local">
-                                            <label for="shelly_device_host_pv">Shelly PV Device Hostname/IP</label>
+                                            <input class="form-control" id="shelly_device_host_pv" placeholder="x.x.x.x">
+                                            <label for="shelly_device_host_pv">Shelly PV Device IP</label>
                                         </div>
                                         <div class="form-floating mb-3">
                                             <input type="password" class="form-control" id="shelly_device_password_pv" placeholder="password">
