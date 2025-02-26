@@ -956,12 +956,12 @@
 
             const series_labels = {
                 "import": "Grid",
-                "consumed": "Cons",
+                "consumed": "Consumed",
                 "solar": "PV",
-                "solar_consumed": "PV-Con",
-                "export": "Export",
-                "battery_charge": "Bat-Chg",
-                "battery_discharge": "Bat-Dis",
+                "solar_consumed": "PV Consumed",
+                "export": "PV Export",
+                "battery_charge": "Battery +",
+                "battery_discharge": "Battery -",
             };
 
             const series_colours = {
@@ -1028,6 +1028,12 @@
                     }
                 }
             };
+
+            if (layout == "small") {
+                donut_options.legend.position = 'none';
+                donut_options.pieSliceText = 'label';
+                donut_options.pieSliceTextStyle.fontSize = legend_font_px_size * 0.9;
+            }
 
             // agg
             agg_source = data_dict.metrics[agg_metric_key];
