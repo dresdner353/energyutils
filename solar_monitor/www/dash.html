@@ -1043,26 +1043,37 @@
             agg_data.addColumn('number', 'kWh');
 
             // calculate total series value
-            total_series_value = 0;
+            var total_series_value = 0;
             for (series_field of donut_series_list) {
-                total_series_value += agg_source[series_field] * 1000;
+                series_value = agg_source[series_field];
+                if (series_value == undefined) {
+                    // FIXME need to investigate why this can be undefined
+                    series_value = 0;
+                }
+                total_series_value += series_value;
             }
 
             for (series_field of donut_series_list) {
                 // calculate percentage of total
                 // for the small screen donut label
-                series_value = agg_source[series_field] * 1000;
-                series_percentage = Math.round((series_value / total_series_value) * 100);
+                series_value = agg_source[series_field];
+                if (series_value == undefined) {
+                    // FIXME need to investigate why this can be undefined
+                    series_value = 0;
+                }
+                series_percentage = series_value / total_series_value * 100;
                 if (layout == "small") {
                     // label + percentage
-                    series_label = `${series_labels[series_field]} ${series_percentage}%`;
+                    series_label = `${series_labels[series_field]} ${series_percentage.toFixed(1)}%`;
                 }
                 else {
-                    // label only
+                    // label only for legend
+                    // displayed value will be the percentage
                     series_label = series_labels[series_field];
                 }
                 agg_data.addRows([
-                    [series_label, series_value],
+                    // graph value times 1000 for issues with small values
+                    [series_label, series_value * 1000]
                 ]);
             }
 
