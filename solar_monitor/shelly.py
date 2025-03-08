@@ -27,7 +27,6 @@ month_ts = 0
 year_ts = 0
 day_ts = 0
 
-
 def parse_time(
         datetime_str,
         timezone):
@@ -55,13 +54,13 @@ def parse_time(
     return time_stamp, dt
 
 
-def get_shelly_api_data(
+def get_shelly_api_usage_data(
         config,
         date_range,
         date_from,
         date_to):
     """
-    Calls Shelly cloud API to retrieve import/export data. 
+    Calls Shelly historic cloud API to retrieve import/export past usage. 
 
     Args:
     config     - config dict 
@@ -310,7 +309,7 @@ def get_shelly_api_data(
     return data_dict
 
 
-def get_cloud_data(config):
+def get_cloud_usage_data(config):
     """
     Combined function to retrieve the last 36 hours,
     30 days and 12 months of historic grid import/export from 
@@ -330,6 +329,15 @@ def get_cloud_data(config):
     now = int(time.time())
     dt_today = datetime.datetime.today() 
     dt_yesterday = dt_today - datetime.timedelta(days = 1)
+
+    utils.log_message(
+            1,
+            "Checking Shelly Cloud Data for updates.. timestamps: day:%s month:%s year:%s" % (
+                day_ts,
+                month_ts,
+                year_ts
+                )
+            )
 
     if now >= day_ts:
         # last 36 hours
@@ -352,7 +360,7 @@ def get_cloud_data(config):
                     )
         
         # using configured hour discard
-        day_data = get_shelly_api_data(
+        day_data = get_shelly_api_usage_data(
                 config,
                 date_range = 'custom',
                 date_from = day_ago_str,
@@ -400,7 +408,7 @@ def get_cloud_data(config):
                     )
         
         # using configured day discard
-        month_data = get_shelly_api_data(
+        month_data = get_shelly_api_usage_data(
                 config,
                 date_range = 'custom',
                 date_from = month_start_str,
@@ -445,7 +453,7 @@ def get_cloud_data(config):
                     )
         
         # using configured day discard times 30
-        year_data = get_shelly_api_data(
+        year_data = get_shelly_api_usage_data(
                 config,
                 date_range = 'custom',
                 date_from = last_year_start_str,
@@ -473,247 +481,11 @@ def get_cloud_data(config):
     return
 
 
-def get_shelly_em_live_data(config):
+def get_cloud_live_data(config):
     """
-    Gets live grid and solar values from a Shelly EM
-
-    Args:
-    config     - config dict 
-
-    Returns: tuple of grid, solar values in kW
-             grid value will be negative for export scenario
-    """
-    utils.log_message(
-            1,
-            "Updating Shelly EM Live Data"
-            )
-
-    device_url = 'http://%s/status' % (config['shelly']['device_host'])
-    basic =  requests.auth.HTTPBasicAuth(
-            config['shelly']['device_username'], 
-            config['shelly']['device_password']) 
-
-    try:
-        utils.log_message(
-                utils.gv_verbose,
-                'Calling Shelly EM Device API.. url:%s' % (
-                    device_url
-                    )
-                )
-        resp = requests.get(
-                device_url, 
-                timeout = 10,
-                auth = basic)
-        device_resp_dict = resp.json()
-        utils.log_message(
-                utils.gv_verbose,
-                'Device API Response\n%s\n' % (
-                    json.dumps(device_resp_dict, indent = 4),
-                    )
-                )
-        # convert to kW
-        grid = device_resp_dict['emeters'][0]['power'] / 1000
-        solar = device_resp_dict['emeters'][1]['power'] / 1000
-
-    except:
-        utils.log_message(
-                1,
-                'Shelly EM Device API Call to %s failed' % (
-                    device_url,
-                    )
-                )
-
-        # set failure values
-        grid = None
-        solar = None
-
-    return grid, solar
-
-
-def get_shelly_pro_em_live_data(config):
-    """
-    Gets live grid and solar values from a Shelly Pro EM
-
-    Args:
-    config     - config dict 
-
-    Returns: tuple of grid, solar values in kW
-             grid value will be negative for export scenario
-    """
-    utils.log_message(
-            1,
-            "Updating Shelly Pro EM Live Data"
-            )
-
-    # HTTP digest based auth
-    digest_auth =  requests.auth.HTTPDigestAuth(
-            config['shelly']['device_username'], 
-            config['shelly']['device_password']) 
-
-    # CT 0 (Grid)
-    device_url = 'http://%s/rpc/EM1.GetStatus?id=0' % (config['shelly']['device_host'])
-
-    try:
-        utils.log_message(
-                utils.gv_verbose,
-                'Calling Shelly Pro EM Device API (grid).. url:%s' % (
-                    device_url
-                    )
-                )
-        resp = requests.get(
-                device_url, 
-                timeout = 10,
-                auth = digest_auth)
-        grid_resp_dict = resp.json()
-        utils.log_message(
-                utils.gv_verbose,
-                'Device API Response (grid)\n%s\n' % (
-                    json.dumps(grid_resp_dict, indent = 4),
-                    )
-                )
-        # convert to kW
-        grid = grid_resp_dict['act_power'] / 1000
-
-    except:
-        utils.log_message(
-                1,
-                'Shelly EM Device API Call to %s failed' % (
-                    device_url,
-                    )
-                )
-        grid = None
-
-    # CT 1 (Solar)
-    device_url = 'http://%s/rpc/EM1.GetStatus?id=1' % (config['shelly']['device_host'])
-
-    try:
-        utils.log_message(
-                utils.gv_verbose,
-                'Calling Shelly Pro EM Device API (solar).. url:%s' % (
-                    device_url
-                    )
-                )
-        resp = requests.get(
-                device_url, 
-                timeout = 10,
-                auth = digest_auth)
-        solar_resp_dict = resp.json()
-        utils.log_message(
-                utils.gv_verbose,
-                'Device API Response (solar)\n%s\n' % (
-                    json.dumps(solar_resp_dict, indent = 4),
-                    )
-                )
-        # convert to kW
-        solar = solar_resp_dict['act_power'] / 1000
-
-    except:
-        utils.log_message(
-                1,
-                'Shelly EM Device API Call to %s failed' % (
-                    device_url,
-                    )
-                )
-        solar = None
-
-    return grid, solar
-
-
-def get_shelly_pro_3em_live_data(config):
-    """
-    Gets live grid and solar values from a Shelly Pro 3EM (3-phase)
-
-    Args:
-    config     - config dict 
-
-    Returns: tuple of grid, solar values in kW
-             grid value will be negative for export scenario
-    """
-    utils.log_message(
-            1,
-            "Updating Shelly Pro 3EM Live Data"
-            )
-
-    # HTTP digest based auth for 2 devices
-    digest_auth_grid =  requests.auth.HTTPDigestAuth(
-            config['shelly']['device_username'], 
-            config['shelly']['device_password']) 
-
-    digest_auth_pv =  requests.auth.HTTPDigestAuth(
-            config['shelly']['device_username_pv'], 
-            config['shelly']['device_password_pv']) 
-
-    # Main Device (Grid)
-    device_url = 'http://%s/rpc/EM.GetStatus?id=0' % (config['shelly']['device_host'])
-
-    try:
-        utils.log_message(
-                utils.gv_verbose,
-                'Calling Shelly Pro 3EM Device API (grid).. url:%s' % (
-                    device_url
-                    )
-                )
-        resp = requests.get(
-                device_url, 
-                timeout = 10,
-                auth = digest_auth_grid)
-        grid_resp_dict = resp.json()
-        utils.log_message(
-                utils.gv_verbose,
-                'Device API Response (grid)\n%s\n' % (
-                    json.dumps(grid_resp_dict, indent = 4),
-                    )
-                )
-        grid = grid_resp_dict['total_act_power'] / 1000
-
-    except:
-        utils.log_message(
-                1,
-                'Shelly EM Device API grid call to %s failed' % (
-                    device_url,
-                    )
-                )
-        grid = None
-
-    # Second Optional Device (Solar)
-    device_url = 'http://%s/rpc/EM.GetStatus?id=0' % (config['shelly']['device_host_pv'])
-
-    try:
-        utils.log_message(
-                utils.gv_verbose,
-                'Calling Shelly Pro EM Device API (solar).. url:%s' % (
-                    device_url
-                    )
-                )
-        resp = requests.get(
-                device_url, 
-                timeout = 10,
-                auth = digest_auth_pv)
-        solar_resp_dict = resp.json()
-        utils.log_message(
-            utils.gv_verbose,
-            'Device API Response (solar)\n%s\n' % (
-                json.dumps(solar_resp_dict, indent = 4),
-                )
-            )
-        solar = solar_resp_dict['total_act_power'] / 1000
-    except:
-        utils.log_message(
-                1,
-                'Shelly EM Device API solar call to %s failed' % (
-                    device_url,
-                    )
-                )
-        solar = None
-
-    return grid, solar
-
-
-def get_live_data(config):
-    """
-    Wrapper function to get live data. This will check the grid_source
-    field in config and call into the Shelly EM/Pro/3EM depending on which 
-    is in use
+    This will check the grid_source and data_source fields 
+    in config and call into the Shelly Cloud API for live import and 
+    PV generation data
 
     Args:
     config     - config dict 
@@ -722,25 +494,40 @@ def get_live_data(config):
     """
     global gv_shelly_dict
 
-    if not config['shelly']['device_host']:
+    # check if creds are set
+    if (
+            not config['shelly']['api_host'] or
+            not config['shelly']['auth_key'] or
+            not config['shelly']['device_id']
+            ):
         utils.log_message(
                 1,
-                "Shelly Device Host is not configured.. skipping device call"
+                "Cloud API creds are not configured.. skipping"
                 )
-        return
+        return 
 
-    # Live data is based on data source of any shelly variant
-    # or grid source of the shelly-em or shelly-pro
-    if config['data_source'] == 'shelly-em':
-        grid, solar = get_shelly_em_live_data(config)
-    elif config['data_source'] == 'shelly-pro':
-        grid, solar = get_shelly_pro_em_live_data(config)
-    elif config['data_source'] == 'shelly-3em-pro':
-        grid, solar = get_shelly_pro_3em_live_data(config)
-    elif config['grid_source'] == 'shelly-em':
-        grid, solar = get_shelly_em_live_data(config)
-    elif config['grid_source'] == 'shelly-pro':
-        grid, solar = get_shelly_pro_em_live_data(config)
+    shelly_cloud_url = 'https://%s/v2/devices/api/get?auth_key=%s' % (
+            config['shelly']['api_host'], 
+            config['shelly']['auth_key'])
+
+    headers = {}
+    headers['Content-Type'] = 'application/json'
+
+    request = {}
+    request['ids'] = []
+    request['select'] = ['status']
+
+    # variants
+    if config['data_source'] in ['shelly-em', 'shelly-pro']:
+        # 1-phase inverter function single device
+        request['ids'].append(config['shelly']['device_id'])
+    elif config['grid_source'] in ['shelly-em', 'shelly-pro']:
+        # live only
+        request['ids'].append(config['shelly']['device_id'])
+    elif config['data_source'] in ['shelly-3em-pro']:
+        # 3-phase inverter 2 devices
+        request['ids'].append(config['shelly']['device_id'])
+        request['ids'].append(config['shelly']['device_id_pv'])
     else:
         utils.log_message(
                 1,
@@ -750,6 +537,49 @@ def get_live_data(config):
                 )
         return
 
+    try:
+        utils.log_message(
+                utils.gv_verbose,
+                'Calling Shelly Cloud API.. url:%s request:%s' % (
+                    shelly_cloud_url,
+                    request
+                    )
+                )
+        resp = requests.post(
+                shelly_cloud_url, 
+                timeout = 20,
+                headers = headers,
+                json = request)
+        resp_dict = resp.json()
+
+    except:
+        utils.log_message(
+                1,
+                'Shelly Cloud API Call to %s, params %s failed' % (
+                    shelly_cloud_url,
+                    request
+                    )
+                )
+        return 
+
+    # variants
+    if config['data_source'] in ['shelly-em', 'shelly-pro']:
+        # single device, two em1 channels
+        grid = resp_dict[0]['status']['em1:0']['act_power'] / 1000
+        solar = resp_dict[0]['status']['em1:1']['act_power'] / 1000
+    elif config['grid_source'] in ['shelly-em', 'shelly-pro']:
+        # single device, two em1 channels
+        grid = resp_dict[0]['status']['em1:0']['act_power'] / 1000
+        solar = resp_dict[0]['status']['em1:1']['act_power'] / 1000
+    elif config['data_source'] in ['shelly-3em-pro']:
+        # two devices, single em1 channel each
+        grid = resp_dict[0]['status']['em1:0']['act_power'] / 1000
+        solar = resp_dict[1]['status']['em1:0']['act_power'] / 1000
+    else:
+        # Apollo alarms
+        grid = 12.01 
+        solar = 12.02
+
     # update live data
     gv_shelly_dict['last_updated'] = int(time.time())
     live_rec = gv_shelly_dict['live']
@@ -757,24 +587,6 @@ def get_live_data(config):
     time_str = datetime.datetime.fromtimestamp(
             gv_shelly_dict['last_updated']).strftime('%H:%M:%S')
     live_rec['title'] = 'Live Usage @%s' % (time_str)
-
-    if grid is None:
-        grid = 12.01 # Apollo alarm :)
-        utils.log_message(
-                1,
-                "Live data call failed for grid.. substituted fake value %f" % (
-                    grid)
-                )
-        live_rec['title'] = 'Live Data Error @%s' % (time_str)
-
-    if solar is None:
-        solar = 12.02 # Apollo alarm :)
-        utils.log_message(
-                1,
-                "Live data call failed for solar.. substituted fake value %f" % (
-                    solar)
-                )
-        live_rec['title'] = 'Live Data Error @%s' % (time_str)
 
     # render into separate values for import and export
     if grid >= 0:
@@ -784,7 +596,7 @@ def get_live_data(config):
         grid_import = 0
         grid_export = grid * -1
 
-    # for solar, zero readings below 10W
+    # for solar, discard zero readings below 10W
     # gets rid of noise readings at night
     if solar <= 0.010:
         solar = 0
@@ -826,17 +638,8 @@ def get_data(config):
     """
     global gv_shelly_dict
 
-    get_live_data(config)
-
-    utils.log_message(
-            1,
-            "Checking Shelly Cloud Data for updates.. timestamps: day:%s month:%s year:%s" % (
-                day_ts,
-                month_ts,
-                year_ts
-                )
-            )
-    get_cloud_data(config)
+    get_cloud_live_data(config)
+    get_cloud_usage_data(config)
 
     utils.log_message(
             utils.gv_verbose,
@@ -848,5 +651,5 @@ def get_data(config):
             )
 
     # return dep copy of data
-    # and a fixed 5-sec refresh
-    return copy.deepcopy(gv_shelly_dict), 5
+    # and a fixed 10-sec refresh
+    return copy.deepcopy(gv_shelly_dict), 10
