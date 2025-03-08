@@ -51,6 +51,7 @@
 
                 $('#shelly_device_id').val(config_dict['shelly']['device_id']);
                 $('#shelly_pv_kwh_discard').val(config_dict['shelly']['pv_kwh_discard']);
+                $('#shelly_time_slot').val(config_dict['shelly']['time_slot']);
 
                 $('#shelly_device_id_pv').val(config_dict['shelly']['device_id_pv']);
             }
@@ -162,6 +163,7 @@
 
                 config_dict['shelly']['device_id'] = $('#shelly_device_id').val();
                 config_dict['shelly']['pv_kwh_discard'] = Number($('#shelly_pv_kwh_discard').val());
+                config_dict['shelly']['time_slot'] = Number($('#shelly_time_slot').val());
 
                 config_dict['shelly']['device_id_pv'] = $('#shelly_device_id_pv').val();
             }
@@ -332,6 +334,12 @@
                                         <div class="form-floating mb-3">
                                             <input class="form-control" id="shelly_pv_kwh_discard" placeholder="0.00n">
                                             <label for="shelly_pv_kwh_discard">PV kWh Discard</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="shelly_time_slot" placeholder="0">
+                                            <label for="shelly_time_slot">API Time Slot (0-9)</label>
                                         </div>
                                     </div>
                                 </div>

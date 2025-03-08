@@ -27,6 +27,7 @@ month_ts = 0
 year_ts = 0
 day_ts = 0
 
+
 def parse_time(
         datetime_str,
         timezone):
@@ -506,6 +507,18 @@ def get_cloud_live_data(config):
                 )
         return 
 
+    now  = int(time.time())
+    now_dt = datetime.datetime.fromtimestamp(now)
+    sleep_period = (config['shelly']['time_slot'] - now_dt.second) % 10
+    if sleep_period > 0:
+        utils.log_message(
+                1,
+                'Sleep %d seconds to align to 10-second boundary for %d' % (
+                    sleep_period,
+                    config['shelly']['time_slot'])
+                )
+        time.sleep(sleep_period)
+
     shelly_cloud_url = 'https://%s/v2/devices/api/get?auth_key=%s' % (
             config['shelly']['api_host'], 
             config['shelly']['auth_key'])
@@ -555,10 +568,26 @@ def get_cloud_live_data(config):
     except:
         utils.log_message(
                 1,
-                'Shelly Cloud API Call to %s, params %s failed' % (
+                'Shelly Cloud API Call to %s, request %s failed' % (
                     shelly_cloud_url,
                     request
                     )
+                )
+        return 
+
+    utils.log_message(
+            utils.gv_verbose,
+            'API Response (%s)\n%s\n' % (
+                request, 
+                json.dumps(resp_dict, indent = 4),
+                )
+            )
+
+    # congestion detection
+    if 'error' in resp_dict:
+        utils.log_message(
+                1,
+                'Shelly Cloud API congestion'                 
                 )
         return 
 
