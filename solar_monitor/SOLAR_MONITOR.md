@@ -26,8 +26,8 @@ To run:
 * The script will startup and create a default config.json file in energyutils/solar_monitor
 * point your browser at either http://localhost:8090 or http://[IP of computer]:8090 and you should see The banner "SolarMon" displayed with a settings cog wheel
 * Click the cog wheel or browse to http://localhost:8090/admin to bring up the admin page (when prompted, login as user "admin" and password "123456789")
-* Select the inverter source type and go from there inputing the credentials or your given device. 
-* If additionally using a Shelly EM/EM Pro for grid monitoring, then select the grid source drop-down to select the desired Shelly variant and enter the additional Shelly credententials
+* Select the inverter source type and go from there inputing the credentials for your given device. 
+* If additionally using a Shelly EM/EM Pro for grid monitoring, then select the grid source drop-down to select the desired Shelly variant and enter the additional Shelly credentials
 * Once you select the data sources, various fields will be shown that need to be populated with the related credentials.
 * When ready to save, click the "Apply" button
 * To get back to the dashboard, click the "Show Dashboard" button or separately browse to http://localhost:8090 or http://[IP of computer]:8090
