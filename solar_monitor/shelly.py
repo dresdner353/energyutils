@@ -99,15 +99,15 @@ def get_shelly_api_usage_data(
     # grid consumption
 
     # Shell EM/pro can be used as inverter or grid source
-    if (config['data_source'] in ['shelly-em', 'shelly-pro'] or 
-        config['grid_source'] in ['shelly-em', 'shelly-pro']):
+    if (config['data_source'] == 'shelly-em' or 
+        config['grid_source'] == 'shelly-em'):
         # single device, 2 channels
         # grid is channel 0
         params['id'] = config['shelly']['device_id']
         params['channel'] = 0
 
     # 3EM-Pro is only as an inverter (data_source)
-    if config['data_source'] in ['shelly-3em-pro']:
+    if config['data_source'] == 'shelly-3em-pro':
         # dual devices, 1 channel each
         # grid is device 1, channel 0
         params['id'] = config['shelly']['device_id']
@@ -148,15 +148,15 @@ def get_shelly_api_usage_data(
     # solar production
 
     # Shell EM/pro can be used as inverter or grid source
-    if (config['data_source'] in ['shelly-em', 'shelly-pro'] or 
-        config['grid_source'] in ['shelly-em', 'shelly-pro']):
+    if (config['data_source'] == 'shelly-em' or 
+        config['grid_source'] == 'shelly-em'):
         # single device, 2 channels
         # solar is channel 1
         params['id'] = config['shelly']['device_id']
         params['channel'] = 1
 
     # 3EM-Pro is only as an inverter (data_source)
-    if config['data_source'] in ['shelly-3em-pro']:
+    if config['data_source'] == 'shelly-3em-pro':
         # dual devices, 1 channel each
         # solar is device 2, channel 0
         params['id'] = config['shelly']['device_id_pv']
@@ -518,13 +518,13 @@ def get_cloud_live_data(config):
     request['select'] = ['status']
 
     # variants
-    if config['data_source'] in ['shelly-em', 'shelly-pro']:
+    if config['data_source'] == 'shelly-em':
         # 1-phase inverter function single device
         request['ids'].append(config['shelly']['device_id'])
-    elif config['grid_source'] in ['shelly-em', 'shelly-pro']:
-        # live only
+    elif config['grid_source'] == 'shelly-em':
+        # 1-phase live only
         request['ids'].append(config['shelly']['device_id'])
-    elif config['data_source'] in ['shelly-3em-pro']:
+    elif config['data_source'] == 'shelly-3em-pro':
         # 3-phase inverter 2 devices
         request['ids'].append(config['shelly']['device_id'])
         request['ids'].append(config['shelly']['device_id_pv'])
@@ -563,11 +563,11 @@ def get_cloud_live_data(config):
         return 
 
     # variants
-    if config['data_source'] in ['shelly-em', 'shelly-pro']:
+    if config['data_source'] == 'shelly-em':
         # single device, two em1 channels
         grid = resp_dict[0]['status']['em1:0']['act_power'] / 1000
         solar = resp_dict[0]['status']['em1:1']['act_power'] / 1000
-    elif config['grid_source'] in ['shelly-em', 'shelly-pro']:
+    elif config['grid_source'] == 'shelly-em':
         # single device, two em1 channels
         grid = resp_dict[0]['status']['em1:0']['act_power'] / 1000
         solar = resp_dict[0]['status']['em1:1']['act_power'] / 1000

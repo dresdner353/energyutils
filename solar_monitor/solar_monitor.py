@@ -366,7 +366,7 @@ def monitor_agent():
         if gv_config_dict['data_source'] == 'solis':
             gv_data_dict, sleep_interval = solis.get_data(gv_config_dict)
 
-        elif gv_config_dict['data_source'] in ['shelly-em', 'shelly-pro', 'shelly-3em-pro']:
+        elif gv_config_dict['data_source'] in ['shelly-em', 'shelly-3em-pro']:
             gv_data_dict, sleep_interval = shelly.get_data(gv_config_dict)
 
         else:
@@ -379,7 +379,7 @@ def monitor_agent():
         if (gv_config_dict['grid_source'] and 
             gv_config_dict['grid_source'] != gv_config_dict['data_source']):
 
-            if gv_config_dict['grid_source'] in ['shelly-em', 'shelly-pro']:
+            if gv_config_dict['grid_source'] in ['shelly-em']:
                 gv_grid_dict, grid_sleep_interval = shelly.get_data(gv_config_dict)
                 merge_grid_data()
 
