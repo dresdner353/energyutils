@@ -50,15 +50,9 @@
                 $('#shelly_auth_key').val(config_dict['shelly']['auth_key']);
 
                 $('#shelly_device_id').val(config_dict['shelly']['device_id']);
-                $('#shelly_device_host').val(config_dict['shelly']['device_host']);
-                $('#shelly_device_username').val(config_dict['shelly']['device_username']);
-                $('#shelly_device_password').val(config_dict['shelly']['device_password']);
                 $('#shelly_pv_kwh_discard').val(config_dict['shelly']['pv_kwh_discard']);
 
                 $('#shelly_device_id_pv').val(config_dict['shelly']['device_id_pv']);
-                $('#shelly_device_host_pv').val(config_dict['shelly']['device_host_pv']);
-                $('#shelly_device_username_pv').val(config_dict['shelly']['device_username_pv']);
-                $('#shelly_device_password_pv').val(config_dict['shelly']['device_password_pv']);
             }
 
             if ('solis' in config_dict){
@@ -171,15 +165,9 @@
                 config_dict['shelly']['auth_key'] = $('#shelly_auth_key').val();
 
                 config_dict['shelly']['device_id'] = $('#shelly_device_id').val();
-                config_dict['shelly']['device_host'] = $('#shelly_device_host').val();
-                config_dict['shelly']['device_username'] = $('#shelly_device_username').val();
-                config_dict['shelly']['device_password'] = $('#shelly_device_password').val();
                 config_dict['shelly']['pv_kwh_discard'] = Number($('#shelly_pv_kwh_discard').val());
 
                 config_dict['shelly']['device_id_pv'] = $('#shelly_device_id_pv').val();
-                config_dict['shelly']['device_host_pv'] = $('#shelly_device_host_pv').val();
-                config_dict['shelly']['device_username_pv'] = $('#shelly_device_username_pv').val();
-                config_dict['shelly']['device_password_pv'] = $('#shelly_device_password_pv').val();
             }
 
             if (config_dict['data_source'] == 'solis') {
@@ -335,54 +323,21 @@
                                             <input class="form-control" id="shelly_device_id" placeholder="xxxxxxxx">
                                             <label for="shelly_device_id">Shelly Device ID</label>
                                         </div>
-
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control" id="shelly_device_username" placeholder="username">
-                                            <label for="shelly_device_username">Shelly Device Username</label>
-                                        </div>
-
                                     </div>
 
-                                    <div class="col">
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control" id="shelly_device_host" placeholder="x.x.x.xl">
-                                            <label for="shelly_device_host">Shelly Device IP</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <input type="password" class="form-control" id="shelly_device_password" placeholder="password">
-                                            <label for="shelly_device_password">Shelly Device Password</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col">
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control" id="shelly_pv_kwh_discard" placeholder="0.00n">
-                                            <label for="shelly_pv_kwh_discard">PV kWh Discard</label>
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div id="shelly_config_3em2" class="row">
-                                    <div class="col">
+                                    <div id="shelly_config_3em2" class="col">
                                         <div class="form-floating mb-3">
                                             <input class="form-control" id="shelly_device_id_pv" placeholder="xxxxxxxx">
                                             <label for="shelly_device_id_pv">Shelly PV Device ID</label>
                                         </div>
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control" id="shelly_device_username_pv" placeholder="username">
-                                            <label for="shelly_device_username_pv">Shelly PV Device Username</label>
-                                        </div>
                                     </div>
 
+                                </div>
+                                <div class="row">
                                     <div class="col">
-
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" id="shelly_device_host_pv" placeholder="x.x.x.x">
-                                            <label for="shelly_device_host_pv">Shelly PV Device IP</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <input type="password" class="form-control" id="shelly_device_password_pv" placeholder="password">
-                                            <label for="shelly_device_password_pv">Shelly PV Device Password</label>
+                                            <input class="form-control" id="shelly_pv_kwh_discard" placeholder="0.00n">
+                                            <label for="shelly_pv_kwh_discard">PV kWh Discard</label>
                                         </div>
                                     </div>
                                 </div>
