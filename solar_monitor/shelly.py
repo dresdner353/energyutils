@@ -680,5 +680,7 @@ def get_data(config):
             )
 
     # return dep copy of data
-    # and a fixed 10-sec refresh
-    return copy.deepcopy(gv_shelly_dict), 10
+    # and a fixed 5-sec refresh
+    # live data updates are every 10 but we need to nudge it 
+    # easlier to allow thew time_slot sleep to align
+    return copy.deepcopy(gv_shelly_dict), 5
