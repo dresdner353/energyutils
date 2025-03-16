@@ -32,9 +32,7 @@ gv_root = '%s' % (
 # tracked inverter API data
 gv_data_dict = {}
 gv_data_dict['last_updated'] = 0
-
-# alternative grid data (for merging with inverter)
-gv_grid_dict = {}
+gv_metrics_dict = {}
 
 gv_refresh_interval = 1
 
@@ -199,7 +197,9 @@ def config_agent():
         time.sleep(10)
 
 
-def merge_grid_data():
+def merge_grid_data(
+        inverter_dict, 
+        grid_dict):
     """
     Merges live and historic import/export data from the grid monitoring into the main data dict. 
 
@@ -207,12 +207,10 @@ def merge_grid_data():
     inverter. Typically used when the inverter is a string model that cannot monitor 
     grid import and export
     """
-    global gv_data_dict
-    global gv_grid_dict
     global gv_config_dict
 
     # live data direct overwrite
-    gv_data_dict['live'] = gv_grid_dict['live']
+    inverter_dict['live'] = grid_dict['live']
 
     # cull lengths
     # number of hours, days and montths may 
@@ -227,23 +225,23 @@ def merge_grid_data():
     for record_type in ['day', 'month', 'year']:
 
         # move list into dict by key field
-        inverter_dict = {}
-        for rec in gv_data_dict[record_type]:
-            inverter_dict[rec['key']] = rec
+        rec_dict = {}
+        for rec in inverter_dict[record_type]:
+            rec_dict[rec['key']] = rec
 
         # merge pass from grid dict
-        for grid_rec in gv_grid_dict[record_type]:
+        for grid_rec in grid_dict[record_type]:
             key = grid_rec['key']
 
             # insert the missing inverter rec from a 
             # copy of the grid rec
-            if not key in inverter_dict:
-                inverter_dict[key] = copy.deepcopy(grid_rec)
-                inverter_dict[key]['key'] = key
-                inverter_dict[key]['solar'] = 0
+            if not key in rec_dict:
+                rec_dict[key] = copy.deepcopy(grid_rec)
+                rec_dict[key]['key'] = key
+                rec_dict[key]['solar'] = 0
 
             # get reference target record
-            inverter_rec = inverter_dict[key]
+            inverter_rec = rec_dict[key]
 
             # direct over-rides from grid
             inverter_rec['import'] = grid_rec['import']
@@ -257,76 +255,74 @@ def merge_grid_data():
         # reconstruct to list
         # and cull accordingly to the last N records
         rec_list = []
-        for key in sorted(inverter_dict.keys())[-record_cull_dict[record_type]:]:
-            rec_list.append(inverter_dict[key])
-        gv_data_dict[record_type] = rec_list
+        for key in sorted(rec_dict.keys())[-record_cull_dict[record_type]:]:
+            rec_list.append(rec_dict[key])
+        inverter_dict[record_type] = rec_list
 
     # align timestamps (selecting the latest of each)
-    gv_data_dict['day_last_updated'] = max(gv_data_dict['day_last_updated'], 
-                                           gv_grid_dict['day_last_updated'])
-    gv_data_dict['month_last_updated'] = max(gv_data_dict['month_last_updated'], 
-                                             gv_grid_dict['month_last_updated'])
-    gv_data_dict['year_last_updated'] = max(gv_data_dict['year_last_updated'],
-                                            gv_grid_dict['year_last_updated'])
+    inverter_dict['day_last_updated'] = max(inverter_dict['day_last_updated'], 
+                                           grid_dict['day_last_updated'])
+    inverter_dict['month_last_updated'] = max(inverter_dict['month_last_updated'], 
+                                             grid_dict['month_last_updated'])
+    inverter_dict['year_last_updated'] = max(inverter_dict['year_last_updated'],
+                                            grid_dict['year_last_updated'])
 
     return
 
 
-def set_metrics():
+def set_metrics(inverter_dict):
     """
     Sets metrics for today, yesterday, month, etc
     """
-    global gv_data_dict
-
-    gv_data_dict['metrics'] = {}
+    global gv_metrics_dict
 
     # move live record into the metrics section
-    if 'live' in gv_data_dict:
+    if 'live' in inverter_dict:
         # move live record into the metrics section
-        gv_data_dict['metrics']['live'] = gv_data_dict['live']
-        del gv_data_dict['live']
+        gv_metrics_dict['live'] = inverter_dict['live']
+        del inverter_dict['live']
 
     # month and year metrics
     # will not be present unless if cloud API calls
-    # have not baan made or failed
-    if (not 'month' in gv_data_dict or 
-        not 'year' in gv_data_dict):
+    # have not been made or failed
+    if (not 'month' in inverter_dict or 
+        not 'year' in inverter_dict):
         return
 
-    if len(gv_data_dict['month']) >= 1:
-        gv_data_dict['metrics']['today'] = gv_data_dict['month'][-1]
-        gv_data_dict['metrics']['today']['title'] = 'Today (%s %d %s)' % (
-                gv_data_dict['metrics']['today']['month'], 
-                gv_data_dict['metrics']['today']['day'], 
-                gv_data_dict['metrics']['today']['year'])
+    if len(inverter_dict['month']) >= 1:
+        gv_metrics_dict['today'] = inverter_dict['month'][-1]
+        gv_metrics_dict['today']['title'] = 'Today (%s %d %s)' % (
+                gv_metrics_dict['today']['month'], 
+                gv_metrics_dict['today']['day'], 
+                gv_metrics_dict['today']['year'])
 
     # one more day for yesterday if we have it
-    if len(gv_data_dict['month']) >= 2:
-        gv_data_dict['metrics']['yesterday'] = gv_data_dict['month'][-2]
-        gv_data_dict['metrics']['yesterday']['title'] = 'Yesterday (%s %d %s)' % (
-                gv_data_dict['metrics']['yesterday']['month'], 
-                gv_data_dict['metrics']['yesterday']['day'], 
-                gv_data_dict['metrics']['yesterday']['year'])
+    if len(inverter_dict['month']) >= 2:
+        gv_metrics_dict['yesterday'] = inverter_dict['month'][-2]
+        gv_metrics_dict['yesterday']['title'] = 'Yesterday (%s %d %s)' % (
+                gv_metrics_dict['yesterday']['month'], 
+                gv_metrics_dict['yesterday']['day'], 
+                gv_metrics_dict['yesterday']['year'])
 
     # take months totals from last recorded month in year
-    if len(gv_data_dict['year']) >= 1:
-        gv_data_dict['metrics']['this_month'] = gv_data_dict['year'][-1]
-        gv_data_dict['metrics']['this_month']['title'] = 'This Month (%s %s)' % (
-                gv_data_dict['metrics']['this_month']['month'], 
-                gv_data_dict['metrics']['this_month']['year'])
+    if len(inverter_dict['year']) >= 1:
+        gv_metrics_dict['this_month'] = inverter_dict['year'][-1]
+        gv_metrics_dict['this_month']['title'] = 'This Month (%s %s)' % (
+                gv_metrics_dict['this_month']['month'], 
+                gv_metrics_dict['this_month']['year'])
 
-    if len(gv_data_dict['year']) >= 2:
-        gv_data_dict['metrics']['last_month'] = gv_data_dict['year'][-2]
-        gv_data_dict['metrics']['last_month']['title'] = 'Last Month (%s %s)' % (
-                gv_data_dict['metrics']['last_month']['month'], 
-                gv_data_dict['metrics']['last_month']['year'])
+    if len(inverter_dict['year']) >= 2:
+        gv_metrics_dict['last_month'] = inverter_dict['year'][-2]
+        gv_metrics_dict['last_month']['title'] = 'Last Month (%s %s)' % (
+                gv_metrics_dict['last_month']['month'], 
+                gv_metrics_dict['last_month']['year'])
 
     # last N months 
-    if len(gv_data_dict['year']) >= 1:
-        gv_data_dict['metrics']['last_12_months'] = {}
-        gv_data_dict['metrics']['last_12_months']['title'] = 'Last %d Months' % (len(gv_data_dict['year']))
+    if len(inverter_dict['year']) >= 1:
+        gv_metrics_dict['last_12_months'] = {}
+        gv_metrics_dict['last_12_months']['title'] = 'Last %d Months' % (len(inverter_dict['year']))
 
-        for month_rec in gv_data_dict['year']:
+        for month_rec in inverter_dict['year']:
             for field in month_rec:
 
                 # skip non-numeric fields
@@ -334,11 +330,12 @@ def set_metrics():
                     continue
 
                 # instatiate if not exists
-                if not field in gv_data_dict['metrics']['last_12_months']:
-                    gv_data_dict['metrics']['last_12_months'][field] = 0
+                if not field in gv_metrics_dict['last_12_months']:
+                    gv_metrics_dict['last_12_months'][field] = 0
 
                 # aggregate value
-                gv_data_dict['metrics']['last_12_months'][field] += month_rec[field]
+                gv_metrics_dict['last_12_months'][field] += month_rec[field]
+
     return
 
 
@@ -354,7 +351,6 @@ def monitor_agent():
     """
 
     global gv_data_dict
-    global gv_grid_dict
     global gv_config_dict
     global gv_force_refresh
     global gv_dev_mode
@@ -372,10 +368,10 @@ def monitor_agent():
     while True:
         # inverter source
         if gv_config_dict['data_source'] == 'solis':
-            gv_data_dict, sleep_interval = solis.get_data(gv_config_dict)
+            inverter_dict, sleep_interval = solis.get_data(gv_config_dict)
 
         elif gv_config_dict['data_source'] in ['shelly-em', 'shelly-3em-pro']:
-            gv_data_dict, sleep_interval = shelly.get_data(gv_config_dict)
+            inverter_dict, sleep_interval = shelly.get_data(gv_config_dict)
 
         else:
             utils.log_message(
@@ -388,11 +384,14 @@ def monitor_agent():
             gv_config_dict['grid_source'] != gv_config_dict['data_source']):
 
             if gv_config_dict['grid_source'] in ['shelly-em']:
-                gv_grid_dict, grid_sleep_interval = shelly.get_data(gv_config_dict)
-                merge_grid_data()
+                grid_dict, grid_sleep_interval = shelly.get_data(gv_config_dict)
+                merge_grid_data(inverter_dict, grid_dict)
 
         # set metrics
-        set_metrics()
+        set_metrics(inverter_dict)
+
+        # publish data after all adjustments
+        gv_data_dict = inverter_dict
 
         # optional grid sleep interval over-ride
         if grid_sleep_interval:
@@ -519,6 +518,7 @@ class data_handler(object):
 
     def index(self):
         global gv_data_dict
+        global gv_metrics_dict
         global gv_config_dict
         global gv_refresh_interval
         global gv_force_refresh
@@ -554,6 +554,10 @@ class data_handler(object):
         # dev mode override for metric cycle
         if (gv_dev_mode and gv_force_metric_cycle):
             gv_data_dict['dashboard']['cycle_interval'] = gv_force_metric_cycle 
+
+        # merge in metrics
+        if len(gv_metrics_dict) > 0:
+            gv_data_dict['metrics'] = gv_metrics_dict 
 
         return json.dumps(gv_data_dict, indent = 4)
 
