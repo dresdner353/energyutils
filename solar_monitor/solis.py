@@ -14,6 +14,9 @@ import utils
 # tracked device and API data
 gv_solis_dict = {}
 gv_solis_dict['last_updated'] = 0
+gv_solis_dict['day_last_updated'] = 0
+gv_solis_dict['month_last_updated'] = 0
+gv_solis_dict['year_last_updated'] = 0
 
 # day, month and year records
 gv_solis_dict['day'] = []
@@ -315,6 +318,7 @@ def get_inverter_day_data(config):
 
     latest_snap_rec = solis_snap_list[-1]
     gv_solis_dict['last_updated'] = int(latest_snap_rec['dataTimestamp']) // 1000
+    gv_solis_dict['day_last_updated'] = int(time.time())
 
     solar = latest_snap_rec['pac'] / 1000
     grid = latest_snap_rec['pSum'] / 1000 
@@ -480,6 +484,7 @@ def get_inverter_month_data(config):
         month_data.append(culled_dict[key])
 
     gv_solis_dict['month'] = month_data
+    gv_solis_dict['month_last_updated'] = int(time.time())
 
     # get month data 20 seconds after the day update
     # ensures the "today" record updates quickly
@@ -584,6 +589,7 @@ def get_inverter_year_data(config):
         year_data.append(culled_dict[key])
 
     gv_solis_dict['year'] = year_data
+    gv_solis_dict['year_last_updated'] = int(time.time())
 
     # new refresh time
     # 15 mins from now
