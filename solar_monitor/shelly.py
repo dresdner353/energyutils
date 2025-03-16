@@ -15,6 +15,9 @@ import utils
 # tracked device and API data
 gv_shelly_dict = {}
 gv_shelly_dict['last_updated'] = 0
+gv_shelly_dict['day_last_updated'] = 0
+gv_shelly_dict['month_last_updated'] = 0
+gv_shelly_dict['year_last_updated'] = 0
 
 # day, month and year records
 gv_shelly_dict['day'] = []
@@ -388,6 +391,7 @@ def get_cloud_usage_data(config):
                 day_data_list.append(day_data[key])
 
             gv_shelly_dict['day'] = day_data_list[-36:]
+            gv_shelly_dict['day_last_updated'] = int(time.time())
     
     if now >= month_ts:
         # last 30 days
@@ -434,6 +438,7 @@ def get_cloud_usage_data(config):
                 month_data_list.append(month_data[key])
 
             gv_shelly_dict['month'] = month_data_list[-30:]
+            gv_shelly_dict['month_last_updated'] = int(time.time())
 
     if now >= year_ts:
         # last several months or so
@@ -478,6 +483,7 @@ def get_cloud_usage_data(config):
                 year_data_list.append(year_data[key])
 
             gv_shelly_dict['year'] = year_data_list[-12:]
+            gv_shelly_dict['year_last_updated'] = int(time.time())
 
     return
 
