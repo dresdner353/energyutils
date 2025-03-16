@@ -261,6 +261,14 @@ def merge_grid_data():
             rec_list.append(inverter_dict[key])
         gv_data_dict[record_type] = rec_list
 
+    # align timestamps (selecting the latest of each)
+    gv_data_dict['day_last_updated'] = max(gv_data_dict['day_last_updated'], 
+                                           gv_grid_dict['day_last_updated'])
+    gv_data_dict['month_last_updated'] = max(gv_data_dict['month_last_updated'], 
+                                             gv_grid_dict['month_last_updated'])
+    gv_data_dict['year_last_updated'] = max(gv_data_dict['year_last_updated'],
+                                            gv_grid_dict['year_last_updated'])
+
     return
 
 
