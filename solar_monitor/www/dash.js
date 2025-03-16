@@ -552,14 +552,6 @@ var first_refresh = 1;
 function refresh_data() {
     console.log("refresh_data()");
 
-    $.ajaxSetup(
-                {
-                    headers: {
-                        'X-screen-width': window.innerWidth,
-                        'X-screen-height': window.innerHeight,
-                    }
-                });
-
     // get the latest data
     var data_request = $.get('/data');
 
@@ -617,21 +609,17 @@ function refresh_data() {
                 console.log('new metric cycle interval:' + metric_cycle_interval);
             }
         }
-        display_data();
     });
 }
 
 // metric series rotation globals
 var agg_metric_index = -1; // init only
-var agg_metric_key = '';
+var agg_metric_key = 'live';
 
 // rotates the current metric index as 
 // part of the timed cycling
 function cycle_metric_index() {
     console.log("cycle_metric_index()");
-
-    // always default to live
-    agg_metric_key = "live";
 
     if ('metrics' in data_dict) {
         metric_list = Object.keys(data_dict.metrics);
@@ -646,6 +634,11 @@ function cycle_metric_index() {
         }
 
     }
+    else {
+        console.log("No metrics in data dict");
+        console.log(data_dict);
+    }
+
     display_data();
 }                                               
 
@@ -689,6 +682,8 @@ function display_data() {
         $("#dashboard").show();
     }
     else {
+        $("#splash").show();
+        $("#dashboard").hide();
         // display message based on configured state
         if (data_dict['configured'] == false) {
             $("#splash_text").html('Please click setup icon above to continue');
