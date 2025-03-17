@@ -679,11 +679,8 @@ function display_data() {
         'metrics' in data_dict && 
         data_dict.last_updated > 0) {
         $("#splash").hide();
-        $("#dashboard").show();
     }
     else {
-        $("#splash").show();
-        $("#dashboard").hide();
         // display message based on configured state
         if (data_dict['configured'] == false) {
             $("#splash_text").html('Please click setup icon above to continue');
@@ -876,6 +873,10 @@ function display_data() {
         $("#agg_trees_unit").removeClass().addClass("metric-unit metric-grey");
     }
 
+    // show the dashboard
+    $("#dashboard").show();
+
+    // onto charts
     render_charts();
 }
 
