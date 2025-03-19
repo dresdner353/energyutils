@@ -258,18 +258,14 @@ def get_shelly_api_usage_data(
             # store in dict
             data_dict[key] = usage_rec
 
-        # skip any further processing if missing data
-        # but mark missing for the purge at the end
-        if ('missing' in shelly_rec and 
-            shelly_rec['missing']):
+        # mark missing for the possible purge at the end
+        if 'missing' in shelly_rec:
             usage_rec['missing'] = True
-            continue
-
-        # add on usage for given time period
-        # works with repeat hours in DST rollback
-        usage_rec['import'] += shelly_rec['consumption'] / 1000
-        usage_rec['export'] += shelly_rec['reversed'] / 1000
-
+        else:
+            # add on usage for given time period
+            # works with repeat hours in DST rollback
+            usage_rec['import'] += shelly_rec['consumption'] / 1000
+            usage_rec['export'] += shelly_rec['reversed'] / 1000
 
     # merge in solar production
     for shelly_rec in solar_resp_dict[res_list]:
@@ -291,14 +287,11 @@ def get_shelly_api_usage_data(
         # works with repeat hours in DST rollback
         usage_rec = data_dict[key]
 
-        # skip further processing if missing
-        # data
-        if ('missing' in shelly_rec and 
-            shelly_rec['missing']):
-            continue
-
-        # solar
-        solar = shelly_rec['consumption'] / 1000
+        # zero solar if missing
+        if 'missing' in shelly_rec:
+            solar = 0
+        else:
+            solar = shelly_rec['consumption'] / 1000
 
         # solar discard
         # allows for a kwh amount per hour to be thrown away to
@@ -335,7 +328,6 @@ def get_shelly_api_usage_data(
     # the data set. This is mostly observed in day data 
     # where the last N hours are missing because they have not 
     # been reached yet. 
-    # So this is a 
     key_list = list(data_dict.keys())
     key_list.sort(reverse = True)
 
@@ -346,6 +338,12 @@ def get_shelly_api_usage_data(
             del data_dict[key]
         else:
             break
+
+    # finally purge all 'missing' indicators 
+    # from remaining records
+    for key in list(data_dict.keys()):
+        if 'missing' in data_dict[key]:
+            del data_dict[key]['missing']
 
     return data_dict
 
@@ -654,11 +652,17 @@ def get_cloud_live_data(config):
         solar = 12.02
 
     # update live data
-    # timestamp taken from status record from Shelly API (when they last updated)
-    gv_shelly_dict['last_updated'] = int(resp_dict[0]['status']['ts'])
+    # timestamp taken from status record from Shelly API 
+    # (when they last updated) may not always be present
     now = int(time.time())
+    if 'ts' in resp_dict[0]['status']:
+        gv_shelly_dict['last_updated'] = int(resp_dict[0]['status']['ts'])
+    else:
+        gv_shelly_dict['last_updated'] = now
+
+    # generate a delayed mesage for gaps over 2 mins
     message = ''
-    if now - gv_shelly_dict['last_updated'] >= 60:
+    if now - gv_shelly_dict['last_updated'] >= 120:
         message = ' (delayed)'
 
     live_rec = gv_shelly_dict['live']
