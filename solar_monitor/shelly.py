@@ -87,7 +87,9 @@ def get_shelly_api_usage_data(
         return None
 
     # API URL and params
-    shelly_cloud_url = 'https://%s/v2/statistics/power-consumption/em-1p' % (
+    shelly_cloud_1p_url = 'https://%s/v2/statistics/power-consumption/em-1p' % (
+            config['shelly']['api_host'])
+    shelly_cloud_3p_url = 'https://%s/v2/statistics/power-consumption/em-3p' % (
             config['shelly']['api_host'])
     params = {}
     params['auth_key'] = config['shelly']['auth_key']
@@ -107,6 +109,7 @@ def get_shelly_api_usage_data(
         config['grid_source'] == 'shelly-em'):
         # single device, 2 channels
         # grid is channel 0
+        shelly_cloud_url = shelly_cloud_1p_url
         params['id'] = config['shelly']['device_id']
         params['channel'] = 0
 
@@ -114,6 +117,7 @@ def get_shelly_api_usage_data(
     if config['data_source'] == 'shelly-3em-pro':
         # dual devices, 1 channel each
         # grid is device 1, channel 0
+        shelly_cloud_url = shelly_cloud_3p_url
         params['id'] = config['shelly']['device_id']
         params['channel'] = 0
 
@@ -156,6 +160,7 @@ def get_shelly_api_usage_data(
         config['grid_source'] == 'shelly-em'):
         # single device, 2 channels
         # solar is channel 1
+        shelly_cloud_url = shelly_cloud_1p_url
         params['id'] = config['shelly']['device_id']
         params['channel'] = 1
 
@@ -163,6 +168,7 @@ def get_shelly_api_usage_data(
     if config['data_source'] == 'shelly-3em-pro':
         # dual devices, 1 channel each
         # solar is device 2, channel 0
+        shelly_cloud_url = shelly_cloud_3p_url
         params['id'] = config['shelly']['device_id_pv']
         params['channel'] = 0
 
@@ -199,8 +205,15 @@ def get_shelly_api_usage_data(
             )
 
     # populate consumption records
+
+    # for 1ph, results in 'history' list
+    # for 3ph, results in 'sum' list
+    res_list = 'history'
+    if config['data_source'] == 'shelly-3em-pro':
+        res_list = 'sum'
+
     data_dict = {}
-    for shelly_rec in grid_resp_dict['history']:
+    for shelly_rec in grid_resp_dict[res_list]:
         # skip any missing records
         # and note partial data scenario
         if ('missing' in shelly_rec and 
@@ -251,7 +264,7 @@ def get_shelly_api_usage_data(
 
 
     # merge in solar production
-    for shelly_rec in solar_resp_dict['history']:
+    for shelly_rec in solar_resp_dict[res_list]:
         # skip any missing records
         # and note partial data scenario
         if ('missing' in shelly_rec and 
