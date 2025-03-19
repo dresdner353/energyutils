@@ -607,9 +607,10 @@ def get_cloud_live_data(config):
         grid = resp_dict[0]['status']['em1:0']['act_power'] / 1000
         solar = resp_dict[0]['status']['em1:1']['act_power'] / 1000
     elif config['data_source'] in ['shelly-3em-pro']:
-        # two devices, single em1 channel each
-        grid = resp_dict[0]['status']['em1:0']['act_power'] / 1000
-        solar = resp_dict[1]['status']['em1:0']['act_power'] / 1000
+        # two devices, single em channel each
+        # total_act_power is the sum of all 3ph readings
+        grid = resp_dict[0]['status']['em:0']['total_act_power'] / 1000
+        solar = resp_dict[1]['status']['em:0']['total_act_power'] / 1000
     else:
         # Apollo alarms
         grid = 12.01 
