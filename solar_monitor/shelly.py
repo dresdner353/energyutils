@@ -87,6 +87,8 @@ def get_shelly_api_usage_data(
         return None
 
     # API URL and params
+    # two URL variants for 1ph and 3ph
+    # device-specific code will select the right one
     shelly_cloud_1p_url = 'https://%s/v2/statistics/power-consumption/em-1p' % (
             config['shelly']['api_host'])
     shelly_cloud_3p_url = 'https://%s/v2/statistics/power-consumption/em-3p' % (
@@ -105,6 +107,7 @@ def get_shelly_api_usage_data(
     # grid consumption
 
     # Shell EM/pro can be used as inverter or grid source
+    # 1ph variant
     if (config['data_source'] == 'shelly-em' or 
         config['grid_source'] == 'shelly-em'):
         # single device, 2 channels
@@ -114,9 +117,10 @@ def get_shelly_api_usage_data(
         params['channel'] = 0
 
     # 3EM-Pro is only as an inverter (data_source)
+    # 3ph variant
     if config['data_source'] == 'shelly-3em-pro':
         # dual devices, 1 channel each
-        # grid is device 1, channel 0
+        # grid is device_id, channel 0
         shelly_cloud_url = shelly_cloud_3p_url
         params['id'] = config['shelly']['device_id']
         params['channel'] = 0
@@ -156,6 +160,7 @@ def get_shelly_api_usage_data(
     # solar production
 
     # Shell EM/pro can be used as inverter or grid source
+    # 1ph variant
     if (config['data_source'] == 'shelly-em' or 
         config['grid_source'] == 'shelly-em'):
         # single device, 2 channels
@@ -165,9 +170,10 @@ def get_shelly_api_usage_data(
         params['channel'] = 1
 
     # 3EM-Pro is only as an inverter (data_source)
+    # 3ph variant
     if config['data_source'] == 'shelly-3em-pro':
         # dual devices, 1 channel each
-        # solar is device 2, channel 0
+        # solar is device_id_pv, channel 0
         shelly_cloud_url = shelly_cloud_3p_url
         params['id'] = config['shelly']['device_id_pv']
         params['channel'] = 0
@@ -207,19 +213,14 @@ def get_shelly_api_usage_data(
     # populate consumption records
 
     # for 1ph, results in 'history' list
-    # for 3ph, results in 'sum' list
+    # for 3ph, results in 'sum' list as 'history' list
+    # 'sum' list is the total of all 3 phases
     res_list = 'history'
     if config['data_source'] == 'shelly-3em-pro':
         res_list = 'sum'
 
     data_dict = {}
     for shelly_rec in grid_resp_dict[res_list]:
-        # skip any missing records
-        # and note partial data scenario
-        if ('missing' in shelly_rec and 
-            shelly_rec['missing']):
-            continue
-
         # epoch timestamp from shelly API local time 
         ts, ts_dt = parse_time(
                 shelly_rec['datetime'],
@@ -257,6 +258,11 @@ def get_shelly_api_usage_data(
             # store in dict
             data_dict[key] = usage_rec
 
+        # skip any further processing if missing data
+        if ('missing' in shelly_rec and 
+            shelly_rec['missing']):
+            continue
+
         # add on usage for given time period
         # works with repeat hours in DST rollback
         usage_rec['import'] += shelly_rec['consumption'] / 1000
@@ -265,12 +271,6 @@ def get_shelly_api_usage_data(
 
     # merge in solar production
     for shelly_rec in solar_resp_dict[res_list]:
-        # skip any missing records
-        # and note partial data scenario
-        if ('missing' in shelly_rec and 
-            shelly_rec['missing']):
-            continue
-
         # epoch timestamp from shelly API local time 
         ts, ts_dt = parse_time(
                 shelly_rec['datetime'],
@@ -289,13 +289,19 @@ def get_shelly_api_usage_data(
         # works with repeat hours in DST rollback
         usage_rec = data_dict[key]
 
+        # skip further processing if missing
+        # data
+        if ('missing' in shelly_rec and 
+            shelly_rec['missing']):
+            continue
+
         # solar
         solar = shelly_rec['consumption'] / 1000
 
         # solar discard
         # allows for a kwh amount per hour to be thrown away to
         # account for an error on the PV reading
-        # has been observed to be ab out 0.004 kwh per hour
+        # has been observed to be about 0.004 kwh per hour
         solar_kwh_discard = config['shelly']['pv_kwh_discard']
         interval = solar_resp_dict['interval']
         if interval == 'day':
@@ -630,12 +636,18 @@ def get_cloud_live_data(config):
         solar = 12.02
 
     # update live data
-    gv_shelly_dict['last_updated'] = int(time.time())
+    # timestamp taken from status record from Shelly API (when they last updated)
+    gv_shelly_dict['last_updated'] = int(resp_dict[0]['status']['ts'])
+    now = int(time.time())
+    message = ''
+    if now - gv_shelly_dict['last_updated'] >= 30:
+        message = ' (delayed)'
+
     live_rec = gv_shelly_dict['live']
 
     time_str = datetime.datetime.fromtimestamp(
             gv_shelly_dict['last_updated']).strftime('%H:%M:%S')
-    live_rec['title'] = 'Live Usage @%s' % (time_str)
+    live_rec['title'] = 'Live Usage @%s%s' % (time_str, message)
 
     # render into separate values for import and export
     if grid >= 0:
