@@ -658,7 +658,7 @@ def get_cloud_live_data(config):
     gv_shelly_dict['last_updated'] = int(resp_dict[0]['status']['ts'])
     now = int(time.time())
     message = ''
-    if now - gv_shelly_dict['last_updated'] >= 30:
+    if now - gv_shelly_dict['last_updated'] >= 60:
         message = ' (delayed)'
 
     live_rec = gv_shelly_dict['live']
