@@ -259,8 +259,10 @@ def get_shelly_api_usage_data(
             data_dict[key] = usage_rec
 
         # skip any further processing if missing data
+        # but mark missing for the purge at the end
         if ('missing' in shelly_rec and 
             shelly_rec['missing']):
+            usage_rec['missing'] = True
             continue
 
         # add on usage for given time period
@@ -328,6 +330,22 @@ def get_shelly_api_usage_data(
         usage_rec['co2'] = (config['environment']['gco2_kwh'] * usage_rec['solar']) / 1000
         usage_rec['trees'] = config['environment']['trees_kwh'] * usage_rec['solar']
 
+    # Purge latter end of missing items
+    # Shelly API will include missing items at the end of 
+    # the data set. This is mostly observed in day data 
+    # where the last N hours are missing because they have not 
+    # been reached yet. 
+    # So this is a 
+    key_list = list(data_dict.keys())
+    key_list.sort(reverse = True)
+
+    # delete 'missing' records from the end
+    # until we reach the first non-missing record
+    for key in key_list:
+        if 'missing' in data_dict[key]:
+            del data_dict[key]
+        else:
+            break
 
     return data_dict
 
