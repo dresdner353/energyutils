@@ -345,6 +345,13 @@ def get_shelly_api_usage_data(
     # otherwise remove the 'missing' key
     for key in key_list:
         if key >= now_key:
+            utils.log_message(
+                    utils.gv_verbose,
+                    'Purging key:%s (%s)' % (
+                        key, 
+                        interval
+                        )
+                    )
             del data_dict[key]
         else:
             if 'missing' in data_dict[key]:
