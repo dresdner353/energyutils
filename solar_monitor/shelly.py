@@ -331,8 +331,8 @@ def get_shelly_api_usage_data(
     # get list of keys separate from dict (for deletion)
     key_list = list(data_dict.keys())
 
-    # key for current time 300 seconds later than now
-    now  = int(time.time()) + 300
+    # key for current time 
+    now  = int(time.time()) 
     now_dt = datetime.datetime.fromtimestamp(now)
     now_key = '%04d-%02d-%02d-%02d' % (
             now_dt.year,
