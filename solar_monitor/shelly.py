@@ -82,7 +82,7 @@ def get_shelly_api_usage_data(
             ):
         utils.log_message(
                 1,
-                "Cloud API creds are not configured.. skipping"
+                'Cloud API creds are not configured.. skipping'
                 )
         return None
 
@@ -324,26 +324,31 @@ def get_shelly_api_usage_data(
         usage_rec['trees'] = config['environment']['trees_kwh'] * usage_rec['solar']
 
     # Purge latter end of missing items
-    # Shelly API will include missing items at the end of 
-    # the data set. This is mostly observed in day data 
-    # where the last N hours are missing because they have not 
-    # been reached yet. 
-    key_list = list(data_dict.keys())
-    key_list.sort(reverse = True)
+    # Shelly API will include missing items in the data set. 
+    # Most of these can be zeroed out but some are in the future.
+    # Theswe future values get purged
 
-    # delete 'missing' records from the end
-    # until we reach the first non-missing record
+    # get list of keys separate from dict (for deletion)
+    key_list = list(data_dict.keys())
+
+    # key for current time 300 seconds later than now
+    now  = int(time.time()) + 300
+    now_dt = datetime.datetime.fromtimestamp(now)
+    now_key = '%04d-%02d-%02d-%02d' % (
+            now_dt.year,
+            now_dt.month,
+            now_dt.day,
+            now_dt.hour)
+
+    # scan all keys and remove records equal to the 
+    # current hour or later
+    # otherwise remove the 'missing' key
     for key in key_list:
-        if 'missing' in data_dict[key]:
+        if key >= now_key:
             del data_dict[key]
         else:
-            break
-
-    # finally purge all 'missing' indicators 
-    # from remaining records
-    for key in list(data_dict.keys()):
-        if 'missing' in data_dict[key]:
-            del data_dict[key]['missing']
+            if 'missing' in data_dict[key]:
+                del data_dict[key]['missing']
 
     return data_dict
 
@@ -369,20 +374,11 @@ def get_cloud_usage_data(config):
     dt_today = datetime.datetime.today() 
     dt_yesterday = dt_today - datetime.timedelta(days = 1)
 
-    utils.log_message(
-            1,
-            "Checking Shelly Cloud Data for updates.. timestamps: day:%s month:%s year:%s" % (
-                day_ts,
-                month_ts,
-                year_ts
-                )
-            )
-
     if now >= day_ts:
         # last 36 hours
         utils.log_message(
                 1,
-                "Updating Shelly Day Data"
+                'Updating Shelly Day Data'
                 )
 
         dt_36h_ago = dt_today - datetime.timedelta(hours = 36)
@@ -407,18 +403,17 @@ def get_cloud_usage_data(config):
         
         if day_data:
             # reset timestamp
-            # for :10 past next hour
-            day_ts = ((70 - dt_today.minute) * 60) + now
+            # for :05 past next hour
+            day_ts = ((65 - dt_today.minute) * 60) + now
+            gv_shelly_dict['day'] = day_data
 
             utils.log_message(
-                    utils.gv_verbose,
-                    'last 24h API Data\n%s\n' % (
-                        json.dumps(
-                            day_data, 
-                            indent = 4),
+                    1,
+                    'Set next day update to %s (%s)' % (
+                        day_ts,
+                        datetime.datetime.fromtimestamp(day_ts).strftime('%H:%M:%S')
                         )
                     )
-            gv_shelly_dict['day'] = day_data
 
             # reformat to list of records
             day_data_list = []
@@ -432,7 +427,7 @@ def get_cloud_usage_data(config):
         # last 30 days
         utils.log_message(
                 1,
-                "Updating Shelly Month Data"
+                'Updating Shelly Month Data'
                 )
 
         dt_month_start = dt_today - datetime.timedelta(days = 30)
@@ -456,14 +451,14 @@ def get_cloud_usage_data(config):
 
         if month_data:
             # reset timestamp
-            # for :10 past next hour
-            month_ts = ((70 - dt_today.minute) * 60) + now
+            # for :05 past next hour
+            month_ts = ((65 - dt_today.minute) * 60) + now
+
             utils.log_message(
-                    utils.gv_verbose,
-                    'Month API Data\n%s\n' % (
-                        json.dumps(
-                            month_data, 
-                            indent = 4),
+                    1,
+                    'Set next month update to %s (%s)' % (
+                        month_ts,
+                        datetime.datetime.fromtimestamp(month_ts).strftime('%H:%M:%S')
                         )
                     )
 
@@ -481,7 +476,7 @@ def get_cloud_usage_data(config):
         # seems to only work if stretch back 300 days
         utils.log_message(
                 1,
-                "Updating Shelly Year Data"
+                'Updating Shelly Year Data'
                 )
 
         last_year = dt_month_start - datetime.timedelta(days = 300)
@@ -502,16 +497,16 @@ def get_cloud_usage_data(config):
         
         if year_data:
             # reset timestamp
-            # for :10 past next hour
-            year_ts = ((70 - dt_today.minute) * 60) + now
+            # for :05 past next hour
+            year_ts = ((65 - dt_today.minute) * 60) + now
             utils.log_message(
-                    utils.gv_verbose,
-                    'Year API Data\n%s\n' % (
-                        json.dumps(
-                            year_data, 
-                            indent = 4),
+                    1,
+                    'Set next year update to %s (%s)' % (
+                        year_ts,
+                        datetime.datetime.fromtimestamp(year_ts).strftime('%H:%M:%S')
                         )
                     )
+
             # reformat to list of records
             year_data_list = []
             for key in sorted(year_data.keys()):
@@ -544,7 +539,7 @@ def get_cloud_live_data(config):
             ):
         utils.log_message(
                 1,
-                "Cloud API creds are not configured.. skipping"
+                'Cloud API creds are not configured.. skipping'
                 )
         return 
 
@@ -554,7 +549,7 @@ def get_cloud_live_data(config):
     if sleep_period > 0:
         utils.log_message(
                 1,
-                'Sleep %d seconds to align to 10-second boundary for %d' % (
+                'Sleep %ds for 10s boundary :0%d' % (
                     sleep_period,
                     config['shelly']['time_slot'])
                 )
@@ -585,7 +580,7 @@ def get_cloud_live_data(config):
     else:
         utils.log_message(
                 1,
-                "Shelly variant (%s) is not valid.. skipping device call" % (
+                'Shelly variant (%s) is not valid.. skipping device call' % (
                     config['data_source']
                     )
                 )
@@ -697,7 +692,7 @@ def get_cloud_live_data(config):
 
     utils.log_message(
             1,
-            "Shelly Device: import:%f export:%f solar:%f" % (
+            'Live data: import:%.3f export:%.3f solar:%.3f' % (
                 live_rec['import'],
                 live_rec['export'],
                 live_rec['solar'],
