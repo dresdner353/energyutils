@@ -34,6 +34,7 @@ var metric_cycle_timer = setInterval(cycle_metric_index, metric_cycle_interval);
 // and forced layout from query args
 var layout;
 var forced_layout = undefined;
+var forced_margin = undefined;
 
 // document load
 $( document ).ready(function() {
@@ -48,6 +49,7 @@ $( document ).ready(function() {
 
     // try to determine optional forced layout
     forced_layout = get_query_arg("layout");
+    forced_margin = get_query_arg("margin");
 
     set_layout();
     refresh_data();
@@ -305,7 +307,7 @@ function set_layout() {
     // left column has the donut and metrics and right
     // has the three column charts
     large_screen_layout = `
-                <div class="container-fluid" data-bs-theme="dark">
+                <div id="master" class="container-fluid" data-bs-theme="dark">
                     <div class="row">
                         <div class="col col-5 mt-0">
                             <div id="agg_donut_insert" class="row">
@@ -333,7 +335,7 @@ function set_layout() {
     // 5:7 split columns
     // donut on  left, metrics stack on right
     small_screen_layout = `
-                <div class="container-fluid" data-bs-theme="dark">
+                <div id="master" class="container-fluid" data-bs-theme="dark">
                     <div class="row align-items-center">
                         <div id="agg_donut_insert" class="col col-5 mt-2">
                         </div>
@@ -446,6 +448,10 @@ function set_layout() {
     }
 
     console.log("Set layout to " + layout);
+
+    if (forced_margin != undefined) {
+        $("#master").removeClass().addClass(`container-fluid mt-${forced_margin} mb-${forced_margin} mx-${forced_margin}`);
+    }
 
     // reset timestamps on bar charts to force redraw
     day_chart_ts = 0;
