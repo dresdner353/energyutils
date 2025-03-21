@@ -42,7 +42,7 @@ HOME_DIR=~pi
 
 # install packages
 apt-get update
-apt install git python3-requests python3-dateutil python3-cherrypy3
+apt install git unclutter python3-requests python3-dateutil python3-cherrypy3
 
 # download code as tareget user
 su ${USER} -c "bash -c install_solar_monitor"
