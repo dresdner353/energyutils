@@ -3,12 +3,12 @@
 # loop until monitor is detected running
 while true
 do
-    echo "Checking for running Shelly monitor.."
+    echo "Checking for running solar monitor.."
     MON_CHECK=`netstat -nl | grep :8090 | wc -l`
 
     if [ ${MON_CHECK} -eq 1 ]
     then
-        echo "Shelly monitor is up"
+        echo "solar monitor is up"
         break
     fi
 
@@ -36,8 +36,8 @@ flags=(
 )
 
 # launch chrome against the Solarmon dashboard 
-# with layout forced to large
-chromium-browser "${flags[@]}" --app='http://localhost:8090?layout=large' &
+# with layout forced to large and margin of 3 for handling of overscan
+chromium-browser "${flags[@]}" --app='http://localhost:8090?layout=large&margin=3' &
 
 # mouse movement and window foreground
 sleep 10
