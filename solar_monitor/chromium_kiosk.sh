@@ -39,12 +39,9 @@ flags=(
 # with layout forced to large and margin of 3 for handling of overscan
 chromium-browser "${flags[@]}" --app='http://localhost:8090?layout=large&margin=3' &
 
-# mouse movement and window foreground
-#WID=$(xdotool search --onlyvisible --class chromium | head -1)
-#xdotool windowactivate ${WID}
-#xdotool windowfocus ${WID}
+# loop to keep mouse at 0,0
 while true
 do
     sleep 20
-    xdotool mousemove --sync 9000 0
+    xdotool mousemove --sync 0 0
 done
