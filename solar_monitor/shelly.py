@@ -410,8 +410,8 @@ def get_cloud_usage_data(config):
         
         if day_data:
             # reset timestamp
-            # for :05 past next hour
-            day_ts = ((65 - dt_today.minute) * 60) + now
+            # for :10 past next hour (data may not be present otherwise)
+            day_ts = ((70 - dt_today.minute) * 60) + now
             gv_shelly_dict['day'] = day_data
 
             utils.log_message(
@@ -458,8 +458,8 @@ def get_cloud_usage_data(config):
 
         if month_data:
             # reset timestamp
-            # for :05 past next hour
-            month_ts = ((65 - dt_today.minute) * 60) + now
+            # for :10 past next hour (data may not be present otherwise)
+            month_ts = ((70 - dt_today.minute) * 60) + now
 
             utils.log_message(
                     1,
@@ -504,8 +504,8 @@ def get_cloud_usage_data(config):
         
         if year_data:
             # reset timestamp
-            # for :05 past next hour
-            year_ts = ((65 - dt_today.minute) * 60) + now
+            # for :10 past next hour (data may not be present otherwise)
+            year_ts = ((70 - dt_today.minute) * 60) + now
             utils.log_message(
                     1,
                     'Set next year update to %s (%s)' % (
