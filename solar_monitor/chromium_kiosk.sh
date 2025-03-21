@@ -40,8 +40,11 @@ flags=(
 chromium-browser "${flags[@]}" --app='http://localhost:8090?layout=large&margin=3' &
 
 # mouse movement and window foreground
-sleep 10
-WID=$(xdotool search --onlyvisible --class chromium | head -1)
-xdotool windowactivate ${WID}
-xdotool windowfocus ${WID}
-xdotool mousemove --sync 9000 0
+#WID=$(xdotool search --onlyvisible --class chromium | head -1)
+#xdotool windowactivate ${WID}
+#xdotool windowfocus ${WID}
+while true
+do
+    sleep 20
+    xdotool mousemove --sync 9000 0
+done
