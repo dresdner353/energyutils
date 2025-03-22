@@ -22,6 +22,10 @@ echo "Starting Chromium in kiosk mode"
 killall -9 chromium-browser
 export DISPLAY=:0
 
+# disable screen blanking
+xset s 0
+xset -dpms
+
 flags=(
    --kiosk
    --touch-events=enabled
@@ -42,6 +46,6 @@ chromium-browser "${flags[@]}" --app='http://localhost:8090?layout=large&margin=
 # loop to keep mouse at 0,0
 while true
 do
-    sleep 20
     xdotool mousemove --sync 0 0
+    sleep 30
 done
