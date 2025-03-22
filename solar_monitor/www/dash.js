@@ -93,50 +93,38 @@ function set_layout() {
     console.log("set_layout()");
     console.log("Window dims.. w:" + window_width + " h:" + window_height);
 
-    agg_donut_html = ` 
-            <div id="agg_donut_chart" class="card-transparent text-white text-center mt-0">
+    metric_donut_html = ` 
+            <div id="metric_donut_chart" class="card-transparent text-white text-center mt-0">
                 <div class="card-body text-center">
                     <center>
-                        <a href="/admin"><div id="agg_donut_title" class="title"></div></a>
+                        <a href="/admin"><div id="metric_donut_title" class="title"></div></a>
                         <div onclick="ui_cycle_forced_layout()" id="donut_chart"></div>
                     </center>
                 </div>
             </div>
             `;
 
-    agg_metrics_html = `
-                <div onclick="ui_cycle_metric_index()" id="agg_metrics" class="container text-white text-center">
+    metrics_html_tmpl = `
+                <div onclick="ui_cycle_metric_index()" id="<METRICS-ID>" class="container text-white text-center">
+                    <div id="<METRICS-ID>_title" class="row row-cols-1 mt-5">
+                        <div class="col">
+                            <center>
+                                <div onclick="ui_cycle_forced_layout()" id="<METRICS-ID>_titletext" class="title text-white text-center"></div>
+                            </center>
+                        </div>
+                    </div>
                     <div class="row row-cols-2">
-
                         <div class="col">
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
                                     <table border="0" align="center">
                                         <tr>
                                             <td style="vertical-align: middle;">
-                                                <span id="agg_import" style="metric metric-white">0</span>
+                                                <span id="<METRICS-ID>_import" style="metric metric-white">0</span>
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="agg_import_icon" class="material-icons metric">login</div>
-                                                <div id="agg_import_unit" class="metric-unit metric-white">kWh</div>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col">
-                            <div class="card-transparent text-center mt-0">
-                                <div class="card-body">
-                                    <table border="0" align="center">
-                                        <tr>
-                                            <td style="vertical-align: middle;">
-                                                <span id="agg_consumed" style="metric metric-white">0</span>
-                                            </td>
-                                            <td style="vertical-align: middle;" align="center">
-                                                <div id="agg_consumed_icon" class="material-icons metric">home</div>
-                                                <div id="agg_consumed_unit" class="metric-unit metric-white">kWh</div>
+                                                <div id="<METRICS-ID>_import_icon" class="material-icons metric">login</div>
+                                                <div id="<METRICS-ID>_import_unit" class="metric-unit metric-white">kWh</div>
                                             </td>
                                         </tr>
                                     </table>
@@ -150,11 +138,11 @@ function set_layout() {
                                     <table border="0" align="center">
                                         <tr>
                                             <td style="vertical-align: middle;">
-                                                <span id="agg_solar" style="metric metric-white">0</span>
+                                                <span id="<METRICS-ID>_consumed" style="metric metric-white">0</span>
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="agg_solar_icon" class="material-icons metric">solar_power</div>
-                                                <div id="agg_solar_unit" class="metric-unit metric-white">kWh</div>
+                                                <div id="<METRICS-ID>_consumed_icon" class="material-icons metric">home</div>
+                                                <div id="<METRICS-ID>_consumed_unit" class="metric-unit metric-white">kWh</div>
                                             </td>
                                         </tr>
                                     </table>
@@ -168,65 +156,11 @@ function set_layout() {
                                     <table border="0" align="center">
                                         <tr>
                                             <td style="vertical-align: middle;">
-                                                <span id="agg_export" style="metric metric-white">0</span>
+                                                <span id="<METRICS-ID>_solar" style="metric metric-white">0</span>
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="agg_export_icon" class="material-icons metric">logout</div>
-                                                <div id="agg_export_unit" class="metric-unit metric-white">kWh</div>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="agg_battery_charge_col" class="col">
-                            <div class="card-transparent text-center mt-0">
-                                <div class="card-body">
-                                    <table border="0" align="center">
-                                        <tr>
-                                            <td style="vertical-align: middle;">
-                                                <span id="agg_battery_charge" style="metric metric-white">0</span>
-                                            </td>
-                                            <td style="vertical-align: middle;" align="center">
-                                                <div id="agg_battery_charge_icon" class="material-icons metric">battery_charging_full</div>
-                                                <div id="agg_battery_charge_unit" class="metric-unit metric-white">kWh</div>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="agg_battery_discharge_col" class="col">
-                            <div class="card-transparent text-center mt-0">
-                                <div class="card-body">
-                                    <table border="0" align="center">
-                                        <tr>
-                                            <td style="vertical-align: middle;">
-                                                <span id="agg_battery_discharge" style="metric metric-white">0</span>
-                                            </td>
-                                            <td style="vertical-align: middle;" align="center">
-                                                <div id="agg_battery_discharge_icon" class="material-icons metric">battery_4_bar</div>
-                                                <div id="agg_battery_discharge_unit" class="metric-unit metric-white">kWh</div>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="agg_battery_soc_col" class="col">
-                            <div class="card-transparent text-center mt-0">
-                                <div class="card-body">
-                                    <table border="0" align="center">
-                                        <tr>
-                                            <td style="vertical-align: middle;">
-                                                <span id="agg_battery_soc" style="metric metric-white">0</span>
-                                            </td>
-                                            <td style="vertical-align: middle;" align="center">
-                                                <div id="agg_battery_soc_icon" class="material-icons metric"></div>
-                                                <div id="agg_battery_soc_unit" class="metric-unit metric-white">%</div>
+                                                <div id="<METRICS-ID>_solar_icon" class="material-icons metric">solar_power</div>
+                                                <div id="<METRICS-ID>_solar_unit" class="metric-unit metric-white">kWh</div>
                                             </td>
                                         </tr>
                                     </table>
@@ -240,11 +174,65 @@ function set_layout() {
                                     <table border="0" align="center">
                                         <tr>
                                             <td style="vertical-align: middle;">
-                                                <span id="agg_co2" style="metric metric-white">0</span>
+                                                <span id="<METRICS-ID>_export" style="metric metric-white">0</span>
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="agg_co2_icon" class="material-icons metric">co2</div>
-                                                <div id="agg_co2_unit" class="metric-unit metric-white">kg</div>
+                                                <div id="<METRICS-ID>_export_icon" class="material-icons metric">logout</div>
+                                                <div id="<METRICS-ID>_export_unit" class="metric-unit metric-white">kWh</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="<METRICS-ID>_battery_charge_col" class="col">
+                            <div class="card-transparent text-center mt-0">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="<METRICS-ID>_battery_charge" style="metric metric-white">0</span>
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="<METRICS-ID>_battery_charge_icon" class="material-icons metric">battery_charging_full</div>
+                                                <div id="<METRICS-ID>_battery_charge_unit" class="metric-unit metric-white">kWh</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="<METRICS-ID>_battery_discharge_col" class="col">
+                            <div class="card-transparent text-center mt-0">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="<METRICS-ID>_battery_discharge" style="metric metric-white">0</span>
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="<METRICS-ID>_battery_discharge_icon" class="material-icons metric">battery_4_bar</div>
+                                                <div id="<METRICS-ID>_battery_discharge_unit" class="metric-unit metric-white">kWh</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="<METRICS-ID>_battery_soc_col" class="col">
+                            <div class="card-transparent text-center mt-0">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="<METRICS-ID>_battery_soc" style="metric metric-white">0</span>
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="<METRICS-ID>_battery_soc_icon" class="material-icons metric"></div>
+                                                <div id="<METRICS-ID>_battery_soc_unit" class="metric-unit metric-white">%</div>
                                             </td>
                                         </tr>
                                     </table>
@@ -258,10 +246,28 @@ function set_layout() {
                                     <table border="0" align="center">
                                         <tr>
                                             <td style="vertical-align: middle;">
-                                                <span id="agg_trees" style="metric metric-white">0</span>
+                                                <span id="<METRICS-ID>_co2" style="metric metric-white">0</span>
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="agg_trees_icon" class="material-icons metric">forest</div>
+                                                <div id="<METRICS-ID>_co2_icon" class="material-icons metric">co2</div>
+                                                <div id="<METRICS-ID>_co2_unit" class="metric-unit metric-white">kg</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="card-transparent text-center mt-0">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="<METRICS-ID>_trees" style="metric metric-white">0</span>
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="<METRICS-ID>_trees_icon" class="material-icons metric">forest</div>
                                             </td>
                                         </tr>
                                     </table>
@@ -310,13 +316,13 @@ function set_layout() {
                 <div id="master" class="container-fluid" data-bs-theme="dark">
                     <div class="row">
                         <div class="col col-5 mt-0">
-                            <div id="agg_donut_insert" class="row">
+                            <div id="metric_donut_insert" class="row">
                             </div>
-                            <div id="agg_metrics_insert" class="row">
+                            <div id="metrics_a_insert" class="row">
                             </div>
                         </div>
 
-                        <div id="chart_column" class="col col-7 mt-0">
+                        <div class="col col-7 mt-0">
                             <div id="day_column_chart_insert" class="row">
                             </div>
 
@@ -337,9 +343,9 @@ function set_layout() {
     small_screen_layout = `
                 <div id="master" class="container-fluid" data-bs-theme="dark">
                     <div class="row align-items-center">
-                        <div id="agg_donut_insert" class="col col-5 mt-2">
+                        <div id="metric_donut_insert" class="col col-5 mt-2">
                         </div>
-                        <div id="agg_metrics_insert" class="col col-7 mt-2">
+                        <div id="metrics_a_insert" class="col col-7 mt-2">
                         </div>
                     </div>
                 </div>
@@ -352,10 +358,10 @@ function set_layout() {
     // tablets or monitors
     portrait_screen_layout = `
                 <div class="container-fluid" data-bs-theme="dark">
-                    <div id="agg_donut_insert" class="row">
+                    <div id="metric_donut_insert" class="row">
                     </div>
 
-                    <div id="agg_metrics_insert" class="row">
+                    <div id="metrics_a_insert" class="row">
                     </div>
 
                     <div id="day_column_chart_insert" class="row">
@@ -371,12 +377,36 @@ function set_layout() {
                 </div>
             `;
 
+    // large metrics-only screen model
+    // two columns, split 6:6 on bootstrap 12 breakpoints
+    // left column has the live and today metrics fixed
+    // right rotates the remaining metrics between the two
+    metrics_screen_layout = `
+                <div id="master" class="container-fluid" data-bs-theme="dark">
+                    <div class="row align-items-center">
+                        <div class="col col-6 mt-0">
+                            <div id="metrics_a_insert" class="row">
+                            </div>
+                            <div id="metrics_b_insert" class="row">
+                            </div>
+                        </div>
+
+                        <div class="col col-6 mt-0">
+                            <div id="metrics_c_insert" class="row">
+                            </div>
+                            <div id="metrics_d_insert" class="row">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
     // layout checks
     layout = undefined;
 
     // forced layout
     if (forced_layout != undefined) {
-        if (["small", "large", "portrait"].includes(forced_layout)) {
+        if (["small", "large", "portrait", "metrics"].includes(forced_layout)) {
             layout = forced_layout;
         }
     }
@@ -395,11 +425,17 @@ function set_layout() {
         }
     }
 
+    // metric a-d layouts from common template
+    metrics_a_html = metrics_html_tmpl.replaceAll("<METRICS-ID>", "metrics_a");
+    metrics_b_html = metrics_html_tmpl.replaceAll("<METRICS-ID>", "metrics_b");
+    metrics_c_html = metrics_html_tmpl.replaceAll("<METRICS-ID>", "metrics_c");
+    metrics_d_html = metrics_html_tmpl.replaceAll("<METRICS-ID>", "metrics_d");
+
     if (layout == "portrait") {
         // portrait view
         $("#dashboard").html(portrait_screen_layout);
-        $("#agg_donut_insert").html(agg_donut_html);
-        $("#agg_metrics_insert").html(agg_metrics_html);
+        $("#metric_donut_insert").html(metric_donut_html);
+        $("#metrics_a_insert").html(metrics_a_html);
         $("#day_column_chart_insert").html(day_column_chart_html);
         $("#month_column_chart_insert").html(month_column_chart_html);
         $("#year_column_chart_insert").html(year_column_chart_html);
@@ -417,8 +453,8 @@ function set_layout() {
         // small screen landscape
         layout = "small";
         $("#dashboard").html(small_screen_layout);
-        $("#agg_donut_insert").html(agg_donut_html);
-        $("#agg_metrics_insert").html(agg_metrics_html);
+        $("#metric_donut_insert").html(metric_donut_html);
+        $("#metrics_a_insert").html(metrics_a_html);
 
         // set the small screen font sizes
         document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-small-screen)');
@@ -432,11 +468,28 @@ function set_layout() {
     if (layout == "large") {
         // large screen landscape
         $("#dashboard").html(large_screen_layout);
-        $("#agg_donut_insert").html(agg_donut_html);
-        $("#agg_metrics_insert").html(agg_metrics_html);
+        $("#metric_donut_insert").html(metric_donut_html);
+        $("#metrics_a_insert").html(metrics_a_html);
         $("#day_column_chart_insert").html(day_column_chart_html);
         $("#month_column_chart_insert").html(month_column_chart_html);
         $("#year_column_chart_insert").html(year_column_chart_html);
+
+        // set the large screen smaller font sizes
+        document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-large-screen)');
+        document.body.style.setProperty("--icon-font-size", 'var(--icon-font-size-large-screen)');
+        document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-large-screen)');
+        document.body.style.setProperty("--title-font-size", 'var(--title-font-size-large-screen)');
+        document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-large-screen)');
+        document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-large-screen)');
+    }
+
+    if (layout == "metrics") {
+        // large screen landscape
+        $("#dashboard").html(metrics_screen_layout);
+        $("#metrics_a_insert").html(metrics_a_html);
+        $("#metrics_b_insert").html(metrics_b_html);
+        $("#metrics_c_insert").html(metrics_c_html);
+        $("#metrics_d_insert").html(metrics_d_html);
 
         // set the large screen smaller font sizes
         document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-large-screen)');
@@ -564,7 +617,7 @@ function refresh_data() {
     // display the get error
     data_request.fail(function() {
         refresh_error_count += 1;
-        $("#agg_donut_title").html(`Data Refresh Failure #${refresh_error_count}`);
+        $("#metric_donut_title").html(`Data Refresh Failure #${refresh_error_count}`);
         data_dict.last_updated = 0;
     });           
 
@@ -619,8 +672,8 @@ function refresh_data() {
 }
 
 // metric series rotation globals
-var agg_metric_index = -1; // init only
-var agg_metric_key = 'live';
+var metrics_a_metric_index = -1; // init only
+var metrics_a_metric_key = 'live';
 
 // rotates the current metric index as 
 // part of the timed cycling
@@ -630,11 +683,11 @@ function cycle_metric_index() {
     if ('metrics' in data_dict) {
         metric_list = Object.keys(data_dict.metrics);
         for (i = 0; i < metric_list.length; i++) {
-            agg_metric_index = (agg_metric_index + 1) % metric_list.length;
+            metrics_a_metric_index = (metrics_a_metric_index + 1) % metric_list.length;
 
             // check its enabled in the config
-            if (data_dict.dashboard.metrics[metric_list[agg_metric_index]]) {
-                agg_metric_key = metric_list[agg_metric_index];
+            if (data_dict.dashboard.metrics[metric_list[metrics_a_metric_index]]) {
+                metrics_a_metric_key = metric_list[metrics_a_metric_index];
                 break;
             }
         }
@@ -666,12 +719,213 @@ var forced_layout_index = -1; // init only
 // only cycles between small and large
 function ui_cycle_forced_layout() {
     console.log("ui_cycle_forced_layout()");
-    forced_layout_list = ['small', 'large'];
+    forced_layout_list = ['small', 'large', 'metrics'];
     forced_layout_index = (forced_layout_index + 1) % forced_layout_list.length;
     forced_layout = forced_layout_list[forced_layout_index];
     console.log("forced layout to:" + forced_layout);
     set_layout();
     display_data();
+}
+
+
+function populate_metrics(metrics_id, metric_key) {
+    metrics_a_source = data_dict.metrics[metric_key];
+
+    $("#" + metrics_id + "_titletext").html(metrics_a_source['title']);
+
+    // select units
+    if (metric_key == 'live'){
+        std_energy_unit = 'kW';
+        mega_energy_unit = 'mW';
+        milli_energy_unit = 'W';
+    }
+    else {
+        std_energy_unit = 'kWh';
+        mega_energy_unit = 'mWh';
+        milli_energy_unit = 'Wh';
+    }
+
+    value_dict = format_energy_value(metrics_a_source.import, 
+                                     std_energy_unit, 
+                                     mega_energy_unit, 
+                                     milli_energy_unit);
+    $("#" + metrics_id + "_import").html(value_dict['value']);
+    $("#" + metrics_id + "_import_unit").html(value_dict['unit']);
+
+    if (metrics_a_source.import > 0) {
+        $("#" + metrics_id + "_import").removeClass().addClass("metric metric-red");
+        $("#" + metrics_id + "_import_icon").removeClass().addClass("material-icons metric metric-red");
+        $("#" + metrics_id + "_import_unit").removeClass().addClass("metric-unit metric-red");
+    }
+    else {
+        $("#" + metrics_id + "_import").removeClass().addClass("metric metric-green");
+        $("#" + metrics_id + "_import_icon").removeClass().addClass("material-icons metric metric-green");
+        $("#" + metrics_id + "_import_unit").removeClass().addClass("metric-unit metric-green");
+    }
+
+    value_dict = format_energy_value(metrics_a_source.solar, 
+                                     std_energy_unit, 
+                                     mega_energy_unit, 
+                                     milli_energy_unit);
+    $("#" + metrics_id + "_solar").html(value_dict['value']);
+    $("#" + metrics_id + "_solar_unit").html(value_dict['unit']);
+
+    if (metrics_a_source.solar > 0) {
+        $("#" + metrics_id + "_solar").removeClass().addClass("metric metric-yellow");
+        $("#" + metrics_id + "_solar_icon").removeClass().addClass("material-icons metric metric-yellow");
+        $("#" + metrics_id + "_solar_unit").removeClass().addClass("metric-unit metric-yellow");
+    }
+    else {
+        $("#" + metrics_id + "_solar").removeClass().addClass("metric metric-grey");
+        $("#" + metrics_id + "_solar_icon").removeClass().addClass("material-icons metric metric-grey");
+        $("#" + metrics_id + "_solar_unit").removeClass().addClass("metric-unit metric-grey");
+    }
+
+    value_dict = format_energy_value(metrics_a_source.export, 
+                                     std_energy_unit, 
+                                     mega_energy_unit, 
+                                     milli_energy_unit);
+    $("#" + metrics_id + "_export").html(value_dict['value']);
+    $("#" + metrics_id + "_export_unit").html(value_dict['unit']);
+
+    if (metrics_a_source.export > 0) {
+        $("#" + metrics_id + "_export").removeClass().addClass("metric metric-blue");
+        $("#" + metrics_id + "_export_icon").removeClass().addClass("material-icons metric metric-blue");
+        $("#" + metrics_id + "_export_unit").removeClass().addClass("metric-unit metric-blue");
+    }
+    else {
+        $("#" + metrics_id + "_export").removeClass().addClass("metric metric-grey");
+        $("#" + metrics_id + "_export_icon").removeClass().addClass("material-icons metric metric-grey");
+        $("#" + metrics_id + "_export_unit").removeClass().addClass("metric-unit metric-grey");
+    }
+
+    value_dict = format_energy_value(metrics_a_source.consumed, 
+                                     std_energy_unit, 
+                                     mega_energy_unit, 
+                                     milli_energy_unit);
+    $("#" + metrics_id + "_consumed").html(value_dict['value']);
+    $("#" + metrics_id + "_consumed_unit").html(value_dict['unit']);
+
+    if (metrics_a_source.import <= 0) {
+        $("#" + metrics_id + "_consumed").removeClass().addClass("metric metric-green");
+        $("#" + metrics_id + "_consumed_icon").removeClass().addClass("material-icons metric metric-green");
+        $("#" + metrics_id + "_consumed_unit").removeClass().addClass("metric-unit metric-green");
+    }
+    else if (metrics_a_source.solar > 0) {
+        $("#" + metrics_id + "_consumed").removeClass().addClass("metric metric-orange");
+        $("#" + metrics_id + "_consumed_icon").removeClass().addClass("material-icons metric metric-orange");
+        $("#" + metrics_id + "_consumed_unit").removeClass().addClass("metric-unit metric-orange");
+    }
+    else {
+        $("#" + metrics_id + "_consumed").removeClass().addClass("metric metric-red");
+        $("#" + metrics_id + "_consumed_icon").removeClass().addClass("material-icons metric metric-red");
+        $("#" + metrics_id + "_consumed_unit").removeClass().addClass("metric-unit metric-red");
+    }
+
+    if ('battery_charge' in metrics_a_source) {
+        $("#" + metrics_id + "_battery_charge_col").show();
+        value_dict = format_energy_value(metrics_a_source.battery_charge, 
+                                         std_energy_unit, 
+                                         mega_energy_unit, 
+                                         milli_energy_unit);
+        $("#" + metrics_id + "_battery_charge").html(value_dict['value']);
+        $("#" + metrics_id + "_battery_charge_unit").html(value_dict['unit']);
+
+        if (metrics_a_source.battery_charge > 0) {
+            $("#" + metrics_id + "_battery_charge").removeClass().addClass("metric metric-charge");
+            $("#" + metrics_id + "_battery_charge_icon").removeClass().addClass("material-icons metric metric-charge");
+            $("#" + metrics_id + "_battery_charge_unit").removeClass().addClass("metric-unit metric-charge");
+        }
+        else {
+            $("#" + metrics_id + "_battery_charge").removeClass().addClass("metric metric-grey");
+            $("#" + metrics_id + "_battery_charge_icon").removeClass().addClass("material-icons metric metric-grey");
+            $("#" + metrics_id + "_battery_charge_unit").removeClass().addClass("metric-unit metric-grey");
+        }
+    }
+    else {
+        $("#" + metrics_id + "_battery_charge_col").hide();
+    }
+
+    if ('battery_discharge' in metrics_a_source) {
+        $("#" + metrics_id + "_battery_discharge_col").show();
+        value_dict = format_energy_value(metrics_a_source.battery_discharge, 
+                                         std_energy_unit, 
+                                         mega_energy_unit, 
+                                         milli_energy_unit);
+        $("#" + metrics_id + "_battery_discharge").html(value_dict['value']);
+        $("#" + metrics_id + "_battery_discharge_unit").html(value_dict['unit']);
+
+        if (metrics_a_source.battery_discharge > 0) {
+            $("#" + metrics_id + "_battery_discharge").removeClass().addClass("metric metric-discharge");
+            $("#" + metrics_id + "_battery_discharge_icon").removeClass().addClass("material-icons metric metric-discharge");
+            $("#" + metrics_id + "_battery_discharge_unit").removeClass().addClass("metric-unit metric-discharge");
+        }
+        else {
+            $("#" + metrics_id + "_battery_discharge").removeClass().addClass("metric metric-grey");
+            $("#" + metrics_id + "_battery_discharge_icon").removeClass().addClass("material-icons metric metric-grey");
+            $("#" + metrics_id + "_battery_discharge_unit").removeClass().addClass("metric-unit metric-grey");
+        }
+    }
+    else {
+        $("#" + metrics_id + "_battery_discharge_col").hide();
+    }
+
+    if ('battery_soc' in metrics_a_source) {
+        $("#" + metrics_id + "_battery_soc_col").show();
+        battery_soc_icon = format_battery_icon(metrics_a_source.battery_soc);
+        $("#" + metrics_id + "_battery_soc").html(metrics_a_source.battery_soc);
+        $("#" + metrics_id + "_battery_soc_unit").html('%');
+        $("#" + metrics_id + "_battery_soc_icon").html(battery_soc_icon);
+
+        if (metrics_a_source.battery_soc >= 50) {
+            $("#" + metrics_id + "_battery_soc").removeClass().addClass("metric metric-green");
+            $("#" + metrics_id + "_battery_soc_icon").removeClass().addClass("material-icons metric metric-green");
+            $("#" + metrics_id + "_battery_soc_unit").removeClass().addClass("metric-unit metric-green");
+        }
+        else if (metrics_a_source.battery_soc >= 30) {
+            $("#" + metrics_id + "_battery_soc").removeClass().addClass("metric metric-orange");
+            $("#" + metrics_id + "_battery_soc_icon").removeClass().addClass("material-icons metric metric-orange");
+            $("#" + metrics_id + "_battery_soc_unit").removeClass().addClass("metric-unit metric-orange");
+        }
+        else {
+            $("#" + metrics_id + "_battery_soc").removeClass().addClass("metric metric-red");
+            $("#" + metrics_id + "_battery_soc_icon").removeClass().addClass("material-icons metric metric-red");
+            $("#" + metrics_id + "_battery_soc_unit").removeClass().addClass("metric-unit metric-red");
+        }
+    }
+    else {
+        $("#" + metrics_id + "_battery_soc_col").hide();
+    }
+
+    value_dict = format_energy_value(metrics_a_source.co2, 'kg', 'mt', 'g');
+    $("#" + metrics_id + "_co2").html(value_dict['value']);
+    $("#" + metrics_id + "_co2_unit").html(value_dict['unit']);
+
+    if (metrics_a_source.co2 > 0) {
+        $("#" + metrics_id + "_co2").removeClass().addClass("metric metric-green");
+        $("#" + metrics_id + "_co2_icon").removeClass().addClass("material-icons metric metric-green");
+        $("#" + metrics_id + "_co2_unit").removeClass().addClass("metric-unit metric-green");
+    }
+    else {
+        $("#" + metrics_id + "_co2").removeClass().addClass("metric metric-grey");
+        $("#" + metrics_id + "_co2_icon").removeClass().addClass("material-icons metric metric-grey");
+        $("#" + metrics_id + "_co2_unit").removeClass().addClass("metric-unit metric-grey");
+    }
+
+    value_dict = format_trees(metrics_a_source.trees);
+    $("#" + metrics_id + "_trees").html(value_dict['value']);
+
+    if (metrics_a_source.trees > 0) {
+        $("#" + metrics_id + "_trees").removeClass().addClass("metric metric-green");
+        $("#" + metrics_id + "_trees_icon").removeClass().addClass("material-icons metric metric-green");
+        $("#" + metrics_id + "_trees_unit").removeClass().addClass("metric-unit metric-green");
+    }
+    else {
+        $("#" + metrics_id + "_trees").removeClass().addClass("metric metric-grey");
+        $("#" + metrics_id + "_trees_icon").removeClass().addClass("material-icons metric metric-grey");
+        $("#" + metrics_id + "_trees_unit").removeClass().addClass("metric-unit metric-grey");
+    }
+
 }
 
 // renders and displays the current dashboard
@@ -701,182 +955,19 @@ function display_data() {
     refresh_error_count = 0;
 
     // Aggregate metrics
-    agg_source = data_dict.metrics[agg_metric_key];
-    $("#agg_donut_title").html(agg_source['title']);
-
-    // select units
-    if (agg_metric_key == 'live'){
-        std_energy_unit = 'kW';
-        mega_energy_unit = 'mW';
-        milli_energy_unit = 'W';
+    if (layout == "metrics") {
+        populate_metrics("metrics_a", "live");
+        populate_metrics("metrics_b", "today");
+        populate_metrics("metrics_c", "this_month");
+        populate_metrics("metrics_d", "last_12_months");
     }
     else {
-        std_energy_unit = 'kWh';
-        mega_energy_unit = 'mWh';
-        milli_energy_unit = 'Wh';
-    }
+        // typical layout of using a donut and one set of metrics
+        metrics_a_source = data_dict.metrics[metrics_a_metric_key];
+        $("#metric_donut_title").html(metrics_a_source['title']);
 
-    value_dict = format_energy_value(agg_source.import, std_energy_unit, mega_energy_unit, milli_energy_unit);
-    $("#agg_import").html(value_dict['value']);
-    $("#agg_import_unit").html(value_dict['unit']);
-
-    if (agg_source.import > 0) {
-        $("#agg_import").removeClass().addClass("metric metric-red");
-        $("#agg_import_icon").removeClass().addClass("material-icons metric metric-red");
-        $("#agg_import_unit").removeClass().addClass("metric-unit metric-red");
-    }
-    else {
-        $("#agg_import").removeClass().addClass("metric metric-green");
-        $("#agg_import_icon").removeClass().addClass("material-icons metric metric-green");
-        $("#agg_import_unit").removeClass().addClass("metric-unit metric-green");
-    }
-
-    value_dict = format_energy_value(agg_source.solar, std_energy_unit, mega_energy_unit, milli_energy_unit);
-    $("#agg_solar").html(value_dict['value']);
-    $("#agg_solar_unit").html(value_dict['unit']);
-
-    if (agg_source.solar > 0) {
-        $("#agg_solar").removeClass().addClass("metric metric-yellow");
-        $("#agg_solar_icon").removeClass().addClass("material-icons metric metric-yellow");
-        $("#agg_solar_unit").removeClass().addClass("metric-unit metric-yellow");
-    }
-    else {
-        $("#agg_solar").removeClass().addClass("metric metric-grey");
-        $("#agg_solar_icon").removeClass().addClass("material-icons metric metric-grey");
-        $("#agg_solar_unit").removeClass().addClass("metric-unit metric-grey");
-    }
-
-    value_dict = format_energy_value(agg_source.export, std_energy_unit, mega_energy_unit, milli_energy_unit);
-    $("#agg_export").html(value_dict['value']);
-    $("#agg_export_unit").html(value_dict['unit']);
-
-    if (agg_source.export > 0) {
-        $("#agg_export").removeClass().addClass("metric metric-blue");
-        $("#agg_export_icon").removeClass().addClass("material-icons metric metric-blue");
-        $("#agg_export_unit").removeClass().addClass("metric-unit metric-blue");
-    }
-    else {
-        $("#agg_export").removeClass().addClass("metric metric-grey");
-        $("#agg_export_icon").removeClass().addClass("material-icons metric metric-grey");
-        $("#agg_export_unit").removeClass().addClass("metric-unit metric-grey");
-    }
-
-    value_dict = format_energy_value(agg_source.consumed, std_energy_unit, mega_energy_unit, milli_energy_unit);
-    $("#agg_consumed").html(value_dict['value']);
-    $("#agg_consumed_unit").html(value_dict['unit']);
-
-    if (agg_source.import <= 0) {
-        $("#agg_consumed").removeClass().addClass("metric metric-green");
-        $("#agg_consumed_icon").removeClass().addClass("material-icons metric metric-green");
-        $("#agg_consumed_unit").removeClass().addClass("metric-unit metric-green");
-    }
-    else if (agg_source.solar > 0) {
-        $("#agg_consumed").removeClass().addClass("metric metric-orange");
-        $("#agg_consumed_icon").removeClass().addClass("material-icons metric metric-orange");
-        $("#agg_consumed_unit").removeClass().addClass("metric-unit metric-orange");
-    }
-    else {
-        $("#agg_consumed").removeClass().addClass("metric metric-red");
-        $("#agg_consumed_icon").removeClass().addClass("material-icons metric metric-red");
-        $("#agg_consumed_unit").removeClass().addClass("metric-unit metric-red");
-    }
-
-    if ('battery_charge' in agg_source) {
-        $("#agg_battery_charge_col").show();
-        value_dict = format_energy_value(agg_source.battery_charge, std_energy_unit, mega_energy_unit, milli_energy_unit);
-        $("#agg_battery_charge").html(value_dict['value']);
-        $("#agg_battery_charge_unit").html(value_dict['unit']);
-
-        if (agg_source.battery_charge > 0) {
-            $("#agg_battery_charge").removeClass().addClass("metric metric-charge");
-            $("#agg_battery_charge_icon").removeClass().addClass("material-icons metric metric-charge");
-            $("#agg_battery_charge_unit").removeClass().addClass("metric-unit metric-charge");
-        }
-        else {
-            $("#agg_battery_charge").removeClass().addClass("metric metric-grey");
-            $("#agg_battery_charge_icon").removeClass().addClass("material-icons metric metric-grey");
-            $("#agg_battery_charge_unit").removeClass().addClass("metric-unit metric-grey");
-        }
-    }
-    else {
-        $("#agg_battery_charge_col").hide();
-    }
-
-    if ('battery_discharge' in agg_source) {
-        $("#agg_battery_discharge_col").show();
-        value_dict = format_energy_value(agg_source.battery_discharge, std_energy_unit, mega_energy_unit, milli_energy_unit);
-        $("#agg_battery_discharge").html(value_dict['value']);
-        $("#agg_battery_discharge_unit").html(value_dict['unit']);
-
-        if (agg_source.battery_discharge > 0) {
-            $("#agg_battery_discharge").removeClass().addClass("metric metric-discharge");
-            $("#agg_battery_discharge_icon").removeClass().addClass("material-icons metric metric-discharge");
-            $("#agg_battery_discharge_unit").removeClass().addClass("metric-unit metric-discharge");
-        }
-        else {
-            $("#agg_battery_discharge").removeClass().addClass("metric metric-grey");
-            $("#agg_battery_discharge_icon").removeClass().addClass("material-icons metric metric-grey");
-            $("#agg_battery_discharge_unit").removeClass().addClass("metric-unit metric-grey");
-        }
-    }
-    else {
-        $("#agg_battery_discharge_col").hide();
-    }
-
-    if ('battery_soc' in agg_source) {
-        $("#agg_battery_soc_col").show();
-        battery_soc_icon = format_battery_icon(agg_source.battery_soc);
-        $("#agg_battery_soc").html(agg_source.battery_soc);
-        $("#agg_battery_soc_unit").html('%');
-        $("#agg_battery_soc_icon").html(battery_soc_icon);
-
-        if (agg_source.battery_soc >= 50) {
-            $("#agg_battery_soc").removeClass().addClass("metric metric-green");
-            $("#agg_battery_soc_icon").removeClass().addClass("material-icons metric metric-green");
-            $("#agg_battery_soc_unit").removeClass().addClass("metric-unit metric-green");
-        }
-        else if (agg_source.battery_soc >= 30) {
-            $("#agg_battery_soc").removeClass().addClass("metric metric-orange");
-            $("#agg_battery_soc_icon").removeClass().addClass("material-icons metric metric-orange");
-            $("#agg_battery_soc_unit").removeClass().addClass("metric-unit metric-orange");
-        }
-        else {
-            $("#agg_battery_soc").removeClass().addClass("metric metric-red");
-            $("#agg_battery_soc_icon").removeClass().addClass("material-icons metric metric-red");
-            $("#agg_battery_soc_unit").removeClass().addClass("metric-unit metric-red");
-        }
-    }
-    else {
-        $("#agg_battery_soc_col").hide();
-    }
-
-    value_dict = format_energy_value(agg_source.co2, 'kg', 'mt', 'g');
-    $("#agg_co2").html(value_dict['value']);
-    $("#agg_co2_unit").html(value_dict['unit']);
-
-    if (agg_source.co2 > 0) {
-        $("#agg_co2").removeClass().addClass("metric metric-green");
-        $("#agg_co2_icon").removeClass().addClass("material-icons metric metric-green");
-        $("#agg_co2_unit").removeClass().addClass("metric-unit metric-green");
-    }
-    else {
-        $("#agg_co2").removeClass().addClass("metric metric-grey");
-        $("#agg_co2_icon").removeClass().addClass("material-icons metric metric-grey");
-        $("#agg_co2_unit").removeClass().addClass("metric-unit metric-grey");
-    }
-
-    value_dict = format_trees(agg_source.trees);
-    $("#agg_trees").html(value_dict['value']);
-
-    if (agg_source.trees > 0) {
-        $("#agg_trees").removeClass().addClass("metric metric-green");
-        $("#agg_trees_icon").removeClass().addClass("material-icons metric metric-green");
-        $("#agg_trees_unit").removeClass().addClass("metric-unit metric-green");
-    }
-    else {
-        $("#agg_trees").removeClass().addClass("metric metric-grey");
-        $("#agg_trees_icon").removeClass().addClass("material-icons metric metric-grey");
-        $("#agg_trees_unit").removeClass().addClass("metric-unit metric-grey");
+        populate_metrics("metrics_a", metrics_a_metric_key);
+        $("#metrics_a_title").hide();
     }
 
     // show the dashboard
@@ -914,6 +1005,10 @@ function render_charts() {
       donut_chart_height = (window.innerHeight) * 0.40;
       break;
 
+      default:
+      // unknown layout, do not render
+      return;
+      break;
     }
 
     // legend font size
@@ -1035,15 +1130,15 @@ function render_charts() {
     }
 
     // agg
-    agg_source = data_dict.metrics[agg_metric_key];
-    var agg_data = new google.visualization.DataTable();
-    agg_data.addColumn('string', 'Source');
-    agg_data.addColumn('number', 'kWh');
+    metrics_a_source = data_dict.metrics[metrics_a_metric_key];
+    var metrics_a_data = new google.visualization.DataTable();
+    metrics_a_data.addColumn('string', 'Source');
+    metrics_a_data.addColumn('number', 'kWh');
 
     // calculate total series value
     var total_series_value = 0;
     for (series_field of donut_series_list) {
-        series_value = agg_source[series_field];
+        series_value = metrics_a_source[series_field];
         if (series_value == undefined) {
             // FIXME need to investigate why this can be undefined
             series_value = 0;
@@ -1054,7 +1149,7 @@ function render_charts() {
     for (series_field of donut_series_list) {
         // calculate percentage of total
         // for the small screen donut label
-        series_value = agg_source[series_field];
+        series_value = metrics_a_source[series_field];
         if (series_value == undefined) {
             // FIXME need to investigate why this can be undefined
             series_value = 0;
@@ -1069,14 +1164,14 @@ function render_charts() {
             // displayed value will be the percentage
             series_label = series_labels[series_field];
         }
-        agg_data.addRows([
+        metrics_a_data.addRows([
             // graph value times 1000 for issues with small values
             [series_label, series_value * 1000]
         ]);
     }
 
     // draw donut
-    donut_chart.draw(agg_data, donut_options);
+    donut_chart.draw(metrics_a_data, donut_options);
 
     // bar charts
     // only applies to portrait or large layouts
