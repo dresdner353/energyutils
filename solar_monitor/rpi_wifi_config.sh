@@ -25,6 +25,9 @@ if test -f "${WIFI_CONFIG_FILE}"; then
 
     # mark as processed
     touch ${DONE_FILE}
+
+    # reboot
+    reboot
 fi
 
 
