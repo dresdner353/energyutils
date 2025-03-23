@@ -941,6 +941,8 @@ function display_data() {
         $("#splash").hide();
     }
     else {
+        $("#splash").show();
+        $("#dashboard").hide();
         // display message based on configured state
         if (data_dict['configured'] == false) {
             $("#splash_text").html('Please click setup icon or visit: ' + data_dict['setup_url']);
