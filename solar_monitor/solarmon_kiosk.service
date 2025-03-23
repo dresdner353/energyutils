@@ -8,7 +8,7 @@ Group=pi
 TTYPath=/dev/tty1
 Environment="XDG_RUNTIME_DIR=/home/pi"
 Restart=always
-ExecStart=/usr/bin/cage -- /usr/bin/chromium-browser 'http://localhost:8090?layout=large&margin=3' --kiosk --noerrdialogs --disable-infobars --no-first-run --ozone-platform=wayland --enable-features=OverlayScrollbar --start-maximized
+ExecStart=/home/pi/energyutils/solar_monitor/chromium_kiosk.sh
 StandardError=journal
 
 [Install]
