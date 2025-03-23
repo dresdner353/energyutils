@@ -18,11 +18,6 @@ function install_solar_monitor {
 
     # restore config
     mv /tmp/config.json energyutils/solar_monitor
-
-    # browser kiosk
-    AUTOSTART_DIR=.config/autostart
-    mkdir -p ${AUTOSTART_DIR}
-    cp energyutils/solar_monitor/chromium_kiosk.desktop ${AUTOSTART_DIR}
 }
 
 # export function for su call
@@ -42,10 +37,13 @@ HOME_DIR=~pi
 
 # install packages
 apt-get update
-apt install git unclutter python3-requests python3-dateutil python3-cherrypy3
+apt install git python3-requests python3-dateutil python3-cherrypy3
 
-# download code as tareget user
+# download code as target user
 su ${USER} -c "bash -c install_solar_monitor"
+
+# host preparation
+echo 'solarmon' > /etc/hostname
 
 # install and start service
 cp ${HOME_DIR}/energyutils/solar_monitor/solarmon.service /etc/systemd/system
