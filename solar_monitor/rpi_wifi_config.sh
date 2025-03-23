@@ -12,5 +12,5 @@ if test -f "${WIFI_CONFIG_FILE}"; then
     rm -f /etc/NetworkManager/system-connections/*
     cp -f solarmon.nmconnection /etc/NetworkManager/system-connections
     systemctl restart NetworkManager
+    echo "Configured WiFi for ${SSID}"
 fi
-
