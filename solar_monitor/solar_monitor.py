@@ -180,6 +180,18 @@ def config_agent():
     global gv_config_file
     last_check = 0
 
+    # restart detection
+    # certain config changes trigger a restart of the script
+    # such as web params, grid/data source changes or parameters 
+    # in the given inverter/data source structures
+    config_check_list = [
+            'data_source',
+            'grid_source',
+            'shelly',
+            'solis',
+            'web',
+            ]
+
     # Default config in case it does not exist
     if (not os.path.isfile(gv_config_file)):
         gv_config_dict = set_default_config()
@@ -192,10 +204,44 @@ def config_agent():
         if config_last_modified > last_check:
             json_config = load_config(gv_config_file)
             if json_config: 
-                gv_config_dict = json_config
                 last_check = config_last_modified
 
+                # check for restart conditions
+                force_restart = False
+
+                for prop in config_check_list:
+                    if (prop in json_config and 
+                        prop in gv_config_dict):
+
+                        # format both as JSON 
+                        # with sorted keys
+                        # strings will be the same if 
+                        # data is the same
+                        config_str = json.dumps(
+                                gv_config_dict[prop],
+                                sort_keys = True)
+                        update_str = json.dumps(
+                                json_config[prop],
+                                sort_keys = True)
+
+                        # if different, then we mark 
+                        # for restart
+                        if config_str != update_str:
+                            utils.log_message(
+                                    1,
+                                    'config change update:%s orig:%s' % (
+                                        update_str,
+                                        config_str)
+                                    )
+                            # full restart of script
+                            restart()
+                            break
+
+                # move to global config
+                gv_config_dict = json_config
+
         time.sleep(10)
+    return
 
 
 def merge_grid_data(
@@ -430,6 +476,7 @@ class config_handler(object):
     def index(self):
 
         global gv_config_dict
+        global gv_data_dict
         global gv_config_file
 
         utils.log_message(
@@ -451,46 +498,6 @@ class config_handler(object):
                     'config post %s' % (updated_config_dict)
                     )
 
-            # restart detection
-            # certain config changes trigger a restart of the script
-            # such as web params, grid/data source changes or parameters 
-            # in the given inverter/data source structures
-            config_check_list = [
-                    'data_source',
-                    'grid_source',
-                    'shelly',
-                    'solis',
-                    'web',
-                    ]
-
-            force_restart = False
-            for prop in config_check_list:
-                if (prop in updated_config_dict and 
-                    prop in gv_config_dict):
-
-                    # format both as JSON 
-                    # with sorted keys
-                    # strings will be the same if 
-                    # data is the same
-                    config_str = json.dumps(
-                            gv_config_dict[prop],
-                            sort_keys = True)
-                    update_str = json.dumps(
-                            updated_config_dict[prop],
-                            sort_keys = True)
-
-                    # if different, then we mark 
-                    # for restart
-                    if config_str != update_str:
-                        utils.log_message(
-                                1,
-                                'config change update:%s orig:%s' % (
-                                    update_str,
-                                    config_str)
-                                )
-                        force_restart = True
-                        break
-
             # map like to like keys in config
             # this is a hack as its allowing config to exist that is not 
             # served back from the admin page
@@ -499,11 +506,7 @@ class config_handler(object):
                 gv_config_dict[key] = updated_config_dict[key]
 
             save_config(gv_config_dict, gv_config_file)
-
-            # restart if we had earlier detected the need
-            # to restart
-            if force_restart:
-                restart()
+            gv_data_dict = {}
 
             return ""
 
