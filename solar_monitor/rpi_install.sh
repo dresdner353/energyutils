@@ -48,6 +48,8 @@ echo 'solarmon' > /etc/hostname
 # Wifi setup via USB stick
 sed -i '/rpi_wifi_config/d' /etc/rc.local
 echo '/home/pi/energyutils/solar_monitor/rpi_wifi_config.sh' >> /etc/rc.local
+chown root:root /etc/rc.local
+chmod +x /etc/rc.local
 chmod +x /home/pi/energyutils/solar_monitor/rpi_wifi_config.sh
 
 # install and start service
