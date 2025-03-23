@@ -46,12 +46,10 @@ su ${USER} -c "bash -c install_solar_monitor"
 echo 'solarmon' > /etc/hostname
 
 # Wifi setup via USB stick
-sed -i '/rpi_wifi_config/d' /etc/rc.local
-echo '/home/pi/energyutils/solar_monitor/rpi_wifi_config.sh' >> /etc/rc.local
-chown root:root /etc/rc.local
-chmod u+x /etc/rc.local
-chmod go-x /etc/rc.local
+# root cron job every minute
 chmod +x /home/pi/energyutils/solar_monitor/rpi_wifi_config.sh
+echo '* * * * * bash /home/pi/energyutils/solar_monitor/rpi_wifi_config.sh >>/tmp/wifi.log 2>&1' > /tmp/crontab
+crontab /tmp/crontab
 
 # install and start service
 cp ${HOME_DIR}/energyutils/solar_monitor/solarmon.service /etc/systemd/system
