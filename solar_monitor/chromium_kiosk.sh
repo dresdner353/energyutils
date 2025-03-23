@@ -17,9 +17,7 @@ done
 
 # chromium kiosk
 echo "Starting Chromium in kiosk mode"
-killall -9 chromium-browser chromium_kiosk.sh
-sleep 2
-killall -9 chromium-browser chromium_kiosk.sh
+killall -9 chromium-browser 
 export DISPLAY=:0
 
 # disable screen blanking and move mouse to 0,0
