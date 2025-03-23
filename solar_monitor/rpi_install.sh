@@ -49,6 +49,9 @@ su ${USER} -c "bash -c install_solar_monitor"
 
 # install and start service
 cp ${HOME_DIR}/energyutils/solar_monitor/solarmon.service /etc/systemd/system
+cp ${HOME_DIR}/energyutils/solar_monitor/solarmon_kiosk.service /etc/systemd/system
 systemctl daemon-reload
 systemctl enable solarmon
+systemctl enable solarmon_kiosk
 systemctl restart solarmon
+systemctl restart solarmon_kiosk
