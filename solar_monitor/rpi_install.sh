@@ -37,7 +37,7 @@ HOME_DIR=~pi
 
 # install packages
 apt-get update
-apt install git xdotool ttf-mscorefonts-installer python3-requests python3-dateutil python3-cherrypy3
+apt install git unclutter xdotool ttf-mscorefonts-installer python3-requests python3-dateutil python3-cherrypy3
 
 # download code as target user
 su ${USER} -c "bash -c install_solar_monitor"
