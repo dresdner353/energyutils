@@ -378,6 +378,8 @@ def monitor_agent():
                     1,
                     "No data source is configured"
                     )
+            time.sleep(sleep_interval)
+            continue
 
         # grid source (separate from inverter data)
         if (gv_config_dict['grid_source'] and 
