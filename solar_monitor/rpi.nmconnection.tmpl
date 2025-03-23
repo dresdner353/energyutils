@@ -1,14 +1,12 @@
 [connection]
 id=solarmon
 type=wifi
-interface-name=wlan0
 
 [wifi]
 mode=infrastructure
 ssid=__SSID__
 
 [wifi-security]
-auth-alg=open
 key-mgmt=wpa-psk
 psk=__PASSWORD__
 
@@ -16,7 +14,7 @@ psk=__PASSWORD__
 method=auto
 
 [ipv6]
-addr-gen-mode=default
+addr-gen-mode=stable-privacy
 method=auto
 
 [proxy]
