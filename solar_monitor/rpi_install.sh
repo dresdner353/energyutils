@@ -48,7 +48,7 @@ echo 'solarmon' > /etc/hostname
 # Wifi setup via USB stick
 # root cron job every minute
 chmod +x /home/pi/energyutils/solar_monitor/rpi_wifi_config.sh
-echo '* * * * * /home/pi/energyutils/solar_monitor/rpi_wifi_config.sh >>/tmp/wifi.log 2>&1' > /tmp/crontab
+echo '* * * * * /home/pi/energyutils/solar_monitor/rpi_wifi_config.sh >>/dev/null 2>&1' > /tmp/crontab
 crontab /tmp/crontab
 
 # install and start service
