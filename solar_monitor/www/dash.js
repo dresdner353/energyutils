@@ -943,7 +943,7 @@ function display_data() {
     else {
         // display message based on configured state
         if (data_dict['configured'] == false) {
-            $("#splash_text").html('Please click setup icon above to continue');
+            $("#splash_text").html('Please click setup icon or visit: ' + data_dict['setup_url']);
         }
         else {
             $("#splash_text").html('Waiting for data...');

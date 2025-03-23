@@ -11,6 +11,7 @@ import zoneinfo
 import random
 import concurrent.futures
 import cherrypy
+import socket
 import utils
 import shelly
 import solis
@@ -525,6 +526,7 @@ class data_handler(object):
         global gv_refresh_interval
         global gv_force_refresh
         global gv_force_metric_cycle
+        global gv_host_ip
 
         utils.log_message(
                 1,
@@ -542,6 +544,12 @@ class data_handler(object):
             gv_data_dict['configured'] = False
         else:
             gv_data_dict['configured'] = True
+
+        # Add in setup URL
+        gv_data_dict['setup_url'] = 'http://%s:%d/admin' % (
+                gv_host_ip,
+                gv_config_dict['web']['port']
+                )
 
         # merge in config for dashboard
         gv_data_dict['dashboard'] = gv_config_dict['dashboard']
@@ -768,6 +776,12 @@ gv_config_file = args['config']
 gv_force_refresh = args['force_refresh']
 gv_force_metric_cycle = args['force_metric_cycle']
 utils.gv_verbose = args['verbose']
+
+# get network IP of host
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))
+gv_host_ip = s.getsockname()[0]
+s.close()
 
 # Thread management 
 executor = concurrent.futures.ThreadPoolExecutor(
