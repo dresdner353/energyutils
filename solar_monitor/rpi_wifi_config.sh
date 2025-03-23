@@ -11,6 +11,7 @@ if test -f "${WIFI_CONFIG_FILE}"; then
     cat /home/pi/energyutils/solar_monitor/rpi.nmconnection.tmpl | \
         sed -e "s/__SSID__/${SSID}/g" -e "s/__PASSWORD__/${PASSWORD}/g" > \
         /etc/NetworkManager/system-connections/solarmon.nmconnection
+    chmod go-rw /etc/NetworkManager/system-connections/solarmon.nmconnection
     systemctl restart NetworkManager
     echo "Configured WiFi for ${SSID}"
 fi
