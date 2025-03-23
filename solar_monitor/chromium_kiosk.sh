@@ -15,8 +15,6 @@ do
     sleep 5
 done
 
-sleep 5
-
 # chromium kiosk
 echo "Starting Chromium in kiosk mode"
 killall -9 chromium-browser chromium_kiosk.sh
@@ -24,9 +22,10 @@ sleep 2
 killall -9 chromium-browser chromium_kiosk.sh
 export DISPLAY=:0
 
-# disable screen blanking
+# disable screen blanking and move mouse to 0,0
 xset s 0
 xset -dpms
+xdotool mousemove --sync 0 0
 
 flags=(
    --kiosk
@@ -43,12 +42,4 @@ flags=(
 
 # launch chrome against the Solarmon dashboard 
 # with layout forced to large and margin of 3 for handling of overscan
-chromium-browser "${flags[@]}" --app='http://localhost:8090?layout=large&margin=3' &
-
-# loop to keep mouse at 0,0 to hide it
-# every 2 minutes
-while true
-do
-    xdotool mousemove --sync 0 0
-    sleep 120
-done
+chromium-browser "${flags[@]}" --app='http://localhost:8090?layout=large&margin=3' 
