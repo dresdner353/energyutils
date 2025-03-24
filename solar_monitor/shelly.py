@@ -695,29 +695,14 @@ def get_cloud_live_data(config):
     live_rec['co2'] = (config['environment']['gco2_kwh'] * solar) / 1000
     live_rec['trees'] = config['environment']['trees_kwh'] * solar
 
-    utils.log_message(
-            1,
-            'Live data: import:%.3f export:%.3f solar:%.3f' % (
-                live_rec['import'],
-                live_rec['export'],
-                live_rec['solar'],
-                )
-            )
-
     # calculate delta values since last live update
+    import_delta = 0
+    export_delta = 0
+    solar_delta = 0
     if gv_live_snapshot_rec:
         import_delta = live_rec['total_import'] - gv_live_snapshot_rec['total_import']
         export_delta = live_rec['total_export'] - gv_live_snapshot_rec['total_export']
         solar_delta = live_rec['total_solar'] - gv_live_snapshot_rec['total_solar']
-
-        utils.log_message(
-                1,
-                'Usage delta: import:%.3f export:%.3f solar:%.3f' % (
-                    import_delta,
-                    export_delta,
-                    solar_delta
-                    )
-                )
 
         # apply offsets for the this hour and recalc derived values 
         latest_hour_rec = gv_shelly_dict['day'][-1]
@@ -756,6 +741,30 @@ def get_cloud_live_data(config):
 
     # snapshot the live data for the next delta calculation
     gv_live_snapshot_rec = copy.deepcopy(gv_shelly_dict['live'])
+
+    utils.log_message(
+            1,
+            'Live import:%.3f kW (+%.5f kWh)' % (
+                live_rec['import'],
+                import_delta,
+                )
+            )
+
+    utils.log_message(
+            1,
+            'Live export:%.3f kW (+%.5f kWh)' % (
+                live_rec['export'],
+                export_delta,
+                )
+            )
+
+    utils.log_message(
+            1,
+            'Live solar:%.3f kW (+%.5f kWh)' % (
+                live_rec['solar'],
+                solar_delta,
+                )
+            )
 
     return
 
