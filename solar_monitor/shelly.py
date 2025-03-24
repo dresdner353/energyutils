@@ -25,10 +25,10 @@ gv_shelly_dict['month'] = []
 gv_shelly_dict['year'] = []
 gv_shelly_dict['live'] = {}
 
-# timestamps to track the next call
-month_ts = 0
-year_ts = 0
-day_ts = 0
+# timestamps to track the next cloud usage call
+# and a snapshot of the live data for the same time
+gv_cloud_refresh_ts = 0
+gv_live_snapshot_rec = None # will be set on first cloud call
 
 
 def parse_time(
@@ -340,11 +340,11 @@ def get_shelly_api_usage_data(
             now_dt.day,
             now_dt.hour)
 
-    # scan all keys and remove records equal to the 
-    # current hour or later
+    # scan all keys and remove records 
+    # beyond the current hour 
     # otherwise remove the 'missing' key
     for key in key_list:
-        if key >= now_key:
+        if key > now_key:
             utils.log_message(
                     utils.gv_verbose,
                     'Purging key:%s (%s)' % (
@@ -373,154 +373,145 @@ def get_cloud_usage_data(config):
     """
 
     global gv_shelly_dict
-    global month_ts
-    global year_ts
-    global day_ts
+    global gv_cloud_refresh_ts
+    global gv_live_snapshot_rec
 
     now = int(time.time())
     dt_today = datetime.datetime.today() 
     dt_yesterday = dt_today - datetime.timedelta(days = 1)
 
-    if now >= day_ts:
-        # last 36 hours
-        utils.log_message(
-                1,
-                'Updating Shelly Day Data'
+    if now < gv_cloud_refresh_ts:
+        return
+
+    # last 36 hours
+    utils.log_message(
+            1,
+            'Updating Shelly Day Data'
+            )
+
+    dt_36h_ago = dt_today - datetime.timedelta(hours = 36)
+    day_ago_str = '%04d-%02d-%02d %02d:00:00' % (
+                dt_36h_ago.year, 
+                dt_36h_ago.month, 
+                dt_36h_ago.day,
+                dt_36h_ago.hour,
                 )
-
-        dt_36h_ago = dt_today - datetime.timedelta(hours = 36)
-        day_ago_str = '%04d-%02d-%02d %02d:00:00' % (
-                    dt_36h_ago.year, 
-                    dt_36h_ago.month, 
-                    dt_36h_ago.day,
-                    dt_36h_ago.hour,
-                    )
-        day_end_str = '%04d-%02d-%02d 23:59:59' % (
-                    dt_today.year, 
-                    dt_today.month, 
-                    dt_today.day
-                    )
-        
-        # using configured hour discard
-        day_data = get_shelly_api_usage_data(
-                config,
-                date_range = 'custom',
-                date_from = day_ago_str,
-                date_to = day_end_str)
-        
-        if day_data:
-            # reset timestamp
-            # for :10 past next hour (data may not be present otherwise)
-            day_ts = ((70 - dt_today.minute) * 60) + now
-            gv_shelly_dict['day'] = day_data
-
-            utils.log_message(
-                    1,
-                    'Set next day update to %s (%s)' % (
-                        day_ts,
-                        datetime.datetime.fromtimestamp(day_ts).strftime('%H:%M:%S')
-                        )
-                    )
-
-            # reformat to list of records
-            day_data_list = []
-            for key in sorted(day_data.keys()):
-                day_data_list.append(day_data[key])
-
-            gv_shelly_dict['day'] = day_data_list[-36:]
-            gv_shelly_dict['day_last_updated'] = int(time.time())
+    day_end_str = '%04d-%02d-%02d 23:59:59' % (
+                dt_today.year, 
+                dt_today.month, 
+                dt_today.day
+                )
     
-    if now >= month_ts:
-        # last 30 days
+    # using configured hour discard
+    day_data = get_shelly_api_usage_data(
+            config,
+            date_range = 'custom',
+            date_from = day_ago_str,
+            date_to = day_end_str)
+    
+    if day_data:
+        # reformat to list of records
+        day_data_list = []
+        for key in sorted(day_data.keys()):
+            day_data_list.append(day_data[key])
+
+        gv_shelly_dict['day'] = day_data_list[-36:]
+        gv_shelly_dict['day_last_updated'] = int(time.time())
+    
+    # last 30 days
+    utils.log_message(
+            1,
+            'Updating Shelly Month Data'
+            )
+
+    dt_month_start = dt_today - datetime.timedelta(days = 30)
+    month_start_str = '%04d-%02d-%02d 00:00:00' % (
+                dt_month_start.year, 
+                dt_month_start.month, 
+                dt_month_start.day
+                )
+    month_end_str = '%04d-%02d-%02d 23:59:59' % (
+                dt_today.year, 
+                dt_today.month, 
+                dt_today.day
+                )
+    
+    # using configured day discard
+    month_data = get_shelly_api_usage_data(
+            config,
+            date_range = 'custom',
+            date_from = month_start_str,
+            date_to = month_end_str)
+
+    if month_data:
+        # reformat to list of records
+        month_data_list = []
+        for key in sorted(month_data.keys()):
+            month_data_list.append(month_data[key])
+
+        gv_shelly_dict['month'] = month_data_list[-30:]
+        gv_shelly_dict['month_last_updated'] = int(time.time())
+
+    # last several months or so
+    # will query all of previous year to today 
+    # seems to only work if stretch back 300 days
+    utils.log_message(
+            1,
+            'Updating Shelly Year Data'
+            )
+
+    last_year = dt_month_start - datetime.timedelta(days = 300)
+    last_year_start_str = '%04d-%02d-01 00:00:00' % (
+                last_year.year, 
+                last_year.month
+                )
+    year_end_str = '%04d-12-31 23:59:59' % (
+                dt_today.year
+                )
+    
+    # using configured day discard times 30
+    year_data = get_shelly_api_usage_data(
+            config,
+            date_range = 'custom',
+            date_from = last_year_start_str,
+            date_to = year_end_str)
+    
+    if year_data:
+        # reformat to list of records
+        year_data_list = []
+        for key in sorted(year_data.keys()):
+            year_data_list.append(year_data[key])
+
+        gv_shelly_dict['year'] = year_data_list[-12:]
+        gv_shelly_dict['year_last_updated'] = int(time.time())
+
+    if day_data and month_data and year_data:
+        # reset timestamp
+        # for :10 past next hour (data may not be present otherwise)
+        gv_cloud_refresh_ts = ((70 - dt_today.minute) * 60) + now
         utils.log_message(
                 1,
-                'Updating Shelly Month Data'
+                'Set next cloud update to %s (%s)' % (
+                    gv_cloud_refresh_ts,
+                    datetime.datetime.fromtimestamp(
+                        gv_cloud_refresh_ts).strftime('%H:%M:%S')
+                    )
                 )
-
-        dt_month_start = dt_today - datetime.timedelta(days = 30)
-        month_start_str = '%04d-%02d-%02d 00:00:00' % (
-                    dt_month_start.year, 
-                    dt_month_start.month, 
-                    dt_month_start.day
-                    )
-        month_end_str = '%04d-%02d-%02d 23:59:59' % (
-                    dt_today.year, 
-                    dt_today.month, 
-                    dt_today.day
-                    )
-        
-        # using configured day discard
-        month_data = get_shelly_api_usage_data(
-                config,
-                date_range = 'custom',
-                date_from = month_start_str,
-                date_to = month_end_str)
-
-        if month_data:
-            # reset timestamp
-            # for :10 past next hour (data may not be present otherwise)
-            month_ts = ((70 - dt_today.minute) * 60) + now
-
-            utils.log_message(
-                    1,
-                    'Set next month update to %s (%s)' % (
-                        month_ts,
-                        datetime.datetime.fromtimestamp(month_ts).strftime('%H:%M:%S')
-                        )
-                    )
-
-            # reformat to list of records
-            month_data_list = []
-            for key in sorted(month_data.keys()):
-                month_data_list.append(month_data[key])
-
-            gv_shelly_dict['month'] = month_data_list[-30:]
-            gv_shelly_dict['month_last_updated'] = int(time.time())
-
-    if now >= year_ts:
-        # last several months or so
-        # will query all of previous year to today 
-        # seems to only work if stretch back 300 days
+        # copy live data to snapshot
+        # as it will be used to slyly increment the cached cloud data
+        # during each live update
+        gv_live_snapshot_rec = copy.deepcopy(gv_shelly_dict['live'])
+    else:
+        # retry in 5mins
+        gv_cloud_refresh_ts = now + 300
         utils.log_message(
                 1,
-                'Updating Shelly Year Data'
+                'Errors encountered with cloud API calls.. set next cloud update to %s (%s)' % (
+                    gv_cloud_refresh_ts,
+                    datetime.datetime.fromtimestamp(
+                        gv_cloud_refresh_ts).strftime('%H:%M:%S')
+                    )
                 )
-
-        last_year = dt_month_start - datetime.timedelta(days = 300)
-        last_year_start_str = '%04d-%02d-01 00:00:00' % (
-                    last_year.year, 
-                    last_year.month
-                    )
-        year_end_str = '%04d-12-31 23:59:59' % (
-                    dt_today.year
-                    )
-        
-        # using configured day discard times 30
-        year_data = get_shelly_api_usage_data(
-                config,
-                date_range = 'custom',
-                date_from = last_year_start_str,
-                date_to = year_end_str)
-        
-        if year_data:
-            # reset timestamp
-            # for :10 past next hour (data may not be present otherwise)
-            year_ts = ((70 - dt_today.minute) * 60) + now
-            utils.log_message(
-                    1,
-                    'Set next year update to %s (%s)' % (
-                        year_ts,
-                        datetime.datetime.fromtimestamp(year_ts).strftime('%H:%M:%S')
-                        )
-                    )
-
-            # reformat to list of records
-            year_data_list = []
-            for key in sorted(year_data.keys()):
-                year_data_list.append(year_data[key])
-
-            gv_shelly_dict['year'] = year_data_list[-12:]
-            gv_shelly_dict['year_last_updated'] = int(time.time())
 
     return
 
@@ -635,23 +626,29 @@ def get_cloud_live_data(config):
         return 
 
     # variants
-    if config['data_source'] == 'shelly-em':
+    if (config['data_source'] == 'shelly-em' or 
+        config['grid_source'] == 'shelly-em'):
         # single device, two em1 channels
         grid = resp_dict[0]['status']['em1:0']['act_power'] / 1000
         solar = resp_dict[0]['status']['em1:1']['act_power'] / 1000
-    elif config['grid_source'] == 'shelly-em':
-        # single device, two em1 channels
-        grid = resp_dict[0]['status']['em1:0']['act_power'] / 1000
-        solar = resp_dict[0]['status']['em1:1']['act_power'] / 1000
+        total_grid_import = resp_dict[0]['status']['em1data:0']['total_act_energy'] / 1000
+        total_grid_export = resp_dict[0]['status']['em1data:0']['total_act_ret_energy'] / 1000
+        total_solar = resp_dict[0]['status']['em1data:1']['total_act_energy'] / 1000
     elif config['data_source'] in ['shelly-3em-pro']:
         # two devices, single em channel each
         # total_act_power is the sum of all 3ph readings
         grid = resp_dict[0]['status']['em:0']['total_act_power'] / 1000
         solar = resp_dict[1]['status']['em:0']['total_act_power'] / 1000
+        total_grid_import = resp_dict[0]['status']['emdata:0']['total_act'] / 1000
+        total_grid_export = resp_dict[0]['status']['emdata:0']['total_act_ret'] / 1000
+        total_solar = resp_dict[1]['status']['emdata:0']['total_act'] / 1000
     else:
         # Apollo alarms
         grid = 12.01 
         solar = 12.02
+        total_grid_import = 0
+        total_grid_export = 0
+        total_solar = 0
 
     # update live data
     # timestamp taken from status record from Shelly API 
@@ -691,6 +688,11 @@ def get_cloud_live_data(config):
     live_rec['export'] = grid_export
     live_rec['solar'] = solar
 
+    # total accumulated values for import, export and solar
+    live_rec['total_import'] = total_grid_import
+    live_rec['total_export'] = total_grid_export
+    live_rec['total_solar'] = total_solar
+
     live_rec['solar_consumed'] = max(0, live_rec['solar'] - live_rec['export'])
     live_rec['consumed'] = live_rec['solar_consumed'] + live_rec['import']
 
@@ -705,6 +707,56 @@ def get_cloud_live_data(config):
                 live_rec['solar'],
                 )
             )
+
+    # calculate delta values since last cloud cache
+    if gv_live_snapshot_rec:
+        import_delta = live_rec['total_import'] - gv_live_snapshot_rec['total_import']
+        export_delta = live_rec['total_export'] - gv_live_snapshot_rec['total_export']
+        solar_delta = live_rec['total_solar'] - gv_live_snapshot_rec['total_solar']
+
+        utils.log_message(
+                1,
+                'Usage delta: import:%.3f export:%.3f solar:%.3f' % (
+                    import_delta,
+                    export_delta,
+                    solar_delta
+                    )
+                )
+
+        # apply offsets for the this hour and recalc derived values 
+        latest_hour_rec = gv_shelly_dict['day'][-1]
+        latest_hour_rec['import'] += import_delta
+        latest_hour_rec['export'] += export_delta
+        latest_hour_rec['solar'] += solar_delta
+        latest_hour_rec['solar_consumed'] = max(0, latest_hour_rec['solar'] - latest_hour_rec['export'])
+        latest_hour_rec['consumed'] = latest_hour_rec['solar_consumed'] + latest_hour_rec['import']
+        latest_hour_rec['co2'] = (config['environment']['gco2_kwh'] * latest_hour_rec['solar']) / 1000
+        latest_hour_rec['trees'] = config['environment']['trees_kwh'] * latest_hour_rec['solar']
+
+        # apply offsets for today and recalc derived values 
+        today_rec = gv_shelly_dict['month'][-1]
+        today_rec['import'] += import_delta
+        today_rec['export'] += export_delta
+        today_rec['solar'] += solar_delta
+        today_rec['solar_consumed'] = max(0, today_rec['solar'] - today_rec['export'])
+        today_rec['consumed'] = today_rec['solar_consumed'] + today_rec['import']
+        today_rec['co2'] = (config['environment']['gco2_kwh'] * today_rec['solar']) / 1000
+        today_rec['trees'] = config['environment']['trees_kwh'] * today_rec['solar']
+
+        # apply offsets for this month and recalc derived values 
+        this_month_rec = gv_shelly_dict['year'][-1]
+        this_month_rec['import'] += import_delta
+        this_month_rec['export'] += export_delta
+        this_month_rec['solar'] += solar_delta
+        this_month_rec['solar_consumed'] = max(0, this_month_rec['solar'] - this_month_rec['export'])
+        this_month_rec['consumed'] = this_month_rec['solar_consumed'] + this_month_rec['import']
+        this_month_rec['co2'] = (config['environment']['gco2_kwh'] * this_month_rec['solar']) / 1000
+        this_month_rec['trees'] = config['environment']['trees_kwh'] * this_month_rec['solar']
+
+        # update cloud data timestamps
+        gv_shelly_dict['day_last_updated'] = int(time.time())
+        gv_shelly_dict['month_last_updated'] = int(time.time())
+        gv_shelly_dict['year_last_updated'] = int(time.time())
 
     return
 
