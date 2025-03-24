@@ -93,12 +93,23 @@ function set_layout() {
     console.log("set_layout()");
     console.log("Window dims.. w:" + window_width + " h:" + window_height);
 
-    metric_donut_html = ` 
-            <div id="metric_donut_chart" class="card-transparent text-white text-center mt-0">
+    metric_donut_a_html = ` 
+            <div class="card-transparent text-white text-center mt-0">
                 <div class="card-body text-center">
                     <center>
-                        <a href="/admin"><div id="metric_donut_title" class="title"></div></a>
-                        <div onclick="ui_cycle_forced_layout()" id="donut_chart"></div>
+                        <a href="/admin"><div id="metric_donut_title_a" class="title"></div></a>
+                        <div onclick="ui_cycle_forced_layout()" id="donut_chart_a"></div>
+                    </center>
+                </div>
+            </div>
+            `;
+
+    metric_donut_b_html = ` 
+            <div class="card-transparent text-white text-center mt-0">
+                <div class="card-body text-center">
+                    <center>
+                        <a href="/admin"><div id="metric_donut_title_b" class="title"></div></a>
+                        <div onclick="ui_cycle_forced_layout()" id="donut_chart_b"></div>
                     </center>
                 </div>
             </div>
@@ -316,7 +327,7 @@ function set_layout() {
                 <div id="master" class="container-fluid" data-bs-theme="dark">
                     <div class="row">
                         <div class="col col-5 mt-0">
-                            <div id="metric_donut_insert" class="row">
+                            <div id="metric_donut_a_insert" class="row">
                             </div>
                             <div id="metrics_a_insert" class="row">
                             </div>
@@ -337,13 +348,38 @@ function set_layout() {
                 </div>
             `;
 
+    // large screen dual-donut model
+    // two columns, split 6:6 on bootstrap 12 breakpoints
+    // left column has the live donut and live metrics 
+    // right has the other cycled metrics rendered as a donut and metric values
+    dual_donut_layout = `
+                <div id="master" class="container-fluid" data-bs-theme="dark">
+                    <div class="row">
+                        <div class="col col-6 mt-0">
+                            <div id="metric_donut_a_insert" class="row">
+                            </div>
+                            <div id="metrics_a_insert" class="row">
+                            </div>
+                        </div>
+
+                        <div class="col col-6 mt-0">
+                            <div id="metric_donut_b_insert" class="row">
+                            </div>
+                            <div id="metrics_b_insert" class="row">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `;
+
     // small screen model
     // 5:7 split columns
     // donut on  left, metrics stack on right
     small_screen_layout = `
                 <div id="master" class="container-fluid" data-bs-theme="dark">
                     <div class="row align-items-center">
-                        <div id="metric_donut_insert" class="col col-5 mt-2">
+                        <div id="metric_donut_a_insert" class="col col-5 mt-2">
                         </div>
                         <div id="metrics_a_insert" class="col col-7 mt-2">
                         </div>
@@ -358,7 +394,7 @@ function set_layout() {
     // tablets or monitors
     portrait_screen_layout = `
                 <div class="container-fluid" data-bs-theme="dark">
-                    <div id="metric_donut_insert" class="row">
+                    <div id="metric_donut_a_insert" class="row">
                     </div>
 
                     <div id="metrics_a_insert" class="row">
@@ -406,7 +442,7 @@ function set_layout() {
 
     // forced layout
     if (forced_layout != undefined) {
-        if (["small", "large", "portrait", "metrics"].includes(forced_layout)) {
+        if (["small", "large", "dual-donuts", "portrait", "metrics"].includes(forced_layout)) {
             layout = forced_layout;
         }
     }
@@ -434,7 +470,7 @@ function set_layout() {
     if (layout == "portrait") {
         // portrait view
         $("#dashboard").html(portrait_screen_layout);
-        $("#metric_donut_insert").html(metric_donut_html);
+        $("#metric_donut_a_insert").html(metric_donut_a_html);
         $("#metrics_a_insert").html(metrics_a_html);
         $("#day_column_chart_insert").html(day_column_chart_html);
         $("#month_column_chart_insert").html(month_column_chart_html);
@@ -453,7 +489,7 @@ function set_layout() {
         // small screen landscape
         layout = "small";
         $("#dashboard").html(small_screen_layout);
-        $("#metric_donut_insert").html(metric_donut_html);
+        $("#metric_donut_a_insert").html(metric_donut_a_html);
         $("#metrics_a_insert").html(metrics_a_html);
 
         // set the small screen font sizes
@@ -468,11 +504,28 @@ function set_layout() {
     if (layout == "large") {
         // large screen landscape
         $("#dashboard").html(large_screen_layout);
-        $("#metric_donut_insert").html(metric_donut_html);
+        $("#metric_donut_a_insert").html(metric_donut_a_html);
         $("#metrics_a_insert").html(metrics_a_html);
         $("#day_column_chart_insert").html(day_column_chart_html);
         $("#month_column_chart_insert").html(month_column_chart_html);
         $("#year_column_chart_insert").html(year_column_chart_html);
+
+        // set the large screen smaller font sizes
+        document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-large-screen)');
+        document.body.style.setProperty("--icon-font-size", 'var(--icon-font-size-large-screen)');
+        document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-large-screen)');
+        document.body.style.setProperty("--title-font-size", 'var(--title-font-size-large-screen)');
+        document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-large-screen)');
+        document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-large-screen)');
+    }
+
+    if (layout == "dual-donuts") {
+        // large screen dual donuts
+        $("#dashboard").html(dual_donut_layout);
+        $("#metric_donut_a_insert").html(metric_donut_a_html);
+        $("#metric_donut_b_insert").html(metric_donut_b_html);
+        $("#metrics_a_insert").html(metrics_a_html);
+        $("#metrics_b_insert").html(metrics_b_html);
 
         // set the large screen smaller font sizes
         document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-large-screen)');
@@ -617,7 +670,7 @@ function refresh_data() {
     // display the get error
     data_request.fail(function() {
         refresh_error_count += 1;
-        $("#metric_donut_title").html(`Data Refresh Failure #${refresh_error_count}`);
+        $("#metric_donut_title_a").html(`Data Refresh Failure #${refresh_error_count}`);
         data_dict.last_updated = 0;
     });           
 
@@ -672,8 +725,8 @@ function refresh_data() {
 }
 
 // metric series rotation globals
-var metrics_a_metric_index = -1; // init only
-var metrics_a_metric_key = 'live';
+var metric_cycle_index = -1; // init only
+var metric_key = 'live';
 
 // rotates the current metric index as 
 // part of the timed cycling
@@ -683,11 +736,18 @@ function cycle_metric_index() {
     if ('metrics' in data_dict) {
         metric_list = Object.keys(data_dict.metrics);
         for (i = 0; i < metric_list.length; i++) {
-            metrics_a_metric_index = (metrics_a_metric_index + 1) % metric_list.length;
+            metric_cycle_index = (metric_cycle_index + 1) % metric_list.length;
+
+            // skip live metric in dual-donut layout
+            // as live is fixed on left
+            if (layout == "dual-donuts" && 
+                metric_list[metric_cycle_index] == "live") {
+                continue;
+            }
 
             // check its enabled in the config
-            if (data_dict.dashboard.metrics[metric_list[metrics_a_metric_index]]) {
-                metrics_a_metric_key = metric_list[metrics_a_metric_index];
+            if (data_dict.dashboard.metrics[metric_list[metric_cycle_index]]) {
+                metric_key = metric_list[metric_cycle_index];
                 break;
             }
         }
@@ -719,7 +779,7 @@ var forced_layout_index = -1; // init only
 // only cycles between small and large
 function ui_cycle_forced_layout() {
     console.log("ui_cycle_forced_layout()");
-    forced_layout_list = ['small', 'large', 'metrics'];
+    forced_layout_list = ['small', 'large', 'dual-donuts', 'metrics'];
     forced_layout_index = (forced_layout_index + 1) % forced_layout_list.length;
     forced_layout = forced_layout_list[forced_layout_index];
     console.log("forced layout to:" + forced_layout);
@@ -963,12 +1023,25 @@ function display_data() {
         populate_metrics("metrics_c", "this_month");
         populate_metrics("metrics_d", "last_12_months");
     }
-    else {
-        // typical layout of using a donut and one set of metrics
-        metrics_a_source = data_dict.metrics[metrics_a_metric_key];
-        $("#metric_donut_title").html(metrics_a_source['title']);
+    else if (layout == "dual-donuts") {
+        // dual-donut + dual metrics layout
+        metrics_a_source = data_dict.metrics["live"];
+        metrics_b_source = data_dict.metrics[metric_key];
+        $("#metric_donut_title_a").html(metrics_a_source['title']);
+        $("#metric_donut_title_b").html(metrics_b_source['title']);
 
-        populate_metrics("metrics_a", metrics_a_metric_key);
+        populate_metrics("metrics_a", "live");
+        $("#metrics_a_title").hide();
+
+        populate_metrics("metrics_b", metric_key);
+        $("#metrics_b_title").hide();
+    }
+    else {
+        // typical layout of using a single donut and one set of metrics
+        metrics_a_source = data_dict.metrics[metric_key];
+        $("#metric_donut_title_a").html(metrics_a_source['title']);
+
+        populate_metrics("metrics_a", metric_key);
         $("#metrics_a_title").hide();
     }
 
@@ -980,7 +1053,8 @@ function display_data() {
 }
 
 // chart globals to avoid memory growth
-var donut_chart;
+var donut_chart_a;
+var donut_chart_b;
 var day_chart;
 var month_chart;
 var year_chart;
@@ -1004,6 +1078,7 @@ function render_charts() {
       break;
 
       case "large":
+      case "dual-donuts":
       donut_chart_height = (window.innerHeight) * 0.40;
       break;
 
@@ -1020,18 +1095,22 @@ function render_charts() {
     // in for the font size. So it needs to rendered in pixels
     switch(layout) {
       case "large":
+      case "dual-donuts":
       legend_font_size_var = "--legend-font-size-large-screen";
       slice_font_size_var = "--slice-font-size-large-screen";
       break;
+
       case "small":
       legend_font_size_var = "--legend-font-size-small-screen";
       slice_font_size_var = "--slice-font-size-small-screen";
       break;
+
       case "portrait":
       legend_font_size_var = "--legend-font-size-portrait-screen";
       slice_font_size_var = "--slice-font-size-portrait-screen";
       break;
     }
+
     // expand that variable into the computed size (which will be x.xxvw)
     legend_font_vw_size = getComputedStyle(document.documentElement).getPropertyValue(legend_font_size_var);
     slice_font_vw_size = getComputedStyle(document.documentElement).getPropertyValue(slice_font_size_var);
@@ -1067,16 +1146,6 @@ function render_charts() {
         "battery_charge": "#5C985C",
         "battery_discharge": "#925EAE",
     };
-
-    // live power distribution 
-
-    if (donut_chart != undefined) {
-        donut_chart.clearChart();
-    }
-    console.log("rendering donut chart");
-    donut_chart = new google.visualization.PieChart(document.getElementById('donut_chart'));
-
-    // donut options (shared)
 
     // construct donut series and colour lists
     donut_series_list = []
@@ -1131,49 +1200,125 @@ function render_charts() {
         donut_options.pieSliceTextStyle.fontSize = legend_font_px_size * 0.9;
     }
 
-    // agg
-    metrics_a_source = data_dict.metrics[metrics_a_metric_key];
-    var metrics_a_data = new google.visualization.DataTable();
-    metrics_a_data.addColumn('string', 'Source');
-    metrics_a_data.addColumn('number', 'kWh');
+    // donuts are drawn on all layouts except metrics
+    if (layout != "metrics") {
 
-    // calculate total series value
-    var total_series_value = 0;
-    for (series_field of donut_series_list) {
-        series_value = metrics_a_source[series_field];
-        if (series_value == undefined) {
-            // FIXME need to investigate why this can be undefined
-            series_value = 0;
+        // donut a
+        // standard left-side donut used for cycled metrics
+        if (donut_chart_a != undefined) {
+            donut_chart_a.clearChart();
         }
-        total_series_value += series_value;
-    }
+        console.log("rendering donut chart a");
+        donut_chart_a = new google.visualization.PieChart(document.getElementById('donut_chart_a'));
 
-    for (series_field of donut_series_list) {
-        // calculate percentage of total
-        // for the small screen donut label
-        series_value = metrics_a_source[series_field];
-        if (series_value == undefined) {
-            // FIXME need to investigate why this can be undefined
-            series_value = 0;
-        }
-        series_percentage = series_value / total_series_value * 100;
-        if (layout == "small") {
-            // label + percentage
-            series_label = `${series_labels[series_field]} ${series_percentage.toFixed(1)}%`;
+        // metrics data source
+        // dual-donut layout uses the live metric on the left side
+        if (layout == "dual-donuts") {
+            // dual-donut layout
+            metrics_a_source = data_dict.metrics["live"];
         }
         else {
-            // label only for legend
-            // displayed value will be the percentage
-            series_label = series_labels[series_field];
+            metrics_a_source = data_dict.metrics[metric_key];
         }
-        metrics_a_data.addRows([
-            // graph value times 1000 for issues with small values
-            [series_label, series_value * 1000]
-        ]);
-    }
 
-    // draw donut
-    donut_chart.draw(metrics_a_data, donut_options);
+        var metrics_a_data = new google.visualization.DataTable();
+        metrics_a_data.addColumn('string', 'Source');
+        metrics_a_data.addColumn('number', 'kWh');
+
+        // calculate total series value
+        var total_series_value = 0;
+        for (series_field of donut_series_list) {
+            series_value = metrics_a_source[series_field];
+            if (series_value == undefined) {
+                // FIXME need to investigate why this can be undefined
+                series_value = 0;
+            }
+            total_series_value += series_value;
+        }
+
+        for (series_field of donut_series_list) {
+            // calculate percentage of total
+            // for the small screen donut label
+            series_value = metrics_a_source[series_field];
+            if (series_value == undefined) {
+                // FIXME need to investigate why this can be undefined
+                series_value = 0;
+            }
+            series_percentage = series_value / total_series_value * 100;
+            if (layout == "small") {
+                // label + percentage
+                series_label = `${series_labels[series_field]} ${series_percentage.toFixed(1)}%`;
+            }
+            else {
+                // label only for legend
+                // displayed value will be the percentage
+                series_label = series_labels[series_field];
+            }
+            metrics_a_data.addRows([
+                // graph value times 1000 for issues with small values
+                [series_label, series_value * 1000]
+            ]);
+        }
+
+        // draw donut a
+        donut_chart_a.draw(metrics_a_data, donut_options);
+
+        if (layout == "dual-donuts") {
+            // donut b
+            // right-side donut used for cycled metrics
+            if (donut_chart_b != undefined) {
+                donut_chart_b.clearChart();
+            }
+            console.log("rendering donut chart b");
+            donut_chart_b = new google.visualization.PieChart(document.getElementById('donut_chart_b'));
+
+            // metrics data source
+            // FIXME should not use live data
+            metrics_b_source = data_dict.metrics[metric_key];
+
+            var metrics_b_data = new google.visualization.DataTable();
+            metrics_b_data.addColumn('string', 'Source');
+            metrics_b_data.addColumn('number', 'kWh');
+
+            // calculate total series value
+            var total_series_value = 0;
+            for (series_field of donut_series_list) {
+                series_value = metrics_b_source[series_field];
+                if (series_value == undefined) {
+                    // FIXME need to investigate why this can be undefined
+                    series_value = 0;
+                }
+                total_series_value += series_value;
+            }
+
+            for (series_field of donut_series_list) {
+                // calculate percentage of total
+                // for the small screen donut label
+                series_value = metrics_b_source[series_field];
+                if (series_value == undefined) {
+                    // FIXME need to investigate why this can be undefined
+                    series_value = 0;
+                }
+                series_percentage = series_value / total_series_value * 100;
+                if (layout == "small") {
+                    // label + percentage
+                    series_label = `${series_labels[series_field]} ${series_percentage.toFixed(1)}%`;
+                }
+                else {
+                    // label only for legend
+                    // displayed value will be the percentage
+                    series_label = series_labels[series_field];
+                }
+                metrics_b_data.addRows([
+                    // graph value times 1000 for issues with small values
+                    [series_label, series_value * 1000]
+                ]);
+            }
+
+            // draw donut
+            donut_chart_b.draw(metrics_b_data, donut_options);
+        }
+    }
 
     // bar charts
     // only applies to portrait or large layouts
