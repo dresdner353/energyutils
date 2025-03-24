@@ -28,7 +28,7 @@ gv_shelly_dict['live'] = {}
 # timestamps to track the next cloud usage call
 # and a snapshot of the live data for the same time
 gv_cloud_refresh_ts = 0
-gv_live_snapshot_rec = None # will be set on first cloud call
+gv_live_snapshot_rec = None # will be set on each live call
 
 
 def parse_time(
@@ -374,7 +374,6 @@ def get_cloud_usage_data(config):
 
     global gv_shelly_dict
     global gv_cloud_refresh_ts
-    global gv_live_snapshot_rec
 
     now = int(time.time())
     dt_today = datetime.datetime.today() 
@@ -497,10 +496,6 @@ def get_cloud_usage_data(config):
                         gv_cloud_refresh_ts).strftime('%H:%M:%S')
                     )
                 )
-        # copy live data to snapshot
-        # as it will be used to slyly increment the cached cloud data
-        # during each live update
-        gv_live_snapshot_rec = copy.deepcopy(gv_shelly_dict['live'])
     else:
         # retry in 5mins
         gv_cloud_refresh_ts = now + 300
@@ -528,6 +523,7 @@ def get_cloud_live_data(config):
     Writes results direct to the gv_shelly_dict
     """
     global gv_shelly_dict
+    global gv_live_snapshot_rec
 
     # check if creds are set
     if (
@@ -708,7 +704,7 @@ def get_cloud_live_data(config):
                 )
             )
 
-    # calculate delta values since last cloud cache
+    # calculate delta values since last live update
     if gv_live_snapshot_rec:
         import_delta = live_rec['total_import'] - gv_live_snapshot_rec['total_import']
         export_delta = live_rec['total_export'] - gv_live_snapshot_rec['total_export']
@@ -757,6 +753,9 @@ def get_cloud_live_data(config):
         gv_shelly_dict['day_last_updated'] = int(time.time())
         gv_shelly_dict['month_last_updated'] = int(time.time())
         gv_shelly_dict['year_last_updated'] = int(time.time())
+
+    # snapshot the live data for the next delta calculation
+    gv_live_snapshot_rec = copy.deepcopy(gv_shelly_dict['live'])
 
     return
 
