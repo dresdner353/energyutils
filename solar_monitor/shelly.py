@@ -297,14 +297,15 @@ def get_shelly_api_usage_data(
         # allows for a kwh amount per hour to be thrown away to
         # account for an error on the PV reading
         # has been observed to be about 0.004 kwh per hour
+        # only applied for 12 hours a day however
         solar_kwh_discard = config['shelly']['pv_kwh_discard']
         interval = solar_resp_dict['interval']
         if interval == 'day':
-            # scale to 24 hours
-            solar_kwh_discard *= 24
+            # scale to 12 hours
+            solar_kwh_discard *= 12
         elif interval == 'month':
-            # scale to 30 days
-            solar_kwh_discard *= (24 * 30)
+            # scale to 12x30 days
+            solar_kwh_discard *= (12 * 30)
 
         # apply discard and zero if negative
         solar -= solar_kwh_discard
