@@ -780,11 +780,14 @@ gv_force_refresh = args['force_refresh']
 gv_force_metric_cycle = args['force_metric_cycle']
 utils.gv_verbose = args['verbose']
 
-# get network IP of host
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.connect(("8.8.8.8", 80))
-gv_host_ip = s.getsockname()[0]
-s.close()
+# try to get network IP of host
+try:
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    gv_host_ip = s.getsockname()[0]
+    s.close()
+except:
+    gv_host_ip = '127.0.0.1'
 
 # Thread management 
 executor = concurrent.futures.ThreadPoolExecutor(
