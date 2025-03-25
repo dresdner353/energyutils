@@ -497,8 +497,8 @@ def get_cloud_usage_data(config):
                     )
                 )
     else:
-        # retry in 5mins
-        gv_cloud_refresh_ts = now + 300
+        # retry in mins
+        gv_cloud_refresh_ts = now + 60
         utils.log_message(
                 1,
                 'Errors encountered with cloud API calls.. set next cloud update to %s (%s)' % (
@@ -701,9 +701,11 @@ def get_cloud_live_data(config):
     solar_delta = 0
 
     # apply delta values to the last hour, day and month records
-    # if we have confirmation that cloud data has been updated (gv_cloud_refresh_ts)
+    # if we actually have this data
     if (gv_live_snapshot_rec and 
-        gv_cloud_refresh_ts > 0):
+        len(gv_shelly_dict['day']) > 0 and
+        len(gv_shelly_dict['month']) > 0 and
+        len(gv_shelly_dict['year']) > 0):
 
         import_delta = live_rec['total_import'] - gv_live_snapshot_rec['total_import']
         export_delta = live_rec['total_export'] - gv_live_snapshot_rec['total_export']
