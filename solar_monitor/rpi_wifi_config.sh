@@ -30,6 +30,11 @@ then
         chmod go-rw ${NM_CONN_FILE}
         systemctl restart NetworkManager
         echo "Configured WiFi for ${SSID}"
+
+        # reboot
+        # not needed but helps clear down anu UI
+        # disk insertion noise that may be on screen 
+        /usr/sbin/reboot
     fi
 fi
 
