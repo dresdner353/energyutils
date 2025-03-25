@@ -707,9 +707,17 @@ def get_cloud_live_data(config):
         len(gv_shelly_dict['month']) > 0 and
         len(gv_shelly_dict['year']) > 0):
 
+        # calculate deltas
         import_delta = live_rec['total_import'] - gv_live_snapshot_rec['total_import']
         export_delta = live_rec['total_export'] - gv_live_snapshot_rec['total_export']
-        solar_delta = live_rec['total_solar'] - gv_live_snapshot_rec['total_solar']
+
+        # solar treated differently. Only set to what we measure if solar 
+        # is actually present. Otherwise, we zero it out
+        # this is the same false reading on low values, sometimes seen at night
+        if live_rec['solar'] > 0:
+            solar_delta = live_rec['total_solar'] - gv_live_snapshot_rec['total_solar']
+        else:
+            solar_delta = 0
 
         # apply offsets for the this hour and recalc derived values 
         latest_hour_rec = gv_shelly_dict['day'][-1]
