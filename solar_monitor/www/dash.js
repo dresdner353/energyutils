@@ -996,7 +996,6 @@ function display_data() {
     // only when we have data to show
     // this is a once-off occurrence at the start
     if ('last_updated' in data_dict && 
-        'metrics' in data_dict && 
         data_dict.last_updated > 0) {
         $("#splash").hide();
     }
