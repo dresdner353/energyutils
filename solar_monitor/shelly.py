@@ -699,7 +699,12 @@ def get_cloud_live_data(config):
     import_delta = 0
     export_delta = 0
     solar_delta = 0
-    if gv_live_snapshot_rec:
+
+    # apply delta values to the last hour, day and month records
+    # if we have confirmation that cloud data has been updated (gv_cloud_refresh_ts)
+    if (gv_live_snapshot_rec and 
+        gv_cloud_refresh_ts > 0):
+
         import_delta = live_rec['total_import'] - gv_live_snapshot_rec['total_import']
         export_delta = live_rec['total_export'] - gv_live_snapshot_rec['total_export']
         solar_delta = live_rec['total_solar'] - gv_live_snapshot_rec['total_solar']
