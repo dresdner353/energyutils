@@ -9,6 +9,19 @@ function get_query_arg(arg) {
     return value;
 }
 
+// get redirect URL with new query arg
+// this will preserve any other query args
+// for example the margin arg
+function get_redirect_url(arg, value) {
+    url = new URL(window.location);
+    console.log("get_redirect_url()");
+    const params = new URLSearchParams(url.search);
+    params.set(arg, value);
+    redirect_url = "/?" + params.toString();
+    console.log("redirect url: " + redirect_url);
+    return redirect_url;
+}
+
 // Google charts
 google.charts.load('current', {'packages': ['corechart']});
 google.charts.load('current', {'packages':['gauge']});
@@ -31,9 +44,7 @@ var metric_cycle_interval = 1000;
 var metric_cycle_timer = setInterval(cycle_metric_index, metric_cycle_interval);
 
 // global string for selected layout
-// and forced layout from query args
 var layout;
-var forced_margin = undefined;
 
 // document load
 $( document ).ready(function() {
@@ -45,9 +56,6 @@ $( document ).ready(function() {
     // set dash to blank text
     // layout will over-ride this
     $("#dashboard").html("");
-
-    // try to determine optional forced layout
-    forced_margin = get_query_arg("margin");
 
     set_layout();
     refresh_data();
@@ -542,8 +550,10 @@ function set_layout() {
 
     console.log("Set layout to " + layout);
 
-    if (forced_margin != undefined) {
-        $("#master").removeClass().addClass(`container-fluid mt-${forced_margin} mb-${forced_margin} mx-${forced_margin}`);
+    // margin for overscan scenarios
+    margin_arg = get_query_arg("margin");
+    if (margin_arg != undefined) {
+        $("#master").removeClass().addClass(`container-fluid mt-${margin_arg} mb-${margin_arg} mx-${margin_arg}`);
     }
 
     // reset timestamps on bar charts to force redraw
@@ -776,7 +786,7 @@ function ui_cycle_layout() {
     layout_index = (layout_index + 1) % ui_layout_list.length;
     layout = ui_layout_list[layout_index];
     console.log("forced layout to:" + layout);
-    window.location.replace("/?layout=" + layout);
+    window.location.replace(get_redirect_url("layout", layout));
 }
 
 
