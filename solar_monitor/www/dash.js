@@ -1129,8 +1129,28 @@ function render_column_chart(chart_id,
     chart_data.addRows(data_dict[data_key].length);
     row = 0
     for (const item of data_dict[data_key]) {
-        // format as hh:00
-        time_str = item.hour.toString().padStart(2, '0') 
+
+        // time string
+        // not ideal as we have to code variation formatting here
+        // for the time field labels
+        switch(data_key) {
+          case 'day':
+          // HH (24hr zero padded)
+          time_str = item.hour.toString().padStart(2, '0');
+          break;
+
+          case 'month':
+          // MMM DD
+          time_str = item.month + ' ' + item.day.toString().padStart(2, '0');
+          break;
+
+          case 'year':
+          // MMM
+          time_str = item.month;
+          break;
+
+        }
+
         chart_data.setCell(row, 0, time_str);
         col = 1
         for (series_field of chart_series_list) {
@@ -1351,21 +1371,21 @@ function render_charts() {
     // only applies to portrait or default layouts
     if (layout == "portrait" || layout == "default") {
 
-        // construct bar_chart series and colour lists
-        bar_chart_series_list = []
-        bar_chart_colour_list = []
+        // construct column_chart series and colour lists
+        column_chart_series_list = []
+        column_chart_colour_list = []
 
         for (series_field of series_fields) {
             if (data_dict.dashboard.bar_chart[series_field]) {
-                bar_chart_series_list.push(series_field)
-                bar_chart_colour_list.push(series_colours[series_field])
+                column_chart_series_list.push(series_field)
+                column_chart_colour_list.push(series_colours[series_field])
             }
         }
 
         // common options
         // but the hAxis title will be tweaked
-        var bar_chart_options = {
-            colors: bar_chart_colour_list,
+        var column_chart_options = {
+            colors: column_chart_colour_list,
             hAxis: {
                 title: 'Hour',
                 titleTextStyle: {
@@ -1437,18 +1457,18 @@ function render_charts() {
             }
             day_chart = render_column_chart("day_google_chart",
                                             'day',
-                                            bar_chart_options,
+                                            column_chart_options,
                                             series_labels,
                                             'Hour',
-                                            bar_chart_series_list);
+                                            column_chart_series_list);
 
             chart_title = `Last ${data_dict.day.length} Hours`;
             $("#day_chart_title").html(chart_title);
         }
 
         // remove the legent for the month and year charts 
-        bar_chart_options.legend = 'none';
-        bar_chart_options.chartArea.top = 10;
+        column_chart_options.legend = 'none';
+        column_chart_options.chartArea.top = 10;
 
         // month 
         if (data_dict.month.length > 0 && 
@@ -1461,10 +1481,10 @@ function render_charts() {
 
             month_chart = render_column_chart("month_google_chart",
                                             'month',
-                                            bar_chart_options,
+                                            column_chart_options,
                                             series_labels,
                                             'Day',
-                                            bar_chart_series_list);
+                                            column_chart_series_list);
 
             chart_title = `Last ${data_dict.month.length} Days`;
             $("#month_chart_title").html(chart_title);
@@ -1480,10 +1500,10 @@ function render_charts() {
             }
             year_chart = render_column_chart("year_google_chart",
                                             'year',
-                                            bar_chart_options,
+                                            column_chart_options,
                                             series_labels,
                                             'Month',
-                                            bar_chart_series_list);
+                                            column_chart_series_list);
 
             chart_title = `Last ${data_dict.year.length} Months`;
             $("#year_chart_title").html(chart_title);
