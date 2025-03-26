@@ -683,6 +683,9 @@ function refresh_data() {
             return;
         }
 
+        // reset error count
+        refresh_error_count = 0;
+
         // check data dict refresh and update if required
         // Note: shown as second and JS operates on msecs
         if ('refresh_interval' in data_dict['dashboard']) {
@@ -1014,36 +1017,38 @@ function display_data() {
         return;
     }
 
-    // reset error count
-    refresh_error_count = 0;
+    // populate metrics
+    switch(layout) {
+      case "metrics":
+      // 4 fixed metric sets
+      populate_metrics("metrics_a", "live");
+      populate_metrics("metrics_b", "today");
+      populate_metrics("metrics_c", "this_month");
+      populate_metrics("metrics_d", "last_12_months");
+      break;
 
-    // Aggregate metrics
-    if (layout == "metrics") {
-        populate_metrics("metrics_a", "live");
-        populate_metrics("metrics_b", "today");
-        populate_metrics("metrics_c", "this_month");
-        populate_metrics("metrics_d", "last_12_months");
-    }
-    else if (layout == "dual-metrics") {
-        // dual-donut + dual metrics layout
-        metrics_a_source = data_dict.metrics["live"];
-        metrics_b_source = data_dict.metrics[metric_key];
-        $("#donut_a_title").html(metrics_a_source['title']);
-        $("#donut_b_title").html(metrics_b_source['title']);
+      case "dual-metrics":
+      // dual-donut + dual metrics layout
+      metrics_a_source = data_dict.metrics["live"];
+      metrics_b_source = data_dict.metrics[metric_key];
+      $("#donut_a_title").html(metrics_a_source['title']);
+      $("#donut_b_title").html(metrics_b_source['title']);
 
-        populate_metrics("metrics_a", "live");
-        $("#metrics_a_title").hide();
+      populate_metrics("metrics_a", "live");
+      $("#metrics_a_title").hide();
 
-        populate_metrics("metrics_b", metric_key);
-        $("#metrics_b_title").hide();
-    }
-    else {
-        // typical layout of using a single donut and one set of metrics
-        metrics_a_source = data_dict.metrics[metric_key];
-        $("#donut_a_title").html(metrics_a_source['title']);
+      populate_metrics("metrics_b", metric_key);
+      $("#metrics_b_title").hide();
+      break;
 
-        populate_metrics("metrics_a", metric_key);
-        $("#metrics_a_title").hide();
+      default:
+      // typical layout of using a single donut and one set of metrics
+      metrics_a_source = data_dict.metrics[metric_key];
+      $("#donut_a_title").html(metrics_a_source['title']);
+
+      populate_metrics("metrics_a", metric_key);
+      $("#metrics_a_title").hide();
+      break;
     }
 
     // show the dashboard
@@ -1081,11 +1086,6 @@ function render_charts() {
       case "default":
       case "dual-metrics":
       donut_chart_height = (window.innerHeight) * 0.40;
-      break;
-
-      default:
-      // unknown layout, do not render
-      return;
       break;
     }
 
