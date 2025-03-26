@@ -258,3 +258,15 @@ async function load_import_file(event) {
     toggle_passwords();
 }
 
+function show_dashboard() {
+    console.log("show_dashboard()");
+    if (document.referrer != document.URL) {
+        // back to referring URL
+        target = document.referrer;
+    }
+    else {
+        // default to root
+        target = '/';
+    }
+    window.location.replace(target);
+}

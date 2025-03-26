@@ -291,7 +291,7 @@
                     </div>
 
                     <button type="submit" class="btn btn-primary mt-4" id="apply_button">Apply Changes</button>
-                    <a class="btn btn-primary mt-4" href="/" role="button">Show Dashboard</a>
+                    <button class="btn btn-primary mt-4" id="dashboard_button" onclick="show_dashboard()">Show Dashboard</button>
                     <button class="btn btn-primary mt-4" id="export_button" onclick="download_config()">Export Config</button>
                     <button class="btn btn-primary mt-4" id="import_button" onclick="import_config()">Import Config</button>
                     <input id="import_file" type="file" accept=".json" name="import_file" onchange="load_import_file(event)"></input>
