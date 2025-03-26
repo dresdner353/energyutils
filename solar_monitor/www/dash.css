@@ -1,37 +1,37 @@
 :root {
     /* metric and material icon sizing
-     * two variations for large and smaller screens
+     * two variations for default and smaller screens
      */
-    --metric-font-size-large-screen: 6.0vw;
-    --metric-font-size-small-screen: 9.0vw;
-    --metric-font-size-portrait-screen: 8.5vw;
+    --metric-font-size-default: 6.0vw;
+    --metric-font-size-small: 9.0vw;
+    --metric-font-size-portrait: 8.5vw;
 
-    --icon-font-size-large-screen: 3.0vw;
-    --icon-font-size-small-screen: 3.5vw;
-    --icon-font-size-portrait-screen: 4.5vw;
+    --icon-font-size-default: 3.0vw;
+    --icon-font-size-small: 3.5vw;
+    --icon-font-size-portrait: 4.5vw;
 
-    --metric-unit-font-size-large-screen: 1.5vw;
-    --metric-unit-font-size-small-screen: 2.0vw;
-    --metric-unit-font-size-portrait-screen: 2.5vw;
+    --metric-unit-font-size-default: 1.5vw;
+    --metric-unit-font-size-small: 2.0vw;
+    --metric-unit-font-size-portrait: 2.5vw;
 
-    --title-font-size-large-screen: 1.5vw;
-    --title-font-size-small-screen: 2.5vw;
-    --title-font-size-portrait-screen: 4.0vw;
+    --title-font-size-default: 1.5vw;
+    --title-font-size-small: 2.5vw;
+    --title-font-size-portrait: 4.0vw;
 
-    --legend-font-size-large-screen: 1.0vw;
-    --legend-font-size-small-screen: 1.5vw;
-    --legend-font-size-portrait-screen: 2.5vw;
+    --legend-font-size-default: 1.0vw;
+    --legend-font-size-small: 1.5vw;
+    --legend-font-size-portrait: 2.5vw;
 
-    --slice-font-size-large-screen: 1.3vw;
-    --slice-font-size-small-screen: 2.0vw;
-    --slice-font-size-portrait-screen: 3.0vw;
+    --slice-font-size-default: 1.3vw;
+    --slice-font-size-small: 2.0vw;
+    --slice-font-size-portrait: 3.0vw;
 
-    --metric-font-size: var(--metric-font-size-large-screen);
-    --icon-font-size: var(--icon-font-size-large-screen);
-    --metric-unit-font-size: var(--metric-unit-font-size-large-screen);
-    --title-font-size: var(--title-font-size-large-screen);
-    --legend-font-size: var(--legend-font-size-large-screen);
-    --slice-font-size: var(--slice-font-size-large-screen);
+    --metric-font-size: var(--metric-font-size-default);
+    --icon-font-size: var(--icon-font-size-default);
+    --metric-unit-font-size: var(--metric-unit-font-size-default);
+    --title-font-size: var(--title-font-size-default);
+    --legend-font-size: var(--legend-font-size-default);
+    --slice-font-size: var(--slice-font-size-default);
 }
 #bg {
     height: 200px;
