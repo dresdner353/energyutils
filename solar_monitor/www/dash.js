@@ -1446,6 +1446,10 @@ function render_charts() {
             $("#day_chart_title").html(chart_title);
         }
 
+        // remove the legent for the month and year charts 
+        bar_chart_options.legend = 'none';
+        bar_chart_options.chartArea.top = 10;
+
         // month 
         if (data_dict.month.length > 0 && 
             month_chart_ts != data_dict.month_last_updated) {
