@@ -1053,6 +1053,102 @@ function display_data() {
     render_charts();
 }
 
+function render_donut(donut_id,
+                      metric_key,
+                      donut_options,
+                      series_labels,
+                      donut_series_list) {
+    console.log(`rendering donut ${donut_id} with ${metric_key} metrics`);
+
+    metrics_source = data_dict.metrics[metric_key];
+
+    var metrics_data = new google.visualization.DataTable();
+    metrics_data.addColumn('string', 'Source');
+    metrics_data.addColumn('number', 'kWh');
+
+    // calculate total series value
+    var total_series_value = 0;
+    for (series_field of donut_series_list) {
+        series_value = metrics_source[series_field];
+        if (series_value == undefined) {
+            series_value = 0;
+        }
+        total_series_value += series_value;
+    }
+
+    for (series_field of donut_series_list) {
+        // calculate percentage of total
+        // for the small screen donut label
+        series_value = metrics_source[series_field];
+        if (series_value == undefined) {
+            series_value = 0;
+        }
+        series_percentage = series_value / total_series_value * 100;
+        if (layout == "small") {
+            // label + percentage
+            series_label = `${series_labels[series_field]} ${series_percentage.toFixed(1)}%`;
+        }
+        else {
+            // label only for legend
+            // displayed value will be the percentage
+            series_label = series_labels[series_field];
+        }
+        metrics_data.addRows([
+            // graph value times 1000 for issues with small values
+            [series_label, series_value * 1000]
+        ]);
+    }
+
+    // draw donut 
+    donut_chart = new google.visualization.PieChart(document.getElementById(donut_id));
+    donut_chart.draw(metrics_data, donut_options);
+
+    return donut_chart;
+}
+
+function render_column_chart(chart_id,
+                             data_key,
+                             chart_options,
+                             series_labels,
+                             time_unit,
+                             chart_series_list) {
+
+    console.log(`rendering column chart ${chart_id} with ${data_key} data`);
+    column_chart = new google.visualization.ColumnChart(document.getElementById(chart_id));
+
+    var chart_data = new google.visualization.DataTable();
+
+    // time unit is actually a number (int)
+    // but we chart it as a string
+    chart_data.addColumn('string', time_unit);
+
+    for (series_field of chart_series_list) {
+        chart_data.addColumn('number', series_labels[series_field]);
+    }
+
+    chart_data.addRows(data_dict[data_key].length);
+    row = 0
+    for (const item of data_dict[data_key]) {
+        // format as hh:00
+        time_str = item.hour.toString().padStart(2, '0') 
+        chart_data.setCell(row, 0, time_str);
+        col = 1
+        for (series_field of chart_series_list) {
+            if (series_field in item) {
+                chart_data.setCell(row, col, item[series_field].toFixed(2));
+            }
+            col += 1;
+        }
+        row += 1;
+    }
+
+    chart_options.hAxis.title = time_unit;
+    column_chart.draw(chart_data, chart_options);
+
+    return column_chart;
+}
+
+
 // chart globals to avoid memory growth
 var donut_a_chart;
 var donut_b_chart;
@@ -1121,7 +1217,15 @@ function render_charts() {
     slice_font_px_size = (slice_font_vw_number * window.innerWidth) / 100;
 
     // series fields and colour assignments
-    const series_fields = ["import", "consumed", "solar", "solar_consumed", "export", "battery_charge", "battery_discharge"];
+    const series_fields = [
+        "import", 
+        "consumed", 
+        "solar", 
+        "solar_consumed", 
+        "export", 
+        "battery_charge", 
+        "battery_discharge"
+    ];
 
     const series_labels = {
         "import": "Grid",
@@ -1201,119 +1305,46 @@ function render_charts() {
 
         // donut a
         // standard left-side donut used for cycled metrics
+
+        // clear existing data
+        // prevents a memory leak
         if (donut_a_chart != undefined) {
             donut_a_chart.clearChart();
         }
-        console.log("rendering donut chart a");
-        donut_a_chart = new google.visualization.PieChart(document.getElementById('donut_a_chart'));
 
         // metrics data source
         // dual-donut layout uses the live metric on the left side
         if (layout == "dual-metrics") {
             // dual-donut layout
-            metrics_a_source = data_dict.metrics["live"];
+            // donut a is fixed to live metric
+            donut_metric_key = "live";
         }
         else {
-            metrics_a_source = data_dict.metrics[metric_key];
+            // cycled metric
+            donut_metric_key = metric_key
         }
 
-        var metrics_a_data = new google.visualization.DataTable();
-        metrics_a_data.addColumn('string', 'Source');
-        metrics_a_data.addColumn('number', 'kWh');
+        donut_a_chart = render_donut("donut_a_chart", 
+                                     metric_key, 
+                                     donut_options, 
+                                     series_labels,
+                                     donut_series_list);
+    }
 
-        // calculate total series value
-        var total_series_value = 0;
-        for (series_field of donut_series_list) {
-            series_value = metrics_a_source[series_field];
-            if (series_value == undefined) {
-                // FIXME need to investigate why this can be undefined
-                series_value = 0;
-            }
-            total_series_value += series_value;
+    if (layout == "dual-metrics") {
+        // donut b
+        // right-side donut used for cycled metrics
+
+        // clear existing data
+        // prevents a memory leak
+        if (donut_b_chart != undefined) {
+            donut_b_chart.clearChart();
         }
-
-        for (series_field of donut_series_list) {
-            // calculate percentage of total
-            // for the small screen donut label
-            series_value = metrics_a_source[series_field];
-            if (series_value == undefined) {
-                // FIXME need to investigate why this can be undefined
-                series_value = 0;
-            }
-            series_percentage = series_value / total_series_value * 100;
-            if (layout == "small") {
-                // label + percentage
-                series_label = `${series_labels[series_field]} ${series_percentage.toFixed(1)}%`;
-            }
-            else {
-                // label only for legend
-                // displayed value will be the percentage
-                series_label = series_labels[series_field];
-            }
-            metrics_a_data.addRows([
-                // graph value times 1000 for issues with small values
-                [series_label, series_value * 1000]
-            ]);
-        }
-
-        // draw donut a
-        donut_a_chart.draw(metrics_a_data, donut_options);
-
-        if (layout == "dual-metrics") {
-            // donut b
-            // right-side donut used for cycled metrics
-            if (donut_b_chart != undefined) {
-                donut_b_chart.clearChart();
-            }
-            console.log("rendering donut chart b");
-            donut_b_chart = new google.visualization.PieChart(document.getElementById('donut_b_chart'));
-
-            // metrics data source
-            // FIXME should not use live data
-            metrics_b_source = data_dict.metrics[metric_key];
-
-            var metrics_b_data = new google.visualization.DataTable();
-            metrics_b_data.addColumn('string', 'Source');
-            metrics_b_data.addColumn('number', 'kWh');
-
-            // calculate total series value
-            var total_series_value = 0;
-            for (series_field of donut_series_list) {
-                series_value = metrics_b_source[series_field];
-                if (series_value == undefined) {
-                    // FIXME need to investigate why this can be undefined
-                    series_value = 0;
-                }
-                total_series_value += series_value;
-            }
-
-            for (series_field of donut_series_list) {
-                // calculate percentage of total
-                // for the small screen donut label
-                series_value = metrics_b_source[series_field];
-                if (series_value == undefined) {
-                    // FIXME need to investigate why this can be undefined
-                    series_value = 0;
-                }
-                series_percentage = series_value / total_series_value * 100;
-                if (layout == "small") {
-                    // label + percentage
-                    series_label = `${series_labels[series_field]} ${series_percentage.toFixed(1)}%`;
-                }
-                else {
-                    // label only for legend
-                    // displayed value will be the percentage
-                    series_label = series_labels[series_field];
-                }
-                metrics_b_data.addRows([
-                    // graph value times 1000 for issues with small values
-                    [series_label, series_value * 1000]
-                ]);
-            }
-
-            // draw donut
-            donut_b_chart.draw(metrics_b_data, donut_options);
-        }
+        donut_b_chart = render_donut("donut_b_chart", 
+                                     metric_key, 
+                                     donut_options, 
+                                     series_labels,
+                                     donut_series_list);
     }
 
     // bar charts
@@ -1401,41 +1432,15 @@ function render_charts() {
             day_chart_ts != data_dict.day_last_updated) {
             day_chart_ts = data_dict.day_last_updated;
 
-            console.log("rendering day chart");
-
             if (day_chart != undefined) {
                 day_chart.clearChart();
             }
-            day_chart = new google.visualization.ColumnChart(document.getElementById('day_google_chart'));
-
-            var day_data = new google.visualization.DataTable();
-
-            // hour is actually a number (int)
-            // but we chart it as a string
-            day_data.addColumn('string', 'Hour');
-
-            for (series_field of bar_chart_series_list) {
-                day_data.addColumn('number', series_labels[series_field]);
-            }
-
-            day_data.addRows(data_dict.day.length);
-            row = 0
-            for (const item of data_dict.day) {
-                // format as hh:00
-                time_str = item.hour.toString().padStart(2, '0') 
-                day_data.setCell(row, 0, time_str);
-                col = 1
-                for (series_field of bar_chart_series_list) {
-                    if (series_field in item) {
-                        day_data.setCell(row, col, item[series_field].toFixed(2));
-                    }
-                    col += 1;
-                }
-                row += 1;
-            }
-
-            bar_chart_options.hAxis.title = 'Hour';
-            day_chart.draw(day_data, bar_chart_options);
+            day_chart = render_column_chart("day_google_chart",
+                                            'day',
+                                            bar_chart_options,
+                                            series_labels,
+                                            'Hour',
+                                            bar_chart_series_list);
 
             chart_title = `Last ${data_dict.day.length} Hours`;
             $("#day_chart_title").html(chart_title);
@@ -1446,42 +1451,16 @@ function render_charts() {
             month_chart_ts != data_dict.month_last_updated) {
             month_chart_ts = data_dict.month_last_updated;
 
-            console.log("rendering month chart");
-
             if (month_chart != undefined) {
                 month_chart.clearChart();
             }
-            month_chart = new google.visualization.ColumnChart(document.getElementById('month_google_chart'));
 
-            var month_data = new google.visualization.DataTable();
-            // present int day number as string
-            month_data.addColumn('string', 'Day');
-
-            for (series_field of bar_chart_series_list) {
-                month_data.addColumn('number', series_labels[series_field]);
-            }
-
-            month_data.addRows(data_dict.month.length);
-            row = 0
-            for (const item of data_dict.month) {
-                // Format as 'MMM dd'
-                time_str = item.month + ' ' + item.day.toString().padStart(2, '0') 
-                //time_str = item.day.toString().padStart(2, '0') 
-                month_data.setCell(row, 0, time_str);
-                col = 1
-                for (series_field of bar_chart_series_list) {
-                    if (series_field in item) {
-                        month_data.setCell(row, col, item[series_field].toFixed(2));
-                    }
-                    col += 1;
-                }
-                row += 1;
-            }
-
-            bar_chart_options.hAxis.title = 'Day';
-            bar_chart_options.legend = 'none';
-            bar_chart_options.chartArea.top = 10;
-            month_chart.draw(month_data, bar_chart_options);
+            month_chart = render_column_chart("month_google_chart",
+                                            'month',
+                                            bar_chart_options,
+                                            series_labels,
+                                            'Day',
+                                            bar_chart_series_list);
 
             chart_title = `Last ${data_dict.month.length} Days`;
             $("#month_chart_title").html(chart_title);
@@ -1492,40 +1471,15 @@ function render_charts() {
             year_chart_ts != data_dict.year_last_updated) {
             year_chart_ts = data_dict.year_last_updated;
 
-            console.log("rendering year chart");
-
             if (year_chart != undefined) {
                 year_chart.clearChart();
             }
-            year_chart = new google.visualization.ColumnChart(document.getElementById('year_google_chart'));
-
-            var year_data = new google.visualization.DataTable();
-            year_data.addColumn('string', 'Month');
-
-            for (series_field of bar_chart_series_list) {
-                year_data.addColumn('number', series_labels[series_field]);
-            }
-
-            year_data.addRows(data_dict.year.length);
-            row = 0
-            for (const item of data_dict.year) {
-                //time_str = item.year + ' ' + item.month
-                time_str = item.month
-                year_data.setCell(row, 0, time_str);
-                col = 1
-                for (series_field of bar_chart_series_list) {
-                    if (series_field in item) {
-                        year_data.setCell(row, col, item[series_field].toFixed(2));
-                    }
-                    col += 1;
-                }
-                row += 1;
-            }
-
-            bar_chart_options.hAxis.title = 'Month';
-            bar_chart_options.legend = 'none';
-            bar_chart_options.chartArea.top = 10;
-            year_chart.draw(year_data, bar_chart_options);
+            year_chart = render_column_chart("year_google_chart",
+                                            'year',
+                                            bar_chart_options,
+                                            series_labels,
+                                            'Month',
+                                            bar_chart_series_list);
 
             chart_title = `Last ${data_dict.year.length} Months`;
             $("#year_chart_title").html(chart_title);
