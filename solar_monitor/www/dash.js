@@ -653,7 +653,6 @@ function format_battery_icon(battery_soc) {
 }
 
 // data refresh globals
-var refresh_error_count = 0;
 var first_refresh = 1;
 
 // refreshes API data for 
@@ -666,8 +665,7 @@ function refresh_data() {
 
     // display the get error
     data_request.fail(function() {
-        refresh_error_count += 1;
-        $("#metric_donut_title_a").html(`Data Refresh Failure #${refresh_error_count}`);
+        $("#splash_text").html(`Data Refresh Failure`);
         data_dict.last_updated = 0;
     });           
 
@@ -682,9 +680,6 @@ function refresh_data() {
             first_refresh = 0;
             return;
         }
-
-        // reset error count
-        refresh_error_count = 0;
 
         // check data dict refresh and update if required
         // Note: shown as second and JS operates on msecs
