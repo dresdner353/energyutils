@@ -504,7 +504,7 @@ function set_layout() {
     if (layout_arg != undefined &&
         ["small", "default", "dual-metrics", "portrait", "metrics"].includes(layout_arg)) {
         layout = layout_arg;
-        console.log("Layout set by query arg to " + layout);
+        console.log("Layout query arg:" + layout);
     }
     else {
         // auto-calculated display size and layout
@@ -519,13 +519,13 @@ function set_layout() {
         else {
             layout = "default";
         }
-        console.log("Auto-calculated display layout is " + layout);
+        console.log("Auto-calculated display layout:" + layout);
 
         // configured default layout over-ride
         if ('layouts' in data_dict && 
             layout in data_dict['layouts']) {
             layout = data_dict['layouts'][layout];
-            console.log("Layout set to configured default " + layout);
+            console.log("Configured default:" + layout);
         }
     }
 
@@ -1014,6 +1014,11 @@ function display_data() {
         else {
             $("#splash_text").html('Waiting for data...');
         }
+
+        // reset the first refresh state 
+        // which will then also invoke a call on 
+        // set_layout()
+        first_refresh = 1;
         return;
     }
 
