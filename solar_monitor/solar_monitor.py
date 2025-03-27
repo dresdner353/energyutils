@@ -169,7 +169,7 @@ def save_config(json_config, config_file):
         indented_json_str = json.dumps(json_config, 
                                        indent=4, 
                                        sort_keys=True)
-        outfile.write(indented_json_str)
+        outfile.write(indented_json_str + '\n')
         outfile.close()
 
 
