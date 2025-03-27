@@ -112,66 +112,6 @@
                     </div>
                     <div class="row row-cols-2 mt-3">
 
-                        <div id="metrics_config" class="col">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Donut Metrics Sources</h5>
-
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="metrics_live">
-                                        <label class="form-check-label" for="metrics_live">Live</label>
-                                    </div>
-
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="metrics_today">
-                                        <label class="form-check-label" for="metrics_today">Today</label>
-                                    </div>
-
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="metrics_yesterday">
-                                        <label class="form-check-label" for="metrics_yesterday">Yesterday</label>
-                                    </div>
-
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="metrics_this_month">
-                                        <label class="form-check-label" for="metrics_this_month">This Month</label>
-                                    </div>
-
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="metrics_last_month">
-                                        <label class="form-check-label" for="metrics_last_month">Last Month</label>
-                                    </div>
-
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="metrics_last_12_months">
-                                        <label class="form-check-label" for="metrics_last_12_months">Last 12 Months</label>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="input-group mb-3">
-                                            <span class="input-group-text">Cycle Interval</span>
-                                            <select id="metric_cycle_interval" class="form-select">
-                                                <option value="1">1 second</option>
-                                                <option value="2">2 seconds</option>
-                                                <option value="3">3 seconds</option>
-                                                <option value="5">5 seconds</option>
-                                                <option value="8">8 seconds</option>
-                                                <option value="10">10 seconds</option>
-                                                <option value="15">15 seconds</option>
-                                                <option value="20">20 seconds</option>
-                                                <option value="30">30 seconds</option>
-                                                <option value="60">1 minute</option>
-                                                <option value="120">2 minutes</option>
-                                                <option value="300">5 minutes</option>
-                                                <option value="600">10 minutes</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-
                         <div id="donut_config" class="col">
                             <div class="card">
                                 <div class="card-body">
@@ -259,6 +199,66 @@
                             </div>
                         </div>
 
+                        <div id="metrics_config" class="col">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Metrics Sources</h5>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="metrics_live">
+                                        <label class="form-check-label" for="metrics_live">Live</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="metrics_today">
+                                        <label class="form-check-label" for="metrics_today">Today</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="metrics_yesterday">
+                                        <label class="form-check-label" for="metrics_yesterday">Yesterday</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="metrics_this_month">
+                                        <label class="form-check-label" for="metrics_this_month">This Month</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="metrics_last_month">
+                                        <label class="form-check-label" for="metrics_last_month">Last Month</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="metrics_last_12_months">
+                                        <label class="form-check-label" for="metrics_last_12_months">Last 12 Months</label>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Cycle Interval</span>
+                                            <select id="metric_cycle_interval" class="form-select">
+                                                <option value="1">1 second</option>
+                                                <option value="2">2 seconds</option>
+                                                <option value="3">3 seconds</option>
+                                                <option value="5">5 seconds</option>
+                                                <option value="8">8 seconds</option>
+                                                <option value="10">10 seconds</option>
+                                                <option value="15">15 seconds</option>
+                                                <option value="20">20 seconds</option>
+                                                <option value="30">30 seconds</option>
+                                                <option value="60">1 minute</option>
+                                                <option value="120">2 minutes</option>
+                                                <option value="300">5 minutes</option>
+                                                <option value="600">10 minutes</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
                         <div id="env_config" class="col">
                             <div class="card">
                                 <div class="card-body">
@@ -271,6 +271,38 @@
                                         <input class="form-control" id="env_trees_kwh" placeholder="tttt">
                                         <label for="env_trees_kwh">Trees Planted per kWh</label>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="layout_config" class="col">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Default Layouts</h5>
+
+                                    <div class="row">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">HD/4K Displays</span>
+                                            <select id="large_screen_layout" class="form-select">
+                                                <option value="default">Donut, metrics & Column Charts</option>
+                                                <option value="small">Donut + Metrics</option>
+                                                <option value="dual-metrics">Dual Donuts + Metrics</option>
+                                                <option value="metrics">Metrics Only</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Small Displays</span>
+                                            <select id="small_screen_layout" class="form-select">
+                                                <option value="small">Donut + Metrics</option>
+                                                <option value="default">Donut, metrics & Column Charts</option>
+                                                <option value="dual-metrics">Dual Donuts + Metrics</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>

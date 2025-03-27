@@ -78,6 +78,11 @@ function populate_config(config_dict) {
     $("#bar_chart_battery_charge").prop("checked", config_dict['dashboard']['bar_chart']['battery_charge']);
     $("#bar_chart_battery_discharge").prop("checked", config_dict['dashboard']['bar_chart']['battery_discharge']);
 
+    if ('layouts' in config_dict){
+        $('#large_screen_layout').val(config_dict['layouts']['default']);
+        $('#small_screen_layout').val(config_dict['layouts']['small']);
+    }
+
     if ('environment' in config_dict){
         $('#env_gco2_kwh').val(config_dict['environment']['gco2_kwh']);
         $('#env_trees_kwh').val(config_dict['environment']['trees_kwh']);
@@ -192,6 +197,10 @@ function apply_config() {
     config_dict['dashboard']['bar_chart']['solar_consumed'] = $('#bar_chart_solar_consumed').prop('checked');
     config_dict['dashboard']['bar_chart']['battery_charge'] = $('#bar_chart_battery_charge').prop('checked');
     config_dict['dashboard']['bar_chart']['battery_discharge'] = $('#bar_chart_battery_discharge').prop('checked');
+
+    config_dict['layouts'] = {};
+    config_dict['layouts']['small'] = $('#small_screen_layout').val();
+    config_dict['layouts']['default'] = $('#large_screen_layout').val();
 
     config_dict['environment'] = {};
     config_dict['environment']['gco2_kwh'] = Number($('#env_gco2_kwh').val());
