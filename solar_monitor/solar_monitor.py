@@ -243,6 +243,7 @@ def config_agent():
 
                 # move to global config
                 gv_config_dict = json_config
+                gv_config_dict['ts'] = config_last_modified
 
         time.sleep(10)
     return
@@ -564,6 +565,9 @@ class data_handler(object):
         # merge in optional layout settings
         if 'layouts' in gv_config_dict:
             gv_data_dict['layouts'] = gv_config_dict['layouts']
+
+        # pass the config update ts
+        gv_data_dict['config_ts'] = gv_config_dict['ts']
 
         # run-time over-ride of refresh (not really a config option)
         gv_data_dict['dashboard']['refresh_interval'] = gv_refresh_interval
