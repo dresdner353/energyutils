@@ -1352,7 +1352,7 @@ function render_charts() {
         }
 
         donut_a_chart = render_donut("donut_a_chart", 
-                                     metric_key, 
+                                     donut_metric_key, 
                                      donut_options, 
                                      series_labels,
                                      donut_series_list);
