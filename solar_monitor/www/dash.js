@@ -435,14 +435,15 @@ function set_layout() {
     // layout checks
     layout = undefined;
 
-    // layout query arg
+    // layout query arg (forces the layout)
     layout_arg = get_query_arg("layout");
     if (layout_arg != undefined &&
         ["small", "default", "dual-metrics", "portrait", "metrics"].includes(layout_arg)) {
         layout = layout_arg;
     }
 
-    // auto-calculated layout
+    // auto-calculated display size and layout
+    // and using configured defaults
     if (layout == undefined) {
         if (window_width <= window_height) {
             layout = "portrait";
@@ -453,6 +454,12 @@ function set_layout() {
         }
         else {
             layout = "default";
+        }
+
+        // configured default layout over-ride
+        if ('layouts' in data_dict && 
+            layout in data_dict['layouts']) {
+            layout = data_dict['layouts'][layout];
         }
     }
 
