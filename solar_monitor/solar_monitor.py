@@ -89,6 +89,10 @@ def set_default_config():
     json_config['environment']['gco2_kwh'] = 297.4
     json_config['environment']['trees_kwh'] = 0.0117
 
+    json_config['layouts'] = {}
+    json_config['layouts']['default'] = 'default'
+    json_config['layouts']['large'] = 'small'
+
     return json_config
 
 
@@ -554,8 +558,9 @@ class data_handler(object):
                 gv_config_dict['web']['port']
                 )
 
-        # merge in config for dashboard
+        # merge in config for dashboard and layouts
         gv_data_dict['dashboard'] = gv_config_dict['dashboard']
+        gv_data_dict['layouts'] = gv_config_dict['layouts']
 
         # run-time over-ride of refresh (not really a config option)
         gv_data_dict['dashboard']['refresh_interval'] = gv_refresh_interval
