@@ -558,9 +558,12 @@ class data_handler(object):
                 gv_config_dict['web']['port']
                 )
 
-        # merge in config for dashboard and layouts
+        # merge in config for dashboard
         gv_data_dict['dashboard'] = gv_config_dict['dashboard']
-        gv_data_dict['layouts'] = gv_config_dict['layouts']
+
+        # merge in optional layout settings
+        if 'layouts' in gv_config_dict:
+            gv_data_dict['layouts'] = gv_config_dict['layouts']
 
         # run-time over-ride of refresh (not really a config option)
         gv_data_dict['dashboard']['refresh_interval'] = gv_refresh_interval
