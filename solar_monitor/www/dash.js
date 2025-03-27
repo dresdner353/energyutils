@@ -726,8 +726,7 @@ function format_battery_icon(battery_soc) {
 
 
 // metric series rotation globals
-var metric_cycle_index = -1; // init only
-var metric_key = 'live';
+var metric_key = 'today';
 
 // rotates the current metric index as 
 // part of the timed cycling
@@ -736,19 +735,20 @@ function cycle_metric_index() {
 
     if ('metrics' in data_dict) {
         metric_list = Object.keys(data_dict.metrics);
+        metric_index = metric_list.indexOf(metric_key);
         for (i = 0; i < metric_list.length; i++) {
-            metric_cycle_index = (metric_cycle_index + 1) % metric_list.length;
+            metric_index = (metric_index + 1) % metric_list.length;
 
             // skip live metric in dual-donut layout
             // as live is fixed on left
             if (layout == "dual-metrics" && 
-                metric_list[metric_cycle_index] == "live") {
+                metric_list[metric_index] == "live") {
                 continue;
             }
 
             // check its enabled in the config
-            if (data_dict.dashboard.metrics[metric_list[metric_cycle_index]]) {
-                metric_key = metric_list[metric_cycle_index];
+            if (data_dict.dashboard.metrics[metric_list[metric_index]]) {
+                metric_key = metric_list[metric_index];
                 break;
             }
         }
@@ -778,18 +778,10 @@ function ui_cycle_metric_index() {
 function ui_cycle_layout() {
     console.log("ui_cycle_layout()");
     ui_layout_list = ['small', 'default', 'dual-metrics', 'metrics'];
-    layout = get_query_arg("layout");
-    if (layout == undefined) {
-        // pick a dummy value
-        // the find will return a -1 and then the 
-        // modulo will moved that to the 0 and select
-        // the first layout
-        layout = 'bogus';
-    }
-    layout_index = ui_layout_list.indexOf(layout)
+    layout_index = ui_layout_list.indexOf(layout);
     layout_index = (layout_index + 1) % ui_layout_list.length;
     layout = ui_layout_list[layout_index];
-    console.log("forced layout to:" + layout);
+    console.log("cycled layout to:" + layout);
     window.location.replace(get_redirect_url("layout", layout));
 }
 
