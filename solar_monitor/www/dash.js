@@ -56,10 +56,6 @@ $( document ).ready(function() {
     // set dash to blank text
     // layout will over-ride this
     $("#dashboard").html("");
-
-    set_layout();
-    refresh_data();
-    display_data();
 });
 
 // Window focus changes activates/deactivates 
@@ -89,6 +85,74 @@ $(window).resize(function () {
     set_layout();
     display_data();
 });
+
+// data refresh globals
+var first_refresh = 1;
+
+// refreshes API data for 
+// constructing the dashboard
+function refresh_data() {
+    console.log("refresh_data()");
+
+    // get the latest data
+    var data_request = $.get('/data');
+
+    // display the get error
+    data_request.fail(function() {
+        $("#splash_text").html(`Data Refresh Failure`);
+        data_dict.last_updated = 0;
+    });           
+
+    // valid retrieval of data
+    data_request.done(function(data) {
+        data_dict = JSON.parse(data);
+
+        // set layout only after first success
+        // data retrieval
+        if (first_refresh) {
+            set_layout();
+            display_data();
+            first_refresh = 0;
+        }
+
+        // check data dict refresh and update if required
+        // Note: shown as second and JS operates on msecs
+        if ('refresh_interval' in data_dict['dashboard']) {
+            data_dict_refresh = data_dict.dashboard.refresh_interval * 1000;
+            if (refresh_interval != data_dict_refresh) {
+                refresh_interval = data_dict_refresh;
+
+                // protection of min 1 sec refresh
+                if (refresh_interval < 1000) {
+                    refresh_interval = 1000;
+                }
+
+                // reset timer
+                clearInterval(refresh_timer);
+                refresh_timer = setInterval(refresh_data, refresh_interval);
+                console.log('new refresh interval:' + refresh_interval);
+            }
+        }
+
+        if ('cycle_interval' in data_dict['dashboard']) {
+            data_dict_metric_cycle_interval = data_dict.dashboard.cycle_interval * 1000;
+            if (data_dict_metric_cycle_interval != metric_cycle_interval) {
+                metric_cycle_interval = data_dict_metric_cycle_interval;
+
+                // protection of min 1 sec cycle
+                if (metric_cycle_interval < 1000) {
+                    metric_cycle_interval = 1000;
+                }
+
+                // reset timer
+                clearInterval(metric_cycle_timer);
+                metric_cycle_timer = setInterval(cycle_metric_index, metric_cycle_interval);
+                console.log('new metric cycle interval:' + metric_cycle_interval);
+            }
+        }
+    });
+}
+
 
 // determines the window dimensions and sets the 
 // appropriate layout template
@@ -440,11 +504,11 @@ function set_layout() {
     if (layout_arg != undefined &&
         ["small", "default", "dual-metrics", "portrait", "metrics"].includes(layout_arg)) {
         layout = layout_arg;
+        console.log("Layout set by query arg to " + layout);
     }
-
-    // auto-calculated display size and layout
-    // and using configured defaults
-    if (layout == undefined) {
+    else {
+        // auto-calculated display size and layout
+        // and using configured defaults
         if (window_width <= window_height) {
             layout = "portrait";
         }
@@ -455,11 +519,13 @@ function set_layout() {
         else {
             layout = "default";
         }
+        console.log("Auto-calculated display layout is " + layout);
 
         // configured default layout over-ride
         if ('layouts' in data_dict && 
             layout in data_dict['layouts']) {
             layout = data_dict['layouts'][layout];
+            console.log("Layout set to configured default " + layout);
         }
     }
 
@@ -554,8 +620,6 @@ function set_layout() {
       document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-default)');
       break;
     }
-
-    console.log("Set layout to " + layout);
 
     // margin for overscan scenarios
     margin_arg = get_query_arg("margin");
@@ -659,72 +723,6 @@ function format_battery_icon(battery_soc) {
     return(battery_icons[i]);
 }
 
-// data refresh globals
-var first_refresh = 1;
-
-// refreshes API data for 
-// constructing the dashboard
-function refresh_data() {
-    console.log("refresh_data()");
-
-    // get the latest data
-    var data_request = $.get('/data');
-
-    // display the get error
-    data_request.fail(function() {
-        $("#splash_text").html(`Data Refresh Failure`);
-        data_dict.last_updated = 0;
-    });           
-
-    // valid retrieval of data
-    data_request.done(function(data) {
-        data_dict = JSON.parse(data);
-
-        // on the first retrieval
-        // do not react to interval changes
-        // seems to cause a delay if we do
-        if (first_refresh) {
-            first_refresh = 0;
-            return;
-        }
-
-        // check data dict refresh and update if required
-        // Note: shown as second and JS operates on msecs
-        if ('refresh_interval' in data_dict['dashboard']) {
-            data_dict_refresh = data_dict.dashboard.refresh_interval * 1000;
-            if (refresh_interval != data_dict_refresh) {
-                refresh_interval = data_dict_refresh;
-
-                // protection of min 1 sec refresh
-                if (refresh_interval < 1000) {
-                    refresh_interval = 1000;
-                }
-
-                // reset timer
-                clearInterval(refresh_timer);
-                refresh_timer = setInterval(refresh_data, refresh_interval);
-                console.log('new refresh interval:' + refresh_interval);
-            }
-        }
-
-        if ('cycle_interval' in data_dict['dashboard']) {
-            data_dict_metric_cycle_interval = data_dict.dashboard.cycle_interval * 1000;
-            if (data_dict_metric_cycle_interval != metric_cycle_interval) {
-                metric_cycle_interval = data_dict_metric_cycle_interval;
-
-                // protection of min 1 sec cycle
-                if (metric_cycle_interval < 1000) {
-                    metric_cycle_interval = 1000;
-                }
-
-                // reset timer
-                clearInterval(metric_cycle_timer);
-                metric_cycle_timer = setInterval(cycle_metric_index, metric_cycle_interval);
-                console.log('new metric cycle interval:' + metric_cycle_interval);
-            }
-        }
-    });
-}
 
 // metric series rotation globals
 var metric_cycle_index = -1; // init only
