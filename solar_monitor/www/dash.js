@@ -86,8 +86,10 @@ $(window).resize(function () {
     display_data();
 });
 
-// data refresh globals
-var first_refresh = 1;
+// config timestamp
+// used to detect config changes
+// for layout updating
+var config_ts = 0;
 
 // refreshes API data for 
 // constructing the dashboard
@@ -107,12 +109,11 @@ function refresh_data() {
     data_request.done(function(data) {
         data_dict = JSON.parse(data);
 
-        // set layout only after first success
-        // data retrieval
-        if (first_refresh) {
+        // set layout when a config change is detected
+        if (data_dict['config_ts'] != config_ts) {
             set_layout();
             display_data();
-            first_refresh = 0;
+            config_ts = data_dict['config_ts'];
         }
 
         // check data dict refresh and update if required
@@ -1015,10 +1016,6 @@ function display_data() {
             $("#splash_text").html('Waiting for data...');
         }
 
-        // reset the first refresh state 
-        // which will then also invoke a call on 
-        // set_layout()
-        first_refresh = 1;
         return;
     }
 
