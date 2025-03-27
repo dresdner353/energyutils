@@ -42,5 +42,5 @@ flags=(
 )
 
 # launch chrome against the Solarmon dashboard 
-# with layout forced to large and margin of 3 for handling of overscan
-chromium-browser "${flags[@]}" --app='http://localhost:8090?layout=large&margin=3' 
+# with forced margin of 3 for handling of overscan
+chromium-browser "${flags[@]}" --app='http://localhost:8090?margin=3' 
