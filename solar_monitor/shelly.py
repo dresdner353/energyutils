@@ -402,7 +402,6 @@ def get_cloud_usage_data(config):
                 dt_today.day
                 )
     
-    # using configured hour discard
     day_data = get_shelly_api_usage_data(
             config,
             date_range = 'custom',
@@ -436,7 +435,6 @@ def get_cloud_usage_data(config):
                 dt_today.day
                 )
     
-    # using configured day discard
     month_data = get_shelly_api_usage_data(
             config,
             date_range = 'custom',
@@ -453,14 +451,16 @@ def get_cloud_usage_data(config):
         gv_shelly_dict['month_last_updated'] = int(time.time())
 
     # last several months or so
-    # will query all of previous year to today 
-    # seems to only work if stretch back 300 days
+    # will query end of current month and go back 12 months
+    # seems to only work if stretch back 320 days
+    # trying 365 and it ends several months earlier or gives a 
+    # current month with little to no usage
     utils.log_message(
             1,
             'Updating Shelly Year Data'
             )
 
-    last_year = dt_month_start - datetime.timedelta(days = 300)
+    last_year = dt_month_start - datetime.timedelta(days = 320)
     last_year_start_str = '%04d-%02d-01 00:00:00' % (
                 last_year.year, 
                 last_year.month
@@ -469,12 +469,11 @@ def get_cloud_usage_data(config):
                 dt_today.year
                 )
     
-    # using configured day discard times 30
     year_data = get_shelly_api_usage_data(
             config,
             date_range = 'custom',
             date_from = last_year_start_str,
-            date_to = year_end_str)
+            date_to = month_end_str)
     
     if year_data:
         # reformat to list of records
