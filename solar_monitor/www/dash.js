@@ -35,7 +35,7 @@ var data_dict = {
 
 // refresh timer 
 // initalised with a short initial value for the first load
-var refresh_interval = 1000
+var refresh_interval = 1000;
 var refresh_timer = setInterval(refresh_data, refresh_interval);
 
 // metric cycle timer also initialised with a short
@@ -374,15 +374,13 @@ function set_layout() {
 
     // layout templates
     // these will be substituted into the top-level 
-    // body to complete re-arrange the screen according to the 
-    // selected screen size
-    // it was too complex to try and dynamically change various bootstrap
-    // class values etc to try and tweak a common layout to obey
+    // body to completely re-arrange the screen according to the 
+    // selected layout
 
-    // default screen model
+    // default layout
     // two columns, split 5:7 on bootstrap 12 breakpoints
-    // left column has the donut and metrics and right
-    // has the three column charts
+    // left column has the donut and metrics below and right
+    // has the three stacked column charts
     default_layout = `
                 <div id="master" class="container-fluid" data-bs-theme="dark">
                     <div class="row">
@@ -410,8 +408,8 @@ function set_layout() {
 
     // dual-donut layout
     // two columns, split 6:6 on bootstrap 12 breakpoints
-    // left column has the live donut and live metrics 
-    // right has the other cycled metrics rendered as a donut and metric values
+    // left column has the live donut + live metrics 
+    // right has the other cycled metrics in the same donut+metrics layout
     dual_metrics_layout = `
                 <div id="master" class="container-fluid" data-bs-theme="dark">
                     <div class="row">
@@ -435,7 +433,7 @@ function set_layout() {
 
     // small screen model
     // 5:7 split columns
-    // donut on  left, metrics stack on right
+    // single donut on left, metrics stack on right
     small_layout = `
                 <div id="master" class="container-fluid" data-bs-theme="dark">
                     <div class="row align-items-center">
@@ -448,10 +446,8 @@ function set_layout() {
             `;
 
     // portrait screen model
-    // vertical stack of everything
-    // in a series of rows, one column
-    // each. Works for phones and portrait
-    // tablets or monitors
+    // vertical stack of donut, metrics and charts
+    // Works for phones and portrait tablets or monitors
     portrait_layout = `
                 <div class="container-fluid" data-bs-theme="dark">
                     <div id="donut_a_insert" class="row">
@@ -473,7 +469,7 @@ function set_layout() {
                 </div>
             `;
 
-    // default metrics-only screen model
+    // metrics-only screen model
     // two columns, split 6:6 on bootstrap 12 breakpoints
     // left column has the live and today metrics fixed
     // right rotates the remaining metrics between the two
@@ -1184,43 +1180,33 @@ function render_charts() {
 
     column_chart_height = (window.innerHeight) * 0.3;
 
+    // chart height and style variations by layout
     switch(layout) {
       case "small":
       donut_chart_height = (window.innerHeight) * 0.9;
-      break;
-
-      case "portrait":
-      donut_chart_height = (window.innerHeight) * 0.4;
-      break;
-
-      case "default":
-      case "dual-metrics":
-      donut_chart_height = (window.innerHeight) * 0.40;
-      break;
-    }
-
-    // legend font size
-    // this is a bit of work
-    // we parse layout and determine the CSS ref variable to 
-    // use for legend font. Google does not allow us pass that CSS
-    // in for the font size. So it needs to rendered in pixels
-    switch(layout) {
-      case "default":
-      case "dual-metrics":
-      legend_font_size_var = "--legend-font-size-default";
-      slice_font_size_var = "--slice-font-size-default";
-      break;
-
-      case "small":
       legend_font_size_var = "--legend-font-size-small";
       slice_font_size_var = "--slice-font-size-small";
       break;
 
       case "portrait":
+      donut_chart_height = (window.innerHeight) * 0.4;
       legend_font_size_var = "--legend-font-size-portrait";
       slice_font_size_var = "--slice-font-size-portrait";
       break;
+
+      case "default":
+      case "dual-metrics":
+      case "metrics":
+      donut_chart_height = (window.innerHeight) * 0.40;
+      legend_font_size_var = "--legend-font-size-default";
+      slice_font_size_var = "--slice-font-size-default";
+      break;
     }
+
+    // legend font size.. this is a bit of work
+    // we parsed layout and determined the CSS ref variable to 
+    // use for legend font. Google does not allow us pass that CSS
+    // in for the font size. So it needs to rendered in pixels
 
     // expand that variable into the computed size (which will be x.xxvw)
     legend_font_vw_size = getComputedStyle(document.documentElement).getPropertyValue(legend_font_size_var);
