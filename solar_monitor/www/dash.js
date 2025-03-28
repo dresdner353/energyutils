@@ -982,6 +982,10 @@ function populate_metrics(metrics_id, metric_key) {
 
 }
 
+// global for metrics layout rotation
+// 0 or 1
+var metrics_layout_id = 0;
+
 // renders and displays the current dashboard
 function display_data() {
     console.log("display_data()");
@@ -1010,11 +1014,23 @@ function display_data() {
     // populate metrics
     switch(layout) {
       case "metrics":
-      // 4 fixed metric sets
+      // 2 fixed metric sets
       populate_metrics("metrics_a", "live");
       populate_metrics("metrics_b", "today");
-      populate_metrics("metrics_c", "this_month");
-      populate_metrics("metrics_d", "last_12_months");
+
+      // 2 variable metric sets:
+      // 1: yesterday, this month 
+      // 2: last month, last 12 months
+      if (metrics_layout_id == 0) {
+          populate_metrics("metrics_c", "yesterday");
+          populate_metrics("metrics_d", "this_month");
+      }
+      else {
+          populate_metrics("metrics_c", "last_month");
+          populate_metrics("metrics_d", "last_12_months");
+      }
+      // rotate for next time
+      metrics_layout_id = (metrics_layout_id + 1) % 2;
       break;
 
       case "dual-metrics":
