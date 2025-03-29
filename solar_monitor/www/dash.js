@@ -382,7 +382,7 @@ function set_layout() {
     // left column has the donut and metrics below and right
     // has the three stacked column charts
     default_layout = `
-                <div id="master" class="container-fluid" data-bs-theme="dark">
+                <div id="master" class="container-fluid vertical-center" data-bs-theme="dark">
                     <div class="row">
                         <div class="col col-5 mt-0">
                             <div id="donut_a_insert" class="row">
@@ -411,7 +411,7 @@ function set_layout() {
     // left column has the live donut + live metrics 
     // right has the other cycled metrics in the same donut+metrics layout
     dual_metrics_layout = `
-                <div id="master" class="container-fluid" data-bs-theme="dark">
+                <div id="master" class="container-fluid vertical-center" data-bs-theme="dark">
                     <div class="row">
                         <div class="col col-6 mt-0">
                             <div id="donut_a_insert" class="row">
