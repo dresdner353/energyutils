@@ -435,11 +435,11 @@ function set_layout() {
     // 5:7 split columns
     // single donut on left, metrics stack on right
     small_layout = `
-                <div id="master" class="container-fluid w-100 h-100" data-bs-theme="dark">
+                <div id="master" class="container-fluid vertical-center" data-bs-theme="dark">
                     <div class="row align-items-center">
-                        <div id="donut_a_insert" class="col col-5 mt-2 align-middle">
+                        <div id="donut_a_insert" class="col col-5 mt-2">
                         </div>
-                        <div id="metrics_a_insert" class="col col-7 mt-2 align-middle">
+                        <div id="metrics_a_insert" class="col col-7 mt-2">
                         </div>
                     </div>
                 </div>
