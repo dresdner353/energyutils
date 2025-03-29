@@ -188,6 +188,7 @@ def config_agent():
     # certain config changes trigger a restart of the script
     # such as web params, grid/data source changes or parameters 
     # in the given inverter/data source structures
+    # layout and chart customisations are not considered here
     config_check_list = [
             'data_source',
             'grid_source',
@@ -209,9 +210,6 @@ def config_agent():
             json_config = load_config(gv_config_file)
             if json_config: 
                 last_check = config_last_modified
-
-                # check for restart conditions
-                force_restart = False
 
                 for prop in config_check_list:
                     if (prop in json_config and 
@@ -510,8 +508,11 @@ class config_handler(object):
             for key in updated_config_dict:
                 gv_config_dict[key] = updated_config_dict[key]
 
+            # save but also locally update the timestamp
+            # this will give realtime reaction to the changed config
+            # ahead of any reload from disk
             save_config(gv_config_dict, gv_config_file)
-            gv_data_dict = {}
+            gv_config_dict['ts'] = int(time.time())
 
             return ""
 
