@@ -33,6 +33,11 @@
     --legend-font-size: var(--legend-font-size-default);
     --slice-font-size: var(--slice-font-size-default);
 }
+body{
+    width:100%;
+    margin:0;
+    height:100%;
+}
 #bg {
     height: 200px;
     background-color: #000000; 
