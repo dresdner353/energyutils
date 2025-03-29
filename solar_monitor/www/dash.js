@@ -1199,7 +1199,7 @@ function render_charts() {
     // chart height and style variations by layout
     switch(layout) {
       case "small":
-      donut_chart_height = (window.innerHeight) * 0.8;
+      donut_chart_height = (window.innerHeight) * 0.7;
       legend_font_size_var = "--legend-font-size-small";
       slice_font_size_var = "--slice-font-size-small";
       break;
