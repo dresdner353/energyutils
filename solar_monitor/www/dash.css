@@ -33,10 +33,11 @@
     --legend-font-size: var(--legend-font-size-default);
     --slice-font-size: var(--slice-font-size-default);
 }
-html, body{
-    width:100%;
-    margin:0;
-    height:100%;
+.vertical-center {
+  min-height: 100%;
+  min-height: 100vh; 
+  display: flex;
+  align-items: center;
 }
 #bg {
     height: 200px;
