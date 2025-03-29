@@ -33,7 +33,7 @@
     --legend-font-size: var(--legend-font-size-default);
     --slice-font-size: var(--slice-font-size-default);
 }
-body{
+html, body{
     width:100%;
     margin:0;
     height:100%;
