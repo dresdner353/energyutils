@@ -436,7 +436,7 @@ function set_layout() {
     // single donut on left, metrics stack on right
     small_layout = `
                 <div id="master" class="container-fluid" data-bs-theme="dark">
-                    <div class="row align-items-center">
+                    <div class="row align-items-center align-middle">
                         <div id="donut_a_insert" class="col col-5 mt-2">
                         </div>
                         <div id="metrics_a_insert" class="col col-7 mt-2">
