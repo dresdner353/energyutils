@@ -491,7 +491,10 @@ class config_handler(object):
 
         if cherrypy.request.method == 'GET':
             # retrieve config
-            return json.dumps(gv_config_dict, indent = 4)
+            return json.dumps(
+                    gv_config_dict, 
+                    indent = 4,
+                    sort_keys = True)
 
         if cherrypy.request.method == 'POST':
             # update config
