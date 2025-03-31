@@ -1,16 +1,32 @@
 #!/bin/bash
 set -e
 
+CONFIG_FILE=`find /media -name config.json | tail -1`
+SOLARMON_CONFIG_FILE='/home/pi/energyutils/solar_monitor/config.json'
+
 NM_CONN_DIR="/etc/NetworkManager/system-connections"
 NM_CONN_FILE="${NM_CONN_DIR}/solarmon.nmconnection"
 NM_CONN_TMPFILE="/tmp/solarmon.nmconnection"
-
 WIFI_CONFIG_FILE=`find /media -name wifi.txt | tail -1`
+
+if test -f "${CONFIG_FILE}"
+then
+    echo "${CONFIG_FILE} found"
+    if cmp -s "${CONFIG_FILE}" "${SOLARMON_CONFIG_FILE}"
+    then
+        echo "No changes to SolarMon configuration"
+    else
+        echo "Updating SolarMon configuration"
+        cp ${CONFIG_FILE} ${SOLARMON_CONFIG_FILE}
+        chown pi:pi ${SOLARMON_CONFIG_FILE}
+        chmod go-rw ${SOLARMON_CONFIG_FILE}
+        chmod u+rw ${SOLARMON_CONFIG_FILE}
+    fi
+fi
 
 if test -f "${WIFI_CONFIG_FILE}"
 then
     echo "$WIFI_CONFIG_FILE found"
-    cat "$WIFI_CONFIG_FILE"
     # source variables
     . "$WIFI_CONFIG_FILE"
 
