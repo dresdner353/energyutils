@@ -9,6 +9,8 @@ NM_CONN_FILE="${NM_CONN_DIR}/solarmon.nmconnection"
 NM_CONN_TMPFILE="/tmp/solarmon.nmconnection"
 WIFI_CONFIG_FILE=`find /media -name wifi.txt | tail -1`
 
+REBOOT=0
+
 if test -f "${CONFIG_FILE}"
 then
     echo "${CONFIG_FILE} found"
@@ -21,6 +23,7 @@ then
         chown pi:pi ${SOLARMON_CONFIG_FILE}
         chmod go-rw ${SOLARMON_CONFIG_FILE}
         chmod u+rw ${SOLARMON_CONFIG_FILE}
+        REBOOT=1
     fi
 fi
 
@@ -46,12 +49,12 @@ then
         chmod go-rw ${NM_CONN_FILE}
         systemctl restart NetworkManager
         echo "Configured WiFi for ${SSID}"
-
-        # reboot
-        # not needed but helps clear down anu UI
-        # disk insertion noise that may be on screen 
-        /usr/sbin/reboot
+        REBOOT=1
     fi
 fi
 
+if [[ "${REBOOT}" -eq 1 ]]
+then
+    /usr/sbin/reboot
+fi
 
