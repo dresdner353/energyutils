@@ -194,7 +194,7 @@ function set_layout() {
                                                 <span id="<METRICS-ID>_import" style="metric metric-white">0</span>
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="<METRICS-ID>_import_icon" class="material-icons metric">login</div>
+                                                <div id="<METRICS-ID>_import_icon" class="metric-icon"><i class="bi bi-plug-fill"></i></div>
                                                 <div id="<METRICS-ID>_import_unit" class="metric-unit metric-white">kWh</div>
                                             </td>
                                         </tr>
@@ -212,7 +212,7 @@ function set_layout() {
                                                 <span id="<METRICS-ID>_consumed" style="metric metric-white">0</span>
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="<METRICS-ID>_consumed_icon" class="material-icons metric">home</div>
+                                                <div id="<METRICS-ID>_consumed_icon" class="metric-icon"><i class="bi bi-buildings-fill"></i></div>
                                                 <div id="<METRICS-ID>_consumed_unit" class="metric-unit metric-white">kWh</div>
                                             </td>
                                         </tr>
@@ -230,7 +230,7 @@ function set_layout() {
                                                 <span id="<METRICS-ID>_solar" style="metric metric-white">0</span>
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="<METRICS-ID>_solar_icon" class="material-icons metric">solar_power</div>
+                                                <div id="<METRICS-ID>_solar_icon" class="metric-icon"><i class="bi bi-sun-fill"></i></div>
                                                 <div id="<METRICS-ID>_solar_unit" class="metric-unit metric-white">kWh</div>
                                             </td>
                                         </tr>
@@ -248,7 +248,7 @@ function set_layout() {
                                                 <span id="<METRICS-ID>_export" style="metric metric-white">0</span>
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="<METRICS-ID>_export_icon" class="material-icons metric">logout</div>
+                                                <div id="<METRICS-ID>_export_icon" class="metric-icon"><i class="bi bi-currency-euro"></i></div>
                                                 <div id="<METRICS-ID>_export_unit" class="metric-unit metric-white">kWh</div>
                                             </td>
                                         </tr>
@@ -266,7 +266,7 @@ function set_layout() {
                                                 <span id="<METRICS-ID>_battery_charge" style="metric metric-white">0</span>
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="<METRICS-ID>_battery_charge_icon" class="material-icons metric">battery_charging_full</div>
+                                                <div id="<METRICS-ID>_battery_charge_icon" class="metric-icon"><i class="bi bi-battery-charging"></i></div>
                                                 <div id="<METRICS-ID>_battery_charge_unit" class="metric-unit metric-white">kWh</div>
                                             </td>
                                         </tr>
@@ -284,7 +284,7 @@ function set_layout() {
                                                 <span id="<METRICS-ID>_battery_discharge" style="metric metric-white">0</span>
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="<METRICS-ID>_battery_discharge_icon" class="material-icons metric">battery_4_bar</div>
+                                                <div id="<METRICS-ID>_battery_discharge_icon" class="metric-icon"><i class="bi bi-battery-half"></i></div>
                                                 <div id="<METRICS-ID>_battery_discharge_unit" class="metric-unit metric-white">kWh</div>
                                             </td>
                                         </tr>
@@ -302,7 +302,7 @@ function set_layout() {
                                                 <span id="<METRICS-ID>_battery_soc" style="metric metric-white">0</span>
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="<METRICS-ID>_battery_soc_icon" class="material-icons metric"></div>
+                                                <div id="<METRICS-ID>_battery_soc_icon" class="metric"></div>
                                                 <div id="<METRICS-ID>_battery_soc_unit" class="metric-unit metric-white">%</div>
                                             </td>
                                         </tr>
@@ -320,7 +320,7 @@ function set_layout() {
                                                 <span id="<METRICS-ID>_co2" style="metric metric-white">0</span>
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="<METRICS-ID>_co2_icon" class="material-icons metric">co2</div>
+                                                <div id="<METRICS-ID>_co2_icon" class="metric-icon"><i class="bi bi-fire"></i></div>
                                                 <div id="<METRICS-ID>_co2_unit" class="metric-unit metric-white">kg</div>
                                             </td>
                                         </tr>
@@ -338,7 +338,7 @@ function set_layout() {
                                                 <span id="<METRICS-ID>_trees" style="metric metric-white">0</span>
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="<METRICS-ID>_trees_icon" class="material-icons metric">forest</div>
+                                                <div id="<METRICS-ID>_trees_icon" class="metric-icon"><i class="bi bi-tree-fill"></i></div>
                                             </td>
                                         </tr>
                                     </table>
@@ -371,6 +371,154 @@ function set_layout() {
                     <div id="year_google_chart"></div>
                 </div>
             `
+
+    school_html = `
+                <div id="school" class="container text-white text-left">
+                    <div id="school_title" class="row mt-0">
+                        <div class="col-11">
+                            <left>
+                                <a href="/admin"><div id="school_titletext" class="title text-white text-left"></div></a>
+                            </left>
+                        </div>
+                        <div class="col-1">
+                            <right>
+                                <img src="/images/school.png" class="img-thumbnail" alt="...">
+                            </right>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="school" class="container text-white text-center">
+                    <div onclick="ui_cycle_metric_index()" class="row row-cols-2 mt-3 text-center">
+
+                        <div class="col">
+                            <div class="card-transparent text-center mt-3">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="school_solar" style="metric metric-white">0</span>&nbsp;
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="school_solar_icon" class="metric-icon"><i class="bi bi-sun-fill"></i></div>
+                                                <div id="school_solar_unit" class="metric-unit metric-white">kWh</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <span id="school_solar_caption" class="metric-unit metric-white">Solar power generated</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="card-transparent text-center mt-3">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="school_consumed" style="metric metric-white">0</span>&nbsp;
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="school_consumed_icon" class="metric-icon"><i class="bi bi-buildings-fill"></i></div>
+                                                <div id="school_consumed_unit" class="metric-unit metric-white">kWh</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <span id="school_consumed_caption" class="metric-unit metric-white">Power used</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="card-transparent text-center mt-3">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="school_import" style="metric metric-white">0</span>&nbsp;
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="school_import_icon" class="metric-icon"><i class="bi bi-plug-fill"></i></div>
+                                                <div id="school_import_unit" class="metric-unit metric-white">kWh</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <span id="school_import_caption" class="metric-unit metric-white">Power purchased from the grid</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="card-transparent text-center mt-3">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="school_export" style="metric metric-white">0</span>&nbsp;
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="school_export_icon" class="metric-icon"><i class="bi bi-currency-euro"></i></div>
+                                                <div id="school_export_unit" class="metric-unit metric-white">kWh</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <span id="school_export_caption" class="metric-unit metric-white">Power sold to the grid</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="card-transparent text-center mt-3">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="school_trees" style="metric metric-white">0</span><br>
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="school_trees_icon" class="metric-icon"><i class="bi bi-tree-fill"></i></div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <span id="school_trees_caption" class="metric-unit metric-white">Equivalent trees planted</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="card-transparent text-center mt-3">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="school_co2" style="metric metric-white">0</span>&nbsp;
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="school_co2_icon" class="metric-icon"><i class="bi bi-fire"></i></div>
+                                                <div id="school_co2_unit" class="metric-unit metric-white">kg</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <span id="school_co2_caption" class="metric-unit metric-white">Reduced emissions</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-11">
+                                <div></div>
+                        </div>
+                        <div onclick="ui_cycle_layout()" class="col-1">
+                            <right>
+                                <img src="/images/installer.png" class="img-thumbnail" alt="...">
+                            </right>
+                        </div>
+                    </div>
+
+                </div>
+            `;
 
     // layout templates
     // these will be substituted into the top-level 
@@ -445,6 +593,15 @@ function set_layout() {
                 </div>
             `;
 
+    // school model
+    // single set of metrics
+    school_layout = `
+                <div id="master" class="container-fluid" data-bs-theme="dark">
+                    <div id="metrics_a_insert" class="row">
+                    </div>
+                </div>
+            `;
+
     // portrait screen model
     // vertical stack of donut, metrics and charts
     // Works for phones and portrait tablets or monitors
@@ -493,13 +650,14 @@ function set_layout() {
                 </div>
             `;
 
+
     // layout checks
     layout = undefined;
 
     // layout query arg (forces the layout)
     layout_arg = get_query_arg("layout");
     if (layout_arg != undefined &&
-        ["small", "default", "dual-metrics", "portrait", "metrics"].includes(layout_arg)) {
+        ["small", "default", "dual-metrics", "school", "portrait", "metrics"].includes(layout_arg)) {
         layout = layout_arg;
         console.log("Layout query arg:" + layout);
     }
@@ -555,6 +713,12 @@ function set_layout() {
       $("#metrics_a_insert").html(metrics_a_html);
       break;
 
+      case "school":
+      // school landscape
+      $("#dashboard").html(school_layout);
+      $("#metrics_a_insert").html(school_html);
+      break;
+
       case "portrait":
       // portrait view
       $("#dashboard").html(portrait_layout);
@@ -586,6 +750,16 @@ function set_layout() {
 
     // Adjust CSS
     switch(layout) {
+
+      case "school":
+      // set the school screen font sizes
+      document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-school)');
+      document.body.style.setProperty("--icon-font-size", 'var(--icon-font-size-school)');
+      document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-school)');
+      document.body.style.setProperty("--title-font-size", 'var(--title-font-size-school)');
+      document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-school)');
+      document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-school)');
+      break;
 
       case "small":
       // set the small screen font sizes
@@ -773,7 +947,7 @@ function ui_cycle_metric_index() {
 // ignores cycling to portrait layout
 function ui_cycle_layout() {
     console.log("ui_cycle_layout()");
-    ui_layout_list = ['small', 'default', 'dual-metrics', 'metrics'];
+    ui_layout_list = ['small', 'default', 'dual-metrics', 'metrics', 'school'];
     layout_index = ui_layout_list.indexOf(layout);
     layout_index = (layout_index + 1) % ui_layout_list.length;
     layout = ui_layout_list[layout_index];
@@ -808,13 +982,15 @@ function populate_metrics(metrics_id, metric_key) {
 
     if (metrics_a_source.import > 0) {
         $("#" + metrics_id + "_import").removeClass().addClass("metric metric-red");
-        $("#" + metrics_id + "_import_icon").removeClass().addClass("material-icons metric metric-red");
+        $("#" + metrics_id + "_import_icon").removeClass().addClass("metric-icon metric-red");
         $("#" + metrics_id + "_import_unit").removeClass().addClass("metric-unit metric-red");
+        $("#" + metrics_id + "_import_caption").removeClass().addClass("metric-unit metric-white");
     }
     else {
         $("#" + metrics_id + "_import").removeClass().addClass("metric metric-green");
-        $("#" + metrics_id + "_import_icon").removeClass().addClass("material-icons metric metric-green");
+        $("#" + metrics_id + "_import_icon").removeClass().addClass("metric-icon metric-green");
         $("#" + metrics_id + "_import_unit").removeClass().addClass("metric-unit metric-green");
+        $("#" + metrics_id + "_import_caption").removeClass().addClass("metric-unit metric-green");
     }
 
     value_dict = format_energy_value(metrics_a_source.solar, 
@@ -826,13 +1002,15 @@ function populate_metrics(metrics_id, metric_key) {
 
     if (metrics_a_source.solar > 0) {
         $("#" + metrics_id + "_solar").removeClass().addClass("metric metric-yellow");
-        $("#" + metrics_id + "_solar_icon").removeClass().addClass("material-icons metric metric-yellow");
+        $("#" + metrics_id + "_solar_icon").removeClass().addClass("metric-icon metric-yellow");
         $("#" + metrics_id + "_solar_unit").removeClass().addClass("metric-unit metric-yellow");
+        $("#" + metrics_id + "_solar_caption").removeClass().addClass("metric-unit metric-white");
     }
     else {
         $("#" + metrics_id + "_solar").removeClass().addClass("metric metric-grey");
-        $("#" + metrics_id + "_solar_icon").removeClass().addClass("material-icons metric metric-grey");
+        $("#" + metrics_id + "_solar_icon").removeClass().addClass("metric-icon metric-grey");
         $("#" + metrics_id + "_solar_unit").removeClass().addClass("metric-unit metric-grey");
+        $("#" + metrics_id + "_solar_caption").removeClass().addClass("metric-unit metric-grey");
     }
 
     value_dict = format_energy_value(metrics_a_source.export, 
@@ -844,13 +1022,15 @@ function populate_metrics(metrics_id, metric_key) {
 
     if (metrics_a_source.export > 0) {
         $("#" + metrics_id + "_export").removeClass().addClass("metric metric-blue");
-        $("#" + metrics_id + "_export_icon").removeClass().addClass("material-icons metric metric-blue");
+        $("#" + metrics_id + "_export_icon").removeClass().addClass("metric-icon metric-blue");
         $("#" + metrics_id + "_export_unit").removeClass().addClass("metric-unit metric-blue");
+        $("#" + metrics_id + "_export_caption").removeClass().addClass("metric-unit metric-white");
     }
     else {
         $("#" + metrics_id + "_export").removeClass().addClass("metric metric-grey");
-        $("#" + metrics_id + "_export_icon").removeClass().addClass("material-icons metric metric-grey");
+        $("#" + metrics_id + "_export_icon").removeClass().addClass("metric-icon metric-grey");
         $("#" + metrics_id + "_export_unit").removeClass().addClass("metric-unit metric-grey");
+        $("#" + metrics_id + "_export_caption").removeClass().addClass("metric-unit metric-grey");
     }
 
     value_dict = format_energy_value(metrics_a_source.consumed, 
@@ -862,18 +1042,21 @@ function populate_metrics(metrics_id, metric_key) {
 
     if (metrics_a_source.import <= 0) {
         $("#" + metrics_id + "_consumed").removeClass().addClass("metric metric-green");
-        $("#" + metrics_id + "_consumed_icon").removeClass().addClass("material-icons metric metric-green");
+        $("#" + metrics_id + "_consumed_icon").removeClass().addClass("metric-icon metric-green");
         $("#" + metrics_id + "_consumed_unit").removeClass().addClass("metric-unit metric-green");
+        $("#" + metrics_id + "_consumed_caption").removeClass().addClass("metric-unit metric-white");
     }
     else if (metrics_a_source.solar > 0) {
         $("#" + metrics_id + "_consumed").removeClass().addClass("metric metric-orange");
-        $("#" + metrics_id + "_consumed_icon").removeClass().addClass("material-icons metric metric-orange");
+        $("#" + metrics_id + "_consumed_icon").removeClass().addClass("metric-icon metric-orange");
         $("#" + metrics_id + "_consumed_unit").removeClass().addClass("metric-unit metric-orange");
+        $("#" + metrics_id + "_consumed_caption").removeClass().addClass("metric-unit metric-white");
     }
     else {
         $("#" + metrics_id + "_consumed").removeClass().addClass("metric metric-red");
-        $("#" + metrics_id + "_consumed_icon").removeClass().addClass("material-icons metric metric-red");
+        $("#" + metrics_id + "_consumed_icon").removeClass().addClass("metric-icon metric-red");
         $("#" + metrics_id + "_consumed_unit").removeClass().addClass("metric-unit metric-red");
+        $("#" + metrics_id + "_consumed_caption").removeClass().addClass("metric-unit metric-white");
     }
 
     if ('battery_charge' in metrics_a_source) {
@@ -887,12 +1070,12 @@ function populate_metrics(metrics_id, metric_key) {
 
         if (metrics_a_source.battery_charge > 0) {
             $("#" + metrics_id + "_battery_charge").removeClass().addClass("metric metric-charge");
-            $("#" + metrics_id + "_battery_charge_icon").removeClass().addClass("material-icons metric metric-charge");
+            $("#" + metrics_id + "_battery_charge_icon").removeClass().addClass("metric-icon metric-charge");
             $("#" + metrics_id + "_battery_charge_unit").removeClass().addClass("metric-unit metric-charge");
         }
         else {
             $("#" + metrics_id + "_battery_charge").removeClass().addClass("metric metric-grey");
-            $("#" + metrics_id + "_battery_charge_icon").removeClass().addClass("material-icons metric metric-grey");
+            $("#" + metrics_id + "_battery_charge_icon").removeClass().addClass("metric-icon metric-grey");
             $("#" + metrics_id + "_battery_charge_unit").removeClass().addClass("metric-unit metric-grey");
         }
     }
@@ -911,12 +1094,12 @@ function populate_metrics(metrics_id, metric_key) {
 
         if (metrics_a_source.battery_discharge > 0) {
             $("#" + metrics_id + "_battery_discharge").removeClass().addClass("metric metric-discharge");
-            $("#" + metrics_id + "_battery_discharge_icon").removeClass().addClass("material-icons metric metric-discharge");
+            $("#" + metrics_id + "_battery_discharge_icon").removeClass().addClass("metric-icon metric-discharge");
             $("#" + metrics_id + "_battery_discharge_unit").removeClass().addClass("metric-unit metric-discharge");
         }
         else {
             $("#" + metrics_id + "_battery_discharge").removeClass().addClass("metric metric-grey");
-            $("#" + metrics_id + "_battery_discharge_icon").removeClass().addClass("material-icons metric metric-grey");
+            $("#" + metrics_id + "_battery_discharge_icon").removeClass().addClass("metric-icon metric-grey");
             $("#" + metrics_id + "_battery_discharge_unit").removeClass().addClass("metric-unit metric-grey");
         }
     }
@@ -933,17 +1116,17 @@ function populate_metrics(metrics_id, metric_key) {
 
         if (metrics_a_source.battery_soc >= 50) {
             $("#" + metrics_id + "_battery_soc").removeClass().addClass("metric metric-green");
-            $("#" + metrics_id + "_battery_soc_icon").removeClass().addClass("material-icons metric metric-green");
+            $("#" + metrics_id + "_battery_soc_icon").removeClass().addClass("metric-icon metric-green");
             $("#" + metrics_id + "_battery_soc_unit").removeClass().addClass("metric-unit metric-green");
         }
         else if (metrics_a_source.battery_soc >= 30) {
             $("#" + metrics_id + "_battery_soc").removeClass().addClass("metric metric-orange");
-            $("#" + metrics_id + "_battery_soc_icon").removeClass().addClass("material-icons metric metric-orange");
+            $("#" + metrics_id + "_battery_soc_icon").removeClass().addClass("metric-icon metric-orange");
             $("#" + metrics_id + "_battery_soc_unit").removeClass().addClass("metric-unit metric-orange");
         }
         else {
             $("#" + metrics_id + "_battery_soc").removeClass().addClass("metric metric-red");
-            $("#" + metrics_id + "_battery_soc_icon").removeClass().addClass("material-icons metric metric-red");
+            $("#" + metrics_id + "_battery_soc_icon").removeClass().addClass("metric-icon metric-red");
             $("#" + metrics_id + "_battery_soc_unit").removeClass().addClass("metric-unit metric-red");
         }
     }
@@ -957,13 +1140,15 @@ function populate_metrics(metrics_id, metric_key) {
 
     if (metrics_a_source.co2 > 0) {
         $("#" + metrics_id + "_co2").removeClass().addClass("metric metric-green");
-        $("#" + metrics_id + "_co2_icon").removeClass().addClass("material-icons metric metric-green");
+        $("#" + metrics_id + "_co2_icon").removeClass().addClass("metric-icon metric-green");
         $("#" + metrics_id + "_co2_unit").removeClass().addClass("metric-unit metric-green");
+        $("#" + metrics_id + "_co2_caption").removeClass().addClass("metric-unit metric-white");
     }
     else {
         $("#" + metrics_id + "_co2").removeClass().addClass("metric metric-grey");
-        $("#" + metrics_id + "_co2_icon").removeClass().addClass("material-icons metric metric-grey");
+        $("#" + metrics_id + "_co2_icon").removeClass().addClass("metric-icon metric-grey");
         $("#" + metrics_id + "_co2_unit").removeClass().addClass("metric-unit metric-grey");
+        $("#" + metrics_id + "_co2_caption").removeClass().addClass("metric-unit metric-grey");
     }
 
     value_dict = format_trees(metrics_a_source.trees);
@@ -971,13 +1156,15 @@ function populate_metrics(metrics_id, metric_key) {
 
     if (metrics_a_source.trees > 0) {
         $("#" + metrics_id + "_trees").removeClass().addClass("metric metric-green");
-        $("#" + metrics_id + "_trees_icon").removeClass().addClass("material-icons metric metric-green");
+        $("#" + metrics_id + "_trees_icon").removeClass().addClass("metric-icon metric-green");
         $("#" + metrics_id + "_trees_unit").removeClass().addClass("metric-unit metric-green");
+        $("#" + metrics_id + "_trees_caption").removeClass().addClass("metric-unit metric-white");
     }
     else {
         $("#" + metrics_id + "_trees").removeClass().addClass("metric metric-grey");
-        $("#" + metrics_id + "_trees_icon").removeClass().addClass("material-icons metric metric-grey");
+        $("#" + metrics_id + "_trees_icon").removeClass().addClass("metric-icon metric-grey");
         $("#" + metrics_id + "_trees_unit").removeClass().addClass("metric-unit metric-grey");
+        $("#" + metrics_id + "_trees_caption").removeClass().addClass("metric-unit metric-grey");
     }
 
 }
@@ -1046,6 +1233,12 @@ function display_data() {
       populate_metrics("metrics_b", metric_key);
       $("#metrics_b_title").hide();
       break;
+
+      case "school":
+      // school layout
+      metrics_a_source = data_dict.metrics[metric_key];
+      populate_metrics("school", metric_key);
+      $("#metrics_a_title").html(metrics_a_source['title']);
 
       default:
       // typical layout of using a single donut and one set of metrics
@@ -1198,6 +1391,11 @@ function render_charts() {
 
     // chart height and style variations by layout
     switch(layout) {
+      case "school":
+      case "metrics":
+      return;
+      break;
+
       case "small":
       donut_chart_height = (window.innerHeight) * 0.9;
       legend_font_size_var = "--legend-font-size-small";
@@ -1321,36 +1519,32 @@ function render_charts() {
         donut_options.pieSliceTextStyle.fontSize = legend_font_px_size * 0.9;
     }
 
-    // donuts are drawn on all layouts except metrics
-    if (layout != "metrics") {
+    // donut a
+    // standard left-side donut used for cycled metrics
 
-        // donut a
-        // standard left-side donut used for cycled metrics
-
-        // clear existing data
-        // prevents a memory leak
-        if (donut_a_chart != undefined) {
-            donut_a_chart.clearChart();
-        }
-
-        // metrics data source
-        // dual-donut layout uses the live metric on the left side
-        if (layout == "dual-metrics") {
-            // dual-donut layout
-            // donut a is fixed to live metric
-            donut_metric_key = "live";
-        }
-        else {
-            // cycled metric
-            donut_metric_key = metric_key
-        }
-
-        donut_a_chart = render_donut("donut_a_chart", 
-                                     donut_metric_key, 
-                                     donut_options, 
-                                     series_labels,
-                                     donut_series_list);
+    // clear existing data
+    // prevents a memory leak
+    if (donut_a_chart != undefined) {
+        donut_a_chart.clearChart();
     }
+
+    // metrics data source
+    // dual-donut layout uses the live metric on the left side
+    if (layout == "dual-metrics") {
+        // dual-donut layout
+        // donut a is fixed to live metric
+        donut_metric_key = "live";
+    }
+    else {
+        // cycled metric
+        donut_metric_key = metric_key
+    }
+
+    donut_a_chart = render_donut("donut_a_chart", 
+                                 donut_metric_key, 
+                                 donut_options, 
+                                 series_labels,
+                                 donut_series_list);
 
     if (layout == "dual-metrics") {
         // donut b
@@ -1481,11 +1675,11 @@ function render_charts() {
             }
 
             month_chart = render_column_chart("month_google_chart",
-                                            'month',
-                                            column_chart_options,
-                                            series_labels,
-                                            'Day',
-                                            column_chart_series_list);
+                                              'month',
+                                              column_chart_options,
+                                              series_labels,
+                                              'Day',
+                                              column_chart_series_list);
 
             chart_title = `Last ${data_dict.month.length} Days`;
             $("#month_chart_title").html(chart_title);
@@ -1500,11 +1694,11 @@ function render_charts() {
                 year_chart.clearChart();
             }
             year_chart = render_column_chart("year_google_chart",
-                                            'year',
-                                            column_chart_options,
-                                            series_labels,
-                                            'Month',
-                                            column_chart_series_list);
+                                             'year',
+                                             column_chart_options,
+                                             series_labels,
+                                             'Month',
+                                             column_chart_series_list);
 
             chart_title = `Last ${data_dict.year.length} Months`;
             $("#year_chart_title").html(chart_title);
