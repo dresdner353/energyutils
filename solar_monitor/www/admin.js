@@ -58,6 +58,7 @@ function populate_config(config_dict) {
     $("#metrics_this_month").prop("checked", config_dict['dashboard']['metrics']['this_month']);
     $("#metrics_last_month").prop("checked", config_dict['dashboard']['metrics']['last_month']);
     $("#metrics_last_12_months").prop("checked", config_dict['dashboard']['metrics']['last_12_months']);
+    $("#metrics_total").prop("checked", config_dict['dashboard']['metrics']['total']);
     $('#metric_cycle_interval').val(config_dict['dashboard']['cycle_interval']);
 
     // donut
@@ -178,6 +179,7 @@ function apply_config() {
     config_dict['dashboard']['metrics']['this_month'] = $('#metrics_this_month').prop('checked');
     config_dict['dashboard']['metrics']['last_month'] = $('#metrics_last_month').prop('checked');
     config_dict['dashboard']['metrics']['last_12_months'] = $('#metrics_last_12_months').prop('checked');
+    config_dict['dashboard']['metrics']['total'] = $('#metrics_total').prop('checked');
     config_dict['dashboard']['cycle_interval'] = $('#metric_cycle_interval').val();
 
     config_dict['dashboard']['donut'] = {};
