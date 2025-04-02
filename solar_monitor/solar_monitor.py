@@ -70,6 +70,7 @@ def set_default_config():
     json_config['dashboard']['metrics']['this_month'] = True
     json_config['dashboard']['metrics']['last_month'] = True
     json_config['dashboard']['metrics']['last_12_months'] = True
+    json_config['dashboard']['metrics']['total'] = True
 
     json_config['dashboard']['donut'] = {}
     json_config['dashboard']['donut']['consumed'] = False
@@ -262,6 +263,14 @@ def merge_grid_data(
     # live data direct overwrite
     inverter_dict['live'] = grid_dict['live']
 
+    # total data override of import/export only
+    inverter_total_rec = inverter_dict['total']
+    grid_total_rec = grid_dict['total']
+    inverter_total_rec['import'] = grid_total_rec['import']
+    inverter_total_rec['export'] = grid_total_rec['export']
+    inverter_total_rec['solar_consumed'] = max(0, inverter_total_rec['solar'] - inverter_total_rec['export'])
+    inverter_total_rec['consumed'] = inverter_total_rec['import'] + inverter_total_rec['solar_consumed']
+
     # cull lengths
     # number of hours, days and montths may 
     # be different for grid data causing new records to be added
@@ -331,6 +340,12 @@ def set_metrics(inverter_dict):
         # move live record into the metrics section
         gv_metrics_dict['live'] = inverter_dict['live']
         del inverter_dict['live']
+
+    # move total record into the metrics section
+    if 'total' in inverter_dict:
+        # move live record into the metrics section
+        gv_metrics_dict['total'] = inverter_dict['total']
+        del inverter_dict['total']
 
     # month and year metrics
     # will not be present unless if cloud API calls
