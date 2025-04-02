@@ -23,6 +23,7 @@ gv_solis_dict['day'] = []
 gv_solis_dict['month'] = []
 gv_solis_dict['year'] = []
 gv_solis_dict['live'] = {}
+gv_solis_dict['total'] = {}
 
 # timestamps to track the next call
 day_ts = 0
@@ -368,6 +369,14 @@ def get_inverter_day_data(config):
 
     live_rec['co2'] = (config['environment']['gco2_kwh'] * solar) / 1000
     live_rec['trees'] = config['environment']['trees_kwh'] * solar
+
+    # FIXME fill in total import/export/solar to date
+    total_rec = gv_solis_dict['total']
+    total_rec['import'] = 0
+    total_rec['export'] = 0
+    total_rec['solar'] = 0
+    total_rec['consumed'] = 0
+    total_rec['solar_consumed'] = 0
 
     # new refresh time
     # 5 mins, 20 secs after last official inverter update
