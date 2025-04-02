@@ -24,11 +24,12 @@ gv_shelly_dict['day'] = []
 gv_shelly_dict['month'] = []
 gv_shelly_dict['year'] = []
 gv_shelly_dict['live'] = {}
+gv_shelly_dict['total'] = {}
 
 # timestamps to track the next cloud usage call
 # and a snapshot of the live data for the same time
 gv_cloud_refresh_ts = 0
-gv_live_snapshot_rec = None # will be set on each live call
+gv_total_snapshot_rec = None # will be set on each live call
 
 
 def parse_time(
@@ -452,15 +453,15 @@ def get_cloud_usage_data(config):
 
     # last several months or so
     # will query end of current month and go back 12 months
-    # seems to only work if stretch back 320 days
-    # trying 365 and it ends several months earlier or gives a 
-    # current month with little to no usage
+    # seems to only work if stretch back 300 days
+    # trying 365 or >300 and it ends several months earlier or gives a 
+    # current month with nothing or very low usage
     utils.log_message(
             1,
             'Updating Shelly Year Data'
             )
 
-    last_year = dt_month_start - datetime.timedelta(days = 320)
+    last_year = dt_month_start - datetime.timedelta(days = 300)
     last_year_start_str = '%04d-%02d-01 00:00:00' % (
                 last_year.year, 
                 last_year.month
@@ -523,7 +524,7 @@ def get_cloud_live_data(config):
     Writes results direct to the gv_shelly_dict
     """
     global gv_shelly_dict
-    global gv_live_snapshot_rec
+    global gv_total_snapshot_rec
 
     # check if creds are set
     if (
@@ -684,16 +685,24 @@ def get_cloud_live_data(config):
     live_rec['export'] = grid_export
     live_rec['solar'] = solar
 
-    # total accumulated values for import, export and solar
-    live_rec['total_import'] = total_grid_import
-    live_rec['total_export'] = total_grid_export
-    live_rec['total_solar'] = total_solar
-
     live_rec['solar_consumed'] = max(0, live_rec['solar'] - live_rec['export'])
     live_rec['consumed'] = live_rec['solar_consumed'] + live_rec['import']
 
     live_rec['co2'] = (config['environment']['gco2_kwh'] * solar) / 1000
     live_rec['trees'] = config['environment']['trees_kwh'] * solar
+
+    # total accumulated values for import, export and solar
+    total_rec = gv_shelly_dict['total']
+    total_rec['title'] = 'Total Usage'
+    total_rec['import'] = total_grid_import
+    total_rec['export'] = total_grid_export
+    total_rec['solar'] = total_solar
+
+    total_rec['solar_consumed'] = max(0, total_rec['solar'] - total_rec['export'])
+    total_rec['consumed'] = total_rec['solar_consumed'] + total_rec['import']
+
+    total_rec['co2'] = (config['environment']['gco2_kwh'] * total_rec['solar']) / 1000
+    total_rec['trees'] = config['environment']['trees_kwh'] * total_rec['solar']
 
     # calculate delta values since last live update
     import_delta = 0
@@ -702,20 +711,20 @@ def get_cloud_live_data(config):
 
     # apply delta values to the last hour, day and month records
     # if we actually have this data
-    if (gv_live_snapshot_rec and 
+    if (gv_total_snapshot_rec and 
         len(gv_shelly_dict['day']) > 0 and
         len(gv_shelly_dict['month']) > 0 and
         len(gv_shelly_dict['year']) > 0):
 
         # calculate deltas
-        import_delta = live_rec['total_import'] - gv_live_snapshot_rec['total_import']
-        export_delta = live_rec['total_export'] - gv_live_snapshot_rec['total_export']
+        import_delta = total_rec['import'] - gv_total_snapshot_rec['import']
+        export_delta = total_rec['export'] - gv_total_snapshot_rec['export']
 
         # solar treated differently. Only set to what we measure if solar 
         # is actually present. Otherwise, we zero it out
         # this is the same false reading on low values, sometimes seen at night
         if live_rec['solar'] > 0:
-            solar_delta = live_rec['total_solar'] - gv_live_snapshot_rec['total_solar']
+            solar_delta = total_rec['solar'] - gv_total_snapshot_rec['solar']
         else:
             solar_delta = 0
 
@@ -754,8 +763,8 @@ def get_cloud_live_data(config):
         gv_shelly_dict['month_last_updated'] = int(time.time())
         gv_shelly_dict['year_last_updated'] = int(time.time())
 
-    # snapshot the live data for the next delta calculation
-    gv_live_snapshot_rec = copy.deepcopy(gv_shelly_dict['live'])
+    # snapshot the total data for the next delta calculation
+    gv_total_snapshot_rec = copy.deepcopy(gv_shelly_dict['total'])
 
     utils.log_message(
             1,
