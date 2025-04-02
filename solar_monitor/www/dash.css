@@ -4,26 +4,32 @@
      */
     --metric-font-size-default: 6.0vw;
     --metric-font-size-small: 9.0vw;
+    --metric-font-size-school: 7.5vw;
     --metric-font-size-portrait: 8.5vw;
 
-    --icon-font-size-default: 3.0vw;
-    --icon-font-size-small: 3.5vw;
-    --icon-font-size-portrait: 4.5vw;
+    --icon-font-size-default: 2.5vw;
+    --icon-font-size-small: 4.0vw;
+    --icon-font-size-school: 3.0vw;
+    --icon-font-size-portrait: 3.0vw;
 
     --metric-unit-font-size-default: 1.5vw;
-    --metric-unit-font-size-small: 2.0vw;
+    --metric-unit-font-size-small: 2.5vw;
+    --metric-unit-font-size-school: 2.0vw;
     --metric-unit-font-size-portrait: 2.5vw;
 
     --title-font-size-default: 1.5vw;
     --title-font-size-small: 2.5vw;
+    --title-font-size-school: 4.5vw;
     --title-font-size-portrait: 4.0vw;
 
     --legend-font-size-default: 1.0vw;
     --legend-font-size-small: 1.5vw;
+    --legend-font-size-school: 1.5vw;
     --legend-font-size-portrait: 2.5vw;
 
     --slice-font-size-default: 1.3vw;
     --slice-font-size-small: 2.0vw;
+    --slice-font-size-school: 2.0vw;
     --slice-font-size-portrait: 3.0vw;
 
     --metric-font-size: var(--metric-font-size-default);
@@ -42,6 +48,9 @@
 #bg {
     height: 200px;
     background-color: #000000; 
+}
+body {
+  /*background-image: url('/images/bg.jpg');*/
 }
 a, a:hover, a:focus, a:active {
     text-decoration: none;
@@ -88,6 +97,6 @@ g.google-visualization-tooltip {
     /* fixes flickering tooltip */
     pointer-events: none 
 }
-.material-icons.metric { 
+.metric-icon { 
     font-size: var(--icon-font-size);
 }
