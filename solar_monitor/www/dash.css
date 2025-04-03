@@ -3,13 +3,13 @@
      * two variations for default and smaller screens
      */
     --metric-font-size-default: 6.0vw;
-    --metric-font-size-small: 9.0vw;
+    --metric-font-size-small: 8.0vw;
     --metric-font-size-single: 10.5vw;
     --metric-font-size-portrait: 8.5vw;
 
     --icon-font-size-default: 2.5vw;
     --icon-font-size-small: 4.0vw;
-    --icon-font-size-single: 4.5vw;
+    --icon-font-size-single: 4.0vw;
     --icon-font-size-portrait: 3.0vw;
 
     --metric-unit-font-size-default: 1.5vw;
