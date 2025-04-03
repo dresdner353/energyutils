@@ -185,7 +185,8 @@ function set_layout() {
                         </div>
                     </div>
                     <div class="row row-cols-2">
-                        <div class="col">
+
+                        <div id="<METRICS-ID>_import_card" class="col">
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
                                     <table border="0" align="center">
@@ -203,7 +204,7 @@ function set_layout() {
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div id="<METRICS-ID>_consumed_card" class="col">
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
                                     <table border="0" align="center">
@@ -221,7 +222,7 @@ function set_layout() {
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div id="<METRICS-ID>_solar_card" class="col">
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
                                     <table border="0" align="center">
@@ -239,7 +240,7 @@ function set_layout() {
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div id="<METRICS-ID>_export_card" class="col">
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
                                     <table border="0" align="center">
@@ -257,7 +258,7 @@ function set_layout() {
                             </div>
                         </div>
 
-                        <div id="<METRICS-ID>_battery_charge_col" class="col">
+                        <div id="<METRICS-ID>_battery_charge_card" class="col">
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
                                     <table border="0" align="center">
@@ -275,7 +276,7 @@ function set_layout() {
                             </div>
                         </div>
 
-                        <div id="<METRICS-ID>_battery_discharge_col" class="col">
+                        <div id="<METRICS-ID>_battery_discharge_card" class="col">
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
                                     <table border="0" align="center">
@@ -293,7 +294,7 @@ function set_layout() {
                             </div>
                         </div>
 
-                        <div id="<METRICS-ID>_battery_soc_col" class="col">
+                        <div id="<METRICS-ID>_battery_soc_card" class="col">
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
                                     <table border="0" align="center">
@@ -311,7 +312,7 @@ function set_layout() {
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div class="col" id="<METRICS-ID>_co2_card">
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
                                     <table border="0" align="center">
@@ -329,7 +330,7 @@ function set_layout() {
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div class="col" id="<METRICS-ID>_trees_card">
                             <div class="card-transparent text-center mt-0">
                                 <div class="card-body">
                                     <table border="0" align="center">
@@ -378,7 +379,7 @@ function set_layout() {
                         <div class="col-12">
                             <left>
                                 <a href="/admin">
-                                <span class="title text-white text-left">Solar Dashboard - </span>
+                                <span class="title text-white text-left"></span>
                                 <span id="single_metric_titletext" class="title text-white text-left"></span>
                                 </a>
                             </left>
@@ -389,7 +390,7 @@ function set_layout() {
                 <div id="single_metric" class="container text-white text-center">
                     <div onclick="ui_cycle_metric_index()" class="row row-cols-2 mt-3 text-center">
 
-                        <div class="col">
+                        <div class="col" id="single_metric_solar_card">
                             <div class="card-transparent text-center mt-3">
                                 <div class="card-body">
                                     <table border="0" align="center">
@@ -408,7 +409,7 @@ function set_layout() {
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div class="col" id="single_metric_consumed_card">
                             <div class="card-transparent text-center mt-3">
                                 <div class="card-body">
                                     <table border="0" align="center">
@@ -427,7 +428,7 @@ function set_layout() {
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div class="col" id="single_metric_import_card">
                             <div class="card-transparent text-center mt-3">
                                 <div class="card-body">
                                     <table border="0" align="center">
@@ -446,7 +447,7 @@ function set_layout() {
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div class="col" id="single_metric_export_card">
                             <div class="card-transparent text-center mt-3">
                                 <div class="card-body">
                                     <table border="0" align="center">
@@ -465,7 +466,7 @@ function set_layout() {
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div class="col" id="single_metric_trees_card">
                             <div class="card-transparent text-center mt-3">
                                 <div class="card-body">
                                     <table border="0" align="center">
@@ -483,7 +484,7 @@ function set_layout() {
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div class="col" id="single_metric_co2_card">
                             <div class="card-transparent text-center mt-3">
                                 <div class="card-body">
                                     <table border="0" align="center">
@@ -497,14 +498,14 @@ function set_layout() {
                                             </td>
                                         </tr>
                                     </table>
-                                    <span id="single_metric_co2_caption" class="metric-unit metric-white">Reduced emissions</span>
+                                    <span id="single_metric_co2_caption" class="metric-unit metric-white">Reduced CO<sub>2</sub> emissions</span>
                                 </div>
                             </div>
                         </div>
 
                     </div>
 
-                    <div class="row">
+                    <div class="row fixed-bottom mb-2">
                         <div onclick="ui_cycle_layout()" class="col-1">
                             <left>
                                 <img src="/images/school.png" class="img-thumbnail" alt="...">
@@ -977,6 +978,21 @@ function populate_metrics(metrics_id, metric_key) {
         milli_energy_unit = 'Wh';
     }
 
+    // Enviromental data hidden by default, but shown 
+    // for the total
+    if (metric_key == 'total') {
+        $("#" + metrics_id + "_co2_card").show();
+        $("#" + metrics_id + "_trees_card").show();
+        $("#" + metrics_id + "_import_card").hide();
+        $("#" + metrics_id + "_consumed_card").hide();
+    }
+    else {
+        $("#" + metrics_id + "_co2_card").hide();
+        $("#" + metrics_id + "_trees_card").hide();
+        $("#" + metrics_id + "_import_card").show();
+        $("#" + metrics_id + "_consumed_card").show();
+    }
+
     value_dict = format_energy_value(metrics_a_source.import, 
                                      std_energy_unit, 
                                      mega_energy_unit, 
@@ -1064,7 +1080,7 @@ function populate_metrics(metrics_id, metric_key) {
     }
 
     if ('battery_charge' in metrics_a_source) {
-        $("#" + metrics_id + "_battery_charge_col").show();
+        $("#" + metrics_id + "_battery_charge_card").show();
         value_dict = format_energy_value(metrics_a_source.battery_charge, 
                                          std_energy_unit, 
                                          mega_energy_unit, 
@@ -1084,11 +1100,11 @@ function populate_metrics(metrics_id, metric_key) {
         }
     }
     else {
-        $("#" + metrics_id + "_battery_charge_col").hide();
+        $("#" + metrics_id + "_battery_charge_card").hide();
     }
 
     if ('battery_discharge' in metrics_a_source) {
-        $("#" + metrics_id + "_battery_discharge_col").show();
+        $("#" + metrics_id + "_battery_discharge_card").show();
         value_dict = format_energy_value(metrics_a_source.battery_discharge, 
                                          std_energy_unit, 
                                          mega_energy_unit, 
@@ -1108,11 +1124,11 @@ function populate_metrics(metrics_id, metric_key) {
         }
     }
     else {
-        $("#" + metrics_id + "_battery_discharge_col").hide();
+        $("#" + metrics_id + "_battery_discharge_card").hide();
     }
 
     if ('battery_soc' in metrics_a_source) {
-        $("#" + metrics_id + "_battery_soc_col").show();
+        $("#" + metrics_id + "_battery_soc_card").show();
         battery_soc_icon = format_battery_icon(metrics_a_source.battery_soc);
         $("#" + metrics_id + "_battery_soc").html(metrics_a_source.battery_soc);
         $("#" + metrics_id + "_battery_soc_unit").html('%');
@@ -1135,7 +1151,7 @@ function populate_metrics(metrics_id, metric_key) {
         }
     }
     else {
-        $("#" + metrics_id + "_battery_soc_col").hide();
+        $("#" + metrics_id + "_battery_soc_card").hide();
     }
 
     value_dict = format_energy_value(metrics_a_source.co2, 'kg', 'mt', 'g');
@@ -1242,7 +1258,8 @@ function display_data() {
       // single metric layout
       metrics_a_source = data_dict.metrics[metric_key];
       populate_metrics("single_metric", metric_key);
-      $("#metrics_a_title").html(metrics_a_source['title']);
+      //$("#single_metric_trees_card").hide();
+      //$("#single_metric_co2_card").hide();
 
       default:
       // typical layout of using a single donut and one set of metrics
