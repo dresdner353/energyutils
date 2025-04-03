@@ -693,7 +693,7 @@ def get_cloud_live_data(config):
 
     # total accumulated values for import, export and solar
     total_rec = gv_shelly_dict['total']
-    total_rec['title'] = 'Total Usage'
+    total_rec['title'] = 'Overall Performance'
     total_rec['import'] = total_grid_import
     total_rec['export'] = total_grid_export
     total_rec['solar'] = total_solar
