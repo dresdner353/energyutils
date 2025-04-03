@@ -372,23 +372,21 @@ function set_layout() {
                 </div>
             `
 
-    school_html = `
-                <div id="school" class="container text-white text-left">
-                    <div id="school_title" class="row mt-0">
-                        <div class="col-11">
+    single_metric_html = `
+                <div id="single_metric" class="container text-white text-center">
+                    <div id="single_metric_title" class="row mt-0">
+                        <div class="col-12">
                             <left>
-                                <a href="/admin"><div id="school_titletext" class="title text-white text-left"></div></a>
+                                <a href="/admin">
+                                <span class="title text-white text-left">Solar Dashboard - </span>
+                                <span id="single_metric_titletext" class="title text-white text-left"></span>
+                                </a>
                             </left>
-                        </div>
-                        <div class="col-1">
-                            <right>
-                                <img src="/images/school.png" class="img-thumbnail" alt="...">
-                            </right>
                         </div>
                     </div>
                 </div>
 
-                <div id="school" class="container text-white text-center">
+                <div id="single_metric" class="container text-white text-center">
                     <div onclick="ui_cycle_metric_index()" class="row row-cols-2 mt-3 text-center">
 
                         <div class="col">
@@ -397,15 +395,15 @@ function set_layout() {
                                     <table border="0" align="center">
                                         <tr>
                                             <td style="vertical-align: middle;">
-                                                <span id="school_solar" style="metric metric-white">0</span>&nbsp;
+                                                <span id="single_metric_solar" style="metric metric-white">0</span>&nbsp;
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="school_solar_icon" class="metric-icon"><i class="bi bi-sun-fill"></i></div>
-                                                <div id="school_solar_unit" class="metric-unit metric-white">kWh</div>
+                                                <div id="single_metric_solar_icon" class="metric-icon"><i class="bi bi-sun-fill"></i></div>
+                                                <div id="single_metric_solar_unit" class="metric-unit metric-white">kWh</div>
                                             </td>
                                         </tr>
                                     </table>
-                                    <span id="school_solar_caption" class="metric-unit metric-white">Solar power generated</span>
+                                    <span id="single_metric_solar_caption" class="metric-unit metric-white">Solar power generated</span>
                                 </div>
                             </div>
                         </div>
@@ -416,15 +414,15 @@ function set_layout() {
                                     <table border="0" align="center">
                                         <tr>
                                             <td style="vertical-align: middle;">
-                                                <span id="school_consumed" style="metric metric-white">0</span>&nbsp;
+                                                <span id="single_metric_consumed" style="metric metric-white">0</span>&nbsp;
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="school_consumed_icon" class="metric-icon"><i class="bi bi-buildings-fill"></i></div>
-                                                <div id="school_consumed_unit" class="metric-unit metric-white">kWh</div>
+                                                <div id="single_metric_consumed_icon" class="metric-icon"><i class="bi bi-buildings-fill"></i></div>
+                                                <div id="single_metric_consumed_unit" class="metric-unit metric-white">kWh</div>
                                             </td>
                                         </tr>
                                     </table>
-                                    <span id="school_consumed_caption" class="metric-unit metric-white">Power used</span>
+                                    <span id="single_metric_consumed_caption" class="metric-unit metric-white">Power used</span>
                                 </div>
                             </div>
                         </div>
@@ -435,15 +433,15 @@ function set_layout() {
                                     <table border="0" align="center">
                                         <tr>
                                             <td style="vertical-align: middle;">
-                                                <span id="school_import" style="metric metric-white">0</span>&nbsp;
+                                                <span id="single_metric_import" style="metric metric-white">0</span>&nbsp;
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="school_import_icon" class="metric-icon"><i class="bi bi-plug-fill"></i></div>
-                                                <div id="school_import_unit" class="metric-unit metric-white">kWh</div>
+                                                <div id="single_metric_import_icon" class="metric-icon"><i class="bi bi-plug-fill"></i></div>
+                                                <div id="single_metric_import_unit" class="metric-unit metric-white">kWh</div>
                                             </td>
                                         </tr>
                                     </table>
-                                    <span id="school_import_caption" class="metric-unit metric-white">Power purchased from the grid</span>
+                                    <span id="single_metric_import_caption" class="metric-unit metric-white">Power purchased from the grid</span>
                                 </div>
                             </div>
                         </div>
@@ -454,15 +452,15 @@ function set_layout() {
                                     <table border="0" align="center">
                                         <tr>
                                             <td style="vertical-align: middle;">
-                                                <span id="school_export" style="metric metric-white">0</span>&nbsp;
+                                                <span id="single_metric_export" style="metric metric-white">0</span>&nbsp;
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="school_export_icon" class="metric-icon"><i class="bi bi-currency-euro"></i></div>
-                                                <div id="school_export_unit" class="metric-unit metric-white">kWh</div>
+                                                <div id="single_metric_export_icon" class="metric-icon"><i class="bi bi-currency-euro"></i></div>
+                                                <div id="single_metric_export_unit" class="metric-unit metric-white">kWh</div>
                                             </td>
                                         </tr>
                                     </table>
-                                    <span id="school_export_caption" class="metric-unit metric-white">Power sold to the grid</span>
+                                    <span id="single_metric_export_caption" class="metric-unit metric-white">Power sold to the grid</span>
                                 </div>
                             </div>
                         </div>
@@ -473,14 +471,14 @@ function set_layout() {
                                     <table border="0" align="center">
                                         <tr>
                                             <td style="vertical-align: middle;">
-                                                <span id="school_trees" style="metric metric-white">0</span><br>
+                                                <span id="single_metric_trees" style="metric metric-white">0</span><br>
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="school_trees_icon" class="metric-icon"><i class="bi bi-tree-fill"></i></div>
+                                                <div id="single_metric_trees_icon" class="metric-icon"><i class="bi bi-tree-fill"></i></div>
                                             </td>
                                         </tr>
                                     </table>
-                                    <span id="school_trees_caption" class="metric-unit metric-white">Equivalent trees planted</span>
+                                    <span id="single_metric_trees_caption" class="metric-unit metric-white">Equivalent trees planted</span>
                                 </div>
                             </div>
                         </div>
@@ -491,15 +489,15 @@ function set_layout() {
                                     <table border="0" align="center">
                                         <tr>
                                             <td style="vertical-align: middle;">
-                                                <span id="school_co2" style="metric metric-white">0</span>&nbsp;
+                                                <span id="single_metric_co2" style="metric metric-white">0</span>&nbsp;
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="school_co2_icon" class="metric-icon"><i class="bi bi-fire"></i></div>
-                                                <div id="school_co2_unit" class="metric-unit metric-white">kg</div>
+                                                <div id="single_metric_co2_icon" class="metric-icon"><i class="bi bi-fire"></i></div>
+                                                <div id="single_metric_co2_unit" class="metric-unit metric-white">kg</div>
                                             </td>
                                         </tr>
                                     </table>
-                                    <span id="school_co2_caption" class="metric-unit metric-white">Reduced emissions</span>
+                                    <span id="single_metric_co2_caption" class="metric-unit metric-white">Reduced emissions</span>
                                 </div>
                             </div>
                         </div>
@@ -507,9 +505,16 @@ function set_layout() {
                     </div>
 
                     <div class="row">
-                        <div class="col-11">
+                        <div onclick="ui_cycle_layout()" class="col-1">
+                            <left>
+                                <img src="/images/school.png" class="img-thumbnail" alt="...">
+                            </left>
+                        </div>
+
+                        <div class="col-10">
                                 <div></div>
                         </div>
+
                         <div onclick="ui_cycle_layout()" class="col-1">
                             <right>
                                 <img src="/images/installer.png" class="img-thumbnail" alt="...">
@@ -593,9 +598,8 @@ function set_layout() {
                 </div>
             `;
 
-    // school model
     // single set of metrics
-    school_layout = `
+    single_metric_layout = `
                 <div id="master" class="container-fluid" data-bs-theme="dark">
                     <div id="metrics_a_insert" class="row">
                     </div>
@@ -657,7 +661,7 @@ function set_layout() {
     // layout query arg (forces the layout)
     layout_arg = get_query_arg("layout");
     if (layout_arg != undefined &&
-        ["small", "default", "dual-metrics", "school", "portrait", "metrics"].includes(layout_arg)) {
+        ["small", "default", "dual-metrics", "single-metric", "portrait", "quad-metrics"].includes(layout_arg)) {
         layout = layout_arg;
         console.log("Layout query arg:" + layout);
     }
@@ -713,10 +717,10 @@ function set_layout() {
       $("#metrics_a_insert").html(metrics_a_html);
       break;
 
-      case "school":
-      // school landscape
-      $("#dashboard").html(school_layout);
-      $("#metrics_a_insert").html(school_html);
+      case "single-metric":
+      // single metric landscape
+      $("#dashboard").html(single_metric_layout);
+      $("#metrics_a_insert").html(single_metric_html);
       break;
 
       case "portrait":
@@ -729,7 +733,7 @@ function set_layout() {
       $("#year_column_chart_insert").html(year_column_chart_html);
       break;
 
-      case "metrics":
+      case "quad-metrics":
       // metrics screen landscape
       $("#dashboard").html(metrics_screen_layout);
       $("#metrics_a_insert").html(metrics_a_html);
@@ -751,14 +755,14 @@ function set_layout() {
     // Adjust CSS
     switch(layout) {
 
-      case "school":
-      // set the school screen font sizes
-      document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-school)');
-      document.body.style.setProperty("--icon-font-size", 'var(--icon-font-size-school)');
-      document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-school)');
-      document.body.style.setProperty("--title-font-size", 'var(--title-font-size-school)');
-      document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-school)');
-      document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-school)');
+      case "single-metric":
+      // set the single metric screen font sizes
+      document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-single)');
+      document.body.style.setProperty("--icon-font-size", 'var(--icon-font-size-single)');
+      document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-single)');
+      document.body.style.setProperty("--title-font-size", 'var(--title-font-size-single)');
+      document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-single)');
+      document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-single)');
       break;
 
       case "small":
@@ -947,7 +951,7 @@ function ui_cycle_metric_index() {
 // ignores cycling to portrait layout
 function ui_cycle_layout() {
     console.log("ui_cycle_layout()");
-    ui_layout_list = ['small', 'default', 'dual-metrics', 'metrics', 'school'];
+    ui_layout_list = ['small', 'default', 'dual-metrics', 'single-metric', 'quad-metrics'];
     layout_index = ui_layout_list.indexOf(layout);
     layout_index = (layout_index + 1) % ui_layout_list.length;
     layout = ui_layout_list[layout_index];
@@ -1200,7 +1204,7 @@ function display_data() {
 
     // populate metrics
     switch(layout) {
-      case "metrics":
+      case "quad-metrics":
       // 2 fixed metric sets
       populate_metrics("metrics_a", "live");
       populate_metrics("metrics_b", "today");
@@ -1234,10 +1238,10 @@ function display_data() {
       $("#metrics_b_title").hide();
       break;
 
-      case "school":
-      // school layout
+      case "single-metric":
+      // single metric layout
       metrics_a_source = data_dict.metrics[metric_key];
-      populate_metrics("school", metric_key);
+      populate_metrics("single_metric", metric_key);
       $("#metrics_a_title").html(metrics_a_source['title']);
 
       default:
@@ -1391,8 +1395,8 @@ function render_charts() {
 
     // chart height and style variations by layout
     switch(layout) {
-      case "school":
-      case "metrics":
+      case "single-metric":
+      case "quad-metrics":
       return;
       break;
 
@@ -1410,7 +1414,6 @@ function render_charts() {
 
       case "default":
       case "dual-metrics":
-      case "metrics":
       donut_chart_height = (window.innerHeight) * 0.40;
       legend_font_size_var = "--legend-font-size-default";
       slice_font_size_var = "--slice-font-size-default";
