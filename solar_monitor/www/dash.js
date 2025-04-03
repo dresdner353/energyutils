@@ -404,7 +404,7 @@ function set_layout() {
                                             </td>
                                         </tr>
                                     </table>
-                                    <span id="single_metric_solar_caption" class="metric-unit metric-white">Solar power generated</span>
+                                    <span id="single_metric_solar_caption" class="metric-unit metric-white mt-0 mb-0">Solar power generation</span>
                                 </div>
                             </div>
                         </div>
@@ -423,7 +423,7 @@ function set_layout() {
                                             </td>
                                         </tr>
                                     </table>
-                                    <span id="single_metric_consumed_caption" class="metric-unit metric-white">Power used</span>
+                                    <span id="single_metric_consumed_caption" class="metric-unit metric-white">Consumed power</span>
                                 </div>
                             </div>
                         </div>
@@ -442,7 +442,7 @@ function set_layout() {
                                             </td>
                                         </tr>
                                     </table>
-                                    <span id="single_metric_import_caption" class="metric-unit metric-white">Power purchased from the grid</span>
+                                    <span id="single_metric_import_caption" class="metric-unit metric-white">Purchased power from the grid</span>
                                 </div>
                             </div>
                         </div>
@@ -461,7 +461,7 @@ function set_layout() {
                                             </td>
                                         </tr>
                                     </table>
-                                    <span id="single_metric_export_caption" class="metric-unit metric-white">Power sold to the grid</span>
+                                    <span id="single_metric_export_caption" class="metric-unit metric-white">Surplus power sold to the grid</span>
                                 </div>
                             </div>
                         </div>
@@ -591,9 +591,9 @@ function set_layout() {
     small_layout = `
                 <div id="master" class="container-fluid vertical-center" data-bs-theme="dark">
                     <div class="row align-items-center">
-                        <div id="donut_a_insert" class="col col-5 mt-2">
+                        <div id="donut_a_insert" class="col col-5 mt-0">
                         </div>
-                        <div id="metrics_a_insert" class="col col-7 mt-2">
+                        <div id="metrics_a_insert" class="col col-7 mt-0">
                         </div>
                     </div>
                 </div>
@@ -631,38 +631,13 @@ function set_layout() {
                 </div>
             `;
 
-    // metrics-only screen model
-    // two columns, split 6:6 on bootstrap 12 breakpoints
-    // left column has the live and today metrics fixed
-    // right rotates the remaining metrics between the two
-    metrics_screen_layout = `
-                <div id="master" class="container-fluid" data-bs-theme="dark">
-                    <div class="row align-items-center">
-                        <div class="col col-6 mt-0">
-                            <div id="metrics_a_insert" class="row">
-                            </div>
-                            <div id="metrics_b_insert" class="row">
-                            </div>
-                        </div>
-
-                        <div class="col col-6 mt-0">
-                            <div id="metrics_c_insert" class="row">
-                            </div>
-                            <div id="metrics_d_insert" class="row">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-
     // layout checks
     layout = undefined;
 
     // layout query arg (forces the layout)
     layout_arg = get_query_arg("layout");
     if (layout_arg != undefined &&
-        ["small", "default", "dual-metrics", "single-metric", "portrait", "quad-metrics"].includes(layout_arg)) {
+        ["small", "default", "dual-metrics", "single-metric", "portrait"].includes(layout_arg)) {
         layout = layout_arg;
         console.log("Layout query arg:" + layout);
     }
@@ -732,15 +707,6 @@ function set_layout() {
       $("#day_column_chart_insert").html(day_column_chart_html);
       $("#month_column_chart_insert").html(month_column_chart_html);
       $("#year_column_chart_insert").html(year_column_chart_html);
-      break;
-
-      case "quad-metrics":
-      // metrics screen landscape
-      $("#dashboard").html(metrics_screen_layout);
-      $("#metrics_a_insert").html(metrics_a_html);
-      $("#metrics_b_insert").html(metrics_b_html);
-      $("#metrics_c_insert").html(metrics_c_html);
-      $("#metrics_d_insert").html(metrics_d_html);
       break;
 
       case "dual-metrics":
@@ -952,7 +918,7 @@ function ui_cycle_metric_index() {
 // ignores cycling to portrait layout
 function ui_cycle_layout() {
     console.log("ui_cycle_layout()");
-    ui_layout_list = ['small', 'default', 'dual-metrics', 'single-metric', 'quad-metrics'];
+    ui_layout_list = ['small', 'default', 'dual-metrics', 'single-metric'];
     layout_index = ui_layout_list.indexOf(layout);
     layout_index = (layout_index + 1) % ui_layout_list.length;
     layout = ui_layout_list[layout_index];
@@ -1220,26 +1186,6 @@ function display_data() {
 
     // populate metrics
     switch(layout) {
-      case "quad-metrics":
-      // 2 fixed metric sets
-      populate_metrics("metrics_a", "live");
-      populate_metrics("metrics_b", "today");
-
-      // 2 variable metric sets:
-      // 1: yesterday, this month 
-      // 2: last month, last 12 months
-      if (metrics_layout_id == 0) {
-          populate_metrics("metrics_c", "yesterday");
-          populate_metrics("metrics_d", "this_month");
-      }
-      else {
-          populate_metrics("metrics_c", "last_month");
-          populate_metrics("metrics_d", "last_12_months");
-      }
-      // rotate for next time
-      metrics_layout_id = (metrics_layout_id + 1) % 2;
-      break;
-
       case "dual-metrics":
       // dual-donut + dual metrics layout
       metrics_a_source = data_dict.metrics["live"];
@@ -1413,7 +1359,6 @@ function render_charts() {
     // chart height and style variations by layout
     switch(layout) {
       case "single-metric":
-      case "quad-metrics":
       return;
       break;
 
