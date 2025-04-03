@@ -50,7 +50,11 @@
     background-color: #000000; 
 }
 body {
-  /*background-image: url('/images/bg.jpg');*/
+    /*
+  background-image: url('/images/bg.jpg');
+  background-repeat:no-repeat;
+  background-size:100% 100vh;
+     */
 }
 a, a:hover, a:focus, a:active {
     text-decoration: none;
