@@ -51,6 +51,7 @@ $( document ).ready(function() {
     console.log("ready()");
     // hide the dashboard and splash initially
     $("#dashboard").hide();
+    $("#about").hide();
     $("#splash").show();
 
     // set dash to blank text
@@ -404,7 +405,7 @@ function set_layout() {
                                             </td>
                                         </tr>
                                     </table>
-                                    <span id="single_metric_solar_caption" class="metric-unit metric-white mt-0 mb-0">Solar power generation</span>
+                                    <span id="single_metric_solar_caption" class="metric-caption metric-white mt-0 mb-0">Solar Power Generation</span>
                                 </div>
                             </div>
                         </div>
@@ -423,7 +424,7 @@ function set_layout() {
                                             </td>
                                         </tr>
                                     </table>
-                                    <span id="single_metric_consumed_caption" class="metric-unit metric-white">Consumed power</span>
+                                    <span id="single_metric_consumed_caption" class="metric-caption metric-white">Consumed Power</span>
                                 </div>
                             </div>
                         </div>
@@ -442,7 +443,7 @@ function set_layout() {
                                             </td>
                                         </tr>
                                     </table>
-                                    <span id="single_metric_import_caption" class="metric-unit metric-white">Purchased power from the grid</span>
+                                    <span id="single_metric_import_caption" class="metric-caption metric-white">Grid Power Purchased</span>
                                 </div>
                             </div>
                         </div>
@@ -461,7 +462,7 @@ function set_layout() {
                                             </td>
                                         </tr>
                                     </table>
-                                    <span id="single_metric_export_caption" class="metric-unit metric-white">Surplus power sold to the grid</span>
+                                    <span id="single_metric_export_caption" class="metric-caption metric-white">Surplus Power Exported</span>
                                 </div>
                             </div>
                         </div>
@@ -479,7 +480,7 @@ function set_layout() {
                                             </td>
                                         </tr>
                                     </table>
-                                    <span id="single_metric_trees_caption" class="metric-unit metric-white">Equivalent trees planted</span>
+                                    <span id="single_metric_trees_caption" class="metric-caption metric-white">Equivalent Trees Planted</span>
                                 </div>
                             </div>
                         </div>
@@ -498,29 +499,57 @@ function set_layout() {
                                             </td>
                                         </tr>
                                     </table>
-                                    <span id="single_metric_co2_caption" class="metric-unit metric-white">Reduced CO<sub>2</sub> emissions</span>
+                                    <span id="single_metric_co2_caption" class="metric-caption metric-white">Reduced CO<sub>2</sub> Emissions</span>
                                 </div>
                             </div>
                         </div>
 
                     </div>
 
-                    <div class="row fixed-bottom mb-2">
-                        <div onclick="ui_cycle_layout()" class="col-1">
+                </div>
+            `;
+
+    about_html = `
+                <div id="single_metric" class="container text-white text-center">
+                    <div id="single_metric_title" class="row mt-0">
+                        <div class="col col-12">
                             <left>
-                                <img src="/images/school.png" class="img-thumbnail" alt="...">
+                                <a href="/admin">
+                                <span class="title text-white text-left">About</span>
+                                </a>
                             </left>
                         </div>
+                    </div>
 
-                        <div class="col-10">
-                                <div></div>
+                    <div onclick="ui_cycle_metric_index()" class="row mt-3 text-center">
+
+                        <div class="col col-9">
+                            <div class="card-transparent text-start mt-3">
+                                <div class="card-body">
+                                <span id="about_caption" class="metric-caption metric-white"></span>
+                                </div>
+                            </div>
                         </div>
 
-                        <div onclick="ui_cycle_layout()" class="col-1">
-                            <right>
-                                <img src="/images/installer.png" class="img-thumbnail" alt="...">
-                            </right>
+                        <div class="col col-1">
                         </div>
+
+                        <div class="col col-2">
+                            <div class="card text-center mt-3">
+                                <div class="card-body">
+                                    <center>
+                                        <img src="/images/installer.png" class="img-thumbnail" alt="...">
+                                    </center>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2 text-center fixed-bottom">
+                    <center>
+                        <span class="footer metric-yellow">Powered by SolarMon (github.com/dresdner353)</span>
+                        <br>
+                        <center>
                     </div>
 
                 </div>
@@ -674,6 +703,9 @@ function set_layout() {
     metric_donut_a_html = donut_html_tmpl.replaceAll("<DONUT-ID>", "donut_a");
     metric_donut_b_html = donut_html_tmpl.replaceAll("<DONUT-ID>", "donut_b");
 
+    // fixed about screen
+    $("#about").html(about_html);
+
     // populate layout HTML
     switch(layout) {
       case "default":
@@ -720,6 +752,8 @@ function set_layout() {
     }
 
     // Adjust CSS
+    document.body.style.setProperty("--bg-colour", data_dict['dashboard']['bg_colour']);
+
     switch(layout) {
 
       case "single-metric":
@@ -727,6 +761,7 @@ function set_layout() {
       document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-single)');
       document.body.style.setProperty("--icon-font-size", 'var(--icon-font-size-single)');
       document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-single)');
+      document.body.style.setProperty("--metric-caption-font-size", 'var(--metric-caption-font-size-single)');
       document.body.style.setProperty("--title-font-size", 'var(--title-font-size-single)');
       document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-single)');
       document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-single)');
@@ -737,6 +772,7 @@ function set_layout() {
       document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-small)');
       document.body.style.setProperty("--icon-font-size", 'var(--icon-font-size-small)');
       document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-small)');
+      document.body.style.setProperty("--metric-caption-font-size", 'var(--metric-caption-font-size-small)');
       document.body.style.setProperty("--title-font-size", 'var(--title-font-size-small)');
       document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-small)');
       document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-small)');
@@ -747,6 +783,7 @@ function set_layout() {
       document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-portrait)');
       document.body.style.setProperty("--icon-font-size", 'var(--icon-font-size-portrait)');
       document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-portrait)');
+      document.body.style.setProperty("--metric-caption-font-size", 'var(--metric-caption-font-size-portrait)');
       document.body.style.setProperty("--title-font-size", 'var(--title-font-size-portrait)');
       document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-portrait)');
       document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-portrait)');
@@ -757,6 +794,7 @@ function set_layout() {
       document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-default)');
       document.body.style.setProperty("--icon-font-size", 'var(--icon-font-size-default)');
       document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-default)');
+      document.body.style.setProperty("--metric-caption-font-size", 'var(--metric-caption-font-size-default)');
       document.body.style.setProperty("--title-font-size", 'var(--title-font-size-default)');
       document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-default)');
       document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-default)');
@@ -880,6 +918,15 @@ function cycle_metric_index() {
         for (i = 0; i < metric_list.length; i++) {
             metric_index = (metric_index + 1) % metric_list.length;
 
+            // about screen injected at start of cycle
+            // if enabled
+            if (metric_key != 'about' && 
+                metric_index == 0 &&
+                data_dict.dashboard.metrics['about']) {
+                metric_key = 'about';
+                break;
+            }
+
             // skip live metric in dual-donut layout
             // as live is fixed on left
             if (layout == "dual-metrics" && 
@@ -970,13 +1017,13 @@ function populate_metrics(metrics_id, metric_key) {
         $("#" + metrics_id + "_import").removeClass().addClass("metric metric-red");
         $("#" + metrics_id + "_import_icon").removeClass().addClass("metric-icon metric-red");
         $("#" + metrics_id + "_import_unit").removeClass().addClass("metric-unit metric-red");
-        $("#" + metrics_id + "_import_caption").removeClass().addClass("metric-unit metric-white");
+        $("#" + metrics_id + "_import_caption").removeClass().addClass("metric-caption metric-white");
     }
     else {
         $("#" + metrics_id + "_import").removeClass().addClass("metric metric-green");
         $("#" + metrics_id + "_import_icon").removeClass().addClass("metric-icon metric-green");
         $("#" + metrics_id + "_import_unit").removeClass().addClass("metric-unit metric-green");
-        $("#" + metrics_id + "_import_caption").removeClass().addClass("metric-unit metric-green");
+        $("#" + metrics_id + "_import_caption").removeClass().addClass("metric-caption metric-green");
     }
 
     value_dict = format_energy_value(metrics_a_source.solar, 
@@ -990,13 +1037,13 @@ function populate_metrics(metrics_id, metric_key) {
         $("#" + metrics_id + "_solar").removeClass().addClass("metric metric-yellow");
         $("#" + metrics_id + "_solar_icon").removeClass().addClass("metric-icon metric-yellow");
         $("#" + metrics_id + "_solar_unit").removeClass().addClass("metric-unit metric-yellow");
-        $("#" + metrics_id + "_solar_caption").removeClass().addClass("metric-unit metric-white");
+        $("#" + metrics_id + "_solar_caption").removeClass().addClass("metric-caption metric-white");
     }
     else {
         $("#" + metrics_id + "_solar").removeClass().addClass("metric metric-grey");
         $("#" + metrics_id + "_solar_icon").removeClass().addClass("metric-icon metric-grey");
         $("#" + metrics_id + "_solar_unit").removeClass().addClass("metric-unit metric-grey");
-        $("#" + metrics_id + "_solar_caption").removeClass().addClass("metric-unit metric-grey");
+        $("#" + metrics_id + "_solar_caption").removeClass().addClass("metric-caption metric-grey");
     }
 
     value_dict = format_energy_value(metrics_a_source.export, 
@@ -1010,13 +1057,13 @@ function populate_metrics(metrics_id, metric_key) {
         $("#" + metrics_id + "_export").removeClass().addClass("metric metric-blue");
         $("#" + metrics_id + "_export_icon").removeClass().addClass("metric-icon metric-blue");
         $("#" + metrics_id + "_export_unit").removeClass().addClass("metric-unit metric-blue");
-        $("#" + metrics_id + "_export_caption").removeClass().addClass("metric-unit metric-white");
+        $("#" + metrics_id + "_export_caption").removeClass().addClass("metric-caption metric-white");
     }
     else {
         $("#" + metrics_id + "_export").removeClass().addClass("metric metric-grey");
         $("#" + metrics_id + "_export_icon").removeClass().addClass("metric-icon metric-grey");
         $("#" + metrics_id + "_export_unit").removeClass().addClass("metric-unit metric-grey");
-        $("#" + metrics_id + "_export_caption").removeClass().addClass("metric-unit metric-grey");
+        $("#" + metrics_id + "_export_caption").removeClass().addClass("metric-caption metric-grey");
     }
 
     value_dict = format_energy_value(metrics_a_source.consumed, 
@@ -1030,19 +1077,19 @@ function populate_metrics(metrics_id, metric_key) {
         $("#" + metrics_id + "_consumed").removeClass().addClass("metric metric-green");
         $("#" + metrics_id + "_consumed_icon").removeClass().addClass("metric-icon metric-green");
         $("#" + metrics_id + "_consumed_unit").removeClass().addClass("metric-unit metric-green");
-        $("#" + metrics_id + "_consumed_caption").removeClass().addClass("metric-unit metric-white");
+        $("#" + metrics_id + "_consumed_caption").removeClass().addClass("metric-caption metric-white");
     }
     else if (metrics_a_source.solar > 0) {
         $("#" + metrics_id + "_consumed").removeClass().addClass("metric metric-orange");
         $("#" + metrics_id + "_consumed_icon").removeClass().addClass("metric-icon metric-orange");
         $("#" + metrics_id + "_consumed_unit").removeClass().addClass("metric-unit metric-orange");
-        $("#" + metrics_id + "_consumed_caption").removeClass().addClass("metric-unit metric-white");
+        $("#" + metrics_id + "_consumed_caption").removeClass().addClass("metric-caption metric-white");
     }
     else {
         $("#" + metrics_id + "_consumed").removeClass().addClass("metric metric-red");
         $("#" + metrics_id + "_consumed_icon").removeClass().addClass("metric-icon metric-red");
         $("#" + metrics_id + "_consumed_unit").removeClass().addClass("metric-unit metric-red");
-        $("#" + metrics_id + "_consumed_caption").removeClass().addClass("metric-unit metric-white");
+        $("#" + metrics_id + "_consumed_caption").removeClass().addClass("metric-caption metric-white");
     }
 
     if ('battery_charge' in metrics_a_source) {
@@ -1128,13 +1175,13 @@ function populate_metrics(metrics_id, metric_key) {
         $("#" + metrics_id + "_co2").removeClass().addClass("metric metric-green");
         $("#" + metrics_id + "_co2_icon").removeClass().addClass("metric-icon metric-green");
         $("#" + metrics_id + "_co2_unit").removeClass().addClass("metric-unit metric-green");
-        $("#" + metrics_id + "_co2_caption").removeClass().addClass("metric-unit metric-white");
+        $("#" + metrics_id + "_co2_caption").removeClass().addClass("metric-caption metric-white");
     }
     else {
         $("#" + metrics_id + "_co2").removeClass().addClass("metric metric-grey");
         $("#" + metrics_id + "_co2_icon").removeClass().addClass("metric-icon metric-grey");
         $("#" + metrics_id + "_co2_unit").removeClass().addClass("metric-unit metric-grey");
-        $("#" + metrics_id + "_co2_caption").removeClass().addClass("metric-unit metric-grey");
+        $("#" + metrics_id + "_co2_caption").removeClass().addClass("metric-caption metric-grey");
     }
 
     value_dict = format_trees(metrics_a_source.trees);
@@ -1144,13 +1191,13 @@ function populate_metrics(metrics_id, metric_key) {
         $("#" + metrics_id + "_trees").removeClass().addClass("metric metric-green");
         $("#" + metrics_id + "_trees_icon").removeClass().addClass("metric-icon metric-green");
         $("#" + metrics_id + "_trees_unit").removeClass().addClass("metric-unit metric-green");
-        $("#" + metrics_id + "_trees_caption").removeClass().addClass("metric-unit metric-white");
+        $("#" + metrics_id + "_trees_caption").removeClass().addClass("metric-caption metric-white");
     }
     else {
         $("#" + metrics_id + "_trees").removeClass().addClass("metric metric-grey");
         $("#" + metrics_id + "_trees_icon").removeClass().addClass("metric-icon metric-grey");
         $("#" + metrics_id + "_trees_unit").removeClass().addClass("metric-unit metric-grey");
-        $("#" + metrics_id + "_trees_caption").removeClass().addClass("metric-unit metric-grey");
+        $("#" + metrics_id + "_trees_caption").removeClass().addClass("metric-caption metric-grey");
     }
 
 }
@@ -1169,6 +1216,7 @@ function display_data() {
     if ('last_updated' in data_dict && 
         data_dict.last_updated > 0) {
         $("#splash").hide();
+        $("#about").hide();
     }
     else {
         $("#splash").show();
@@ -1180,6 +1228,16 @@ function display_data() {
         else {
             $("#splash_text").html('Waiting for data...');
         }
+
+        return;
+    }
+
+    if (metric_key == 'about') {
+        $("#splash").hide();
+        $("#dashboard").hide();
+        $("#about").show();
+        reformatted_text = data_dict['dashboard']['about_caption'].replaceAll('\n', '<br>');
+        $("#about_caption").html(reformatted_text);
 
         return;
     }
@@ -1334,6 +1392,10 @@ function render_column_chart(chart_id,
     }
 
     chart_options.hAxis.title = time_unit;
+
+    // draw twice as it seems to goof on the width at times 
+    // and render one narrower
+    column_chart.draw(chart_data, chart_options);
     column_chart.draw(chart_data, chart_options);
 
     return column_chart;
