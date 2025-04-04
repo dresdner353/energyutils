@@ -334,7 +334,7 @@ def get_inverter_day_data(config):
     live_rec = gv_solis_dict['live']
     time_str = datetime.datetime.fromtimestamp(
             gv_solis_dict['last_updated']).strftime('%H:%M:%S')
-    live_rec['title'] = 'Live Usage @%s' % (time_str)
+    live_rec['title'] = 'Real-time @%s' % (time_str)
 
     if grid < 0:
         # negative => exporting

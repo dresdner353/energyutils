@@ -665,7 +665,7 @@ def get_cloud_live_data(config):
 
     time_str = datetime.datetime.fromtimestamp(
             gv_shelly_dict['last_updated']).strftime('%H:%M:%S')
-    live_rec['title'] = 'Live Usage @%s%s' % (time_str, message)
+    live_rec['title'] = 'Real-time @%s%s' % (time_str, message)
 
     # render into separate values for import and export
     if grid >= 0:
