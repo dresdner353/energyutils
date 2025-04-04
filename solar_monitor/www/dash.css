@@ -3,22 +3,18 @@
      * two variations for default and smaller screens
      */
     --metric-font-size-default: 6.0vw;
-    --metric-font-size-small: 8.0vw;
     --metric-font-size-single: 10.5vw;
     --metric-font-size-portrait: 8.5vw;
 
     --icon-font-size-default: 2.5vw;
-    --icon-font-size-small: 4.0vw;
     --icon-font-size-single: 4.0vw;
     --icon-font-size-portrait: 3.0vw;
 
     --metric-unit-font-size-default: 1.5vw;
-    --metric-unit-font-size-small: 2.5vw;
     --metric-unit-font-size-single: 3.0vw;
     --metric-unit-font-size-portrait: 2.5vw;
 
     --metric-caption-font-size-default: 1.0vw;
-    --metric-caption-font-size-small: 1.5vw;
     --metric-caption-font-size-single: 2.0vw;
     --metric-caption-font-size-portrait: 1.0vw;
 
@@ -27,17 +23,14 @@
     --about-caption-font-size: 2.0vw;
 
     --title-font-size-default: 1.5vw;
-    --title-font-size-small: 2.5vw;
     --title-font-size-single: 4.5vw;
     --title-font-size-portrait: 4.0vw;
 
     --legend-font-size-default: 1.0vw;
-    --legend-font-size-small: 1.5vw;
     --legend-font-size-single: 1.5vw;
     --legend-font-size-portrait: 2.5vw;
 
     --slice-font-size-default: 1.3vw;
-    --slice-font-size-small: 2.0vw;
     --slice-font-size-single: 2.0vw;
     --slice-font-size-portrait: 3.0vw;
 

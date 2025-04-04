@@ -616,20 +616,6 @@ function set_layout() {
                 </div>
             `;
 
-    // small screen model
-    // 5:7 split columns
-    // single donut on left, metrics stack on right
-    small_layout = `
-                <div id="master" class="container-fluid vertical-center" data-bs-theme="dark">
-                    <div class="row align-items-center">
-                        <div id="donut_a_insert" class="col col-5 mt-0">
-                        </div>
-                        <div id="metrics_a_insert" class="col col-7 mt-0">
-                        </div>
-                    </div>
-                </div>
-            `;
-
     // single set of metrics
     single_metric_layout = `
                 <div id="master" class="container-fluid" data-bs-theme="dark">
@@ -668,7 +654,7 @@ function set_layout() {
     // layout query arg (forces the layout)
     layout_arg = get_query_arg("layout");
     if (layout_arg != undefined &&
-        ["small", "default", "dual-metrics", "single-metric", "portrait"].includes(layout_arg)) {
+        ["default", "dual-metrics", "single-metric", "portrait"].includes(layout_arg)) {
         layout = layout_arg;
         console.log("Layout query arg:" + layout);
     }
@@ -677,10 +663,6 @@ function set_layout() {
         // and using configured defaults
         if (window_width <= window_height) {
             layout = "portrait";
-        }
-        else if (window_width < 1600 || 
-                 window_height < 1080) {
-            layout = "small";
         }
         else {
             layout = "default";
@@ -718,13 +700,6 @@ function set_layout() {
       $("#day_column_chart_insert").html(day_column_chart_html);
       $("#month_column_chart_insert").html(month_column_chart_html);
       $("#year_column_chart_insert").html(year_column_chart_html);
-      break;
-
-      case "small":
-      // small screen landscape
-      $("#dashboard").html(small_layout);
-      $("#donut_a_insert").html(metric_donut_a_html);
-      $("#metrics_a_insert").html(metrics_a_html);
       break;
 
       case "single-metric":
@@ -772,17 +747,6 @@ function set_layout() {
       document.body.style.setProperty("--title-font-size", 'var(--title-font-size-single)');
       document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-single)');
       document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-single)');
-      break;
-
-      case "small":
-      // set the small screen font sizes
-      document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-small)');
-      document.body.style.setProperty("--icon-font-size", 'var(--icon-font-size-small)');
-      document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-small)');
-      document.body.style.setProperty("--metric-caption-font-size", 'var(--metric-caption-font-size-small)');
-      document.body.style.setProperty("--title-font-size", 'var(--title-font-size-small)');
-      document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-small)');
-      document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-small)');
       break;
 
       case "portrait":
@@ -972,7 +936,7 @@ function ui_cycle_metric_index() {
 // ignores cycling to portrait layout
 function ui_cycle_layout() {
     console.log("ui_cycle_layout()");
-    ui_layout_list = ['small', 'default', 'dual-metrics', 'single-metric'];
+    ui_layout_list = ['default', 'dual-metrics', 'single-metric'];
     layout_index = ui_layout_list.indexOf(layout);
     layout_index = (layout_index + 1) % ui_layout_list.length;
     layout = ui_layout_list[layout_index];
@@ -1313,22 +1277,11 @@ function render_donut(donut_id,
     }
 
     for (series_field of donut_series_list) {
-        // calculate percentage of total
-        // for the small screen donut label
         series_value = metrics_source[series_field];
         if (series_value == undefined) {
             series_value = 0;
         }
-        series_percentage = series_value / total_series_value * 100;
-        if (layout == "small") {
-            // label + percentage
-            series_label = `${series_labels[series_field]} ${series_percentage.toFixed(1)}%`;
-        }
-        else {
-            // label only for legend
-            // displayed value will be the percentage
-            series_label = series_labels[series_field];
-        }
+        series_label = series_labels[series_field];
         metrics_data.addRows([
             // graph value times 1000 for issues with small values
             [series_label, series_value * 1000]
@@ -1429,12 +1382,6 @@ function render_charts() {
     switch(layout) {
       case "single-metric":
       return;
-      break;
-
-      case "small":
-      donut_chart_height = (window.innerHeight) * 0.9;
-      legend_font_size_var = "--legend-font-size-small";
-      slice_font_size_var = "--slice-font-size-small";
       break;
 
       case "portrait":
@@ -1545,13 +1492,6 @@ function render_charts() {
             }
         }
     };
-
-    if (layout == "small") {
-        // hide legend and display label instead of percentage
-        donut_options.legend.position = 'none';
-        donut_options.pieSliceText = 'label';
-        donut_options.pieSliceTextStyle.fontSize = legend_font_px_size * 0.9;
-    }
 
     // donut a
     // standard left-side donut used for cycled metrics

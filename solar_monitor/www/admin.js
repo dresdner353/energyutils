@@ -82,7 +82,6 @@ function populate_config(config_dict) {
 
     if ('layouts' in config_dict){
         $('#large_screen_layout').val(config_dict['layouts']['default']);
-        $('#small_screen_layout').val(config_dict['layouts']['small']);
     }
 
     if ('environment' in config_dict){
@@ -208,7 +207,6 @@ function apply_config() {
     config_dict['dashboard']['bar_chart']['battery_discharge'] = $('#bar_chart_battery_discharge').prop('checked');
 
     config_dict['layouts'] = {};
-    config_dict['layouts']['small'] = $('#small_screen_layout').val();
     config_dict['layouts']['default'] = $('#large_screen_layout').val();
 
     config_dict['environment'] = {};
