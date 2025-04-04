@@ -754,7 +754,12 @@ function set_layout() {
     }
 
     // Adjust CSS
-    document.body.style.setProperty("--bg-colour", data_dict['dashboard']['bg_colour']);
+    if ('bg_colour' in data_dict['dashboard']) {
+        document.body.style.setProperty("--bg-colour", data_dict['dashboard']['bg_colour']);
+    }
+    else {
+        document.body.style.setProperty("--bg-colour", 'black');
+    }
 
     switch(layout) {
 
@@ -921,8 +926,10 @@ function cycle_metric_index() {
             metric_index = (metric_index + 1) % metric_list.length;
 
             // about screen injected at start of cycle
-            // if enabled
-            if (metric_key != 'about' && 
+            // if enabled. Applies only to the single-metric
+            // layout
+            if (layout == 'single-metric' && 
+                metric_key != 'about' && 
                 metric_index == 0 &&
                 data_dict.dashboard.metrics['about']) {
                 metric_key = 'about';
