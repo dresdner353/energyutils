@@ -206,7 +206,7 @@ def config_agent():
 
     # 10-second check for config changes
     while (1):
-        config_last_modified = os.path.getmtime(gv_config_file)
+        config_last_modified = int(os.path.getmtime(gv_config_file))
 
         if config_last_modified > last_check:
             json_config = load_config(gv_config_file)
