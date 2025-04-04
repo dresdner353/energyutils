@@ -389,9 +389,9 @@ function set_layout() {
                 </div>
 
                 <div id="single_metric" class="container text-white text-center">
-                    <div onclick="ui_cycle_metric_index()" class="row row-cols-2 mt-3 text-center">
+                    <div class="row row-cols-2 mt-3 text-center">
 
-                        <div class="col" id="single_metric_solar_card">
+                        <div onclick="ui_cycle_layout()" class="col" id="single_metric_solar_card">
                             <div class="card-transparent text-center mt-3">
                                 <div class="card-body">
                                     <table border="0" align="center">
@@ -410,7 +410,7 @@ function set_layout() {
                             </div>
                         </div>
 
-                        <div class="col" id="single_metric_consumed_card">
+                        <div onclick="ui_cycle_metric_index()" class="col" id="single_metric_consumed_card">
                             <div class="card-transparent text-center mt-3">
                                 <div class="card-body">
                                     <table border="0" align="center">
@@ -429,7 +429,7 @@ function set_layout() {
                             </div>
                         </div>
 
-                        <div class="col" id="single_metric_import_card">
+                        <div onclick="ui_cycle_metric_index()" class="col" id="single_metric_import_card">
                             <div class="card-transparent text-center mt-3">
                                 <div class="card-body">
                                     <table border="0" align="center">
@@ -448,7 +448,7 @@ function set_layout() {
                             </div>
                         </div>
 
-                        <div class="col" id="single_metric_export_card">
+                        <div onclick="ui_cycle_metric_index()" class="col" id="single_metric_export_card">
                             <div class="card-transparent text-center mt-3">
                                 <div class="card-body">
                                     <table border="0" align="center">
@@ -467,7 +467,7 @@ function set_layout() {
                             </div>
                         </div>
 
-                        <div class="col" id="single_metric_trees_card">
+                        <div onclick="ui_cycle_metric_index()" class="col" id="single_metric_trees_card">
                             <div class="card-transparent text-center mt-3">
                                 <div class="card-body">
                                     <table border="0" align="center">
@@ -485,7 +485,7 @@ function set_layout() {
                             </div>
                         </div>
 
-                        <div class="col" id="single_metric_co2_card">
+                        <div onclick="ui_cycle_metric_index()" class="col" id="single_metric_co2_card">
                             <div class="card-transparent text-center mt-3">
                                 <div class="card-body">
                                     <table border="0" align="center">
