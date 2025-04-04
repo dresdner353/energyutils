@@ -25,6 +25,9 @@ gv_solis_dict['year'] = []
 gv_solis_dict['live'] = {}
 gv_solis_dict['total'] = {}
 
+gv_solis_dict['total']['import'] = 0
+gv_solis_dict['total']['export'] = 0
+
 # timestamps to track the next call
 day_ts = 0
 month_ts = 0

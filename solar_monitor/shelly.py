@@ -26,6 +26,9 @@ gv_shelly_dict['year'] = []
 gv_shelly_dict['live'] = {}
 gv_shelly_dict['total'] = {}
 
+gv_shelly_dict['total']['import'] = 0
+gv_shelly_dict['total']['export'] = 0
+
 # timestamps to track the next cloud usage call
 # and a snapshot of the live data for the same time
 gv_cloud_refresh_ts = 0
