@@ -59,6 +59,7 @@ function populate_config(config_dict) {
     $("#metrics_last_month").prop("checked", config_dict['dashboard']['metrics']['last_month']);
     $("#metrics_last_12_months").prop("checked", config_dict['dashboard']['metrics']['last_12_months']);
     $("#metrics_total").prop("checked", config_dict['dashboard']['metrics']['total']);
+    $("#metrics_about").prop("checked", config_dict['dashboard']['metrics']['about']);
     $('#metric_cycle_interval').val(config_dict['dashboard']['cycle_interval']);
 
     // donut
@@ -88,6 +89,9 @@ function populate_config(config_dict) {
         $('#env_gco2_kwh').val(config_dict['environment']['gco2_kwh']);
         $('#env_trees_kwh').val(config_dict['environment']['trees_kwh']);
     }
+
+    $('#about_caption').val(config_dict['dashboard']['about_caption']);
+    $('#bg_colour').val(config_dict['dashboard']['bg_colour']);
 
 }
 
@@ -171,6 +175,8 @@ function apply_config() {
     }
 
     config_dict['dashboard'] = {}
+    config_dict['dashboard']['about_caption'] = $('#about_caption').val();
+    config_dict['dashboard']['bg_colour'] = $('#bg_colour').val();
 
     config_dict['dashboard']['metrics'] = {};
     config_dict['dashboard']['metrics']['live'] =  $('#metrics_live').prop('checked');
@@ -180,6 +186,7 @@ function apply_config() {
     config_dict['dashboard']['metrics']['last_month'] = $('#metrics_last_month').prop('checked');
     config_dict['dashboard']['metrics']['last_12_months'] = $('#metrics_last_12_months').prop('checked');
     config_dict['dashboard']['metrics']['total'] = $('#metrics_total').prop('checked');
+    config_dict['dashboard']['metrics']['about'] = $('#metrics_about').prop('checked');
     config_dict['dashboard']['cycle_interval'] = $('#metric_cycle_interval').val();
 
     config_dict['dashboard']['donut'] = {};
