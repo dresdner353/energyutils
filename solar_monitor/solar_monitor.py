@@ -61,6 +61,7 @@ def set_default_config():
     # dashboard
     json_config['dashboard'] = {}
 
+    json_config['dashboard']['bg_colour'] = '#000000';
     json_config['dashboard']['cycle_interval'] = 10
 
     json_config['dashboard']['metrics'] = {}
