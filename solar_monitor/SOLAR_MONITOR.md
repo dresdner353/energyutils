@@ -4,7 +4,7 @@ This is a small web server designed to query live data from an inverter cloud AP
 
 ## Requirements:
 * Computer capable of running Python3 (Any Linux, Mac, PC, Raspberry Pi can do this but you may need to install Python3 and additional library modules)
-* Either:
+* One of the following supported setups:
     - A Solis hybrid inverter with integrated monitoring of import/export
     - A Shelly EM or EM Pro 50 with 2 CT clamps (one wired to grid, the other to any string inverter output)
     - Two Shelly 3EM Pro 3-phase devices (one set of CT clamps wired to grid, the other set to any 3-phase string inverter output)
@@ -48,51 +48,37 @@ When changes are made, they are applied by clicking the "Apply Changes" button. 
 
 ![Admin Page](screenshots/admin.png)
 
-### Large Screen Format (HD/4K monitor/TV)
-The layout here uses a donut chart on the left that graphs a metric set. Underneath the donut, you will find the various metric values in numeric format. The units used will auto-scale between W/kW/mW or Wh/kWh/mWh as required.
+### Default Layout
+This layout here uses a donut chart on the left that graphs a metric set. Underneath the donut, you will find the various metric values in numeric format. The units used will auto-scale between W/kW/mW or Wh/kWh/mWh as required.
 
 Then on the right are three column charts that graph the recent performance for the last 36 hours, last 30 days and last 12 months. This layout will be used when rendering the page on a larger screen in landscape mode. Best suited for HD/4K monitors and TVs.
 
 Every N seconds the donut chart and metrics will be cycled to the next metric. The specific set of metrics that get used can be controlled from the admin page
 
-![Large Screen Live](screenshots/large_live.png)
+![Default Layout Last Month](screenshots/default_last_month.png)
 
-![Large Screen Last Month](screenshots/large_last_month.png)
+### Dual-metrics Layout
+This layout removes the column charts and adds a 2nd donut plus metrics set. The left donut and metrics are fixed on the live usage information and the right side metrics will cycle every N seconds based on the metrics options set in the admin page. 
 
-![Large Screen Last 12 Months](screenshots/large_last_12_months.png)
+![Dual-metrics Today](screenshots/dual_metrics_today.png)
 
-![Large Screen Yesterday](screenshots/large_yesterday.png)
+### Single-metric Layout
+This layout removes the donut and column charts entirely and diplays four metric numbers in larger fonts with captions. This is designed for smaller tablet or monitor interfaces but is equally at home on large screens that require a simplified interface. 
 
-### Small Screen Format (laptop/tablet)
-The small screen format will be used on smaller screens such as laptops and tablets. This layout removes the column charts due to limited space and places the donut chart on the left and metric values on the right.
-
-These metrics will cycle every N seconds from one set to the other. 
-
-![Small Screen Live](screenshots/small_live.png)
-
-![Small Screen This Month](screenshots/small_this_month.png)
+![Single-metric Total](screenshots/single_metric_total.png)
 
 ### Portrait Screen Format (portrait tablet/phone)
-The portrait format will apply for any portrait monitor where the height > width and this includes mobile phones etc. All charts and metrics are shown in this format and can be scrolled as required. If using a tablet in landscape mode, then rotating it to portrait should result in this portrait mode being activated. When rotated back to landscape, the small screen layout will resume.
+The portrait format will apply for any portrait monitor where the height > width and this includes mobile phones etc. Column charts and metrics are shown in this format and can be scrolled as required. If using a tablet in landscape mode, then rotating it to portrait should result in this portrait mode being activated. When rotated back to landscape, the default will resume.
 
 ![Portrait Screen Live](screenshots/portrait_live.png)
 
 ### Other Features
 
-#### Bar Chart Metrics Panel
-If you hover the mouse over any specific bar on the charts or tap this area on a tablet/phone, a panel will appear that displays specific values for each metric in the column. 
-
-![Bar Chart Metrics Panel](screenshots/bar_chart_hover.png)
-
 #### Manual Metrics Cycling
 If you click or tap anywhere on the numeric metrics section, the metrics will immediately cycle to the next set. This is useful if you want to see a specific metric without waiting for the automatic cycling to occur.
 
-#### Small/Large Screen Layout Cycling
-If you click or tap on the donut chart, the layout will cycle between the small and large screen layouts. This is useful if want to force a specific layout to be used over the automatic layout that was first selected. 
-
-This feature also allows for a small layout to be used with say a tablet display which is best suited for distance reading but then a single tap will quickly switch to the large layout when you are standing closer to the screen.
+#### Screen Layout Cycling
+If you click or tap on the donut chart, the layout will cycle between the default, dual-merics and single-metrics layouts. This is useful if want to force a specific layout to be used over the automatic layout that was first selected. When displaying the single-metrics layout, clicking on the Solar Power Generation metric performs the same layout cycling.
 
 #### Forced Layout in the URL
-If you append ?layout=small or ?layout=large or ?layout=portrait to the dashboard URL, then the layout will be forced to that specific variant. This is useful if you want to bookmark a specific layout or if you are using a screen that does not auto-select the desired layout by default. 
-
-For example, if using a smart TV to display the dashboard via browser app, it is possible that the dashboard may select the small layout instead of the desired large layout. Then by using e.g. http://1.2.3.4:8090?layout=large as the URL, you will be guaranteed that the large layout will be used.
+If you append ?layout=default or ?layout=dual-metrics or ?layout=single-metric to the dashboard URL, then the layout will be forced to that specific variant. This is useful if you want to bookmark a specific layout or if you are using a screen that does not auto-select the desired layout by default. 
