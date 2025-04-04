@@ -256,6 +256,7 @@
                                                 <option value="10">10 seconds</option>
                                                 <option value="15">15 seconds</option>
                                                 <option value="20">20 seconds</option>
+                                                <option value="25">25 seconds</option>
                                                 <option value="30">30 seconds</option>
                                                 <option value="60">1 minute</option>
                                                 <option value="120">2 minutes</option>
@@ -288,17 +289,20 @@
                         <div id="layout_config" class="col">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-title">Default Layouts</h5>
+                                    <h5 class="card-title">Layout</h5>
 
-                                    <div class="row">
-                                        <div class="input-group mb-3">
-                                            <span class="input-group-text">HD/4K Displays</span>
-                                            <select id="large_screen_layout" class="form-select">
-                                                <option value="default">Donut, metrics & Column Charts</option>
-                                                <option value="dual-metrics">Dual Donuts + Metrics</option>
-                                                <option value="single-metric">Metrics Only</option>
-                                            </select>
-                                        </div>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text">Default Layout</span>
+                                        <select id="large_screen_layout" class="form-select">
+                                            <option value="default">Single Donut/Metrics & Column Charts</option>
+                                            <option value="dual-metrics">Dual Donuts/Metrics</option>
+                                            <option value="single-metric">Metrics Only</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="bg_colour" placeholder="#000000">
+                                        <label for="bg_colour">Dashboard Background Colour</label>
                                     </div>
 
                                 </div>
@@ -308,25 +312,28 @@
                         <div id="general_config" class="col">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-title">General Settings</h5>
+                                    <h5 class="card-title">General</h5>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="show_passwords" onchange="toggle_passwords()">
                                         <label class="form-check-label" for="show_passwords">Show Passwords/Keys</label>
-                                    </div>
-
-                                    <div class="form-floating mb-3">
-                                        <input class="form-control" id="bg_colour" placeholder="#000000">
-                                        <label for="bg_colour">Dashboard Background Colour</label>
-                                    </div>
-
-                                    <div class="form-floating mb-3">
-                                            <textarea class="form-control" id="about_caption" placeholder="enter description here" style="height: 300px"></textarea>
-                                            <label for="about_caption">About System Text</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                    </div>
+
+                    <div class="row row-cols-1 mt-0">
+                        <div id="general_config" class="col">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">About Screen Text</h5>
+                                    <div class="form-floating mb-3">
+                                            <textarea class="form-control" id="about_caption" placeholder="enter description here" style="height: 300px"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <button type="submit" class="btn btn-primary mt-4" id="apply_button">Apply Changes</button>
