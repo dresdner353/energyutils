@@ -546,10 +546,12 @@ function set_layout() {
                     </div>
 
                     <div class="row mt-2 text-center fixed-bottom">
-                    <center>
-                        <span class="footer metric-yellow">Powered by SolarMon (github.com/dresdner353)</span>
-                        <br>
                         <center>
+                            <span class="footer metric-yellow">Powered by SolarMon (github.com/dresdner353)</span>
+                            <br>
+                            <br>
+                            <br>
+                        </center>
                     </div>
 
                 </div>
