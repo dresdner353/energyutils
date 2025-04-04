@@ -17,6 +17,13 @@
     --metric-unit-font-size-single: 3.0vw;
     --metric-unit-font-size-portrait: 2.5vw;
 
+    --metric-caption-font-size-default: 1.0vw;
+    --metric-caption-font-size-small: 1.5vw;
+    --metric-caption-font-size-single: 2.0vw;
+    --metric-caption-font-size-portrait: 1.0vw;
+
+    --footer-font-size: 1.0vw;
+
     --title-font-size-default: 1.5vw;
     --title-font-size-small: 2.5vw;
     --title-font-size-single: 4.5vw;
@@ -35,9 +42,12 @@
     --metric-font-size: var(--metric-font-size-default);
     --icon-font-size: var(--icon-font-size-default);
     --metric-unit-font-size: var(--metric-unit-font-size-default);
+    --metric-caption-font-size: var(--metric-caption-font-size-default);
     --title-font-size: var(--title-font-size-default);
     --legend-font-size: var(--legend-font-size-default);
     --slice-font-size: var(--slice-font-size-default);
+
+    --bg-colour: #000000;
 }
 .vertical-center {
   min-height: 100%;
@@ -47,7 +57,7 @@
 }
 #bg {
     height: 200px;
-    background-color: #000000; 
+    background-color: var(--bg-colour);
 }
 body {
     /*
@@ -71,7 +81,7 @@ a, a:hover, a:focus, a:active {
     color: white;
 }
 .metric-grey{
-    color: #525252;
+    color: #424242;
 }
 .metric-yellow{
     color: #AAAA00;
@@ -96,6 +106,15 @@ a, a:hover, a:focus, a:active {
 }
 .metric-unit{
     font-size: var(--metric-unit-font-size);
+}
+.metric-unit{
+    font-size: var(--metric-unit-font-size);
+}
+.metric-caption{
+    font-size: var(--metric-caption-font-size);
+}
+.footer{
+    font-size: var(--footer-font-size);
 }
 g.google-visualization-tooltip { 
     /* fixes flickering tooltip */
