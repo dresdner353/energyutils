@@ -370,13 +370,23 @@ def get_inverter_day_data(config):
     live_rec['co2'] = (config['environment']['gco2_kwh'] * solar) / 1000
     live_rec['trees'] = config['environment']['trees_kwh'] * solar
 
-    # FIXME fill in total import/export/solar to date
+    # total accumulated values for import, export and solar
     total_rec = gv_solis_dict['total']
-    total_rec['import'] = 0
-    total_rec['export'] = 0
-    total_rec['solar'] = 0
-    total_rec['consumed'] = 0
-    total_rec['solar_consumed'] = 0
+    latest_snap_rec = solis_snap_list[-1]
+    total_rec['title'] = 'Overall Performance'
+    total_rec['import'] = latest_snap_rec['gridPurchasedTotalEnergy']
+    total_rec['export'] = latest_snap_rec['gridSellTotalEnergy']
+    total_rec['solar'] = latest_snap_rec['eTotal']
+    total_rec['consumed'] = latest_snap_rec['homeLoadTotalEnergy']
+    if gv_battery_is_present:
+        usage_rec['battery_charge'] = solis_snap_rec['batteryTotalChargeEnergy']
+        usage_rec['battery_discharge'] = solis_snap_rec['batteryTotalDischargeEnergy']
+
+    total_rec['solar_consumed'] = max(0, total_rec['solar'] - total_rec['export'])
+    total_rec['consumed'] = total_rec['solar_consumed'] + total_rec['import']
+
+    total_rec['co2'] = (config['environment']['gco2_kwh'] * total_rec['solar']) / 1000
+    total_rec['trees'] = config['environment']['trees_kwh'] * total_rec['solar']
 
     # new refresh time
     # 5 mins, 20 secs after last official inverter update
