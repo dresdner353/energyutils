@@ -515,7 +515,7 @@ function set_layout() {
                         <div class="col col-12">
                             <left>
                                 <a href="/admin">
-                                <span class="about-title text-white text-center">About</span>
+                                <span class="about-title text-white text-center">About This Dashboard</span>
                                 </a>
                             </left>
                         </div>
