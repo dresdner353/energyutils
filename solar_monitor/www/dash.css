@@ -22,7 +22,9 @@
     --metric-caption-font-size-single: 2.0vw;
     --metric-caption-font-size-portrait: 1.0vw;
 
-    --footer-font-size: 1.0vw;
+    --about-footer-font-size: 1.0vw;
+    --about-title-font-size: 4.5vw;
+    --about-caption-font-size: 2.0vw;
 
     --title-font-size-default: 1.5vw;
     --title-font-size-small: 2.5vw;
@@ -74,6 +76,17 @@ a, a:hover, a:focus, a:active {
     font-size: var(--title-font-size);
     color: white;
 }
+.about-title{
+    font-size: var(--about-title-font-size);
+    color: white;
+}
+.about-caption{
+    font-size: var(--about-caption-font-size);
+    color: white;
+}
+.about-footer{
+    font-size: var(--about-footer-font-size);
+}
 .metric{
     font-size: var(--metric-font-size);
 }
@@ -112,9 +125,6 @@ a, a:hover, a:focus, a:active {
 }
 .metric-caption{
     font-size: var(--metric-caption-font-size);
-}
-.footer{
-    font-size: var(--footer-font-size);
 }
 g.google-visualization-tooltip { 
     /* fixes flickering tooltip */

@@ -515,7 +515,7 @@ function set_layout() {
                         <div class="col col-12">
                             <left>
                                 <a href="/admin">
-                                <span class="title text-white text-left">About</span>
+                                <span class="about-title text-white text-center">About</span>
                                 </a>
                             </left>
                         </div>
@@ -526,7 +526,7 @@ function set_layout() {
                         <div class="col col-9">
                             <div class="card-transparent text-start mt-3">
                                 <div class="card-body">
-                                <span id="about_caption" class="metric-caption metric-white"></span>
+                                <span id="about_caption" class="about-caption metric-white"></span>
                                 </div>
                             </div>
                         </div>
@@ -547,7 +547,7 @@ function set_layout() {
 
                     <div class="row mt-2 text-center fixed-bottom">
                         <center>
-                            <span class="footer metric-yellow">Powered by SolarMon (github.com/dresdner353)</span>
+                            <span class="about-footer metric-yellow">Powered by SolarMon (github.com/dresdner353)</span>
                             <br>
                             <br>
                             <br>
@@ -926,10 +926,8 @@ function cycle_metric_index() {
             metric_index = (metric_index + 1) % metric_list.length;
 
             // about screen injected at start of cycle
-            // if enabled. Applies only to the single-metric
-            // layout
-            if (layout == 'single-metric' && 
-                metric_key != 'about' && 
+            // if enabled. 
+            if (metric_key != 'about' && 
                 metric_index == 0 &&
                 data_dict.dashboard.metrics['about']) {
                 metric_key = 'about';
