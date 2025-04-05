@@ -460,6 +460,63 @@ function set_layout() {
                             </div>
                         </div>
 
+                        <div onclick="ui_cycle_metric_index()" id="single_metric_battery_charge_card" class="col">
+                            <div class="card-transparent text-center mt-0">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="single_metric_battery_charge" style="metric metric-white">0</span>
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="single_metric_battery_charge_icon" class="metric-icon"><i class="bi bi-battery-charging"></i></div>
+                                                <div id="single_metric_battery_charge_unit" class="metric-unit metric-white">kWh</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <span id="single_metric_battery_charge_caption" class="metric-caption metric-white">Battery Charge</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div onclick="ui_cycle_metric_index()" id="single_metric_battery_discharge_card" class="col">
+                            <div class="card-transparent text-center mt-0">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="single_metric_battery_discharge" style="metric metric-white">0</span>
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="single_metric_battery_discharge_icon" class="metric-icon"><i class="bi bi-battery-half"></i></div>
+                                                <div id="single_metric_battery_discharge_unit" class="metric-unit metric-white">kWh</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <span id="single_metric_battery_discharge_caption" class="metric-caption metric-white">Battery Discharge</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div onclick="ui_cycle_metric_index()" id="single_metric_battery_soc_card" class="col">
+                            <div class="card-transparent text-center mt-0">
+                                <div class="card-body">
+                                    <table border="0" align="center">
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <span id="single_metric_battery_soc" style="metric metric-white">0</span>
+                                            </td>
+                                            <td style="vertical-align: middle;" align="center">
+                                                <div id="single_metric_battery_soc_icon" class="metric-icon"><i id="single_metric_battery_soc_state" class="bi bi-battery-half"></i></div>
+                                                <div id="single_metric_battery_soc_unit" class="metric-unit metric-white">%</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <span id="single_metric_battery_soc_caption" class="metric-caption metric-white">Battery State</span>
+                                </div>
+                            </div>
+                        </div>
+
                         <div onclick="ui_cycle_metric_index()" class="col" id="single_metric_trees_card">
                             <div class="card-transparent text-center mt-3">
                                 <div class="card-body">
@@ -563,22 +620,14 @@ function set_layout() {
                 <div id="master" class="container-fluid vertical-center" data-bs-theme="dark">
                     <div class="row">
                         <div class="col col-5 mt-0">
-                            <div id="donut_a_insert" class="row">
-                            </div>
-                            <div id="metrics_a_insert" class="row">
-                            </div>
+                            <div id="donut_a_insert" class="row"></div>
+                            <div id="metrics_a_insert" class="row"></div>
                         </div>
 
                         <div class="col col-7 mt-0">
-                            <div id="day_column_chart_insert" class="row">
-                            </div>
-
-                            <div id="month_column_chart_insert" class="row">
-                            </div>
-
-                            <div id="year_column_chart_insert" class="row">
-                            </div>
-
+                            <div id="day_column_chart_insert" class="row"></div>
+                            <div id="month_column_chart_insert" class="row"></div>
+                            <div id="year_column_chart_insert" class="row"></div>
                         </div>
                     </div>
                 </div>
@@ -592,17 +641,13 @@ function set_layout() {
                 <div id="master" class="container-fluid vertical-center" data-bs-theme="dark">
                     <div class="row">
                         <div class="col col-6 mt-0">
-                            <div id="donut_a_insert" class="row">
-                            </div>
-                            <div id="metrics_a_insert" class="row">
-                            </div>
+                            <div id="donut_a_insert" class="row"></div>
+                            <div id="metrics_a_insert" class="row"></div>
                         </div>
 
                         <div class="col col-6 mt-0">
-                            <div id="donut_b_insert" class="row">
-                            </div>
-                            <div id="metrics_b_insert" class="row">
-                            </div>
+                            <div id="donut_b_insert" class="row"></div>
+                            <div id="metrics_b_insert" class="row"></div>
                         </div>
 
                     </div>
@@ -612,8 +657,7 @@ function set_layout() {
     // single set of metrics
     single_metric_layout = `
                 <div id="master" class="container-fluid" data-bs-theme="dark">
-                    <div id="metrics_a_insert" class="row">
-                    </div>
+                    <div id="metrics_a_insert" class="row"></div>
                 </div>
             `;
 
@@ -622,22 +666,11 @@ function set_layout() {
     // Works for phones and portrait tablets or monitors
     portrait_layout = `
                 <div class="container-fluid" data-bs-theme="dark">
-                    <div id="donut_a_insert" class="row">
-                    </div>
-
-                    <div id="metrics_a_insert" class="row">
-                    </div>
-
-                    <div id="day_column_chart_insert" class="row">
-                    </div>
-
-                    <div id="month_column_chart_insert" class="row">
-                    </div>
-
-                    <div id="year_column_chart_insert" class="row">
-                    </div>
-
-                    </div>
+                    <div id="donut_a_insert" class="row"></div>
+                    <div id="metrics_a_insert" class="row"></div>
+                    <div id="day_column_chart_insert" class="row"></div>
+                    <div id="month_column_chart_insert" class="row"></div>
+                    <div id="year_column_chart_insert" class="row"></div>
                 </div>
             `;
 
@@ -1298,7 +1331,8 @@ function render_donut(donut_id,
     return donut_chart;
 }
 
-function render_column_chart(chart_id,
+function render_column_chart(column_chart,
+                             chart_id,
                              data_key,
                              chart_options,
                              series_labels,
@@ -1306,6 +1340,18 @@ function render_column_chart(chart_id,
                              chart_series_list) {
 
     console.log(`rendering column chart ${chart_id} with ${data_key} data`);
+
+    // fre up memory due to leak risk
+    if (column_chart != undefined) {
+        column_chart.clearChart();
+        first_run = false;
+    }
+    else {
+        // will be used later on to draw the 
+        // chart twice due to an initial rendering issue
+        first_run = true;
+    }
+
     column_chart = new google.visualization.ColumnChart(document.getElementById(chart_id));
 
     var chart_data = new google.visualization.DataTable();
@@ -1356,9 +1402,13 @@ function render_column_chart(chart_id,
 
     chart_options.hAxis.title = time_unit;
 
-    // draw twice as it seems to goof on the width at times 
-    // and render one narrower
+    // render the chart
     column_chart.draw(chart_data, chart_options);
+    if (first_run) {
+        // second draw to fix the width
+        column_chart.draw(chart_data, chart_options);
+        console.log("second column chart draw for " + chart_id);
+    }
 
     return column_chart;
 }
@@ -1628,10 +1678,8 @@ function render_charts() {
             day_chart_ts != data_dict.day_last_updated) {
             day_chart_ts = data_dict.day_last_updated;
 
-            if (day_chart != undefined) {
-                day_chart.clearChart();
-            }
-            day_chart = render_column_chart("day_google_chart",
+            day_chart = render_column_chart(day_chart,
+                                            "day_google_chart",
                                             'day',
                                             column_chart_options,
                                             series_labels,
@@ -1651,11 +1699,8 @@ function render_charts() {
             month_chart_ts != data_dict.month_last_updated) {
             month_chart_ts = data_dict.month_last_updated;
 
-            if (month_chart != undefined) {
-                month_chart.clearChart();
-            }
-
-            month_chart = render_column_chart("month_google_chart",
+            month_chart = render_column_chart(month_chart,
+                                              "month_google_chart",
                                               'month',
                                               column_chart_options,
                                               series_labels,
@@ -1671,10 +1716,8 @@ function render_charts() {
             year_chart_ts != data_dict.year_last_updated) {
             year_chart_ts = data_dict.year_last_updated;
 
-            if (year_chart != undefined) {
-                year_chart.clearChart();
-            }
-            year_chart = render_column_chart("year_google_chart",
+            year_chart = render_column_chart(year_chart,
+                                             "year_google_chart",
                                              'year',
                                              column_chart_options,
                                              series_labels,
