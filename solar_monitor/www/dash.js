@@ -368,20 +368,15 @@ function set_layout() {
             `
 
     single_metric_html = `
-                <div id="single_metric" class="container text-white text-center">
                     <div id="single_metric_title" class="row mt-0">
-                        <div class="col-12">
-                            <left>
+                        <div class="col-12 text-center">
                                 <a href="/admin">
                                 <span class="title text-white text-left"></span>
                                 <span id="single_metric_titletext" class="title text-white text-left"></span>
                                 </a>
-                            </left>
                         </div>
                     </div>
-                </div>
 
-                <div id="single_metric" class="container text-white text-center">
                     <div class="row row-cols-2 mt-3 text-center">
 
                         <div onclick="ui_cycle_layout()" class="col" id="single_metric_solar_card">
@@ -556,24 +551,22 @@ function set_layout() {
 
                     </div>
 
-                </div>
             `;
 
     about_html = `
-                <div id="single_metric" class="container text-white text-center">
-                    <div id="single_metric_title" class="row mt-0">
-                        <div class="col col-12">
-                            <left>
+                    <div id="about_title" class="row mt-0">
+                        <div class="col-12 text-center">
                                 <a href="/admin">
                                 <span class="about-title text-white text-center">About This Dashboard</span>
                                 </a>
-                            </left>
                         </div>
                     </div>
 
                     <div onclick="ui_cycle_metric_index()" class="row mt-3 text-center">
 
-                        <div class="col col-9">
+                        <div class="col col-1"></div>
+
+                        <div class="col col-7">
                             <div class="card-transparent text-start mt-3">
                                 <div class="card-body">
                                 <span id="about_caption" class="about-caption metric-white"></span>
@@ -581,8 +574,7 @@ function set_layout() {
                             </div>
                         </div>
 
-                        <div class="col col-1">
-                        </div>
+                        <div class="col col-1"></div>
 
                         <div class="col col-2">
                             <div class="card text-center mt-3">
@@ -593,6 +585,8 @@ function set_layout() {
                                 </div>
                             </div>
                         </div>
+
+                        <div class="col col-1"></div>
                     </div>
 
                     <div class="row mt-2 text-center fixed-bottom">
@@ -603,8 +597,6 @@ function set_layout() {
                             <br>
                         </center>
                     </div>
-
-                </div>
             `;
 
     // layout templates
@@ -617,7 +609,7 @@ function set_layout() {
     // left column has the donut and metrics below and right
     // has the three stacked column charts
     default_layout = `
-                <div id="master" class="container-fluid vertical-center" data-bs-theme="dark">
+                <div id="master" class="container-fluid" data-bs-theme="dark">
                     <div class="row">
                         <div class="col col-5 mt-0">
                             <div id="donut_a_insert" class="row"></div>
@@ -638,7 +630,7 @@ function set_layout() {
     // left column has the live donut + live metrics 
     // right has the other cycled metrics in the same donut+metrics layout
     dual_metrics_layout = `
-                <div id="master" class="container-fluid vertical-center" data-bs-theme="dark">
+                <div id="master" class="container-fluid" data-bs-theme="dark">
                     <div class="row">
                         <div class="col col-6 mt-0">
                             <div id="donut_a_insert" class="row"></div>
@@ -671,6 +663,13 @@ function set_layout() {
                     <div id="day_column_chart_insert" class="row"></div>
                     <div id="month_column_chart_insert" class="row"></div>
                     <div id="year_column_chart_insert" class="row"></div>
+                </div>
+            `;
+    
+    // about screen
+    about_layout = `
+                <div id="master" class="container-fluid " data-bs-theme="dark">
+                    <div id="about_insert" class="row"></div>
                 </div>
             `;
 
@@ -714,7 +713,8 @@ function set_layout() {
     metric_donut_b_html = donut_html_tmpl.replaceAll("<DONUT-ID>", "donut_b");
 
     // fixed about screen
-    $("#about").html(about_html);
+    $("#about").html(about_layout);
+    $("#about_insert").html(about_html);
 
     // populate layout HTML
     switch(layout) {
@@ -1232,6 +1232,7 @@ function display_data() {
     }
     else {
         $("#splash").show();
+        $("#about").hide();
         $("#dashboard").hide();
         // display message based on configured state
         if (data_dict['configured'] == false) {
