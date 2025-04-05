@@ -23,6 +23,10 @@ echo "Starting Chromium in kiosk mode"
 killall -9 chromium-browser 
 export DISPLAY=:0
 
+# wipe any local chromium config
+cd
+rm -rf .config/chromium
+
 # disable screen blanking and move mouse to 0,0
 xset s off
 xset -dpms
