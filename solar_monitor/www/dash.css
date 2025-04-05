@@ -1,39 +1,55 @@
 :root {
-    /* metric and material icon sizing
-     * two variations for default and smaller screens
+    /* Default landscape screen
+     * Donut + column charts
+     * and dual-metrics variations
      */
     --metric-font-size-default: 6.0vw;
-    --metric-font-size-single: 10.5vw;
-    --metric-font-size-portrait: 8.5vw;
-
     --icon-font-size-default: 2.5vw;
-    --icon-font-size-single: 4.0vw;
-    --icon-font-size-portrait: 3.0vw;
-
     --metric-unit-font-size-default: 1.5vw;
-    --metric-unit-font-size-single: 3.0vw;
-    --metric-unit-font-size-portrait: 2.5vw;
-
     --metric-caption-font-size-default: 1.0vw;
-    --metric-caption-font-size-single: 2.0vw;
-    --metric-caption-font-size-portrait: 1.0vw;
+    --title-font-size-default: 1.5vw;
+    --legend-font-size-default: 1.0vw;
+    --slice-font-size-default: 1.3vw;
 
+    /* Single metric landscape screen
+     */
+    --metric-font-size-single: 10.5vw;
+    --icon-font-size-single: 4.0vw;
+    --metric-unit-font-size-single: 3.0vw;
+    --metric-caption-font-size-single: 2.0vw;
+    --title-font-size-single: 4.5vw;
+    --legend-font-size-single: 1.5vw;
+    --slice-font-size-single: 2.0vw;
+
+    /* Dual metric landscape screen
+     */
+    --metric-font-size-dual: 6.0vw;
+    --icon-font-size-dual: 3.0vw;
+    --metric-unit-font-size-dual: 2.0vw;
+    --metric-caption-font-size-dual: 1.0vw;
+    --title-font-size-dual: 2.0vw;
+    --legend-font-size-dual: 1.2vw;
+    --slice-font-size-dual: 1.3vw;
+
+    /* Portrait layout
+     */
+    --metric-font-size-portrait: 8.5vw;
+    --icon-font-size-portrait: 3.0vw;
+    --metric-unit-font-size-portrait: 2.5vw;
+    --metric-caption-font-size-portrait: 1.0vw;
+    --title-font-size-portrait: 4.0vw;
+    --legend-font-size-portrait: 2.5vw;
+    --slice-font-size-portrait: 3.0vw;
+
+    /* Specific to about screen
+     */
     --about-footer-font-size: 1.2vw;
     --about-title-font-size: 4.5vw;
     --about-caption-font-size: 2.0vw;
 
-    --title-font-size-default: 1.5vw;
-    --title-font-size-single: 4.5vw;
-    --title-font-size-portrait: 4.0vw;
-
-    --legend-font-size-default: 1.0vw;
-    --legend-font-size-single: 1.5vw;
-    --legend-font-size-portrait: 2.5vw;
-
-    --slice-font-size-default: 1.3vw;
-    --slice-font-size-single: 2.0vw;
-    --slice-font-size-portrait: 3.0vw;
-
+    /* default assignments to common variables
+     * layout calls will re-assign these
+     */
     --metric-font-size: var(--metric-font-size-default);
     --icon-font-size: var(--icon-font-size-default);
     --metric-unit-font-size: var(--metric-unit-font-size-default);
