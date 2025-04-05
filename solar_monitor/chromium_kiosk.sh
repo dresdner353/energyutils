@@ -4,19 +4,17 @@
 while true
 do
     echo "Checking for running solar monitor.."
-    MON_CHECK=`netstat -nl | grep :8090 | wc -l`
-
-    if [ ${MON_CHECK} -eq 1 ]
+    curl http://127.0.0.1:8090 > /dev/null 2>&1
+    if [ ${?} -eq 0 ]
     then
         echo "solar monitor is up"
         break
     fi
-
-    sleep 5
+    sleep 1
 done
 
 # give more time for the monitor to be available
-sleep 20
+sleep 5
 
 # chromium kiosk
 echo "Starting Chromium in kiosk mode"
