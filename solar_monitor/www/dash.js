@@ -913,42 +913,61 @@ function format_battery_class(battery_soc) {
 
 
 // metric series rotation globals
-var metric_key = 'today';
+// initially set to live
+var metric_key = 'live';
 
 // rotates the current metric index as 
 // part of the timed cycling
 function cycle_metric_index() {
     console.log("cycle_metric_index()");
 
+    // predetermined cycle order
+    metric_list = [
+        'live',
+        'today',
+        'yesterday',
+        'this_month',
+        'last_month',
+        'last_12_month',
+        'total',
+        'about',
+    ];
+
     if ('metrics' in data_dict) {
-        metric_list = Object.keys(data_dict.metrics);
+        // locate current index in list
         metric_index = metric_list.indexOf(metric_key);
         for (i = 0; i < metric_list.length; i++) {
+            // cycle
             metric_index = (metric_index + 1) % metric_list.length;
-
-            // about screen injected at start of cycle
-            // if enabled. 
-            if (metric_key != 'about' && 
-                metric_index == 0 &&
-                data_dict.dashboard.metrics['about']) {
-                metric_key = 'about';
-                break;
-            }
+            next_metric_key = metric_list[metric_index];
 
             // skip live metric in dual-donut layout
             // as live is fixed on left
             if (layout == "dual-metrics" && 
-                metric_list[metric_index] == "live") {
+                next_metric_key == "live") {
                 continue;
             }
 
-            // check its enabled in the config
-            if (data_dict.dashboard.metrics[metric_list[metric_index]]) {
-                metric_key = metric_list[metric_index];
+            // check if present in the data dict
+            // and enabled in the config
+            // "about" is given special treatment as its never present in 
+            // the data dict
+            if ((next_metric_key == "about" || 
+                 next_metric_key in data_dict.dashboard.metrics) &&
+                data_dict.dashboard.metrics[next_metric_key]) {
+                metric_key = next_metric_key
+                break;
+            }
+
+            // safety net
+            // we get here if nothing is found
+            // more than likely nothing configured
+            // so we fall back on live
+            if (i == metric_list.length - 1) {
+                metric_key = "live";
                 break;
             }
         }
-
     }
     else {
         console.log("No metrics in data dict");
