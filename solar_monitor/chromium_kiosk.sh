@@ -24,7 +24,7 @@ killall -9 chromium-browser
 export DISPLAY=:0
 
 # disable screen blanking and move mouse to 0,0
-xset s 0
+xset s off
 xset -dpms
 xdotool mousemove --sync 0 0
 
