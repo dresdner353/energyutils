@@ -178,13 +178,6 @@ function set_layout() {
 
     metrics_html_tmpl = `
                 <div onclick="ui_cycle_metric_index()" id="<METRICS-ID>" class="container text-white text-center">
-                    <div id="<METRICS-ID>_title" class="row row-cols-1 mt-5">
-                        <div class="col">
-                            <center>
-                                <div onclick="ui_cycle_layout()" id="<METRICS-ID>_titletext" class="title text-white text-center"></div>
-                            </center>
-                        </div>
-                    </div>
                     <div class="row row-cols-2">
 
                         <div id="<METRICS-ID>_import_card" class="col">
@@ -304,7 +297,7 @@ function set_layout() {
                                                 <span id="<METRICS-ID>_battery_soc" style="metric metric-white">0</span>
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="<METRICS-ID>_battery_soc_icon" class="metric"></div>
+                                                <div id="<METRICS-ID>_battery_soc_icon" class="metric-icon"><i id="<METRICS-ID>_battery_soc_state" class="bi bi-battery-half"></i></div>
                                                 <div id="<METRICS-ID>_battery_soc_unit" class="metric-unit metric-white">%</div>
                                             </td>
                                         </tr>
@@ -749,6 +742,17 @@ function set_layout() {
       document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-single)');
       break;
 
+      case "dual-metrics":
+      // set the single metric screen font sizes
+      document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-dual)');
+      document.body.style.setProperty("--icon-font-size", 'var(--icon-font-size-dual)');
+      document.body.style.setProperty("--metric-unit-font-size", 'var(--metric-unit-font-size-dual)');
+      document.body.style.setProperty("--metric-caption-font-size", 'var(--metric-caption-font-size-dual)');
+      document.body.style.setProperty("--title-font-size", 'var(--title-font-size-dual)');
+      document.body.style.setProperty("--legend-font-size", 'var(--legend-font-size-dual)');
+      document.body.style.setProperty("--slice-font-size", 'var(--slice-font-size-dual)');
+      break;
+
       case "portrait":
       // set the portrait screen font sizes
       document.body.style.setProperty("--metric-font-size", 'var(--metric-font-size-portrait)');
@@ -848,17 +852,17 @@ function format_trees(value) {
 }
 
 // selects a battery capacity unit based on the soc (percentage)
-function format_battery_icon(battery_soc) {
+function format_battery_class(battery_soc) {
 
     battery_icons = [
-        'battery_0_bar',
-        'battery_1_bar',
-        'battery_2_bar',
-        'battery_3_bar',
-        'battery_4_bar',
-        'battery_5_bar',
-        'battery_6_bar',
-        'battery_full',
+        'bi bi-battery',
+        'bi bi-battery',
+        'bi bi-battery',
+        'bi bi-battery',
+        'bi bi-battery-half',
+        'bi bi-battery-half',
+        'bi bi-battery-half',
+        'bi bi-battery-full',
     ];
 
     percent_per_band = 100 / battery_icons.length;
@@ -945,7 +949,7 @@ function ui_cycle_layout() {
 }
 
 
-function populate_metrics(metrics_id, metric_key) {
+function populate_metrics(metrics_id, metric_key, layout) {
     metrics_a_source = data_dict.metrics[metric_key];
 
     $("#" + metrics_id + "_titletext").html(metrics_a_source['title']);
@@ -964,17 +968,20 @@ function populate_metrics(metrics_id, metric_key) {
 
     // Enviromental data hidden by default, but shown 
     // for the total
-    if (metric_key == 'total') {
-        $("#" + metrics_id + "_co2_card").show();
-        $("#" + metrics_id + "_trees_card").show();
-        $("#" + metrics_id + "_import_card").hide();
-        $("#" + metrics_id + "_consumed_card").hide();
-    }
-    else {
-        $("#" + metrics_id + "_co2_card").hide();
-        $("#" + metrics_id + "_trees_card").hide();
-        $("#" + metrics_id + "_import_card").show();
-        $("#" + metrics_id + "_consumed_card").show();
+    switch(metric_key) {
+      case 'total':
+      $("#" + metrics_id + "_co2_card").show();
+      $("#" + metrics_id + "_trees_card").show();
+      $("#" + metrics_id + "_import_card").hide();
+      $("#" + metrics_id + "_consumed_card").hide();
+      break;
+
+      default:
+      $("#" + metrics_id + "_co2_card").hide();
+      $("#" + metrics_id + "_trees_card").hide();
+      $("#" + metrics_id + "_import_card").show();
+      $("#" + metrics_id + "_consumed_card").show();
+      break;
     }
 
     value_dict = format_energy_value(metrics_a_source.import, 
@@ -1113,10 +1120,11 @@ function populate_metrics(metrics_id, metric_key) {
 
     if ('battery_soc' in metrics_a_source) {
         $("#" + metrics_id + "_battery_soc_card").show();
-        battery_soc_icon = format_battery_icon(metrics_a_source.battery_soc);
+        battery_soc_class = format_battery_class(metrics_a_source.battery_soc);
+        console.log("battery_soc_class:" + battery_soc_class);
         $("#" + metrics_id + "_battery_soc").html(metrics_a_source.battery_soc);
         $("#" + metrics_id + "_battery_soc_unit").html('%');
-        $("#" + metrics_id + "_battery_soc_icon").html(battery_soc_icon);
+        $("#" + metrics_id + "_battery_soc_state").removeClass().addClass(battery_soc_class);
 
         if (metrics_a_source.battery_soc >= 50) {
             $("#" + metrics_id + "_battery_soc").removeClass().addClass("metric metric-green");
@@ -1222,26 +1230,21 @@ function display_data() {
       $("#donut_a_title").html(metrics_a_source['title']);
       $("#donut_b_title").html(metrics_b_source['title']);
 
-      populate_metrics("metrics_a", "live");
-      $("#metrics_a_title").hide();
-
-      populate_metrics("metrics_b", metric_key);
-      $("#metrics_b_title").hide();
+      populate_metrics("metrics_a", "live", layout);
+      populate_metrics("metrics_b", metric_key, layout);
       break;
 
       case "single-metric":
       // single metric layout
       metrics_a_source = data_dict.metrics[metric_key];
-      populate_metrics("single_metric", metric_key);
-      //$("#single_metric_trees_card").hide();
-      //$("#single_metric_co2_card").hide();
+      populate_metrics("single_metric", metric_key, layout);
 
       default:
       // typical layout of using a single donut and one set of metrics
       metrics_a_source = data_dict.metrics[metric_key];
       $("#donut_a_title").html(metrics_a_source['title']);
 
-      populate_metrics("metrics_a", metric_key);
+      populate_metrics("metrics_a", metric_key, layout);
       $("#metrics_a_title").hide();
       break;
     }
@@ -1356,7 +1359,6 @@ function render_column_chart(chart_id,
     // draw twice as it seems to goof on the width at times 
     // and render one narrower
     column_chart.draw(chart_data, chart_options);
-    column_chart.draw(chart_data, chart_options);
 
     return column_chart;
 }
@@ -1390,8 +1392,13 @@ function render_charts() {
       slice_font_size_var = "--slice-font-size-portrait";
       break;
 
-      case "default":
       case "dual-metrics":
+      donut_chart_height = (window.innerHeight) * 0.40;
+      legend_font_size_var = "--legend-font-size-dual";
+      slice_font_size_var = "--slice-font-size-dual";
+      break;
+
+      case "default":
       donut_chart_height = (window.innerHeight) * 0.40;
       legend_font_size_var = "--legend-font-size-default";
       slice_font_size_var = "--slice-font-size-default";
