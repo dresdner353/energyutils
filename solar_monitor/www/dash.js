@@ -915,6 +915,8 @@ function format_battery_class(battery_soc) {
 // metric series rotation globals
 // initially set to live
 var metric_key = 'live';
+var cycle_count = 0;
+var about_screen_ts = 0;
 
 // rotates the current metric index as 
 // part of the timed cycling
@@ -933,13 +935,55 @@ function cycle_metric_index() {
         'about',
     ];
 
+    // current epoch timestamp
+    d = new Date();
+    now_ts = Math.round(d.getTime() / 1000);
+
     if ('metrics' in data_dict) {
         // locate current index in list
         metric_index = metric_list.indexOf(metric_key);
         for (i = 0; i < metric_list.length; i++) {
-            // cycle
+            // about screen display in progress
+            // we break out if the interval not yet been reached
+            // but we will break out early if it has been disabled
+            if (metric_key == "about" &&
+                data_dict.dashboard.metrics[next_metric_key] &&
+                now_ts - about_screen_ts < data_dict.dashboard.about_screen_display_interval) {
+                break;
+            }
+            
+            // cycle metric
             metric_index = (metric_index + 1) % metric_list.length;
             next_metric_key = metric_list[metric_index];
+
+            // detect full cycle on return to 
+            // first item in list
+            if (metric_index == 0) {
+                // increment cycle count
+                cycle_count++;
+            }
+
+            // check for the about screen in the cycle
+            // this includs checking in 
+            if (next_metric_key == "about") {
+                if (data_dict.dashboard.metrics[next_metric_key] &&
+                    cycle_count >= data_dict.dashboard.about_screen_cycle_interval &&
+                    (now_ts - about_screen_ts) >= data_dict.dashboard.about_screen_display_interval) {
+
+                    // set the metric to the about screen
+                    // mark the timestamp and we're all set
+                    // also reset the cycle count for the next time
+                    cycle_count = 0;
+                    metric_key = next_metric_key
+                    about_screen_ts = now_ts
+                    break;
+                }
+                else {
+                    // skip the about screen
+                    // and continue the cycle
+                    continue;
+                }
+            }
 
             // skip live metric in dual-donut layout
             // as live is fixed on left
@@ -950,10 +994,7 @@ function cycle_metric_index() {
 
             // check if present in the data dict
             // and enabled in the config
-            // "about" is given special treatment as its never present in 
-            // the data dict
-            if ((next_metric_key == "about" || 
-                 next_metric_key in data_dict.dashboard.metrics) &&
+            if (next_metric_key in data_dict.dashboard.metrics &&
                 data_dict.dashboard.metrics[next_metric_key]) {
                 metric_key = next_metric_key
                 break;
@@ -974,6 +1015,7 @@ function cycle_metric_index() {
         console.log(data_dict);
     }
 
+    console.log("metric key: " + metric_key);
     display_data();
 }                                               
 
