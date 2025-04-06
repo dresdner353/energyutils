@@ -240,7 +240,7 @@ def config_agent():
                         if config_str != update_str:
                             utils.log_message(
                                     1,
-                                    'config change update:%s orig:%s' % (
+                                    'config change forcing restart.. update:%s orig:%s' % (
                                         update_str,
                                         config_str)
                                     )
@@ -527,17 +527,26 @@ class config_handler(object):
                     'config post %s' % (updated_config_dict)
                     )
 
-            # map like to like keys in config
-            # this is a hack as its allowing config to exist that is not 
-            # served back from the admin page
-            # users and ports are examples of fields like this
+            # take a copy of the current in-memory config
+            # and update with the new values from the admin 
+            # page and write to disk
+            copy_config_dict = copy.deepcopy(gv_config_dict)
             for key in updated_config_dict:
-                gv_config_dict[key] = updated_config_dict[key]
+                copy_config_dict[key] = updated_config_dict[key]
+            save_config(copy_config_dict, gv_config_file)
 
-            # save but also locally update the timestamp
-            # this will give realtime reaction to the changed config
-            # ahead of any reload from disk
-            save_config(gv_config_dict, gv_config_file)
+            # soft update of live config
+            # this is only the dashboard and layouts
+            # no inverter or user items are included
+            # this is deliberate to allow quick reaction to layout and 
+            # dashboard changes but also allowing the config reload to 
+            # detect morer serious changes like inverter/data source which
+            # will trigger a restart of the script    
+            soft_update_list = ['dashboard', 'layouts']
+            for key in soft_update_list:
+                if key in updated_config_dict:
+                    gv_config_dict[key] = updated_config_dict[key]
+
             gv_config_dict['ts'] = int(time.time())
 
             return ""
