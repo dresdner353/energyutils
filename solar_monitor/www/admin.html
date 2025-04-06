@@ -46,7 +46,7 @@
                                     <label for="shelly_api_host">Shelly Cloud API Hostname</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="password" class="form-control" id="shelly_auth_key" placeholder="XXXXXXXX">
+                                    <input class="form-control" id="shelly_auth_key" placeholder="XXXXXXXX">
                                     <label for="shelly_auth_key">Shelly Cloud Authentication Key</label>
                                 </div>
                                 <div class="row">
@@ -91,17 +91,17 @@
                                         </div>
 
                                         <div class="form-floating mb-3">
-                                            <input type="password" class="form-control" id="solis_key_id" placeholder="xxxxxxxx">
+                                            <input class="form-control" id="solis_key_id" placeholder="xxxxxxxx">
                                             <label for="solis_key_id">Solis Key ID</label>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="form-floating mb-3">
-                                            <input type="password" class="form-control" id="solis_inverter_sn" placeholder="xxxxxxxxx">
+                                            <input class="form-control" id="solis_inverter_sn" placeholder="xxxxxxxxx">
                                             <label for="solis_inverter_sn">Solis Inverter SN</label>
                                         </div>
                                         <div class="form-floating mb-3">
-                                            <input type="password" class="form-control" id="solis_key_secret" placeholder="xxxxxxxxx">
+                                            <input class="form-control" id="solis_key_secret" placeholder="xxxxxxxxx">
                                             <label for="solis_key_secret">Solis Key Secret</label>
                                         </div>
                                     </div>
@@ -206,7 +206,7 @@
 
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="metrics_live">
-                                        <label class="form-check-label" for="metrics_live">Live</label>
+                                        <label class="form-check-label" for="metrics_live">Real-time</label>
                                     </div>
 
                                     <div class="form-check">
@@ -236,7 +236,7 @@
 
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="metrics_total">
-                                        <label class="form-check-label" for="metrics_total">Total</label>
+                                        <label class="form-check-label" for="metrics_total">Overall Performance</label>
                                     </div>
 
                                     <div class="form-check">
@@ -246,7 +246,7 @@
 
                                     <div class="row">
                                         <div class="input-group mb-3">
-                                            <span class="input-group-text">Cycle Interval</span>
+                                            <span class="input-group-text">Cycle Metrics Every</span>
                                             <select id="metric_cycle_interval" class="form-select">
                                                 <option value="1">1 second</option>
                                                 <option value="2">2 seconds</option>
@@ -262,6 +262,37 @@
                                                 <option value="120">2 minutes</option>
                                                 <option value="300">5 minutes</option>
                                                 <option value="600">10 minutes</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Display About Screen Every</span>
+                                            <select id="about_screen_cycle_interval" class="form-select">
+                                                <option value="1">1 cycle</option>
+                                                <option value="2">2 cycles</option>
+                                                <option value="3">3 cycles</option>
+                                                <option value="4">4 cycles</option>
+                                                <option value="5">5 cycles</option>
+                                                <option value="10">10 cycles</option>
+                                                <option value="20">20 cycles</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">About Screen Display Interval</span>
+                                            <select id="about_screen_display_interval" class="form-select">
+                                                <option value="5">5 seconds</option>
+                                                <option value="8">8 seconds</option>
+                                                <option value="10">10 seconds</option>
+                                                <option value="15">15 seconds</option>
+                                                <option value="20">20 seconds</option>
+                                                <option value="25">25 seconds</option>
+                                                <option value="30">30 seconds</option>
+                                                <option value="60">1 minute</option>
                                             </select>
                                         </div>
                                     </div>
@@ -305,18 +336,6 @@
                                         <label for="bg_colour">Dashboard Background Colour</label>
                                     </div>
 
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="general_config" class="col">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">General</h5>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="show_passwords" onchange="toggle_passwords()">
-                                        <label class="form-check-label" for="show_passwords">Show Passwords/Keys</label>
-                                    </div>
                                 </div>
                             </div>
                         </div>

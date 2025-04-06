@@ -61,6 +61,8 @@ function populate_config(config_dict) {
     $("#metrics_total").prop("checked", config_dict['dashboard']['metrics']['total']);
     $("#metrics_about").prop("checked", config_dict['dashboard']['metrics']['about']);
     $('#metric_cycle_interval').val(config_dict['dashboard']['cycle_interval']);
+    $('#about_screen_cycle_interval').val(config_dict['dashboard']['about_screen_cycle_interval']);
+    $('#about_screen_display_interval').val(config_dict['dashboard']['about_screen_display_interval']);
 
     // donut
     $("#donut_import").prop("checked", config_dict['dashboard']['donut']['import']);
@@ -92,16 +94,6 @@ function populate_config(config_dict) {
     $('#about_caption').val(config_dict['dashboard']['about_caption']);
     $('#bg_colour').val(config_dict['dashboard']['bg_colour']);
 
-}
-
-function toggle_passwords() {
-    console.log("toggle_passwords()");
-    if ($('#show_passwords').prop('checked')) {
-        $("input[type='password']").prop('type', 'text');
-    }
-    else {
-        $("input[type='text']").prop('type', 'password');
-    }
 }
 
 function toggle_config() {
@@ -187,6 +179,8 @@ function apply_config() {
     config_dict['dashboard']['metrics']['total'] = $('#metrics_total').prop('checked');
     config_dict['dashboard']['metrics']['about'] = $('#metrics_about').prop('checked');
     config_dict['dashboard']['cycle_interval'] = $('#metric_cycle_interval').val();
+    config_dict['dashboard']['about_screen_cycle_interval'] = $('#about_screen_cycle_interval').val();
+    config_dict['dashboard']['about_screen_display_interval'] = $('#about_screen_display_interval').val();
 
     config_dict['dashboard']['donut'] = {};
     config_dict['dashboard']['donut']['import'] = $('#donut_import').prop('checked');
@@ -268,10 +262,6 @@ async function load_import_file(event) {
     config_dict = JSON.parse(text);
     populate_config(config_dict);
     toggle_config();
-
-    // force display of pasword fields
-    $('#show_passwords').prop('checked', true);
-    toggle_passwords();
 }
 
 function show_dashboard() {
