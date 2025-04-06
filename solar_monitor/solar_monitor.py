@@ -63,6 +63,8 @@ def set_default_config():
 
     json_config['dashboard']['bg_colour'] = '#000000';
     json_config['dashboard']['cycle_interval'] = 10
+    json_config['dashboard']['about_screen_cycle_interval'] = 5
+    json_config['dashboard']['about_screen_display_interval'] = 25
 
     json_config['dashboard']['metrics'] = {}
     json_config['dashboard']['metrics']['live'] = True
@@ -72,13 +74,16 @@ def set_default_config():
     json_config['dashboard']['metrics']['last_month'] = True
     json_config['dashboard']['metrics']['last_12_months'] = True
     json_config['dashboard']['metrics']['total'] = True
+    json_config['dashboard']['metrics']['about'] = False
 
     json_config['dashboard']['donut'] = {}
     json_config['dashboard']['donut']['consumed'] = False
-    json_config['dashboard']['donut']['export'] = False
+    json_config['dashboard']['donut']['export'] = True
     json_config['dashboard']['donut']['import'] = True
     json_config['dashboard']['donut']['solar'] = False
     json_config['dashboard']['donut']['solar_consumed'] = True
+    json_config['dashboard']['donut']['battery_charge'] = False
+    json_config['dashboard']['donut']['battery_discharge'] = False
 
     json_config['dashboard']['bar_chart'] = {}
     json_config['dashboard']['bar_chart']['consumed'] = False
@@ -86,6 +91,8 @@ def set_default_config():
     json_config['dashboard']['bar_chart']['import'] = True
     json_config['dashboard']['bar_chart']['solar'] = True
     json_config['dashboard']['bar_chart']['solar_consumed'] = True
+    json_config['dashboard']['bar_chart']['battery_charge'] = False
+    json_config['dashboard']['bar_chart']['battery_discharge'] = False
 
     json_config['environment'] = {}
     json_config['environment']['gco2_kwh'] = 297.4
