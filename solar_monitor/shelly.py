@@ -266,10 +266,30 @@ def get_shelly_api_usage_data(
         if 'missing' in shelly_rec:
             usage_rec['missing'] = True
         else:
+            # shelly API returns in Wh
+            # convert to kWh 
+            grid_import = shelly_rec['consumption'] / 1000
+            grid_export = shelly_rec['reversed'] / 1000
+
+            # scale by grid factor
+            # will normally be set to 1 but in some 3phase setups, 
+            # there will be parallel trunk cables and the CT clamps will fit only
+            # on one of the cables. This will cause a 2x or 3x factor to be applied 
+            # as configured
+
+            if 'grid_scale_factor' in config['shelly']:
+                grid_scale_factor = config['shelly']['grid_scale_factor']
+            else:
+                # default to 1
+                grid_scale_factor = 1
+
+            grid_import *= grid_scale_factor
+            grid_export *= grid_scale_factor
+
             # add on usage for given time period
             # works with repeat hours in DST rollback
-            usage_rec['import'] += shelly_rec['consumption'] / 1000
-            usage_rec['export'] += shelly_rec['reversed'] / 1000
+            usage_rec['import'] += grid_import
+            usage_rec['export'] += grid_export
 
     # merge in solar production
     for shelly_rec in solar_resp_dict[res_list]:
@@ -684,6 +704,22 @@ def get_cloud_live_data(config):
     else:
         grid_import = 0
         grid_export = grid * -1
+
+    # scale by grid factor
+    # will normally be set to 1 but in some 3phase setups, 
+    # there will be parallel trunk cables and the CT clamps will fit only
+    # on one of the cables. This will cause a 2x or 3x factor to be applied 
+    # as configured
+    if 'grid_scale_factor' in config['shelly']:
+        grid_scale_factor = config['shelly']['grid_scale_factor']
+    else:
+        # default to 1
+        grid_scale_factor = 1
+
+    grid_import *= grid_scale_factor
+    grid_export *= grid_scale_factor
+    total_grid_import *= grid_scale_factor
+    total_grid_export *= grid_scale_factor
 
     # for solar, discard zero readings below 10W
     # gets rid of noise readings at night
