@@ -54,7 +54,7 @@
                                     <div class="col">
                                         <div class="form-floating mb-3">
                                             <input class="form-control" id="shelly_device_id" placeholder="xxxxxxxx">
-                                            <label for="shelly_device_id">Shelly Device ID</label>
+                                            <label for="shelly_device_id">Shelly Grid Device ID</label>
                                         </div>
                                     </div>
 
@@ -68,11 +68,27 @@
                                 </div>
                                 <div class="row">
                                     <div class="col">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Grid Scale Factor</span>
+                                            <select id="shelly_grid_scale_factor" class="form-select">
+                                                <option value="1">1 (unchanged)</option>
+                                                <option value="2">2 (2x import/export reading)</option>
+                                                <option value="3">3 (3x import/export reading)</option>
+                                                <option value="4">4 (4x import/export reading)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+
+                                    <div class="col">
                                         <div class="form-floating mb-3">
                                             <input class="form-control" id="shelly_pv_kwh_discard" placeholder="0.00n">
                                             <label for="shelly_pv_kwh_discard">PV kWh Discard</label>
                                         </div>
                                     </div>
+
                                     <div class="col">
                                         <div class="form-floating mb-3">
                                             <input class="form-control" id="shelly_time_slot" placeholder="0">
