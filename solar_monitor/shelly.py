@@ -659,10 +659,17 @@ def get_cloud_live_data(config):
     else:
         gv_shelly_dict['last_updated'] = now
 
-    # generate a delayed mesage for gaps over 2 mins
+    # generate a delayed message for gaps over 2 mins
     message = ''
     if now - gv_shelly_dict['last_updated'] >= 120:
         message = ' (delayed)'
+
+    # generate an offline message for gaps over 1 hour
+    if now - gv_shelly_dict['last_updated'] >= 120:
+        gv_shelly_dict['last_updated'] = now
+        message = ' (offline)'
+        grid = 0
+        solar = 0
 
     live_rec = gv_shelly_dict['live']
 
