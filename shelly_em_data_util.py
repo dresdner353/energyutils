@@ -44,16 +44,22 @@ def get_day_data(
         api_host,
         auth_key,
         device_id,
+        pv_device_id,
+        grid_scale_factor,
+        pv_kwh_discard,
         date_ref,
-        odir,
-        solar_discard):
+        odir):
 
     global gv_verbose
 
-    # API URL and params
-    shelly_cloud_url = 'https://%s/v2/statistics/power-consumption/em-1p' % (api_host)
+    # set API URL variant
+    if pv_device_id:
+        # 3EM device
+        shelly_cloud_url = 'https://%s/v2/statistics/power-consumption/em-3p' % (api_host)
+    else:
+        shelly_cloud_url = 'https://%s/v2/statistics/power-consumption/em-1p' % (api_host)
+
     params = {}
-    params['id'] = device_id
     params['auth_key'] = auth_key
     params['date_range'] = 'day'
 
@@ -98,8 +104,15 @@ def get_day_data(
         # a peviously incomplete file
         write_context = 'Updating'
 
-    # channel 0 (grid consumption and return)
-    params['channel'] = 0
+    # grid variants
+    if pv_device_id:
+        params['id'] = device_id
+        params['channel'] = 0
+    else:
+        # Single device channel 0 = grid
+        params['id'] = device_id
+        params['channel'] = 0
+
     resp = requests.get(
             shelly_cloud_url, 
             data = params)
@@ -113,8 +126,15 @@ def get_day_data(
                 )
             )
 
-    # channel 1 (solar production)
-    params['channel'] = 1
+    # pv variants
+    if pv_device_id:
+        params['id'] = pv_device_id
+        params['channel'] = 0
+    else:
+        # Single device channel 1 = pv
+        params['id'] = device_id
+        params['channel'] = 1
+
     resp = requests.get(
             shelly_cloud_url, 
             data = params)
@@ -128,17 +148,18 @@ def get_day_data(
                 )
             )
 
+    # parsr variants
+    # 1ph is in "history" and 
+    # 3ph is in "sum"
+    if pv_device_id:
+        res_list = 'sum'
+    else:
+        res_list = 'history'
+
     # populate consumption records
     data_dict = {}
     partial_data = False
-    for shelly_rec in grid_resp_dict['history']:
-        # skip any missing records
-        # and note partial data scenario
-        if ('missing' in shelly_rec and 
-            shelly_rec['missing']):
-            partial_data = True
-            continue
-
+    for shelly_rec in grid_resp_dict[res_list]:
         # epoch timestamp from shelly API local time 
         ts, ts_dt = parse_time(
                 shelly_rec['datetime'],
@@ -155,7 +176,6 @@ def get_day_data(
             usage_rec['import'] = 0
             usage_rec['export'] = 0
             usage_rec['solar'] = 0
-            usage_rec['solar_discard'] = 0
             usage_rec['ts'] = ts
             usage_rec['datetime'] = ts_dt.strftime('%Y/%m/%d %H:%M:%S')
 
@@ -176,20 +196,24 @@ def get_day_data(
             # store in dict
             data_dict[ts] = usage_rec
 
-        # add on usage for given time period
-        # works with repeat hours in DST rollback
-        usage_rec['import'] += shelly_rec['consumption'] / 1000
-        usage_rec['export'] += shelly_rec['reversed'] / 1000
-
-    # merge in solar production
-    for shelly_rec in solar_resp_dict['history']:
-        # skip any missing records
-        # and note partial data scenario
         if ('missing' in shelly_rec and 
             shelly_rec['missing']):
             partial_data = True
-            continue
+            grid_import = 0
+            grid_export = 0
+        else:
+            # retrieve import/export values
+            # scaned to kWh and applied against scale factor
+            grid_import = shelly_rec['consumption'] / 1000 * grid_scale_factor
+            grid_export = shelly_rec['reversed'] / 1000 * grid_scale_factor
 
+        # add on usage for given time period
+        # works with repeat hours in DST rollback
+        usage_rec['import'] += grid_import
+        usage_rec['export'] += grid_export
+
+    # merge in solar production
+    for shelly_rec in solar_resp_dict[res_list]:
         # epoch timestamp from shelly API local time 
         ts, ts_dt = parse_time(
                 shelly_rec['datetime'],
@@ -200,18 +224,16 @@ def get_day_data(
         # works with repeat hours in DST rollback
         usage_rec = data_dict[ts]
 
-        # solar
-        solar = shelly_rec['consumption'] / 1000
-
-        # zero any value <= the solar discard
-        # caters for neglible error readings at night
-        # Also subtract if value exceeds twice the discard
-        if solar <= solar_discard:
-            usage_rec['solar_discard'] += solar
+        if ('missing' in shelly_rec and 
+            shelly_rec['missing']):
+            partial_data = True
             solar = 0
-        elif solar >= solar_discard:
-            solar -= solar_discard
-            usage_rec['solar_discard'] += solar_discard
+        else:
+            # solar discard
+            # removing error factor if any exists
+            solar = shelly_rec['consumption'] / 1000
+            solar -= pv_kwh_discard
+            solar = max(0, solar)
 
         # append the solar value 
         usage_rec['solar'] += solar
@@ -280,7 +302,7 @@ parser.add_argument(
         )
 
 parser.add_argument(
-        '--solar_discard', 
+        '--pv_kwh_discard', 
         help = 'per-hour error discard for Solar (kWh)', 
         type = float,
         default = 0,
@@ -291,6 +313,21 @@ parser.add_argument(
         '--id', 
         help = 'Device ID', 
         required = True
+        )
+
+parser.add_argument(
+        '--pv_id', 
+        help = 'PV Device ID (3em only)', 
+        required = True
+        )
+
+parser.add_argument(
+        '--grid_scale_factor', 
+        help = 'Grid Scale Factor (def:1)', 
+        required = False,
+        type = int,
+        choices = [1, 2, 3, 4, 5],
+        default = 1
         )
 
 parser.add_argument(
@@ -310,7 +347,9 @@ api_host = args['host']
 backfill_days = args['days']
 odir = args['odir']
 device_id = args['id']
-solar_discard = args['solar_discard']
+pv_device_id = args['pv_id']
+grid_scale_factor = args['grid_scale_factor']
+pv_kwh_discard = args['pv_kwh_discard']
 auth_key = args['auth_key']
 gv_verbose = args['verbose']
 
@@ -333,9 +372,11 @@ for i in range(0, backfill_days):
             api_host = api_host,
             auth_key = auth_key,
             device_id = device_id,
+            pv_device_id = pv_device_id,
+            grid_scale_factor = grid_scale_factor,
+            pv_kwh_discard = pv_kwh_discard,
             date_ref = date_ref,
-            odir = odir,
-            solar_discard = solar_discard)
+            odir = odir)
 
     # move back to previous day
     date_ref = date_ref - datetime.timedelta(days = 1)
