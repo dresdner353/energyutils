@@ -243,7 +243,7 @@ function set_layout() {
                                                 <span id="<METRICS-ID>_export" style="metric metric-white">0</span>
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="<METRICS-ID>_export_icon" class="metric-icon"><i class="bi bi-currency-euro"></i></div>
+                                                <div id="<METRICS-ID>_export_icon" class="metric-icon"><i class="bi bi-box-arrow-right"></i></div>
                                                 <div id="<METRICS-ID>_export_unit" class="metric-unit metric-white">kWh</div>
                                             </td>
                                         </tr>
@@ -445,7 +445,7 @@ function set_layout() {
                                                 <span id="single_metric_export" style="metric metric-white">0</span>&nbsp;
                                             </td>
                                             <td style="vertical-align: middle;" align="center">
-                                                <div id="single_metric_export_icon" class="metric-icon"><i class="bi bi-currency-euro"></i></div>
+                                                <div id="single_metric_export_icon" class="metric-icon"><i class="bi bi-box-arrow-right"></i></div>
                                                 <div id="single_metric_export_unit" class="metric-unit metric-white">kWh</div>
                                             </td>
                                         </tr>
