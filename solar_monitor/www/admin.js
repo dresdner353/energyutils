@@ -58,8 +58,8 @@ function populate_config(config_dict) {
     $("#metrics_yesterday").prop("checked", config_dict['dashboard']['metrics']['yesterday']);
     $("#metrics_this_month").prop("checked", config_dict['dashboard']['metrics']['this_month']);
     $("#metrics_last_month").prop("checked", config_dict['dashboard']['metrics']['last_month']);
-    $("#metrics_last_12_months").prop("checked", config_dict['dashboard']['metrics']['last_12_months']);
     $("#metrics_total").prop("checked", config_dict['dashboard']['metrics']['total']);
+    $("#metrics_pv_total").prop("checked", config_dict['dashboard']['metrics']['pv_total']);
     $("#metrics_about").prop("checked", config_dict['dashboard']['metrics']['about']);
     $('#metric_cycle_interval').val(config_dict['dashboard']['cycle_interval']);
     $('#about_screen_cycle_interval').val(config_dict['dashboard']['about_screen_cycle_interval']);
@@ -83,10 +83,6 @@ function populate_config(config_dict) {
     $("#bar_chart_battery_charge").prop("checked", config_dict['dashboard']['bar_chart']['battery_charge']);
     $("#bar_chart_battery_discharge").prop("checked", config_dict['dashboard']['bar_chart']['battery_discharge']);
 
-    if ('layouts' in config_dict){
-        $('#large_screen_layout').val(config_dict['layouts']['default']);
-    }
-
     if ('environment' in config_dict){
         $('#env_gco2_kwh').val(config_dict['environment']['gco2_kwh']);
         $('#env_trees_kwh').val(config_dict['environment']['trees_kwh']);
@@ -94,6 +90,7 @@ function populate_config(config_dict) {
 
     $('#about_caption').val(config_dict['dashboard']['about_caption']);
     $('#bg_colour').val(config_dict['dashboard']['bg_colour']);
+    $('#default_layout').val(config_dict['dashboard']['layout']);
 
 }
 
@@ -170,6 +167,7 @@ function apply_config() {
     config_dict['dashboard'] = {}
     config_dict['dashboard']['about_caption'] = $('#about_caption').val();
     config_dict['dashboard']['bg_colour'] = $('#bg_colour').val();
+    config_dict['dashboard']['layout'] = $('#default_layout').val();
 
     config_dict['dashboard']['metrics'] = {};
     config_dict['dashboard']['metrics']['live'] =  $('#metrics_live').prop('checked');
@@ -177,8 +175,8 @@ function apply_config() {
     config_dict['dashboard']['metrics']['yesterday'] = $('#metrics_yesterday').prop('checked');
     config_dict['dashboard']['metrics']['this_month'] = $('#metrics_this_month').prop('checked');
     config_dict['dashboard']['metrics']['last_month'] = $('#metrics_last_month').prop('checked');
-    config_dict['dashboard']['metrics']['last_12_months'] = $('#metrics_last_12_months').prop('checked');
     config_dict['dashboard']['metrics']['total'] = $('#metrics_total').prop('checked');
+    config_dict['dashboard']['metrics']['pv_total'] = $('#metrics_pv_total').prop('checked');
     config_dict['dashboard']['metrics']['about'] = $('#metrics_about').prop('checked');
     config_dict['dashboard']['cycle_interval'] = $('#metric_cycle_interval').val();
     config_dict['dashboard']['about_screen_cycle_interval'] = $('#about_screen_cycle_interval').val();
@@ -201,9 +199,6 @@ function apply_config() {
     config_dict['dashboard']['bar_chart']['solar_consumed'] = $('#bar_chart_solar_consumed').prop('checked');
     config_dict['dashboard']['bar_chart']['battery_charge'] = $('#bar_chart_battery_charge').prop('checked');
     config_dict['dashboard']['bar_chart']['battery_discharge'] = $('#bar_chart_battery_discharge').prop('checked');
-
-    config_dict['layouts'] = {};
-    config_dict['layouts']['default'] = $('#large_screen_layout').val();
 
     config_dict['environment'] = {};
     config_dict['environment']['gco2_kwh'] = Number($('#env_gco2_kwh').val());
