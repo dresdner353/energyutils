@@ -113,6 +113,7 @@ function refresh_data() {
         // set layout when a config change is detected
         if (data_dict['config_ts'] != config_ts) {
             set_layout();
+            cycle_metric_index();
             display_data();
             config_ts = data_dict['config_ts'];
         }
@@ -206,7 +207,7 @@ function set_layout() {
                                 </a>
                         </div>
                     </div>
-                <div onclick="ui_cycle_metric_index()" id="<METRICS-ID>" class="container text-white text-center">
+                <div id="<METRICS-ID>" class="container text-white text-center">
                     <div class="row row-cols-2">
                     <CARDS>
                     </div>
