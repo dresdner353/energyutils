@@ -33,7 +33,6 @@ gv_root = '%s' % (
 # tracked inverter API data
 gv_data_dict = {}
 gv_data_dict['last_updated'] = 0
-gv_metrics_dict = {}
 
 gv_refresh_interval = 1
 
@@ -94,13 +93,12 @@ def set_default_config():
     json_config['dashboard']['bar_chart']['battery_charge'] = False
     json_config['dashboard']['bar_chart']['battery_discharge'] = False
 
+    json_config['dashboard']['layout'] = 'default'
+
     json_config['environment'] = {}
     json_config['environment']['gco2_kwh'] = 297.4
     json_config['environment']['trees_kwh'] = 0.0117
 
-    json_config['layouts'] = {}
-    json_config['layouts']['default'] = 'default'
-    json_config['layouts']['large'] = 'small'
 
     return json_config
 
@@ -337,81 +335,6 @@ def merge_grid_data(
     return
 
 
-def set_metrics(inverter_dict):
-    """
-    Sets metrics for today, yesterday, month, etc
-    """
-    global gv_metrics_dict
-
-    # move live record into the metrics section
-    if 'live' in inverter_dict:
-        # move live record into the metrics section
-        gv_metrics_dict['live'] = inverter_dict['live']
-        del inverter_dict['live']
-
-    # move total record into the metrics section
-    if 'total' in inverter_dict:
-        # move live record into the metrics section
-        gv_metrics_dict['total'] = inverter_dict['total']
-        del inverter_dict['total']
-
-    # month and year metrics
-    # will not be present unless if cloud API calls
-    # have not been made or failed
-    if (not 'month' in inverter_dict or 
-        not 'year' in inverter_dict):
-        return
-
-    if len(inverter_dict['month']) >= 1:
-        gv_metrics_dict['today'] = inverter_dict['month'][-1]
-        gv_metrics_dict['today']['title'] = 'Today (%s %d %s)' % (
-                gv_metrics_dict['today']['month'], 
-                gv_metrics_dict['today']['day'], 
-                gv_metrics_dict['today']['year'])
-
-    # one more day for yesterday if we have it
-    if len(inverter_dict['month']) >= 2:
-        gv_metrics_dict['yesterday'] = inverter_dict['month'][-2]
-        gv_metrics_dict['yesterday']['title'] = 'Yesterday (%s %d %s)' % (
-                gv_metrics_dict['yesterday']['month'], 
-                gv_metrics_dict['yesterday']['day'], 
-                gv_metrics_dict['yesterday']['year'])
-
-    # take months totals from last recorded month in year
-    if len(inverter_dict['year']) >= 1:
-        gv_metrics_dict['this_month'] = inverter_dict['year'][-1]
-        gv_metrics_dict['this_month']['title'] = 'This Month (%s %s)' % (
-                gv_metrics_dict['this_month']['month'], 
-                gv_metrics_dict['this_month']['year'])
-
-    if len(inverter_dict['year']) >= 2:
-        gv_metrics_dict['last_month'] = inverter_dict['year'][-2]
-        gv_metrics_dict['last_month']['title'] = 'Last Month (%s %s)' % (
-                gv_metrics_dict['last_month']['month'], 
-                gv_metrics_dict['last_month']['year'])
-
-    # last N months 
-    if len(inverter_dict['year']) >= 1:
-        gv_metrics_dict['last_12_months'] = {}
-        gv_metrics_dict['last_12_months']['title'] = 'Last %d Months' % (len(inverter_dict['year']))
-
-        for month_rec in inverter_dict['year']:
-            for field in month_rec:
-
-                # skip non-numeric fields
-                if type(month_rec[field]) == str:
-                    continue
-
-                # instatiate if not exists
-                if not field in gv_metrics_dict['last_12_months']:
-                    gv_metrics_dict['last_12_months'][field] = 0
-
-                # aggregate value
-                gv_metrics_dict['last_12_months'][field] += month_rec[field]
-
-    return
-
-
 def monitor_agent():
     """
     Agent to manage the retrieval of inverter and grid data. This will call into 
@@ -461,9 +384,6 @@ def monitor_agent():
             if gv_config_dict['grid_source'] in ['shelly-em']:
                 grid_dict, grid_sleep_interval = shelly.get_data(gv_config_dict)
                 merge_grid_data(inverter_dict, grid_dict)
-
-        # set metrics
-        set_metrics(inverter_dict)
 
         # publish data after all adjustments
         gv_data_dict = inverter_dict
@@ -542,7 +462,7 @@ class config_handler(object):
             # dashboard changes but also allowing the config reload to 
             # detect morer serious changes like inverter/data source which
             # will trigger a restart of the script    
-            soft_update_list = ['dashboard', 'layouts']
+            soft_update_list = ['dashboard']
             for key in soft_update_list:
                 if key in updated_config_dict:
                     gv_config_dict[key] = updated_config_dict[key]
@@ -565,7 +485,6 @@ class data_handler(object):
 
     def index(self):
         global gv_data_dict
-        global gv_metrics_dict
         global gv_config_dict
         global gv_refresh_interval
         global gv_force_refresh
@@ -598,10 +517,6 @@ class data_handler(object):
         # merge in config for dashboard
         gv_data_dict['dashboard'] = gv_config_dict['dashboard']
 
-        # merge in optional layout settings
-        if 'layouts' in gv_config_dict:
-            gv_data_dict['layouts'] = gv_config_dict['layouts']
-
         # pass the config update ts
         gv_data_dict['config_ts'] = gv_config_dict['ts']
 
@@ -615,10 +530,6 @@ class data_handler(object):
         # dev mode override for metric cycle
         if (gv_dev_mode and gv_force_metric_cycle):
             gv_data_dict['dashboard']['cycle_interval'] = gv_force_metric_cycle 
-
-        # merge in metrics
-        if len(gv_metrics_dict) > 0:
-            gv_data_dict['metrics'] = gv_metrics_dict 
 
         return json.dumps(gv_data_dict, indent = 4)
 
