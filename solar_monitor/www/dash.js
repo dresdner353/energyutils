@@ -1008,7 +1008,7 @@ function populate_metrics(metrics_id, metric_key, layout) {
         $("#" + metrics_id + "_solar_live_value").html(value_dict['value']);
         $("#" + metrics_id + "_solar_live_unit").html(value_dict['unit']);
 
-        if (metrics_source.solar > 0) {
+        if (metrics_source.solar_live > 0) {
             $("#" + metrics_id + "_solar_live_value").removeClass().addClass("metric metric-yellow");
             $("#" + metrics_id + "_solar_live_icon").removeClass().addClass("metric-icon metric-yellow");
             $("#" + metrics_id + "_solar_live_unit").removeClass().addClass("metric-unit metric-yellow");
@@ -1029,7 +1029,7 @@ function populate_metrics(metrics_id, metric_key, layout) {
         $("#" + metrics_id + "_solar_today_value").html(value_dict['value']);
         $("#" + metrics_id + "_solar_today_unit").html(value_dict['unit']);
 
-        if (metrics_source.solar > 0) {
+        if (metrics_source.solar_today > 0) {
             $("#" + metrics_id + "_solar_today_value").removeClass().addClass("metric metric-yellow");
             $("#" + metrics_id + "_solar_today_icon").removeClass().addClass("metric-icon metric-yellow");
             $("#" + metrics_id + "_solar_today_unit").removeClass().addClass("metric-unit metric-yellow");
