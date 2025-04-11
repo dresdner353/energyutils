@@ -198,6 +198,19 @@ function set_layout() {
             </div>
             `;
 
+    image_card_tmpl = `
+            <div onclick="ui_cycle_metric_index()" class="col" id="<METRICS-ID>_<CARD-ID>_card">
+                <div class="card-transparent text-center mt-3 h-100">
+                    <div class="card-body align-middle h-100">
+                        <br>
+                        <br>
+                        <br>
+                        <img src="<IMAGE>" class="img-thumbnail" alt="...">
+                    </div>
+                </div>
+            </div>
+            `;
+
     metrics_page_html_tmpl = `
                     <div id="<METRICS-ID>_title" class="row mt-0">
                         <div class="col-12 text-center">
@@ -403,11 +416,14 @@ function set_layout() {
     consumed_card_html = metric_card_tmpl.replaceAll("<CARD-ID>", "consumed");
     consumed_card_html = consumed_card_html.replaceAll("<ICON-ID>", "bi-buildings-fill");
     
-    solar_card_html = metric_card_tmpl.replaceAll("<CARD-ID>", "solar");
-    solar_card_html = solar_card_html.replaceAll("<ICON-ID>", "bi-sun-fill");
+    solar_card_live_html = metric_card_tmpl.replaceAll("<CARD-ID>", "solar_live");
+    solar_card_live_html = solar_card_live_html.replaceAll("<ICON-ID>", "bi-sun-fill");
     
     solar_card_today_html = metric_card_tmpl.replaceAll("<CARD-ID>", "solar_today");
     solar_card_today_html = solar_card_today_html.replaceAll("<ICON-ID>", "bi-sun-fill");
+    
+    solar_card_html = metric_card_tmpl.replaceAll("<CARD-ID>", "solar");
+    solar_card_html = solar_card_html.replaceAll("<ICON-ID>", "bi-sun-fill");
     
     export_card_html = metric_card_tmpl.replaceAll("<CARD-ID>", "export");
     export_card_html = export_card_html.replaceAll("<ICON-ID>", "bi-box-arrow-right");
@@ -427,17 +443,22 @@ function set_layout() {
     trees_card_html = metric_card_tmpl.replaceAll("<CARD-ID>", "trees");
     trees_card_html = trees_card_html.replaceAll("<ICON-ID>", "bi-tree-fill");
 
+    installer_card_html = image_card_tmpl.replaceAll("<CARD-ID>", "installer");
+    installer_card_html = installer_card_html.replaceAll("<IMAGE>", "/images/installer.png");
+
     // metric page definitions
     cards_html = import_card_html + 
         consumed_card_html + 
-        solar_card_html +  
+        solar_card_live_html +
         solar_card_today_html +
+        solar_card_html +  
         export_card_html + 
         battery_charge_card_html +  
         battery_discharge_card_html + 
         battery_soc_card_html + 
         co2_card_html + 
-        trees_card_html;
+        trees_card_html + 
+        installer_card_html;
     
     // metrics a-d layouts from common template
     metrics_a_html = metrics_page_html_tmpl;
@@ -900,28 +921,34 @@ function populate_metrics(metrics_id, metric_key, layout) {
       $("#" + metrics_id + "_export_card").show();
       $("#" + metrics_id + "_import_card").hide();
       $("#" + metrics_id + "_consumed_card").hide();
+      $("#" + metrics_id + "_solar_live_card").hide();
       $("#" + metrics_id + "_solar_today_card").hide();
       $("#" + metrics_id + "_installer_logo").hide();
+      $("#" + metrics_id + "_installer_card").hide();
       break;
 
       case 'pv_total':
       $("#" + metrics_id + "_co2_card").show();
       $("#" + metrics_id + "_trees_card").show();
+      $("#" + metrics_id + "_solar_live_card").show();
       $("#" + metrics_id + "_solar_today_card").show();
       $("#" + metrics_id + "_import_card").hide();
       $("#" + metrics_id + "_export_card").hide();
       $("#" + metrics_id + "_consumed_card").hide();
-      $("#" + metrics_id + "_installer_logo").show();
+      //$("#" + metrics_id + "_installer_logo").show();
+      $("#" + metrics_id + "_installer_card").show();
       break;
 
       default:
       $("#" + metrics_id + "_co2_card").hide();
       $("#" + metrics_id + "_trees_card").hide();
       $("#" + metrics_id + "_export_card").show();
+      $("#" + metrics_id + "_solar_live_card").hide();
       $("#" + metrics_id + "_solar_today_card").hide();
       $("#" + metrics_id + "_import_card").show();
       $("#" + metrics_id + "_consumed_card").show();
       $("#" + metrics_id + "_installer_logo").hide();
+      $("#" + metrics_id + "_installer_card").hide();
       break;
     }
 
@@ -974,6 +1001,28 @@ function populate_metrics(metrics_id, metric_key, layout) {
     }
 
     if (metric_key == 'pv_total') {
+
+        value_dict = format_energy_value(metrics_source.solar_live, 
+                                         'kW', 
+                                         'mW', 
+                                         'W');
+        $("#" + metrics_id + "_solar_live_caption").html('Real-time Solar Power');
+        $("#" + metrics_id + "_solar_live_value").html(value_dict['value']);
+        $("#" + metrics_id + "_solar_live_unit").html(value_dict['unit']);
+
+        if (metrics_source.solar > 0) {
+            $("#" + metrics_id + "_solar_live_value").removeClass().addClass("metric metric-yellow");
+            $("#" + metrics_id + "_solar_live_icon").removeClass().addClass("metric-icon metric-yellow");
+            $("#" + metrics_id + "_solar_live_unit").removeClass().addClass("metric-unit metric-yellow");
+            $("#" + metrics_id + "_solar_live_caption").removeClass().addClass("metric-caption metric-white");
+        }
+        else {
+            $("#" + metrics_id + "_solar_live_value").removeClass().addClass("metric metric-grey");
+            $("#" + metrics_id + "_solar_live_icon").removeClass().addClass("metric-icon metric-grey");
+            $("#" + metrics_id + "_solar_live_unit").removeClass().addClass("metric-unit metric-grey");
+            $("#" + metrics_id + "_solar_live_caption").removeClass().addClass("metric-caption metric-grey");
+        }
+
         value_dict = format_energy_value(metrics_source.solar_today, 
                                          std_energy_unit, 
                                          mega_energy_unit, 
@@ -1191,6 +1240,7 @@ function get_metrics(metric_key) {
       metric_source = data_dict["total"];
       metric_today = data_dict.month[data_dict.month.length - 1];
       metric_source.solar_today = metric_today.solar;
+      metric_source.solar_live = data_dict.live.solar;
       break;
 
       default:
