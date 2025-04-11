@@ -200,7 +200,7 @@ function set_layout() {
 
     image_card_tmpl = `
             <div onclick="ui_cycle_metric_index()" class="col" id="<METRICS-ID>_<CARD-ID>_card">
-                <div class="card-transparent text-center mt-3 h-100">
+                <div class="card-transparent text-center mt-3">
                     <div class="card-body align-middle">
                         <br>
                         <img src="<IMAGE>" class="img-thumbnail" alt="...">
