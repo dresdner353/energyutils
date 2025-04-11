@@ -204,7 +204,6 @@ function set_layout() {
                     <div class="card-body align-middle h-100">
                         <br>
                         <br>
-                        <br>
                         <img src="<IMAGE>" class="img-thumbnail" alt="...">
                     </div>
                 </div>
