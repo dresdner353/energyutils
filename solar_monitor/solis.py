@@ -335,9 +335,17 @@ def get_inverter_day_data(config):
         solar = 0
 
     live_rec = gv_solis_dict['live']
-    time_str = datetime.datetime.fromtimestamp(
-            gv_solis_dict['last_updated']).strftime('%H:%M:%S')
-    live_rec['title'] = 'Real-time @%s' % (time_str)
+    live_rec['ts'] = gv_solis_dict['last_updated']
+
+    # broken out values for local time
+    live_dt = datetime.datetime.fromtimestamp(live_rec['ts'])
+    live_rec['year'] = '%04d' %(
+                        live_dt.year)
+    live_rec['month'] = live_dt.strftime('%b')
+    live_rec['day'] = live_dt.day
+    live_rec['hour'] = live_dt.hour
+    live_rec['minute'] = live_dt.minute
+    live_rec['second'] = live_dt.second
 
     if grid < 0:
         # negative => exporting
@@ -376,7 +384,6 @@ def get_inverter_day_data(config):
     # total accumulated values for import, export and solar
     total_rec = gv_solis_dict['total']
     latest_snap_rec = solis_snap_list[-1]
-    total_rec['title'] = 'Overall Performance'
     total_rec['import'] = latest_snap_rec['gridPurchasedTotalEnergy']
     total_rec['export'] = latest_snap_rec['gridSellTotalEnergy']
     total_rec['solar'] = latest_snap_rec['eTotal']

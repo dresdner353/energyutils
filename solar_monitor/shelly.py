@@ -697,23 +697,23 @@ def get_cloud_live_data(config):
     else:
         gv_shelly_dict['last_updated'] = now
 
-    # generate a delayed message for gaps over 2 mins
-    message = ''
-    if now - gv_shelly_dict['last_updated'] >= 120:
-        message = ' (delayed)'
+    live_rec = gv_shelly_dict['live']
+    live_rec['ts'] = gv_shelly_dict['last_updated']
 
-    # generate an offline message for gaps over 1 hour
+    # broken out values for local time
+    live_dt = datetime.datetime.fromtimestamp(live_rec['ts'])
+    live_rec['year'] = '%04d' %(
+                        live_dt.year)
+    live_rec['month'] = live_dt.strftime('%b')
+    live_rec['day'] = live_dt.day
+    live_rec['hour'] = live_dt.hour
+    live_rec['minute'] = live_dt.minute
+    live_rec['second'] = live_dt.second
+
+    # zero values if delayed longer thn 2 minutes
     if now - gv_shelly_dict['last_updated'] >= 120:
-        gv_shelly_dict['last_updated'] = now
-        message = ' (offline)'
         grid = 0
         solar = 0
-
-    live_rec = gv_shelly_dict['live']
-
-    time_str = datetime.datetime.fromtimestamp(
-            gv_shelly_dict['last_updated']).strftime('%H:%M:%S')
-    live_rec['title'] = 'Real-time @%s%s' % (time_str, message)
 
     # render into separate values for import and export
     if grid >= 0:
@@ -757,7 +757,6 @@ def get_cloud_live_data(config):
 
     # total accumulated values for import, export and solar
     total_rec = gv_shelly_dict['total']
-    total_rec['title'] = 'Overall Performance'
     total_rec['import'] = total_grid_import
     total_rec['export'] = total_grid_export
     total_rec['solar'] = total_solar
