@@ -203,7 +203,7 @@ function set_layout() {
                 <div class="card-transparent text-center mt-3">
                     <div class="card-body align-middle h-70">
                         <br>
-                        <img src="<IMAGE>" style="object-fit: cover;" alt="...">
+                        <img src="<IMAGE>" class="img-thumbnail" alt="...">
                     </div>
                 </div>
             </div>
