@@ -203,7 +203,8 @@ function set_layout() {
                 <div class="card-transparent text-center mt-3">
                     <div class="card-body align-middle ">
                         <br>
-                        <img src="<IMAGE>" class="img-thumbnail" alt="...">
+                        <img src="<IMAGE>" style="width: 20vh; " alt="...">
+
                     </div>
                 </div>
             </div>
