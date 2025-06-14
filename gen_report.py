@@ -279,12 +279,6 @@ field_dict = {
             'format' : 'kwh',
             },
 
-        'rel_import' : {
-            'title' : 'Relative Import',
-            'width' : 12,
-            'header_format' : 'header',
-            'format' : 'kwh',
-            },
         'savings' : {
             'title' : 'Savings',
             'width' : 12,
@@ -905,10 +899,6 @@ def load_data(
                 dt_weekday = int(rec['weekday'].split(' ')[0])
                 dt_hour = rec['hour']
 
-                # relative import
-                # initial calc is import - export
-                rec['rel_import'] =  rec['import'] - rec['export'] 
-    
                 # Import Tariff and charging rates
                 if (dt_weekday in tarff_interval_dict and 
                     dt_hour in tarff_interval_dict[dt_weekday]):
@@ -950,7 +940,6 @@ def load_data(
                             rec['export_percent'] = rec['export'] / rec['solar']
 
                         rec['solar_credit'] = rec['solar_consumed'] * rec['tariff_rate']
-                        rec['rel_import'] -= rec['solar_consumed']
 
                         # reset savings for solar credit
                         rec['savings'] = rec['solar_credit'] + rec['export_credit'] 
@@ -1305,13 +1294,6 @@ pv_perf_series =  [
             },
         ]
 
-rel_import_series =  [
-        {
-            'field': 'rel_import',
-            'colour': 'blue',
-            },
-        ]
-
 value_series = [
         {
             'field': 'import_cost',
@@ -1429,14 +1411,6 @@ for report in report_list:
                         'series' : pv_perf_series,
                         },
                     {
-                        'title' : 'Relative Import',
-                        'type' : 'column',
-                        'x_title' : 'Hour',
-                        'x_rotation' : -45,
-                        'y_title' : 'kWh',
-                        'series' : rel_import_series,
-                        },
-                    {
                         'title' : 'Battery Charging',
                         'type' : 'column',
                         'x_title' : 'Hour',
@@ -1548,14 +1522,6 @@ for report in report_list:
                         'series' : pv_perf_series,
                         },
                     {
-                        'title' : 'Relative Import',
-                        'type' : 'column',
-                        'x_title' : 'Day',
-                        'x_rotation' : -45,
-                        'y_title' : 'kWh',
-                        'series' : rel_import_series,
-                        },
-                    {
                         'title' : 'Charging',
                         'type' : 'column',
                         'x_title' : 'Day',
@@ -1617,14 +1583,6 @@ for report in report_list:
                         'x_rotation' : -45,
                         'y_title' : 'kWh',
                         'series' : pv_perf_series,
-                        },
-                    {
-                        'title' : 'Relative Import',
-                        'type' : 'column',
-                        'x_title' : 'Week',
-                        'x_rotation' : -45,
-                        'y_title' : 'kWh',
-                        'series' : rel_import_series,
                         },
                     {
                         'title' : 'Charging',
@@ -1690,14 +1648,6 @@ for report in report_list:
                         'series' : pv_perf_series,
                         },
                     {
-                        'title' : 'Relative Import',
-                        'type' : 'column',
-                        'x_title' : 'Month',
-                        'x_rotation' : -45,
-                        'y_title' : 'kWh',
-                        'series' : rel_import_series,
-                        },
-                    {
                         'title' : 'Charging',
                         'type' : 'column',
                         'x_title' : 'Month',
@@ -1761,14 +1711,6 @@ for report in report_list:
                         'series' : pv_perf_series,
                         },
                     {
-                        'title' : 'Relative Import',
-                        'type' : 'column',
-                        'x_title' : 'Year',
-                        'x_rotation' : -45,
-                        'y_title' : 'kWh',
-                        'series' : rel_import_series,
-                        },
-                    {
                         'title' : 'Charging',
                         'type' : 'column',
                         'x_title' : 'Year',
@@ -1828,14 +1770,6 @@ for report in report_list:
                         'x_rotation' : -45,
                         'y_title' : 'kWh',
                         'series' : pv_perf_series,
-                        },
-                    {
-                        'title' : 'Relative Import',
-                        'type' : 'column',
-                        'x_title' : 'Weekday',
-                        'x_rotation' : -45,
-                        'y_title' : 'kWh',
-                        'series' : rel_import_series,
                         },
                     {
                         'title' : 'Charging',
@@ -1899,14 +1833,6 @@ for report in report_list:
                         'series' : pv_perf_series,
                         },
                     {
-                        'title' : 'Relative Import',
-                        'type' : 'column',
-                        'x_title' : 'Hour',
-                        'x_rotation' : -45,
-                        'y_title' : 'kWh',
-                        'series' : rel_import_series,
-                        },
-                    {
                         'title' : 'Charging',
                         'type' : 'column',
                         'x_title' : 'Hour',
@@ -1950,13 +1876,6 @@ for report in report_list:
                         'x_rotation' : -45,
                         'y_title' : cost_label,
                         'series' : bill_series,
-                        },
-                    {
-                        'title' : 'Relative Import',
-                        'type' : 'column',
-                        'x_title' : 'Tariff',
-                        'y_title' : 'kWh',
-                        'series' : rel_import_series,
                         },
                     {
                         'title' : 'Charging',
