@@ -53,8 +53,9 @@ echo ' ' >> /tmp/crontab
 echo '# Config check via USB stick every minute ' >> /tmp/crontab
 echo '* * * * * /home/pi/energyutils/solar_monitor/rpi_config.sh >>/dev/null 2>&1' >> /tmp/crontab
 echo ' ' >> /tmp/crontab
-echo '# Daily restart of pi at 09:30' >> /tmp/crontab
-echo '30 9 * * * /usr/sbin/reboot' >> /tmp/crontab
+echo '# Daily restart of services at 06:30' >> /tmp/crontab
+echo '30 6 * * * /usr/bin/systemctl restart solarmon' >> /tmp/crontab
+echo '35 6 * * * /usr/bin/systemctl restart solarmon_kiosk' >> /tmp/crontab
 
 # load the crontab
 crontab /tmp/crontab
