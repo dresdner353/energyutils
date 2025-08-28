@@ -572,11 +572,11 @@ def get_cloud_live_data(config):
 
     now  = int(time.time())
     now_dt = datetime.datetime.fromtimestamp(now)
-    sleep_period = (config['shelly']['time_slot'] - now_dt.second) % 10
+    sleep_period = (config['shelly']['time_slot'] - now_dt.second) % 20
     if sleep_period > 0:
         utils.log_message(
                 1,
-                'Sleep %ds for 10s boundary :0%d' % (
+                'Sleep %ds for 20s boundary :%02d' % (
                     sleep_period,
                     config['shelly']['time_slot'])
                 )
