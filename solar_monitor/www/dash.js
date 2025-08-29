@@ -22,10 +22,6 @@ function get_redirect_url(arg, value) {
     return redirect_url;
 }
 
-// Google charts
-google.charts.load('current', {'packages': ['corechart']});
-google.charts.load('current', {'packages':['gauge']});
-
 // data dict as taken from the /data GET
 var data_dict = {
     year: [],
@@ -1457,10 +1453,19 @@ var year_chart;
 var day_chart_ts = 0;
 var month_chart_ts = 0;
 var year_chart_ts = 0;
+var charts_loaded = false;
 
 // render the Google charts
 function render_charts() {
     console.log("render_charts()");
+
+    // Google charts
+    if (!charts_loaded) {
+        google.charts.load('current', {'packages': ['corechart']});
+        google.charts.load('current', {'packages':['gauge']});
+        charts_loaded = true;
+        console.log("Loaded Google charts");
+    }
 
     column_chart_height = (window.innerHeight) * 0.3;
 
