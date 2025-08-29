@@ -60,6 +60,7 @@ fi
 if [[ "${REBOOT}" -eq 1 ]]
 then
     # display dialog on desktop
+    systemctl stop solarmon_kiosk
     export DISPLAY=:0
     /usr/bin/zenity \
         --info \
