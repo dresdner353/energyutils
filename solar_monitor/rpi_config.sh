@@ -11,8 +11,6 @@ WIFI_CONFIG_FILE=`find /media -name wifi.txt | tail -1`
 
 REBOOT=0
 
-UPDATE_MSG=""
-
 if test -f "${CONFIG_FILE}"
 then
     echo "${CONFIG_FILE} found"
@@ -26,7 +24,6 @@ then
         chmod go-rw ${SOLARMON_CONFIG_FILE}
         chmod u+rw ${SOLARMON_CONFIG_FILE}
         REBOOT=1
-        UPDATE_MSG="${UPDATE_MSG}<span font=\"64\">Updated Config File</span><br>"
     fi
 fi
 
@@ -53,22 +50,11 @@ then
         systemctl restart NetworkManager
         echo "Configured WiFi for ${SSID}"
         REBOOT=1
-        UPDATE_MSG="${UPDATE_MSG}<span font=\"64\">Updated WiFi SSID=${SSID}</span><br>"
     fi
 fi
 
 if [[ "${REBOOT}" -eq 1 ]]
 then
-    # display dialog on desktop
-    systemctl stop solarmon_kiosk
-    export DISPLAY=:0
-    /usr/bin/zenity \
-        --info \
-        --title="Rebooting in 10 seconds" \
-        --text="${UPDATE_MSG}" &
-
-    # small sleep and reboot
-    sleep 10
     /usr/sbin/reboot
 fi
 
