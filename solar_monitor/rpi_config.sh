@@ -11,6 +11,8 @@ WIFI_CONFIG_FILE=`find /media -name wifi.txt | tail -1`
 
 REBOOT=0
 
+UPDATE_MSG="Updated:"
+
 if test -f "${CONFIG_FILE}"
 then
     echo "${CONFIG_FILE} found"
@@ -24,6 +26,7 @@ then
         chmod go-rw ${SOLARMON_CONFIG_FILE}
         chmod u+rw ${SOLARMON_CONFIG_FILE}
         REBOOT=1
+        UPDATE_MSG="${UPDATE_MSG} Config"
     fi
 fi
 
@@ -50,11 +53,18 @@ then
         systemctl restart NetworkManager
         echo "Configured WiFi for ${SSID}"
         REBOOT=1
+        UPDATE_MSG="${UPDATE_MSG} SSID=${SSID}"
     fi
 fi
 
 if [[ "${REBOOT}" -eq 1 ]]
 then
+    /usr/sbin/init 3
+    clear
+    /usr/bin/figlet ${UPDATE_MSG}
+    /usr/bin/figlet "Remove USB drive now"
+    /usr/bin/figlet "Rebooting in 10 seconds..."
+    sleep 10
     /usr/sbin/reboot
 fi
 
