@@ -56,10 +56,12 @@ apt install git unclutter xdotool ttf-mscorefonts-installer python3-requests pyt
 su ${USER} -c "bash -c install_solar_monitor"
 
 # mdns hostname solarmon.local
+echo "Setting hostname..."
 echo 'solarmon' > /etc/hostname
 
 # Wifi setup via USB stick
 # root cron job every minute
+echo "Setting up crontab..."
 chmod +x /home/pi/energyutils/solar_monitor/rpi_config.sh
 echo '# SolarMon cron tasks' > /tmp/crontab
 echo ' ' >> /tmp/crontab
@@ -74,6 +76,7 @@ echo '35 6,18 * * * /usr/bin/systemctl restart solarmon_kiosk' >> /tmp/crontab
 crontab /tmp/crontab
 
 # install and start service
+echo "Setting up wsystemd services..."
 cp ${HOME_DIR}/energyutils/solar_monitor/solarmon.service /etc/systemd/system
 cp ${HOME_DIR}/energyutils/solar_monitor/solarmon_kiosk.service /etc/systemd/system
 systemctl daemon-reload
