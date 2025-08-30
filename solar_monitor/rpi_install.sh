@@ -8,16 +8,26 @@ function install_solar_monitor {
     cd # go to home
     echo "Installing energyutils user:${USER} pwd:${HOME}"
 
-    # backup any existing config and wipe repo
-    mv energyutils/solar_monitor/config.json /tmp
-    rm -rf energyutils
+    # backup any existing config installer logo
+    if [ -f energyutils/solar_monitor/config.json ]; then
+        mv energyutils/solar_monitor/config.json /tmp
+    fi
+    if [ -f energyutils/solar_monitor/www/images/installer.png ]; then
+        mv energyutils/solar_monitor/www/images/installer.png /tmp
+    fi
 
-    # GIT repo
+    # GIT repo wipe and install
+    rm -rf energyutils
     echo "Downloading energyutils..."
     git clone https://github.com/dresdner353/energyutils.git
 
-    # restore config
-    mv /tmp/config.json energyutils/solar_monitor
+    # restore config and logo
+    if [ -f /tmp/config.json ]; then
+        mv /tmp/config.json energyutils/solar_monitor
+    fi
+    if [ -f /tmp/installer.png ]; then
+        mv /tmp/installer.png energyutils/solar_monitor/www/images
+    fi
 }
 
 # export function for su call
@@ -53,9 +63,9 @@ echo ' ' >> /tmp/crontab
 echo '# Config check via USB stick every minute ' >> /tmp/crontab
 echo '* * * * * /home/pi/energyutils/solar_monitor/rpi_config.sh >>/dev/null 2>&1' >> /tmp/crontab
 echo ' ' >> /tmp/crontab
-echo '# Daily restart of services at 06:30' >> /tmp/crontab
-echo '30 6 * * * /usr/bin/systemctl restart solarmon' >> /tmp/crontab
-echo '35 6 * * * /usr/bin/systemctl restart solarmon_kiosk' >> /tmp/crontab
+echo '# Daily restart of services at 06:30/18:30' >> /tmp/crontab
+echo '30 6,18 * * * /usr/bin/systemctl restart solarmon' >> /tmp/crontab
+echo '35 6,18 * * * /usr/bin/systemctl restart solarmon_kiosk' >> /tmp/crontab
 
 # load the crontab
 crontab /tmp/crontab
