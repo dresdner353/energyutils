@@ -49,6 +49,7 @@ USER=pi
 HOME_DIR=~pi
 
 # install packages
+echo "Installing required packages..."
 apt-get update
 apt install git unclutter xdotool ttf-mscorefonts-installer python3-requests python3-dateutil python3-cherrypy3
 
@@ -61,7 +62,7 @@ echo 'solarmon' > /etc/hostname
 
 # Wifi setup via USB stick
 # root cron job every minute
-echo "Setting up crontab..."
+echo "Configuring crontab..."
 chmod +x /home/pi/energyutils/solar_monitor/rpi_config.sh
 echo '# SolarMon cron tasks' > /tmp/crontab
 echo ' ' >> /tmp/crontab
@@ -76,7 +77,7 @@ echo '35 6,18 * * * /usr/bin/systemctl restart solarmon_kiosk' >> /tmp/crontab
 crontab /tmp/crontab
 
 # install and start service
-echo "Setting up wsystemd services..."
+echo "Configuring systemd services..."
 cp ${HOME_DIR}/energyutils/solar_monitor/solarmon.service /etc/systemd/system
 cp ${HOME_DIR}/energyutils/solar_monitor/solarmon_kiosk.service /etc/systemd/system
 systemctl daemon-reload
