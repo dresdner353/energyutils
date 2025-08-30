@@ -1,14 +1,16 @@
 #!/bin/bash
 
 # Exit on errors
-set -x
+set -e
 
 # install
 function install_solar_monitor {
+    set -e # exit on errors
     cd # go to home
     echo "Installing energyutils user:${USER} pwd:${HOME}"
 
     # backup any existing config installer logo
+    echo "Backing up config..."
     if [ -f energyutils/solar_monitor/config.json ]; then
         mv energyutils/solar_monitor/config.json /tmp
     fi
@@ -22,6 +24,7 @@ function install_solar_monitor {
     git clone https://github.com/dresdner353/energyutils.git
 
     # restore config and logo
+    echo "Restoring config..."
     if [ -f /tmp/config.json ]; then
         mv /tmp/config.json energyutils/solar_monitor
     fi
