@@ -10,11 +10,11 @@ do
         echo "solar monitor is up"
         break
     fi
-    sleep 1
+    sleep 5
 done
 
 # give more time for the monitor to be available
-sleep 5
+sleep 20
 
 # chromium kiosk
 echo "Starting Chromium in kiosk mode"
