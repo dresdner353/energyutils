@@ -9,8 +9,29 @@ NM_CONN_FILE="${NM_CONN_DIR}/solarmon.nmconnection"
 NM_CONN_TMPFILE="/tmp/solarmon.nmconnection"
 WIFI_CONFIG_FILE=`find /media -name wifi.txt | tail -1`
 
+OFFLINE_FILE="/tmp/OFFLINE"
+
 REBOOT=0
 
+# Online test
+# used to restart kiosk when going back online
+ping -q -c 1 -w 1 www.google.com >/dev/null 2>&1
+ONLINE=$?
+if [ $ONLINE -ne 0 ]
+then
+    # offline
+    touch ${OFFLINE_FILE}
+else
+    # online
+    if test -f "${OFFLINE_FILE}"
+    then
+        # restart kiosk
+        systemctl restart solarmon_kiosk
+        rm -f ${OFFLINE_FILE}
+    fi
+fi
+
+# JSON config file
 if test -f "${CONFIG_FILE}"
 then
     echo "${CONFIG_FILE} found"
@@ -27,6 +48,7 @@ then
     fi
 fi
 
+# WiFi config file
 if test -f "${WIFI_CONFIG_FILE}"
 then
     echo "$WIFI_CONFIG_FILE found"
