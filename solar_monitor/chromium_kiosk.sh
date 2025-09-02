@@ -24,6 +24,7 @@ export DISPLAY=:0
 # wipe any local chromium config
 cd
 rm -rf .config/chromium
+rm -rf .cache/chromium
 
 # disable screen blanking and move mouse to 0,0
 xset s off
