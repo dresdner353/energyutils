@@ -29,6 +29,13 @@ var data_dict = {
     day: []
 };
 
+// reload timer 
+// initalised with a fixed 120s interval 
+// this is for a forced page reload if no data appears to be 
+// arriving
+var reload_interval = 120000;
+var reload_timer = setInterval(reload_page, reload_interval);
+
 // refresh timer 
 // initalised with a short initial value for the first load
 var refresh_interval = 1000;
@@ -64,6 +71,9 @@ $(window).focus(function() {
     display_data();
 
     // restart timers
+    clearInterval(reload_timer);
+    reload_timer = setInterval(reload_page, reload_interval);
+
     clearInterval(refresh_timer);
     refresh_timer = setInterval(refresh_data, refresh_interval);
 
@@ -72,6 +82,7 @@ $(window).focus(function() {
 
 }).blur(function() {
 
+    clearInterval(reload_timer);
     clearInterval(refresh_timer);
     clearInterval(metric_cycle_timer);
 
@@ -83,10 +94,26 @@ $(window).resize(function () {
     display_data();
 });
 
-// config timestamp
+// config and refresh timestamps
 // used to detect config changes
-// for layout updating
+// for layout updating and a health check 
+// on data refresh
 var config_ts = 0;
+var refresh_ts = 0;
+
+// reload page is no updates in some time
+function reload_page() {
+    console.log("reload_page()");
+    now_ts = Date.now();
+    last_activity = now_ts - refresh_ts;
+    console.log("Last refresh (ms):" + last_activity);
+    if (last_activity >= reload_interval) {
+        console.log("No recent data refresh detected, force reloading page");
+
+        // reload, bypassing cache
+        window.location.reload(true);
+    }
+}
 
 // refreshes API data for 
 // constructing the dashboard
@@ -105,6 +132,13 @@ function refresh_data() {
     // valid retrieval of data
     data_request.done(function(data) {
         data_dict = JSON.parse(data);
+
+        // mark what seems to be a valid data refresh
+        // with the current timestamp
+        if ('last_updated' in data_dict && 
+            data_dict.last_updated > 0) {
+            refresh_ts = Date.now();
+        }
 
         // set layout when a config change is detected
         if (data_dict['config_ts'] != config_ts) {
