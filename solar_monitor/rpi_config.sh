@@ -19,19 +19,24 @@ ONLINE=$?
 if [ $ONLINE -ne 0 ]
 then
     # offline
-    touch ${OFFLINE_FILE}
+    # only touch file if it doesn't exist
+    if [ ! -f "${OFFLINE_FILE}" ]
+    then
+        touch ${OFFLINE_FILE}
+    fi
 else
     # online
-    if test -f "${OFFLINE_FILE}"
+    # if known to be offline
+    # restart kiosk and delete file
+    if [ -f "${OFFLINE_FILE}" ]
     then
-        # restart kiosk
         systemctl restart solarmon_kiosk
         rm -f ${OFFLINE_FILE}
     fi
 fi
 
 # JSON config file
-if test -f "${CONFIG_FILE}"
+if [ -f "${CONFIG_FILE}" ]
 then
     echo "${CONFIG_FILE} found"
     if cmp -s "${CONFIG_FILE}" "${SOLARMON_CONFIG_FILE}"
@@ -48,7 +53,7 @@ then
 fi
 
 # WiFi config file
-if test -f "${WIFI_CONFIG_FILE}"
+if [ -f "${WIFI_CONFIG_FILE}" ]
 then
     echo "$WIFI_CONFIG_FILE found"
     # source variables
