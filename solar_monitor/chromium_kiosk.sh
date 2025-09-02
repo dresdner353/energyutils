@@ -13,9 +13,6 @@ do
     sleep 5
 done
 
-# give more time for the monitor to be available
-sleep 10
-
 # chromium kiosk
 echo "Starting Chromium in kiosk mode"
 killall -9 chromium-browser 
