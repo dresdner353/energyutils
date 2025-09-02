@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 CONFIG_FILE=`find /media -name config.json | tail -1`
 SOLARMON_CONFIG_FILE='/home/pi/energyutils/solar_monitor/config.json'
