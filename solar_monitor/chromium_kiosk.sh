@@ -14,7 +14,7 @@ do
 done
 
 # give more time for the monitor to be available
-sleep 30
+sleep 10
 
 # chromium kiosk
 echo "Starting Chromium in kiosk mode"
