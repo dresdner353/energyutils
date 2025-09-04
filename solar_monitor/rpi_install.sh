@@ -31,6 +31,10 @@ function install_solar_monitor {
     if [ -f /tmp/installer.png ]; then
         mv /tmp/installer.png energyutils/solar_monitor/www/images
     fi
+
+    # wipe chromium config and cache
+    rm -rf .config/chromium
+    rm -rf .cache/chromium
 }
 
 # export function for su call
