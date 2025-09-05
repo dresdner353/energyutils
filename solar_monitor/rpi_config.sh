@@ -39,11 +39,12 @@ fi
 # offline delayed 20 minutes 
 # restart network and services
 if [ -f "${OFFLINE_FILE}" ]
+then
     NOW_TS=`date +%s`
     OFFLINE_TS=`stat -c %Y ${OFFLINE_FILE}`
     OFFLINE_DELTA=`expr ${NOW_TS} - ${OFFLINE_TS}`
 
-    if [ "$OFFLINE_DELTA" -ge "S{OFFLINE_RESTART_DELAY}" ] 
+    if [ "$OFFLINE_DELTA" -ge "${OFFLINE_RESTART_DELAY}" ] 
     then
         echo "Network offline over ${OFFLINE_RESTART_DELAY} seconds"
         echo "Restarting NetworkManager and services"
@@ -54,7 +55,7 @@ if [ -f "${OFFLINE_FILE}" ]
         systemctl restart solarmon
         systemctl restart solarmon_kiosk
     fi
-then
+fi
 
 # JSON config file
 if [ -f "${CONFIG_FILE}" ]
