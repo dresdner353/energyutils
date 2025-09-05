@@ -43,7 +43,8 @@ if [ -f "${OFFLINE_FILE}" ]
     OFFLINE_TS=`stat -c %Y ${OFFLINE_FILE}`
     OFFLINE_DELTA=`expr ${NOW_TS} - ${OFFLINE_TS}`
 
-    if [ "$OFFLINE_DELTA" -ge "S{OFFLINE_RESTART_DELAY}" ]; then
+    if [ "$OFFLINE_DELTA" -ge "S{OFFLINE_RESTART_DELAY}" ] 
+    then
         echo "Network offline over ${OFFLINE_RESTART_DELAY} seconds"
         echo "Restarting NetworkManager and services"
         # remove offline file and restart network/services
