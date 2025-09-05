@@ -9,6 +9,7 @@ NM_CONN_TMPFILE="/tmp/solarmon.nmconnection"
 WIFI_CONFIG_FILE=`find /media -name wifi.txt | tail -1`
 
 OFFLINE_FILE="/tmp/OFFLINE"
+OFFLINE_RESTART_DELAY=1200  # seconds
 
 REBOOT=0
 
@@ -34,6 +35,25 @@ else
         rm -f ${OFFLINE_FILE}
     fi
 fi
+
+# offline delayed 20 minutes 
+# restart network and services
+if [ -f "${OFFLINE_FILE}" ]
+    NOW_TS=`date +%s`
+    OFFLINE_TS=`stat -c %Y ${OFFLINE_FILE}`
+    OFFLINE_DELTA=`expr ${NOW_TS} - ${OFFLINE_TS}`
+
+    if [ "$OFFLINE_DELTA" -ge "S{OFFLINE_RESTART_DELAY}" ]; then
+        echo "Network offline over ${OFFLINE_RESTART_DELAY} seconds"
+        echo "Restarting NetworkManager and services"
+        # remove offline file and restart network/services
+        rm -f ${OFFLINE_FILE}
+        systemctl restart NetworkManager
+        sleep 10
+        systemctl restart solarmon
+        systemctl restart solarmon_kiosk
+    fi
+then
 
 # JSON config file
 if [ -f "${CONFIG_FILE}" ]
