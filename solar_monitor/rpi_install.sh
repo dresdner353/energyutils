@@ -35,6 +35,19 @@ function install_solar_monitor {
     # wipe chromium config and cache
     rm -rf .config/chromium
     rm -rf .cache/chromium
+
+    # Wifi/config setup and network monitoring script
+    # via crontab every minute
+    echo "Configuring crontab..."
+    chmod +x /home/pi/energyutils/solar_monitor/rpi_config.sh
+    echo '# SolarMon cron tasks' > /tmp/crontab
+    echo ' ' >> /tmp/crontab
+    echo '# Config check via USB stick every minute ' >> /tmp/crontab
+    echo '* * * * * /home/pi/energyutils/solar_monitor/rpi_config.sh >>/dev/null 2>&1' >> /tmp/crontab
+    echo ' ' >> /tmp/crontab
+    echo '# Daily restart of services at 06:00, 18:00' >> /tmp/crontab
+    echo '0 6,18 * * * sudo /usr/bin/systemctl restart solarmon' >> /tmp/crontab
+    echo '5 6,18 * * * sudo /usr/bin/systemctl restart solarmon_kiosk' >> /tmp/crontab
 }
 
 # export function for su call
@@ -63,19 +76,6 @@ su ${USER} -c "bash -c install_solar_monitor"
 # mdns hostname solarmon.local
 echo "Setting hostname..."
 echo 'solarmon' > /etc/hostname
-
-# Wifi setup via USB stick
-# root cron job every minute
-echo "Configuring crontab..."
-chmod +x /home/pi/energyutils/solar_monitor/rpi_config.sh
-echo '# SolarMon cron tasks' > /tmp/crontab
-echo ' ' >> /tmp/crontab
-echo '# Config check via USB stick every minute ' >> /tmp/crontab
-echo '* * * * * /home/pi/energyutils/solar_monitor/rpi_config.sh >>/dev/null 2>&1' >> /tmp/crontab
-echo ' ' >> /tmp/crontab
-echo '# Daily restart of services at 06:00, 18:00' >> /tmp/crontab
-echo '0 6,18 * * * /usr/bin/systemctl restart solarmon' >> /tmp/crontab
-echo '5 6,18 * * * /usr/bin/systemctl restart solarmon_kiosk' >> /tmp/crontab
 
 # load the crontab
 crontab /tmp/crontab
