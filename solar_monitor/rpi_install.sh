@@ -48,6 +48,9 @@ function install_solar_monitor {
     echo '# Daily restart of services at 06:00, 18:00' >> /tmp/crontab
     echo '0 6,18 * * * sudo /usr/bin/systemctl restart solarmon' >> /tmp/crontab
     echo '5 6,18 * * * sudo /usr/bin/systemctl restart solarmon_kiosk' >> /tmp/crontab
+
+    # load the crontab
+    crontab /tmp/crontab
 }
 
 # export function for su call
@@ -76,9 +79,6 @@ su ${USER} -c "bash -c install_solar_monitor"
 # mdns hostname solarmon.local
 echo "Setting hostname..."
 echo 'solarmon' > /etc/hostname
-
-# load the crontab
-crontab /tmp/crontab
 
 echo "Configuring D-Bus notification service..."
 NOTIF_SVC_FILE=/usr/share/dbus-1/services/org.freedesktop.Notifications.service
