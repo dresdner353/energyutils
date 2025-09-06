@@ -80,12 +80,6 @@ su ${USER} -c "bash -c install_solar_monitor"
 echo "Setting hostname..."
 echo 'solarmon' > /etc/hostname
 
-echo "Configuring D-Bus notification service..."
-NOTIF_SVC_FILE=/usr/share/dbus-1/services/org.freedesktop.Notifications.service
-echo '[D-BUS Service]' > ${NOTIF_SVC_FILE}
-echo 'Name=org.freedesktop.Notifications' >> ${NOTIF_SVC_FILE}
-echo 'Exec=/usr/lib/notification-daemon/notification-daemon' >> ${NOTIF_SVC_FILE}
-
 # install and start service
 echo "Configuring systemd services..."
 cp ${HOME_DIR}/energyutils/solar_monitor/solarmon.service /etc/systemd/system
