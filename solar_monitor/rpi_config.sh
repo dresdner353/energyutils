@@ -26,7 +26,7 @@ ONLINE=$?
 if [ $ONLINE -ne 0 ]
 then
     # offline
-    zenity --timeout=20 --notification  --text="Network Offline"
+    zenity --notification  --text="Network Offline"
     # only touch file if it doesn't exist
     if [ ! -f "${OFFLINE_FILE}" ]
     then
@@ -38,7 +38,7 @@ else
     # restart kiosk and delete file
     if [ -f "${OFFLINE_FILE}" ]
     then
-        zenity --timeout=20 --notification  --text="Network Online.. restarting UI"
+        zenity --notification  --text="Network Online.. restarting UI"
         sudo systemctl restart solarmon_kiosk
         rm -f ${OFFLINE_FILE}
     fi
@@ -54,7 +54,7 @@ then
 
     if [ "$OFFLINE_DELTA" -ge "${OFFLINE_RESTART_DELAY}" ] 
     then
-        zenity --timeout=20 --notification  --text="Network offline over ${OFFLINE_RESTART_DELAY} seconds.. restarting network and services"
+        zenity --notification  --text="Network offline over ${OFFLINE_RESTART_DELAY} seconds.. restarting network and services"
         # remove offline file and restart network/services
         rm -f ${OFFLINE_FILE}
         sudo systemctl restart NetworkManager
@@ -69,12 +69,12 @@ then
     echo "${CONFIG_FILE} found"
     if cmp -s "${CONFIG_FILE}" "${SOLARMON_CONFIG_FILE}"
     then
-        zenity --timeout=20 --notification  --text="Ignoring SolarMon configuration (no changes, remove USB drive)"
+        zenity --notification  --text="Ignoring SolarMon configuration (no changes, remove USB drive)"
     else
         cp ${CONFIG_FILE} ${SOLARMON_CONFIG_FILE}
         chmod go-rw ${SOLARMON_CONFIG_FILE}
         chmod u+rw ${SOLARMON_CONFIG_FILE}
-        zenity --timeout=20 --notification  --text="Applied new SolarMon configuration (remove USB drive)"
+        zenity --notification  --text="Applied new SolarMon configuration (remove USB drive)"
         sudo systemctl restart solarmon
         sudo systemctl restart solarmon_kiosk
     fi
@@ -93,7 +93,7 @@ then
 
     if sudo cmp -s "${NM_CONN_TMPFILE}" "${NM_CONN_FILE}"
     then
-        zenity --timeout=20 --notification  --text="Ignoring WiFi config (no changes, remove USB drive)"
+        zenity --notification  --text="Ignoring WiFi config (no changes, remove USB drive)"
     else
         # move to NetworkManager directory
         # and restart NetworkManager
@@ -102,7 +102,7 @@ then
         sudo chown root:root ${NM_CONN_FILE}
         sudo chmod go-rw ${NM_CONN_FILE}
         sudo systemctl restart NetworkManager
-        zenity --timeout=20 --notification  --text="Updated WiFi to ${SSID} (remove USB drive)"
+        zenity --notification  --text="Updated WiFi to ${SSID} (remove USB drive)"
     fi
 fi
 
@@ -110,7 +110,7 @@ if [[ "${REBOOT}" -eq 1 ]]
 then
     # allow 10s delay to read previous notifications
     sleep 10
-    zenity --timeout=20 --notification  --text="Rebooting in 10 seconds... (remove USB drive when reboot starts)"
+    zenity --notification  --text="Rebooting in 10 seconds... (remove USB drive when reboot starts)"
     # another delay to read notification
     sleep 10
     sudo reboot
