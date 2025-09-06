@@ -13,7 +13,7 @@ OFFLINE_FILE="/tmp/OFFLINE"
 OFFLINE_RESTART_DELAY=1200  # seconds
 
 function display_msg() {
-    zenity --timeout=15 --info --title "SolarMon" --text "<span font=\"48\">${1}</span>"
+    zenity --timeout=15 --info --title "SolarMon" --text "<span font=\"36\">${1}</span>"
 }
 
 
@@ -41,7 +41,7 @@ else
     # restart kiosk and delete file
     if [ -f "${OFFLINE_FILE}" ]
     then
-        display_msg "Internet Connection Restored \n\nRestarting UI"
+        display_msg "Internet Connection Restored \n\nRestarting SolarMon"
         sudo systemctl restart solarmon_kiosk
         rm -f ${OFFLINE_FILE}
     fi
@@ -57,7 +57,7 @@ then
 
     if [ "$OFFLINE_DELTA" -ge "${OFFLINE_RESTART_DELAY}" ] 
     then
-        display_msg "No Internet connection for over 20 minutes \n\nRestarting network and SolarMon services"
+        display_msg "Restarting SolarMon"
         # remove offline file and restart network/services
         rm -f ${OFFLINE_FILE}
         sudo systemctl restart NetworkManager
@@ -72,12 +72,12 @@ then
     echo "${CONFIG_FILE} found"
     if cmp -s "${CONFIG_FILE}" "${SOLARMON_CONFIG_FILE}"
     then
-        display_msg "Ignoring SolarMon configuration \n\n(no changes detected, remove USB drive)"
+        display_msg "SolarMon config file is already applied \n\n(remove USB drive)"
     else
         cp ${CONFIG_FILE} ${SOLARMON_CONFIG_FILE}
         chmod go-rw ${SOLARMON_CONFIG_FILE}
         chmod u+rw ${SOLARMON_CONFIG_FILE}
-        display_msg "Applied new SolarMon configuration \n\n(remove USB drive)"
+        display_msg "Applied new SolarMon config file \n\n(remove USB drive)"
         sudo systemctl restart solarmon
         sudo systemctl restart solarmon_kiosk
     fi
@@ -96,7 +96,7 @@ then
 
     if sudo cmp -s "${NM_CONN_TMPFILE}" "${NM_CONN_FILE}"
     then
-        display_msg "Ignoring WiFi config \n\n(no changes detected, remove USB drive)"
+        display_msg "WiFi is already updated \n\n(remove USB drive)"
     else
         # move to NetworkManager directory
         # and restart NetworkManager
