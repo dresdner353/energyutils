@@ -11,9 +11,11 @@ WIFI_CONFIG_FILE=`find /media -name wifi.txt | tail -1`
 
 OFFLINE_FILE="/tmp/OFFLINE"
 OFFLINE_RESTART_DELAY=1200  # seconds
-ZENITY_OPTS="--timeout=20 --info "
 
-REBOOT=0
+function display_msg() {
+    zenity --timeout=15 --info --title "SolarMon" --text "<span font=\"48\">${1}</span>"
+}
+
 
 # PATH and X11
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
@@ -27,7 +29,7 @@ ONLINE=$?
 if [ $ONLINE -ne 0 ]
 then
     # offline
-    zenity ${ZENITY_OPTS} --text="Network Offline"
+    display_msg "Lost Network Connection"
     # only touch file if it doesn't exist
     if [ ! -f "${OFFLINE_FILE}" ]
     then
@@ -39,7 +41,7 @@ else
     # restart kiosk and delete file
     if [ -f "${OFFLINE_FILE}" ]
     then
-        zenity ${ZENITY_OPTS} --text="Network Online.. restarting UI"
+        display_msg "Connected to Network.. restarting UI"
         sudo systemctl restart solarmon_kiosk
         rm -f ${OFFLINE_FILE}
     fi
@@ -55,7 +57,7 @@ then
 
     if [ "$OFFLINE_DELTA" -ge "${OFFLINE_RESTART_DELAY}" ] 
     then
-        zenity ${ZENITY_OPTS} --text="Network offline over ${OFFLINE_RESTART_DELAY} seconds.. restarting network and services"
+        display_msg "Network connection offline over ${OFFLINE_RESTART_DELAY} seconds <br>restarting network and SolarMon services"
         # remove offline file and restart network/services
         rm -f ${OFFLINE_FILE}
         sudo systemctl restart NetworkManager
@@ -70,12 +72,12 @@ then
     echo "${CONFIG_FILE} found"
     if cmp -s "${CONFIG_FILE}" "${SOLARMON_CONFIG_FILE}"
     then
-        zenity ${ZENITY_OPTS} --text="Ignoring SolarMon configuration (no changes, remove USB drive)"
+        display_msg "Ignoring SolarMon configuration <br>(no changes, remove USB drive)"
     else
         cp ${CONFIG_FILE} ${SOLARMON_CONFIG_FILE}
         chmod go-rw ${SOLARMON_CONFIG_FILE}
         chmod u+rw ${SOLARMON_CONFIG_FILE}
-        zenity ${ZENITY_OPTS} --text="Applied new SolarMon configuration (remove USB drive)"
+        display_msg "Applied new SolarMon configuration <br>(remove USB drive)"
         sudo systemctl restart solarmon
         sudo systemctl restart solarmon_kiosk
     fi
@@ -94,7 +96,7 @@ then
 
     if sudo cmp -s "${NM_CONN_TMPFILE}" "${NM_CONN_FILE}"
     then
-        zenity ${ZENITY_OPTS} --text="Ignoring WiFi config (no changes, remove USB drive)"
+        display_msg "Ignoring WiFi config <br>(no changes, remove USB drive)"
     else
         # move to NetworkManager directory
         # and restart NetworkManager
@@ -103,17 +105,6 @@ then
         sudo chown root:root ${NM_CONN_FILE}
         sudo chmod go-rw ${NM_CONN_FILE}
         sudo systemctl restart NetworkManager
-        zenity ${ZENITY_OPTS} --text="Updated WiFi to ${SSID} (remove USB drive)"
+        display_msg "Updated WiFi to ${SSID} <br>(remove USB drive)"
     fi
 fi
-
-if [[ "${REBOOT}" -eq 1 ]]
-then
-    # allow 10s delay to read previous notifications
-    sleep 10
-    zenity ${ZENITY_OPTS} --text="Rebooting in 10 seconds... (remove USB drive when reboot starts)"
-    # another delay to read notification
-    sleep 10
-    sudo reboot
-fi
-
