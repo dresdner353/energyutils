@@ -99,6 +99,7 @@ then
         # and restart NetworkManager
         sudo rm -f ${NM_CONN_DIR}/*
         sudo mv ${NM_CONN_TMPFILE} ${NM_CONN_FILE}
+        sudo chown root:root ${NM_CONN_FILE}
         sudo chmod go-rw ${NM_CONN_FILE}
         sudo systemctl restart NetworkManager
         zenity --notification  --text="Applying new WiFi configuration (SSID=${SSID})"
