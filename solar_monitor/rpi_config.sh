@@ -13,7 +13,7 @@ OFFLINE_FILE="/tmp/OFFLINE"
 OFFLINE_RESTART_DELAY=1200  # seconds
 
 function display_msg() {
-    zenity --timeout=15 --info --title "SolarMon" --text "<p font=\"48\">${1}</p>"
+    zenity --timeout=15 --info --title "SolarMon" --text "<span font=\"48\">${1}</span>"
 }
 
 
