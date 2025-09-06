@@ -6,6 +6,7 @@ SOLARMON_CONFIG_FILE='/home/pi/energyutils/solar_monitor/config.json'
 NM_CONN_DIR="/etc/NetworkManager/system-connections"
 NM_CONN_FILE="${NM_CONN_DIR}/solarmon.nmconnection"
 NM_CONN_TMPFILE="/tmp/solarmon.nmconnection"
+NM_CONN_TMPL="/home/pi/energyutils/solar_monitor/rpi.nmconnection.tmpl"
 WIFI_CONFIG_FILE=`find /media -name wifi.txt | tail -1`
 
 OFFLINE_FILE="/tmp/OFFLINE"
@@ -13,7 +14,10 @@ OFFLINE_RESTART_DELAY=1200  # seconds
 
 REBOOT=0
 
+# PATH and X11
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 export DISPLAY=:0
+xhost +
 
 # Online test
 # used to restart kiosk when going back online
@@ -35,7 +39,7 @@ else
     if [ -f "${OFFLINE_FILE}" ]
     then
         zenity --notification  --text="Network Online.. restarting kiosk"
-        systemctl restart solarmon_kiosk
+        sudo systemctl restart solarmon_kiosk
         rm -f ${OFFLINE_FILE}
     fi
 fi
@@ -53,9 +57,9 @@ then
         zenity --notification  --text="Network offline over ${OFFLINE_RESTART_DELAY} seconds.. restarting network and services"
         # remove offline file and restart network/services
         rm -f ${OFFLINE_FILE}
-        systemctl restart NetworkManager
-        systemctl restart solarmon
-        systemctl restart solarmon_kiosk
+        sudo systemctl restart NetworkManager
+        sudo systemctl restart solarmon
+        sudo systemctl restart solarmon_kiosk
     fi
 fi
 
@@ -84,19 +88,19 @@ then
     . "$WIFI_CONFIG_FILE"
 
     # create NetworkManager connection file from template
-    cat /home/pi/energyutils/solar_monitor/rpi.nmconnection.tmpl | \
+    cat ${NM_CONN_TMPL} | \
         sed -e "s/__SSID__/${SSID}/g" -e "s/__PASSWORD__/${PASSWORD}/g" > ${NM_CONN_TMPFILE}
 
-    if cmp -s "${NM_CONN_TMPFILE}" "${NM_CONN_FILE}"
+    if sudo cmp -s "${NM_CONN_TMPFILE}" "${NM_CONN_FILE}"
     then
         zenity --notification  --text="Ignoring WiFi configuration (no changes)"
     else
         # move to NetworkManager directory
         # and restart NetworkManager
-        rm -f ${NM_CONN_DIR}/*
-        mv ${NM_CONN_TMPFILE} ${NM_CONN_FILE}
-        chmod go-rw ${NM_CONN_FILE}
-        systemctl restart NetworkManager
+        sudo rm -f ${NM_CONN_DIR}/*
+        sudo mv ${NM_CONN_TMPFILE} ${NM_CONN_FILE}
+        sudo chmod go-rw ${NM_CONN_FILE}
+        sudo systemctl restart NetworkManager
         zenity --notification  --text="Applying new WiFi configuration (SSID=${SSID})"
         REBOOT=1
     fi
@@ -109,6 +113,6 @@ then
     zenity --notification  --text="Rebooting in 10 seconds... (remove USB drive when reboot starts)"
     # another delay to read notification
     sleep 10
-    /usr/sbin/reboot
+    sudo reboot
 fi
 
