@@ -27,10 +27,10 @@ if [ $ONLINE -ne 0 ]
 then
     # offline
     # only touch file if it doesn't exist
+    zenity --notification  --text="Network Offline"
     if [ ! -f "${OFFLINE_FILE}" ]
     then
         touch ${OFFLINE_FILE}
-        zenity --notification  --text="Network Offline"
     fi
 else
     # online
