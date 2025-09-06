@@ -93,7 +93,7 @@ then
 
     if sudo cmp -s "${NM_CONN_TMPFILE}" "${NM_CONN_FILE}"
     then
-        zenity --notification  --text="Ignoring WiFi configuration (no changes)"
+        zenity --notification  --text="Ignoring WiFi config (no changes)"
     else
         # move to NetworkManager directory
         # and restart NetworkManager
@@ -102,7 +102,7 @@ then
         sudo chown root:root ${NM_CONN_FILE}
         sudo chmod go-rw ${NM_CONN_FILE}
         sudo systemctl restart NetworkManager
-        zenity --notification  --text="Applying new WiFi configuration (SSID=${SSID})"
+        zenity --notification  --text="Updating WiFi config (${SSID})"
         REBOOT=1
     fi
 fi
