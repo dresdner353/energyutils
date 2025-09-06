@@ -69,7 +69,7 @@ then
     echo "${CONFIG_FILE} found"
     if cmp -s "${CONFIG_FILE}" "${SOLARMON_CONFIG_FILE}"
     then
-        zenity --timeout=20 --notification  --text="Ignoring SolarMon configuration (no changes)"
+        zenity --timeout=20 --notification  --text="Ignoring SolarMon configuration (no changes, remove USB drive)"
     else
         cp ${CONFIG_FILE} ${SOLARMON_CONFIG_FILE}
         chmod go-rw ${SOLARMON_CONFIG_FILE}
@@ -93,7 +93,7 @@ then
 
     if sudo cmp -s "${NM_CONN_TMPFILE}" "${NM_CONN_FILE}"
     then
-        zenity --timeout=20 --notification  --text="Ignoring WiFi config (no changes)"
+        zenity --timeout=20 --notification  --text="Ignoring WiFi config (no changes, remove USB drive)"
     else
         # move to NetworkManager directory
         # and restart NetworkManager
