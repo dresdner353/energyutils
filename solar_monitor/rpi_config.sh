@@ -29,7 +29,7 @@ ONLINE=$?
 if [ $ONLINE -ne 0 ]
 then
     # offline
-    display_msg "Lost Network Connection"
+    display_msg "No Internet Connection"
     # only touch file if it doesn't exist
     if [ ! -f "${OFFLINE_FILE}" ]
     then
@@ -41,7 +41,7 @@ else
     # restart kiosk and delete file
     if [ -f "${OFFLINE_FILE}" ]
     then
-        display_msg "Connected to Network.. restarting UI"
+        display_msg "Internet Conection Restored <br>restarting UI"
         sudo systemctl restart solarmon_kiosk
         rm -f ${OFFLINE_FILE}
     fi
@@ -57,7 +57,7 @@ then
 
     if [ "$OFFLINE_DELTA" -ge "${OFFLINE_RESTART_DELAY}" ] 
     then
-        display_msg "Network connection offline over ${OFFLINE_RESTART_DELAY} seconds <br>restarting network and SolarMon services"
+        display_msg "No Internet connection for over ${OFFLINE_RESTART_DELAY} seconds <br>Restarting network and SolarMon services"
         # remove offline file and restart network/services
         rm -f ${OFFLINE_FILE}
         sudo systemctl restart NetworkManager
@@ -72,7 +72,7 @@ then
     echo "${CONFIG_FILE} found"
     if cmp -s "${CONFIG_FILE}" "${SOLARMON_CONFIG_FILE}"
     then
-        display_msg "Ignoring SolarMon configuration <br>(no changes, remove USB drive)"
+        display_msg "Ignoring SolarMon configuration <br>(no changes detected, remove USB drive)"
     else
         cp ${CONFIG_FILE} ${SOLARMON_CONFIG_FILE}
         chmod go-rw ${SOLARMON_CONFIG_FILE}
@@ -96,7 +96,7 @@ then
 
     if sudo cmp -s "${NM_CONN_TMPFILE}" "${NM_CONN_FILE}"
     then
-        display_msg "Ignoring WiFi config <br>(no changes, remove USB drive)"
+        display_msg "Ignoring WiFi config <br>(no changes detected, remove USB drive)"
     else
         # move to NetworkManager directory
         # and restart NetworkManager
