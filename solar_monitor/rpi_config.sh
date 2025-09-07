@@ -105,12 +105,14 @@ then
         display_msg "WiFi is already updated to ${SSID} \n\n(remove USB drive)"
     else
         # move to NetworkManager directory
-        # and restart NetworkManager
+        # and restart everything
         sudo rm -f ${NM_CONN_DIR}/*
         sudo mv ${NM_CONN_TMPFILE} ${NM_CONN_FILE}
         sudo chown root:root ${NM_CONN_FILE}
         sudo chmod go-rw ${NM_CONN_FILE}
         sudo systemctl restart NetworkManager
+        sudo systemctl restart solarmon
+        sudo systemctl restart solarmon_kiosk
         display_msg "Updated WiFi to ${SSID} \n\n(remove USB drive)"
     fi
 fi
