@@ -13,7 +13,7 @@ OFFLINE_FILE="/tmp/OFFLINE"
 OFFLINE_RESTART_DELAY=1200  # seconds
 
 function display_msg() {
-    zenity --timeout=15 --info --title "SolarMon" --text "<span font=\"36\">${1}</span>"
+    zenity --timeout=5 --info --title "SolarMon" --text "<span font=\"32\">${1}</span>"
 }
 
 
@@ -29,7 +29,7 @@ ONLINE=$?
 if [ $ONLINE -ne 0 ]
 then
     # offline
-    display_msg "No Internet Connection"
+    display_msg "Network Connection Lost"
     # only touch file if it doesn't exist
     if [ ! -f "${OFFLINE_FILE}" ]
     then
@@ -41,7 +41,7 @@ else
     # restart kiosk and delete file
     if [ -f "${OFFLINE_FILE}" ]
     then
-        display_msg "Internet Connection Restored \n\nRestarting SolarMon"
+        display_msg "Network Connection Restored"
         sudo systemctl restart solarmon_kiosk
         rm -f ${OFFLINE_FILE}
     fi
@@ -57,7 +57,7 @@ then
 
     if [ "$OFFLINE_DELTA" -ge "${OFFLINE_RESTART_DELAY}" ] 
     then
-        display_msg "Restarting SolarMon"
+        display_msg "Network Connection Lost for over 20 minutes"
         # remove offline file and restart network/services
         rm -f ${OFFLINE_FILE}
         sudo systemctl restart NetworkManager
