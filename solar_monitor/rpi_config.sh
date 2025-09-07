@@ -29,7 +29,7 @@ ONLINE=$?
 if [ $ONLINE -ne 0 ]
 then
     # offline
-    display_msg "Network Connection Lost"
+    display_msg "No Internet connection"
     # only touch file if it doesn't exist
     if [ ! -f "${OFFLINE_FILE}" ]
     then
@@ -41,7 +41,7 @@ else
     # restart kiosk and delete file
     if [ -f "${OFFLINE_FILE}" ]
     then
-        display_msg "Network Connection Restored"
+        display_msg "Internet connection restored"
         sudo systemctl restart solarmon_kiosk
         rm -f ${OFFLINE_FILE}
     fi
@@ -57,7 +57,7 @@ then
 
     if [ "$OFFLINE_DELTA" -ge "${OFFLINE_RESTART_DELAY}" ] 
     then
-        display_msg "Network Connection Lost for over 20 minutes"
+        display_msg "Internet connection down for over 20 minutes"
         # remove offline file and restart network/services
         rm -f ${OFFLINE_FILE}
         sudo systemctl restart NetworkManager
@@ -96,7 +96,7 @@ then
 
     if sudo cmp -s "${NM_CONN_TMPFILE}" "${NM_CONN_FILE}"
     then
-        display_msg "WiFi is already updated \n\n(remove USB drive)"
+        display_msg "WiFi is already updated to ${SSID} \n\n(remove USB drive)"
     else
         # move to NetworkManager directory
         # and restart NetworkManager
