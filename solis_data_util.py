@@ -12,8 +12,8 @@ import base64
 
 
 def log_message(
-        verbose,
-        message):
+        verbose: bool,
+        message: str) -> None:
 
     if verbose:
         print(
@@ -27,8 +27,8 @@ def log_message(
 
 
 def parse_time(
-        datetime_str,
-        timezone):
+        datetime_str: str,
+        timezone: str) -> tuple:
 
     # naive parse
     dt = dateutil.parser.parse(datetime_str)
@@ -44,8 +44,8 @@ def parse_time(
 
 
 def get_hours_in_day(
-        datetime_str,
-        timezone):
+        datetime_str: str,
+        timezone: str) -> int:
 
     # naive parse of our datetime field
     dt = datetime.datetime.strptime(datetime_str, '%Y/%m/%d %H:%M:%S')
@@ -78,10 +78,10 @@ def get_hours_in_day(
 
 
 def get_shelly_day_data(
-        api_host,
-        auth_key,
-        device_id,
-        date_ref):
+        api_host: str,
+        auth_key: str,
+        device_id: str,
+        date_ref: datetime.date) -> dict:
 
     global gv_verbose
 
@@ -179,11 +179,11 @@ def get_shelly_day_data(
 # adapted from code
 # in https://github.com/Gentleman1983/ginlong_solis_api_connector
 def get_solis_cloud_data(
-        solis_api_host,
-        solis_key_id,
-        solis_key_secret,
-        url_part, 
-        request) -> dict:
+        solis_api_host: str,
+        solis_key_id: str,
+        solis_key_secret: str,
+        url_part: str, 
+        request: dict) -> dict:
 
     global gv_verbose
 
@@ -250,13 +250,13 @@ def get_solis_cloud_data(
 
 
 def get_solis_day_data(
-            solis_api_host,
-            solis_key_id,
-            solis_key_secret,
-            solis_inverter_sn,
-            solis_strings,
-            solis_ac_phase,
-            date_ref):
+        solis_api_host: str,
+        solis_key_id: str,
+        solis_key_secret: str,
+        solis_inverter_sn: str,
+        solis_strings: int,
+        solis_ac_phase: int,
+        date_ref: datetime.date) -> dict:
 
     request = {}
     request['sn'] = solis_inverter_sn
@@ -450,18 +450,18 @@ def get_solis_day_data(
 
 
 def get_day_data(
-        odir,
-        timezone,
-        date_ref,
-        solis_api_host,
-        solis_key_id,
-        solis_key_secret,
-        solis_inverter_sn,
-        solis_strings,
-        solis_ac_phase,
-        shelly_api_host,
-        shelly_auth_key,
-        shelly_device_id):
+        odir: str,
+        timezone: str,
+        date_ref: datetime.date,
+        solis_api_host: str,
+        solis_key_id: str,
+        solis_key_secret: str,
+        solis_inverter_sn: str,
+        solis_strings: int,
+        solis_ac_phase: int,
+        shelly_api_host: str,
+        shelly_auth_key: str,
+        shelly_device_id: str) -> None:
 
     # local jsonl file
     dest_file_prefix = '%04d-%02d-%02d' % (

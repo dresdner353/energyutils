@@ -10,8 +10,8 @@ import glob
 
 
 def log_message(
-        verbose,
-        message):
+        verbose: int,
+        message: str) -> None:
 
     if verbose:
         print(
@@ -25,8 +25,8 @@ def log_message(
 
 
 def parse_esb_time(
-        datetime_str,
-        timezone):
+        datetime_str: str,
+        timezone: str) -> tuple[int, datetime.datetime]:
 
     # naive parse
     if '/' in datetime_str:
@@ -45,8 +45,8 @@ def parse_esb_time(
 
 
 def get_hours_in_day(
-        datetime_str,
-        timezone):
+        datetime_str: str,
+        timezone: str) -> int:
 
     # naive parse of our datetime field
     dt = datetime.datetime.strptime(datetime_str, '%Y/%m/%d %H:%M:%S')
@@ -79,10 +79,10 @@ def get_hours_in_day(
 
 
 def process_esb_hdf_files(
-        hdf_file_list,
-        timezone,
-        odir,
-        partial_days):
+        hdf_file_list: list[str],
+        timezone: str,
+        odir: str,
+        partial_days: bool) -> None:
 
     # ESB HDF Parse
     fields = [

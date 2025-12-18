@@ -103,7 +103,7 @@ def set_default_config():
     return json_config
 
 
-def load_config(config_file):
+def load_config(config_file: str) -> dict:
     """
     Loads config from the specified file
 
@@ -130,7 +130,7 @@ def load_config(config_file):
     return json_config
 
 
-def sanitise_config(json_config):
+def sanitise_config(json_config: dict) -> None:
     """
     Sanitised config from the specified dict. Removes
     leading/trailling whitespace and other artifacts like
@@ -160,7 +160,8 @@ def sanitise_config(json_config):
     return
 
 
-def save_config(json_config, config_file):
+def save_config(json_config: dict, 
+                config_file: str) -> None:
     """
     Saves config to the specified file
 
@@ -255,8 +256,8 @@ def config_agent():
 
 
 def merge_grid_data(
-        inverter_dict, 
-        grid_dict):
+        inverter_dict: dict, 
+        grid_dict: dict) -> None:
     """
     Merges live and historic import/export data from the grid monitoring into the main data dict. 
 
@@ -537,7 +538,8 @@ class data_handler(object):
     index._cp_config = {'tools.trailing_slash.on': False}
 
 
-def web_server(dev_mode):
+def web_server(
+        dev_mode: bool) -> None:
     """
     Webserver agent to drive the setup and running of cherrypy resources
     to manage the serving of static HTML assets and API data
@@ -651,33 +653,6 @@ def web_server(dev_mode):
     return
 
 
-def thread_exception_wrapper(
-        fn, 
-        *args, 
-        **kwargs):
-    """
-    This is a simple exception wrapper used for concurrent futures
-    to capture the actual exception and then raise a new one with the 
-    string detail of the original. Prevents loss of exception context
-    when using concurrent futures
-    """
-
-    try:
-        # call fn arg with other args
-        return fn(*args, **kwargs)
-
-    except Exception:
-        # generate a formal backtrace as a string
-        # and raise this as a new exception with that string as title
-        exception_detail = sys.exc_info()
-        exception_list = traceback.format_exception(
-                *exception_detail,
-                limit = 200)
-        exception_str = ''.join(exception_list)
-
-        raise Exception(exception_str)  
-
-
 def restart():
     """
     function to complete restart the script by doing an exec on itself
@@ -755,7 +730,7 @@ future_dict = {}
 
 # Config Agent
 future_dict['Config Agent'] = executor.submit(
-        thread_exception_wrapper,
+        utils.thread_exception_wrapper,
         config_agent)
 
 # allow config to init
@@ -763,13 +738,13 @@ time.sleep(5)
 
 # Monitor API Agent
 future_dict['Monitor API Agent'] = executor.submit(
-        thread_exception_wrapper,
+        utils.thread_exception_wrapper,
         monitor_agent
         )
 
 # Cherry Py web server
 future_dict['Web Server'] = executor.submit(
-        thread_exception_wrapper,
+        utils.thread_exception_wrapper,
         web_server,
         gv_dev_mode)
 

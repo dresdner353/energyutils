@@ -315,9 +315,9 @@ def log_message(
 
 
 def parse_range_time(
-        datetime_str,
-        timezone,
-        end):
+        datetime_str: str,
+        timezone: str,
+        end: bool = False) -> tuple[int, datetime.datetime]:
 
     # naive parse
     dt = datetime.datetime.strptime(datetime_str, '%Y%m%d')
@@ -341,13 +341,13 @@ def parse_range_time(
 
 
 def add_worksheet(
-        workbook,
-        sheet_title,
-        format_dict,
-        field_dict,
-        data_dict,
-        first_field,
-        chart_list = None):
+        workbook: xlsxwriter.Workbook,
+        sheet_title: str,
+        format_dict: dict,
+        field_dict: dict,
+        data_dict: dict,
+        first_field: str,
+        chart_list: list = None) -> None:
 
     global verbose
 
@@ -622,8 +622,8 @@ def add_worksheet(
 
 
 def gen_aggregate_dict(
-        data_dict,
-        agg_field):
+        data_dict: dict,
+        agg_field: str) -> dict:
 
     agg_dict = {}
 
@@ -734,14 +734,14 @@ def gen_aggregate_dict(
 
 
 def load_data(
-        idir,
-        start_date,
-        end_date,
-        time_zone,
-        standing_rate,
-        tariff_list,
-        interval_list,
-        fit_rate):
+        idir: str,
+        start_date: str,
+        end_date: str,
+        time_zone: str,
+        standing_rate: float,
+        tariff_list: list,
+        interval_list: list,
+        fit_rate: float) -> dict:
 
     global verbose
 

@@ -39,9 +39,9 @@ gv_battery_is_present = False
 # adapted from code
 # in https://github.com/Gentleman1983/ginlong_solis_api_connector
 def get_solis_cloud_data(
-        config,
-        url_part, 
-        request) -> dict:
+        config: dict,
+        url_part: str, 
+        request: dict) -> dict:
     """
     Calls Solis cloud API to retrieve inverter data. Handles all 
     the complex authentication steps required to generate headers etc
@@ -139,12 +139,13 @@ def get_solis_cloud_data(
     return None
 
 
-def get_inverter_day_data(config):
+def get_inverter_day_data(
+        config: dict) -> None:
     """
     Gets inverter data for the last 36 hours
 
     Args:
-    config    - gloval config
+    config    - global config
     """
     global day_ts
     global gv_solis_dict
@@ -405,12 +406,13 @@ def get_inverter_day_data(config):
     return
 
 
-def get_inverter_month_data(config):
+def get_inverter_month_data(
+        config: dict) -> None:
     """
     Gets inverter data for the last 30 days
 
     Args:
-    config    - gloval config
+    config    - global config
     """
     global month_ts
     global day_ts
@@ -522,12 +524,13 @@ def get_inverter_month_data(config):
     return 
 
 
-def get_inverter_year_data(config):
+def get_inverter_year_data(
+        config: dict) -> None:
     """
     Gets inverter data for the last 12 months
 
     Args:
-    config    - gloval config
+    config    - global config
     """
     global year_ts
     global gv_solis_dict
@@ -627,7 +630,8 @@ def get_inverter_year_data(config):
     return 
 
 
-def get_data(config):
+def get_data(
+        config: dict) -> tuple:
     """
     Gets inverter data. This is the module common function 
     called by the parent solar_monnitor.py script. It manages 
@@ -635,7 +639,7 @@ def get_data(config):
     results in a common format dict object
 
     Args:
-    config    - gloval config
+    config    - global config
 
     Returns: tuple of the data dict and refresh interval 
              (derived from next predicted update time)

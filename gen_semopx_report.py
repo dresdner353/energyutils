@@ -104,8 +104,8 @@ field_dict = {
         }
 
 def log_message(
-        verbose,
-        message):
+        verbose: int,
+        message: str):
 
     if verbose:
         print(
@@ -119,9 +119,9 @@ def log_message(
 
 
 def parse_range_time(
-        datetime_str,
-        timezone,
-        end):
+        datetime_str: str,
+        timezone: str,
+        end: bool = False):
 
     # naive parse
     dt = datetime.datetime.strptime(datetime_str, '%Y%m%d')
@@ -145,13 +145,13 @@ def parse_range_time(
 
 
 def add_worksheet(
-        workbook,
-        sheet_title,
-        format_dict,
-        field_dict,
-        data_dict,
-        first_field,
-        chart_list = None):
+        workbook: xlsxwriter.Workbook,
+        sheet_title: str,
+        format_dict: dict,
+        field_dict: dict,
+        data_dict: dict,
+        first_field: str,
+        chart_list: list = None) -> None:
 
     global verbose
 
@@ -408,13 +408,13 @@ def add_worksheet(
 
 
 def load_data(
-        idir,
-        start_date,
-        end_date,
-        time_zone,
-        tariff_list,
-        interval_list,
-        vat_rate):
+        idir: str,
+        start_date: str,
+        end_date: str,
+        time_zone: str,
+        tariff_list: list,
+        interval_list: list,
+        vat_rate: float) -> dict:
 
     global verbose
 

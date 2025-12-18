@@ -10,8 +10,8 @@ import sys
 
 
 def log_message(
-        verbose,
-        message):
+        verbose: bool,
+        message: str) -> None:
 
     if verbose:
         print(
@@ -25,8 +25,8 @@ def log_message(
 
 
 def parse_semopx_time(
-        datetime_str,
-        timezone):
+        datetime_str: str,
+        timezone: str) -> tuple[int, datetime.datetime]:
 
     # Parse SEMOpx UTC time to DT
     # this has a "Z" inicator the parse will corectly
@@ -44,10 +44,10 @@ def parse_semopx_time(
 
 
 def retrieve_market_results(
-        odir, 
-        days,
-        market_area,
-        timezone):
+        odir: str, 
+        days: int,
+        market_area: str,
+        timezone: str) -> None:
 
     global gv_verbose
 

@@ -9,8 +9,8 @@ import sys
 
 
 def log_message(
-        verbose,
-        message):
+        verbose: int,
+        message: str) -> None:
 
     if verbose:
         print(
@@ -24,9 +24,9 @@ def log_message(
 
 
 def parse_range_time(
-        datetime_str,
-        timezone,
-        end):
+        datetime_str: str,
+        timezone: str,
+        end: bool = False) -> tuple[int, datetime.datetime]:
 
     # naive parse
     dt = datetime.datetime.strptime(datetime_str, '%Y%m%d')
@@ -50,10 +50,10 @@ def parse_range_time(
 
 
 def load_data(
-        idir,
-        start_date,
-        end_date,
-        timezone):
+        idir: str,
+        start_date: str,
+        end_date: str,
+        timezone: str) -> dict:
 
     global verbose
 
@@ -114,10 +114,10 @@ def load_data(
 
 
 def output_results(
-        odir,
-        data_dict,
-        prefix,
-        decimal_places):
+        odir: str,
+        data_dict: dict,
+        prefix: str,
+        decimal_places: int) -> None:
 
     # no date, nothing to do
     if len(data_dict) == 0:
@@ -138,7 +138,7 @@ def output_results(
 
 
 def gen_time_interval_set(
-        interval_range):
+        interval_range: str) -> set[int]:
 
     interval_set = set()
 

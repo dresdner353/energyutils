@@ -9,8 +9,8 @@ import zoneinfo
 
 
 def log_message(
-        verbose,
-        message):
+        verbose: bool,
+        message: str):
 
     if verbose:
         print(

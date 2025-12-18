@@ -9,8 +9,8 @@ import zoneinfo
 
 
 def log_message(
-        verbose,
-        message):
+        verbose: bool,
+        message: str) -> None:
 
     if verbose:
         print(
@@ -24,8 +24,8 @@ def log_message(
 
 
 def parse_time(
-        datetime_str,
-        timezone):
+        datetime_str: str,
+        timezone: str) -> tuple[int, datetime.datetime]:
 
     # naive parse
     dt = dateutil.parser.parse(datetime_str)
@@ -41,14 +41,14 @@ def parse_time(
 
 
 def get_day_data(
-        api_host,
-        auth_key,
-        device_id,
-        pv_device_id,
-        grid_scale_factor,
-        pv_kwh_discard,
-        date_ref,
-        odir):
+        api_host: str,
+        auth_key: str,
+        device_id: str,
+        pv_device_id: str,
+        grid_scale_factor: int,
+        pv_kwh_discard: float,
+        date_ref: datetime.date,
+        odir: str) -> None: 
 
     global gv_verbose
 
