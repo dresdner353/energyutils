@@ -181,6 +181,7 @@ def save_config(json_config: dict,
         outfile.close()
 
 
+@utils.wrap_exceptions
 def config_agent():
     """
     Config agent that runs in a 10-second loop monitoring 
@@ -336,6 +337,7 @@ def merge_grid_data(
     return
 
 
+@utils.wrap_exceptions
 def monitor_agent():
     """
     Agent to manage the retrieval of inverter and grid data. This will call into 
@@ -538,6 +540,7 @@ class data_handler(object):
     index._cp_config = {'tools.trailing_slash.on': False}
 
 
+@utils.wrap_exceptions
 def web_server(
         dev_mode: bool) -> None:
     """
@@ -730,7 +733,6 @@ future_dict = {}
 
 # Config Agent
 future_dict['Config Agent'] = executor.submit(
-        utils.thread_exception_wrapper,
         config_agent)
 
 # allow config to init
@@ -738,13 +740,11 @@ time.sleep(5)
 
 # Monitor API Agent
 future_dict['Monitor API Agent'] = executor.submit(
-        utils.thread_exception_wrapper,
         monitor_agent
         )
 
 # Cherry Py web server
 future_dict['Web Server'] = executor.submit(
-        utils.thread_exception_wrapper,
         web_server,
         gv_dev_mode)
 

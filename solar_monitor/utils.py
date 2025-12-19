@@ -30,28 +30,25 @@ def log_message(
     return
 
 
-def thread_exception_wrapper(
-        fn, 
-        *args, 
-        **kwargs):
-    """
-    This is a simple exception wrapper used for concurrent futures
-    to capture the actual exception and then raise a new one with the 
-    string detail of the original. Prevents loss of exception context
-    when using concurrent futures
+def wrap_exceptions(fn):
+    """ Decorator to wrap a function and re-raise exceptions with full backtrace 
+        as the exception raise message. Used to decorate functions submitted to 
+        current.futures where the original traceback is lost.
     """
 
-    try:
-        # call fn arg with other args
-        return fn(*args, **kwargs)
+    def wrapper(*args, **kwargs):
+        try:
+            return fn(*args, **kwargs)
 
-    except Exception:
-        # generate a formal backtrace as a string
-        # and raise this as a new exception with that string as title
-        exception_detail = sys.exc_info()
-        exception_list = traceback.format_exception(
-                *exception_detail,
-                limit = 200)
-        exception_str = ''.join(exception_list)
+        except Exception:
+            # generate a formal backtrace as a string
+            # and raise this as a new exception with that string as title
+            exception_detail = sys.exc_info()
+            exception_list = traceback.format_exception(
+                    *exception_detail,
+                    limit = 200)
+            exception_str = ''.join(exception_list)
 
-        raise Exception(exception_str)  
+            raise Exception(exception_str)  
+
+    return wrapper 
