@@ -29,9 +29,7 @@ export DISPLAY=:0
 xhost +
 
 # Online test
-# used to restart kiosk when going back online
-# 1 ping every 5s, timeout after 5s
-ping -q -c 5 -i 1 -w 5 www.google.com >/dev/null 2>&1
+wget -q --spider 'https://google.com' >/dev/null 2>&1
 ONLINE=$?
 if [ $ONLINE -ne 0 ]
 then
