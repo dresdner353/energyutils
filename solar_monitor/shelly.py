@@ -688,6 +688,17 @@ def get_cloud_live_data(config):
                 solar = status_rec['status']['em:0']['total_act_power'] / 1000
                 total_solar = status_rec['status']['emdata:0']['total_act'] / 1000
 
+    # Total PV offset
+    # allows for a kwh amount to be added to the total PV reading.
+    # Should not be needed but this total_act_energy/total_act_power field
+    # is from the device itself and not the cloud. So it can be lost
+    # over time if the device is reset or replaced. So this allows for a manual offset.
+    # You could also do this via the cloud historic data summing up the generated total 
+    # over several years but but Shelly is not holding this forever. So either way, there
+    # is no easy alternative to this offset.
+    if 'pv_kwh_offset' in config['shelly']:
+        total_solar += config['shelly']['pv_kwh_offset']
+
     # update live data
     # timestamp taken from status record from Shelly API 
     # (when they last updated) may not always be present

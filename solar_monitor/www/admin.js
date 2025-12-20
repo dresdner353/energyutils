@@ -40,6 +40,7 @@ function populate_config(config_dict) {
         $('#shelly_device_id').val(config_dict['shelly']['device_id']);
         $('#shelly_grid_scale_factor').val(config_dict['shelly']['grid_scale_factor']);
         $('#shelly_pv_kwh_discard').val(config_dict['shelly']['pv_kwh_discard']);
+        $('#shelly_pv_kwh_offset').val(config_dict['shelly']['pv_kwh_offset']);
         $('#shelly_time_slot').val(config_dict['shelly']['time_slot']);
 
         $('#shelly_device_id_pv').val(config_dict['shelly']['device_id_pv']);
@@ -151,6 +152,7 @@ function apply_config() {
         config_dict['shelly']['device_id'] = $('#shelly_device_id').val();
         config_dict['shelly']['grid_scale_factor'] = Number($('#shelly_grid_scale_factor').val());
         config_dict['shelly']['pv_kwh_discard'] = Number($('#shelly_pv_kwh_discard').val());
+        config_dict['shelly']['pv_kwh_offset'] = Number($('#shelly_pv_kwh_offset').val());
         config_dict['shelly']['time_slot'] = Number($('#shelly_time_slot').val());
 
         config_dict['shelly']['device_id_pv'] = $('#shelly_device_id_pv').val();
