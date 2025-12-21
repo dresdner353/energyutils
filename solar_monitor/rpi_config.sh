@@ -109,6 +109,7 @@ then
         sudo mv ${NM_CONN_TMPFILE} ${NM_CONN_FILE}
         sudo chown root:root ${NM_CONN_FILE}
         sudo chmod go-rw ${NM_CONN_FILE}
+        rm -f ${OFFLINE_FILE}
         sudo systemctl restart NetworkManager
         sudo systemctl restart solarmon
         sudo systemctl restart solarmon_kiosk
