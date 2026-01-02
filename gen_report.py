@@ -64,6 +64,12 @@ field_dict = {
             'format' : 'integer',
             },
 
+        'plan' : {
+            'title' : 'Plan',
+            'width' : 30,
+            'header_format' : 'header',
+            'format' : 'str',
+            },
         'tariff_name' : {
             'title' : 'Import Tariff',
             'width' : 12,
@@ -88,7 +94,7 @@ field_dict = {
             'title' : 'Standing Cost',
             'width' : 12,
             'header_format' : 'header',
-            'format' : 'currency_2dp',
+            'format' : 'currency_4dp',
             },
 
         'import' : {
@@ -101,7 +107,7 @@ field_dict = {
             'title' : 'Import Cost',
             'width' : 12,
             'header_format' : 'header',
-            'format' : 'currency_2dp',
+            'format' : 'currency_4dp',
             },
 
         'grid_voltage_min' : {
@@ -251,7 +257,7 @@ field_dict = {
             'title' : 'Export Rate',
             'width' : 12,
             'header_format' : 'header',
-            'format' : 'currency_2dp',
+            'format' : 'currency_4dp',
             },
         'export' : {
             'title' : 'Export',
@@ -635,6 +641,7 @@ def gen_aggregate_dict(
             'ts', 
             'weekday',
             'hour',
+            'plan',
             'tariff_name',
             'tariff_rate',
             'standing_rate',
@@ -733,15 +740,71 @@ def gen_aggregate_dict(
     return agg_dict
 
 
+def load_tariffs(
+        tariff_file: str) -> dict:
+
+    global verbose
+
+    if not tariff_file:
+        return None
+
+    log_message(
+            verbose,
+            'Loading tariffs from %s' % (
+                tariff_file)
+            )
+
+    with open(tariff_file) as fp:
+        tariff_plans = json.load(fp)
+
+        for tariff_plan in tariff_plans:
+            # scale standing charge to hourly rate
+            tariff_plan['standing_rate'] = tariff_plan['annual_standing_charge'] / 365 / 24
+
+            # tariff reg dimensions.. 
+            # tariff_reg[day][hour] -> {"name", "rate"}
+            tariff_plan['tariff_reg'] = {}
+
+            for tariff_rec in tariff_plan['tariffs']:
+                # initialise optional days list
+                if not 'days' in tariff_rec:
+                    tariff_rec['days'] = [1,2,3,4,5,6,7]
+
+                for day in tariff_rec['days']:
+                    if not day in tariff_plan['tariff_reg']:
+                        tariff_plan['tariff_reg'][day] = {}
+
+                start_hh = tariff_rec['start'] 
+                end_hh = tariff_rec['end'] 
+
+                if start_hh == end_hh:
+                    # full 24 hour range
+                    for day in tariff_rec['days']:
+                        for hh in range(0, 24):
+                            tariff_plan['tariff_reg'][day][hh] = {
+                                    'name' : tariff_rec['name'],
+                                    'rate' : tariff_rec['rate'],
+                                    }
+                else:
+                    hh = start_hh
+                    while hh != end_hh:
+                        for day in tariff_rec['days']:
+                            tariff_plan['tariff_reg'][day][hh] = {
+                                    'name' : tariff_rec['name'],
+                                    'rate' : tariff_rec['rate'],
+                                    }
+                        hh = (hh + 1) % 24 # 0-23 modulo
+
+
+    return tariff_plans
+
+
 def load_data(
         idir: str,
         start_date: str,
         end_date: str,
         time_zone: str,
-        standing_rate: float,
-        tariff_list: list,
-        interval_list: list,
-        fit_rate: float) -> dict:
+        tariff_plans: list) -> dict:
 
     global verbose
 
@@ -761,100 +824,6 @@ def load_data(
                 end_date,
                 timezone,
                 end = True)
-
-    # tariffs 
-    tariff_dict = {}
-    if tariff_list:
-        for tariff_str in tariff_list:
-            fields = tariff_str.split(':')
-            if len(fields) == 2:
-                tariff_dict[fields[0]] = float(fields[1])
-    
-        log_message(
-                verbose,
-                'Tariff Rates: %s' % (
-                    tariff_dict)
-                )
-    
-    # tariff intervals
-    tarff_interval_dict = {}
-    if interval_list:
-        for interval_str in interval_list:
-
-            # D-D:HH-HH:Tariff_Name
-            # First Day range is optional
-            fields = interval_str.split(':')
-
-            if len(fields) == 2:
-                # no day range specified
-                hour_fields = fields[0].split('-')
-                start_hh = int(hour_fields[0])
-                end_hh = int(hour_fields[1])
-                tariff_name = fields[1]
-                days = [1,2,3,4,5,6,7]
-
-            elif len(fields) == 3:
-                # day range specified
-                day_fields = fields[0].split('-')
-                start_day = int(day_fields[0])
-                end_day = int(day_fields[1])
-
-                # populate days list from specified range
-                days = []
-                for day in range(1, 8):
-                    if (day >= start_day and 
-                        day <= end_day):
-                        days.append(day)
-
-                hour_fields = fields[1].split('-')
-                start_hh = int(hour_fields[0])
-                end_hh = int(hour_fields[1])
-                tariff_name = fields[2]
-
-            else:
-                # ignore mal-formed entries
-                # FIXME needs more advanced error handling
-                continue
-
-            for day in days:
-                # Initialise day
-                if not day in tarff_interval_dict:
-                    tarff_interval_dict[day] = {}
-
-                if start_hh == end_hh:
-                    # single xx:xx range (full 24 hours)
-                    for i in range(0, 24):
-                        tarff_interval_dict[day][i] = tariff_name
-                else:
-                    hh = start_hh
-                    while hh != end_hh:
-                        if tariff_name in tariff_dict:
-                            tarff_interval_dict[day][hh] = tariff_name
-                        hh = (hh + 1) % 24
-        log_message(
-                verbose,
-                'Tariff Intervals: %s' % (
-                    json.dumps(
-                        tarff_interval_dict, 
-                        indent = 4)
-                    )
-                )
-    
-        for day in [1,2,3,4,5,6,7]:
-            if not day in tarff_interval_dict:
-                log_message(
-                        1,
-                        'WARNING: Tariff interval data not present for day %d' % (
-                            day)   
-                        )
-        for day in tarff_interval_dict.keys():
-            if len(tarff_interval_dict[day]) != 24:
-                log_message(
-                        1,
-                        'WARNING: Tariff interval data present for only %d/24 hours in day %d' % (
-                            len(tarff_interval_dict[day]),
-                            day)   
-                        )
 
     # load all data
     data_dict = {}
@@ -899,55 +868,57 @@ def load_data(
                 dt_weekday = int(rec['weekday'].split(' ')[0])
                 dt_hour = rec['hour']
 
-                # Import Tariff and charging rates
-                if (dt_weekday in tarff_interval_dict and 
-                    dt_hour in tarff_interval_dict[dt_weekday]):
-                    rec['tariff_name'] = tarff_interval_dict[dt_weekday][dt_hour]
-                    rec['tariff_rate'] = tariff_dict[rec['tariff_name']]
-                    rec['import_cost'] = rec['import'] * rec['tariff_rate']
-                    rec['bill_amount'] = rec['import_cost']
+                # select the appropriate tariff plan
+                # based on the date range
+                # YYYY-MM-DD comparison
+                for tariff_plan in tariff_plans:
+                    if (rec['day'] >= tariff_plan['start'] and 
+                        rec['day'] <= tariff_plan['end']):
+                        break
 
-                    if not standing_rate:
-                        standing_rate = 0
-                    # both fields same value here
-                    # but standing_cost will live on in aggregations
-                    # rate only appears in hour record
-                    rec['standing_rate'] = standing_rate
-                    rec['standing_cost'] = standing_rate
-                    rec['bill_amount'] += rec['standing_cost']
+                rec['plan'] = tariff_plan['name']
+                rec['tariff_name'] = tariff_plan['tariff_reg'][dt_weekday][dt_hour]['name']
+                rec['tariff_rate'] = tariff_plan['tariff_reg'][dt_weekday][dt_hour]['rate']
+                rec['import_cost'] = rec['import'] * rec['tariff_rate']
+                rec['bill_amount'] = rec['import_cost']
 
-                    # FIT (export_credit)
-                    # calculates the credit and export and 
-                    # adjusts relative cost to match
-                    if not fit_rate:
-                        fit_rate = 0
-                    rec['export_rate'] = fit_rate
-                    rec['export_credit'] = rec['export'] * fit_rate
-                    rec['bill_amount'] -= rec['export_credit'] 
-                    rec['savings'] = rec['export_credit'] 
+                # both fields same value here
+                # but standing_cost will live on in aggregations
+                # rate only appears in hour record
+                rec['standing_rate'] = tariff_plan['standing_rate']
+                rec['standing_cost'] = rec['standing_rate']
+                rec['bill_amount'] += rec['standing_cost']
 
-                    # Solar Self-consumption
-                    # Solar credit is calculated based on the applicable tariff
-                    # for ther given hour (import costs we avoided).
-                    # Relative import is further offset by this self-consumption.
-                    # Savings is then calculated as the sum of solar and export
-                    # credit
-                    if 'solar_consumed' in rec:
-                        rec['solar_consumed_percent'] = 0
-                        rec['export_percent'] = 0
-                        if rec['solar'] > 0:
-                            rec['solar_consumed_percent'] = rec['solar_consumed'] / rec['solar']
-                            rec['export_percent'] = rec['export'] / rec['solar']
+                # FIT (export_credit)
+                # calculates the credit and export and 
+                # adjusts relative cost to match
+                rec['export_rate'] = tariff_plan['fit_rate']
+                rec['export_credit'] = rec['export'] * rec['export_rate']
+                rec['bill_amount'] -= rec['export_credit'] 
+                rec['savings'] = rec['export_credit'] 
 
-                        rec['solar_credit'] = rec['solar_consumed'] * rec['tariff_rate']
+                # Solar Self-consumption
+                # Solar credit is calculated based on the applicable tariff
+                # for ther given hour (import costs we avoided).
+                # Relative import is further offset by this self-consumption.
+                # Savings is then calculated as the sum of solar and export
+                # credit
+                if 'solar_consumed' in rec:
+                    rec['solar_consumed_percent'] = 0
+                    rec['export_percent'] = 0
+                    if rec['solar'] > 0:
+                        rec['solar_consumed_percent'] = rec['solar_consumed'] / rec['solar']
+                        rec['export_percent'] = rec['export'] / rec['solar']
 
-                        # reset savings for solar credit
-                        rec['savings'] = rec['solar_credit'] + rec['export_credit'] 
+                    rec['solar_credit'] = rec['solar_consumed'] * rec['tariff_rate']
 
-                    # savings %
-                    original_bill_value = rec['bill_amount'] + rec['savings']
-                    savings_percent = (rec['savings'] / original_bill_value)
-                    rec['savings_percent'] = savings_percent
+                    # reset savings for solar credit
+                    rec['savings'] = rec['solar_credit'] + rec['export_credit'] 
+
+                # savings %
+                original_bill_value = rec['bill_amount'] + rec['savings']
+                savings_percent = (rec['savings'] / original_bill_value)
+                rec['savings_percent'] = savings_percent
     
     log_message(
             1,
@@ -983,6 +954,12 @@ parser.add_argument(
         )
 
 parser.add_argument(
+        '--tariffs', 
+        help = 'Tariffs JSON file', 
+        required = False
+        )
+
+parser.add_argument(
         '--idir', 
         help = 'Input Directory for data files', 
         required = True
@@ -1015,41 +992,6 @@ parser.add_argument(
         )
 
 parser.add_argument(
-        '--tariff_rate', 
-        help = 'kwh Tariff <NAME:rate/kWh> <NAME:rate/kWh> ...', 
-        nargs = '+',
-        required = False
-        )
-
-parser.add_argument(
-        '--tariff_interval', 
-        help = 'Time Interval for Tariff <[D-D:]HH-HH:Tariff Name> <[D-D:]HH-HH:Tariff Name> ...', 
-        nargs = '+',
-        required = False
-        )
-
-parser.add_argument(
-        '--fit_rate', 
-        help = 'FIT Rate rate/kWh', 
-        type = float,
-        required = False
-        )
-
-parser.add_argument(
-        '--standing_rate', 
-        help = 'Standing Rate (cost per hour)', 
-        type = float,
-        required = False
-        )
-
-parser.add_argument(
-        '--annual_standing_charge', 
-        help = 'Annual Standing Charge (cost per year)', 
-        type = float,
-        required = False
-        )
-
-parser.add_argument(
         '--verbose', 
         help = 'Enable verbose output', 
         action = 'store_true'
@@ -1075,11 +1017,7 @@ parser.add_argument(
 
 args = vars(parser.parse_args())
 report_file_name = args['file']
-tariff_list = args['tariff_rate']
-interval_list = args['tariff_interval']
-fit_rate = args['fit_rate']
-standing_rate = args['standing_rate']
-annual_standing_charge = args['annual_standing_charge']
+tariff_file = args['tariffs']
 idir = args['idir']
 start_date = args['start']
 end_date = args['end']
@@ -1088,11 +1026,6 @@ currency_symbol = args['currency']
 report_list = args['reports']
 hide_column_list = args['hide_columns']
 verbose = args['verbose']
-
-# annual standing charge conversion
-# from year to hourly rate
-if annual_standing_charge:
-    standing_rate = annual_standing_charge / (365 * 24)
 
 # hidden columns
 # populate hidden boolean into field dict
@@ -1107,26 +1040,25 @@ log_message(
             )
         )
 
+tariff_plans = load_tariffs(tariff_file)
+
 data_dict = load_data(
         idir,
         start_date,
         end_date,
         timezone,
-        standing_rate,
-        tariff_list,
-        interval_list,
-        fit_rate)
+        tariff_plans)
 
 # XLSX
 workbook = xlsxwriter.Workbook(report_file_name)
 
 # try to reconstruct the command line 
 # options to capture in the properties
-cmdline_str = 'Invoke options:\n'
+comment_str = 'Invoke options:\n'
 for arg in sys.argv:
     if arg.startswith('--'):
-        cmdline_str += '\n'
-    cmdline_str += ' ' + arg
+        comment_str += '\n'
+    comment_str += ' ' + arg
 
 workbook.set_properties(
     {
@@ -1134,7 +1066,7 @@ workbook.set_properties(
         'subject': 'Python-generated Excel report based on energy usage data',
         'keywords': 'python energy solar report',
         'author': 'https://github.com/dresdner353/energyutils',
-        'comments': cmdline_str
+        'comments': comment_str
     }
 )
 
