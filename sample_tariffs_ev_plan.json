@@ -1,0 +1,29 @@
+[
+    {
+        "name": "Sample EV Plan",
+        "start": "2000-01-01",
+        "end": "2030-12-31",
+        "annual_standing_charge": 265.01,
+        "fit_rate": 0.185,
+        "tariffs": [
+            {
+                "name": "Day",
+                "start": 0,
+                "end": 23,
+                "rate": 0.4016
+            },
+            {
+                "name": "EV",
+                "start": 2,
+                "end": 6,
+                "rate": 0.0942
+            },
+            {
+                "name": "Peak",
+                "start": 17,
+                "end": 19,
+                "rate": 0.3002
+            }
+        ]
+    }
+]
