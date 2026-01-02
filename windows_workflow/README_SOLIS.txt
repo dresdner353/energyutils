@@ -93,19 +93,13 @@ This "gen_solis_report" script performs two functions:
 * Downloads data from Solis Cloud
 * Generates the Excel file report
 
-Part of the script includes the ability to set pricing details:
+Part of the script includes the ability to set pricing details via the --tariffs option.:
 
 REM Example EV report
 %PYTHON% %GEN_REPORT_SCRIPT% ^
     --idir %SOLIS_DATA% ^
     --file solis_report_ev.xlsx ^
     --reports %REPORTS% ^
-    --tariff_rate Day:0.4320 Night:0.2086 Boost:0.1225 ^
-    --tariff_interval 08-23:Day 23-08:Night 02-04:Boost ^
-    --annual_standing_charge 303 ^
-    --fit_rate 0.21 
-
-The --tariff_rate and --tariff_interval options designate the tariffs in use and the time periods that they apply. 
-The --annual_standing_charge option specifies the annual standing charge for your plan. 
+    --tariffs %TARIFF_PLANS% 
 
 See https://github.com/dresdner353/energyutils/blob/main/GEN_REPORT.md for full options on this report generator

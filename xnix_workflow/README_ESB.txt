@@ -76,10 +76,7 @@ As you glance down the file, you will find this code:
 python3 ${GEN_REPORT_SCRIPT} \
     --idir "${HDF_DATA}" \
     --file esb_report.xlsx \
-    --tariff_rate Day:0.4320 Night:0.2086 Boost:0.1225 \
-    --tariff_interval 08-23:Day 23-08:Night 02-04:Boost \
-    --annual_standing_charge 396 \
-    --fit_rate 0.21 
+    --tariffs "${TARIFF_PLANS}" 
 
 That shell command invokes the report generator to generate an Excel file called esb_report.xlsx
 The line that starts with "--tariff_rate" defines three tariffs.. Day, Night and Boost. 
@@ -87,19 +84,7 @@ The values are defined after the tariff label. So Day:0.4320 defines the day kWh
 0.4320 Euro. You can have as many of these on the line as required for your given 
 electricity plan. 
 
-The line starting with "--tariff_interval" defines day/hour ranges and the matching tariff. In
-the above example, it says hours 08-23 are the Day tariff and hours 23-08 are the night and 02-04 
-are the Boost tariff. 
-
-You can also optionally prefix this with a day range 1-7 to depict tariffs for specific days. 
-For example:
-
-    --tariff_rate Day:0.5094 Night:0.3743 Peak:0.6223 Free:0 \
-    --tariff_interval 08-23:Day 23-08:Night 17-19:Peak 7-7:09-17:Free \
-
-The above defines a Free tariff of 0. Then this tariff is applied only on Sunday between 9-5pm 
-
-Lastly, the --annual_standing_charge value is yearly standing charge. 
+The line starting with "--tariffs" defines the tariff plans in a separate file. 
 
 See:
 https://github.com/dresdner353/energyutils/blob/main/GEN_REPORT.md

@@ -2,6 +2,7 @@ SET PYTHON=python3.exe
 SET SHELLY_DATA=shelly_data
 SET SHELLY_SCRIPT=..\shelly_em_data_util.py
 SET GEN_REPORT_SCRIPT=..\gen_report.py
+SET TARIFF_PLANS=..\sample_tariffs_plan.json
 SET REPORTS=day week month year hour tariff 24h weekday
 
 REM Shelly API config
@@ -25,9 +26,6 @@ REM Example EV report
     --idir %SHELLY_DATA% ^
     --file shelly_report_ev.xlsx ^
     --reports %REPORTS% ^
-    --tariff_rate Day:0.4320 Night:0.2086 Boost:0.1225 ^
-    --tariff_interval 08-23:Day 23-08:Night 02-04:Boost ^
-    --annual_standing_charge 303 ^
-    --fit_rate 0.21 
+    --tariffs %TARIFF_PLANS% 
 
 pause

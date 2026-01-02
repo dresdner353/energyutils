@@ -63,32 +63,18 @@ This can be the tricky part. If you right-click on the gen_esb_report file and
 select edit, it should launch Windows Notepad and this lets you edit the script
 itself.
 
-As you glance down the file, there are four stacks of code similar to this example:
+As you glance down the file, there is a chunk of code similar to this example:
 
 REM Example EV report
 %PYTHON% %GEN_REPORT_SCRIPT% ^
     --idir %HDF_DATA% ^
     --file esb_report_ev.xlsx ^
     --reports %REPORTS% ^
-    --tariff_rate Day:0.4320 Night:0.2086 Boost:0.1225 ^
-    --tariff_interval 08-23:Day 23-08:Night 02-04:Boost ^
-    --annual_standing_charge 396 ^
-    --fit_rate 0.21 
+    --tariffs %TARIFF_PLANS% 
 
 
 That code invokes the report generator to generate an Excel file called esb_report_ev.xlsx
-The line that starts with "--tariff_rate" defines three tariffs.. Day, Night and Boost. 
-The values are defined after the tariff label. So Day:0.4320 defines the day kWh rate as 
-0.4320 Euro. You can have as many of these on the line as required for your given 
-electricity plan. 
-
-The line starting with "--tariff_interval" defines day/hour ranges and the matching tariff. In
-the above example, it says hours 08-23 are the Day tariff and hours 23-08 are the night and 02-04 
-are the Boost tariff. You can also optionally prefix this with a day range 1-7 to depict tariffs
-for specific days. There is an example at the bottom of that file showing a plan that uses a free tariff
-between 9 and 5pm on Sundays.
-
-Lastly, the --annual_standing_charge value is yearly standing charge. 
+The line that starts with "--tariffs" defines the tariffs in a file.
 
 See:
 https://github.com/dresdner353/energyutils/blob/main/GEN_REPORT.md
