@@ -986,7 +986,7 @@ parser.add_argument(
 
 parser.add_argument(
         '--currency', 
-        help = 'Currency Sumbol (def:€)', 
+        help = 'Currency Symbol (def:€)', 
         default = '€',
         required = False
         )
