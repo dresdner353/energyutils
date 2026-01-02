@@ -20,7 +20,7 @@ options:
   --start START         Calculation Start Date (YYYYMMDD)
   --end END             Calculation End Date (YYYYMMDD)
   --timezone TIMEZONE   Timezone
-  --currency CURRENCY   Currency Sumbol (def:€)
+  --currency CURRENCY   Currency Symbol (def:€)
   --verbose             Enable verbose output
   --reports [{year,month,week,day,hour,tariff,weekday,24h} ...]
                         Reports to generate
