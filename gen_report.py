@@ -795,6 +795,37 @@ def load_tariffs(
                                     }
                         hh = (hh + 1) % 24 # 0-23 modulo
 
+            # validate parsed plan
+
+            # 7-day coverage 
+            week_day_set = set(range(1, 8))
+            coverage_set = set(tariff_plan['tariff_reg'].keys())
+            if coverage_set != week_day_set:
+                raise Exception(
+                        'Tariff plan %s does not have full 7-day coverage.. missing days: %s' % (
+                            tariff_plan['name'],
+                            str(week_day_set - coverage_set)
+                            )
+                        )
+            for day in tariff_plan['tariff_reg']:
+                # 24-hour coverage
+                day_hour_set = set(range(0, 24))
+                coverage_set = set(tariff_plan['tariff_reg'][day].keys())
+                if coverage_set != day_hour_set:
+                    raise Exception(
+                            'Tariff plan %s does not have full 24-hour coverage for day %d .. missing hours: %s' % (
+                                tariff_plan['name'],
+                                day,
+                                str(day_hour_set - coverage_set)
+                                )
+                            )
+
+    log_message(
+            verbose,
+            'Loaded tariffs.. \n%s' % (
+                json.dumps(tariff_plans, indent=4)
+                )
+            )
 
     return tariff_plans
 
