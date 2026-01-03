@@ -115,13 +115,13 @@ Each plan is an object with fields as described below.
 * The "start" and "end" fields in the plan define the date range for which the plan is valid.
 These are in YYYY-MM-DD format and should be inclusive for any dates covered by the input data. The purpose of these fields is to allow for multiple plans to be defined in the same file for different time periods. The plan selected for any given day is based on first plan in the list that is matched to the given day. Ideally the plans should be set with the correct start and end times to guarantee no overlaps. Best advised to place them in chronological order, oldest plan first.
 * The "annual_standing_charge" field defines the yearly fixed standing charge for the plan. 
-Each hour will have a per hour cost applied. (after dividing by /365/24)
+Each hour will have a per-hour cost applied. (after dividing by /365/24)
 * The "fit_rate" field defines the feed-in-tariff rate for any exported solar energy.
 * The "tariffs" field is a list of tariff objects. Each tariff object defines a name, start and end hour (0-23) and the rate per kWh for that tariff
 * An optional "days" field may be specified in a tariff object. 
 This is a list of week days (1=Monday to 7=Sunday) for which the specific tariff applies. If omitted, the tariff applies to all days. This allows for weekend or specific day tariffs to be defined. In the above example, the "Sat/Sun Free" tariff applies only on Saturdays and Sundays between 8am and 5pm. 
 * Tariffs are populated in list order when parsed.
-This means that an earlier tariff may define a price for all hours in a day and a later tariff may override specific hours or days. Therefore it is important to order the tariffs correctly to ensure the desired behaviour. In the above example, the "Day" tariff applies to all hours except those overridden by the "Night", "Peak" and "Sat/Sun Free" tariffs.
+This means that an earlier tariff may define a price for all hours in a day and a later tariff may override specific hours or days. Therefore it is important to order the tariffs correctly to ensure the desired behaviour. In the above example, the "Day" tariff applies to all hours in every day by default. But then rates for night and peak hours are overridden by the "Night", "Peak" tariffs. Likewise, "Sat/Sun Free" tariff makes specific over-rides for times on Saturday and Sunday.
 
 ## Example Reports
 Some examples here of the kind of data generated in the Excel files.
