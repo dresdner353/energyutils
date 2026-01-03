@@ -113,7 +113,7 @@ Notes:
 * The outer JSON structure is a list of tariff plans. 
 Each plan is an object with fields as described below.
 * The "start" and "end" fields in the plan define the date range for which the plan is valid.
-These are in YYYY-MM-DD format and should be inclusive for any dates covered by the input data. The purpose of these fields is to allow for multiple plans to be defined in the same file for different time periods, new plans added over time when the tariff changes. The plan selected for any given day is based on first plan that is matched to the given day. Ideally the plans should be set with the corect start and end times to guarantee no overlaps. Best advised to place then in chronological order.
+These are in YYYY-MM-DD format and should be inclusive for any dates covered by the input data. The purpose of these fields is to allow for multiple plans to be defined in the same file for different time periods. The plan selected for any given day is based on first plan in the list that is matched to the given day. Ideally the plans should be set with the correct start and end times to guarantee no overlaps. Best advised to place them in chronological order, oldest plan first.
 * The "annual_standing_charge" field defines the yearly fixed standing charge for the plan. 
 Each hour will have a per hour cost applied. (after dividing by /365/24)
 * The "fit_rate" field defines the feed-in-tariff rate for any exported solar energy.
