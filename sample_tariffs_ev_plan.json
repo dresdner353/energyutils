@@ -9,7 +9,7 @@
             {
                 "name": "Day",
                 "start": 0,
-                "end": 23,
+                "end": 0,
                 "rate": 0.4016
             },
             {
@@ -17,12 +17,6 @@
                 "start": 2,
                 "end": 6,
                 "rate": 0.0942
-            },
-            {
-                "name": "Peak",
-                "start": 17,
-                "end": 19,
-                "rate": 0.3002
             }
         ]
     }
