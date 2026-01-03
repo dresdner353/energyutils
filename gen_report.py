@@ -987,7 +987,7 @@ parser.add_argument(
 parser.add_argument(
         '--tariffs', 
         help = 'Tariffs JSON file', 
-        required = False
+        required = True
         )
 
 parser.add_argument(
