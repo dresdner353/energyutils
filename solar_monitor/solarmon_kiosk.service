@@ -9,7 +9,8 @@ TTYPath=/dev/tty1
 Environment="XDG_RUNTIME_DIR=/home/pi"
 Restart=always
 ExecStart=/home/pi/energyutils/solar_monitor/chromium_kiosk.sh
-StandardError=journal
+StandardOutput=null
+StandardError=null
 
 [Install]
 WantedBy=default.target
