@@ -82,7 +82,9 @@ def process_esb_hdf_files(
         hdf_file_list: list[str],
         timezone: str,
         odir: str,
-        partial_days: bool) -> None:
+        partial_days: bool,
+        import_scale: float,
+        export_scale: float) -> None:
 
     # ESB HDF Parse
     fields = [
@@ -216,6 +218,10 @@ def process_esb_hdf_files(
             usage_rec['import'] = max(usage_rec['import'], esb_rec['import'])
             usage_rec['export'] = max(usage_rec['export'], esb_rec['export'])
 
+            # optional scaling
+            usage_rec['import'] *= import_scale
+            usage_rec['export'] *= export_scale
+
             # align consumed to same import value
             usage_rec['consumed'] = usage_rec['import']
 
@@ -313,6 +319,22 @@ parser.add_argument(
         )
 
 parser.add_argument(
+        '--import_scale', 
+        help = 'Import Scale factor (def 1.0)', 
+        type = float,
+        default = 1.0,
+        required = False
+        )
+
+parser.add_argument(
+        '--export_scale', 
+        help = 'Export Scale factor (def 1.0)', 
+        type = float,
+        default = 1.0,
+        required = False
+        )
+
+parser.add_argument(
         '--partial_days', 
         help = 'Include incomplete partial days (skipped by default)', 
         action = 'store_true'
@@ -329,6 +351,8 @@ hdf_file_list = args['file']
 odir = args['odir']
 timezone = args['timezone']
 partial_days = args['partial_days']
+import_scale = args['import_scale']
+export_scale = args['export_scale']
 verbose = args['verbose']
 
 # JSON encoder force decimal places to 4
@@ -349,4 +373,6 @@ process_esb_hdf_files(
         hdf_file_list,
         timezone,
         odir,
-        partial_days)
+        partial_days,
+        import_scale,
+        export_scale)

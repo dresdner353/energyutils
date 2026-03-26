@@ -8,19 +8,28 @@ The ```esb_hdf_reader.py``` script can be used to parse this data into a more an
 
 ## Usage
 ```
-usage: esb_hdf_reader.py [-h] --file FILE --odir ODIR [--timezone TIMEZONE]
-                         [--verbose]
+usage: esb_hdf_reader.py [-h] --file FILE [FILE ...] --odir ODIR [--timezone TIMEZONE]
+                         [--import_scale IMPORT_SCALE] [--export_scale EXPORT_SCALE]
+                         [--partial_days] [--verbose]
 
 ESB HDF Reader
 
-optional arguments:
-  -h, --help           show this help message and exit
+options:
+  -h, --help            show this help message and exit
   --file FILE [FILE ...]
-                       ESB HDF file list or directory
-  --odir ODIR          Output Directory
-  --timezone TIMEZONE  Timezone
-  --partial_days       Include incomplete partial days (skipped by default)
-  --verbose            Enable verbose output
+                        ESB HDF file list or directory
+  --odir ODIR           Output Directory
+  --timezone TIMEZONE   Timezone
+  --import_scale IMPORT_SCALE
+                        Import Scale factor (def 1.0)
+  --export_scale EXPORT_SCALE
+                        Export Scale factor (def 1.0)
+  --partial_days        Include incomplete partial days (skipped by default)
+  --verbose             Enable verbose output
+
+
+
+
 ```
 
 Options:
@@ -32,6 +41,10 @@ This specifies the output directory for the processed data. Each day is written 
 Allows for specifying of a timezone. The default is Europe/Dublin and should be fine for any processing within Ireland the UK. 
 * --partial_days  
 This optional flag instructs the script to include incomplete days where the full 24 hours of data is not present. If this option is omitted, so will any incomplete days from the generated files. Usually with ESB HDF files, they both begin and terminate with incomplete days, so it is recommended you omit this flag unless a larger number of incomplete days are present and you still want a best effort calculation.
+* --import_scale  
+The option allows a scale factor to be applied to the read import values to scale them up or down based on a desired multiplier. For example, using a value of 1.5 will scale up the import values by 50%. A value of 0.7 will reduce all import values to 70%. This helps manipulate the given test data for modelling higher or lower usage scenarios. When omitted, the scale factor is set to 1.0 (no change).
+* --export_scale  
+Same scaling factor but applied to export for simulation of higher or lower export amounts. Setting this to 0 will also provide a quick way to zero all export values. When omitted, the scale factor is set to 1.0 (no change).
 
 ## Example Call (using the included example file)
 ```
