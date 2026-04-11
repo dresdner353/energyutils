@@ -1238,7 +1238,14 @@ grid_3_series =  [
             },
         ]
 
-pv_perf_series =  [
+pv_total_perf_series =  [
+        {
+            'field': 'solar',
+            'colour': '#EDC001',
+            },
+        ]
+
+pv_string_perf_series =  [
         {
             'field': 'solar_pv1',
             'colour': '#DDDD00',
@@ -1371,7 +1378,15 @@ for report in report_list:
                         'x_title' : 'Hour',
                         'x_rotation' : -45,
                         'y_title' : 'kWh',
-                        'series' : pv_perf_series,
+                        'series' : pv_total_perf_series,
+                        },
+                    {
+                        'title' : 'PV String Generation',
+                        'type' : 'column',
+                        'x_title' : 'Hour',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : pv_string_perf_series,
                         },
                     {
                         'title' : 'Battery Charging',
@@ -1482,7 +1497,15 @@ for report in report_list:
                         'x_title' : 'Day',
                         'x_rotation' : -45,
                         'y_title' : 'kWh',
-                        'series' : pv_perf_series,
+                        'series' : pv_total_perf_series,
+                        },
+                    {
+                        'title' : 'PV String Generation',
+                        'type' : 'column',
+                        'x_title' : 'Day',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : pv_string_perf_series,
                         },
                     {
                         'title' : 'Charging',
@@ -1545,7 +1568,15 @@ for report in report_list:
                         'x_title' : 'Week',
                         'x_rotation' : -45,
                         'y_title' : 'kWh',
-                        'series' : pv_perf_series,
+                        'series' : pv_total_perf_series,
+                        },
+                    {
+                        'title' : 'PV String Generation',
+                        'type' : 'column',
+                        'x_title' : 'Week',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : pv_string_perf_series,
                         },
                     {
                         'title' : 'Charging',
@@ -1608,7 +1639,15 @@ for report in report_list:
                         'x_title' : 'Month',
                         'x_rotation' : -45,
                         'y_title' : 'kWh',
-                        'series' : pv_perf_series,
+                        'series' : pv_total_perf_series,
+                        },
+                    {
+                        'title' : 'PV String Generation',
+                        'type' : 'column',
+                        'x_title' : 'Month',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : pv_string_perf_series,
                         },
                     {
                         'title' : 'Charging',
@@ -1671,7 +1710,15 @@ for report in report_list:
                         'x_title' : 'Year',
                         'x_rotation' : -45,
                         'y_title' : 'kWh',
-                        'series' : pv_perf_series,
+                        'series' : pv_total_perf_series,
+                        },
+                    {
+                        'title' : 'PV String Generation',
+                        'type' : 'column',
+                        'x_title' : 'Year',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : pv_string_perf_series,
                         },
                     {
                         'title' : 'Charging',
@@ -1732,7 +1779,15 @@ for report in report_list:
                         'x_title' : 'Weekday',
                         'x_rotation' : -45,
                         'y_title' : 'kWh',
-                        'series' : pv_perf_series,
+                        'series' : pv_total_perf_series,
+                        },
+                    {
+                        'title' : 'PV String Generation',
+                        'type' : 'column',
+                        'x_title' : 'Weekday',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : pv_string_perf_series,
                         },
                     {
                         'title' : 'Charging',
@@ -1793,7 +1848,15 @@ for report in report_list:
                         'x_title' : 'Hour',
                         'x_rotation' : -45,
                         'y_title' : 'kWh',
-                        'series' : pv_perf_series,
+                        'series' : pv_total_perf_series,
+                        },
+                    {
+                        'title' : 'PV String Generation',
+                        'type' : 'column',
+                        'x_title' : 'Hour',
+                        'x_rotation' : -45,
+                        'y_title' : 'kWh',
+                        'series' : pv_string_perf_series,
                         },
                     {
                         'title' : 'Charging',
