@@ -755,9 +755,18 @@ def load_tariffs(
             )
 
     with open(tariff_file) as fp:
-        tariff_plans = json.load(fp)
+        tariff_plan_full_list = json.load(fp)
+        tariff_plan_list = []
 
-        for tariff_plan in tariff_plans:
+        # remove disabled plans
+        for tariff_plan in tariff_plan_full_list:
+            if ('enabled' in tariff_plan and 
+                not tariff_plan['enabled']):
+                pass
+            else:
+                tariff_plan_list.append(tariff_plan)
+
+        for tariff_plan in tariff_plan_list:
             # scale standing charge to hourly rate
             tariff_plan['standing_rate'] = tariff_plan['annual_standing_charge'] / 365 / 24
 
@@ -823,11 +832,11 @@ def load_tariffs(
     log_message(
             verbose,
             'Loaded tariffs.. \n%s' % (
-                json.dumps(tariff_plans, indent=4)
+                json.dumps(tariff_plan_list, indent=4)
                 )
             )
 
-    return tariff_plans
+    return tariff_plan_list
 
 
 def load_data(
@@ -835,7 +844,7 @@ def load_data(
         start_date: str,
         end_date: str,
         time_zone: str,
-        tariff_plans: list) -> dict:
+        tariff_plan_list: list) -> dict:
 
     global verbose
 
@@ -902,7 +911,7 @@ def load_data(
                 # select the appropriate tariff plan
                 # based on the date range
                 # YYYY-MM-DD comparison
-                for tariff_plan in tariff_plans:
+                for tariff_plan in tariff_plan_list:
                     if (rec['day'] >= tariff_plan['start'] and 
                         rec['day'] <= tariff_plan['end']):
                         break
@@ -1071,14 +1080,14 @@ log_message(
             )
         )
 
-tariff_plans = load_tariffs(tariff_file)
+tariff_plan_list = load_tariffs(tariff_file)
 
 data_dict = load_data(
         idir,
         start_date,
         end_date,
         timezone,
-        tariff_plans)
+        tariff_plan_list)
 
 # XLSX
 workbook = xlsxwriter.Workbook(report_file_name)
