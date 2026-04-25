@@ -999,7 +999,7 @@ function populate_metrics(metrics_id, metric_key, layout) {
         $("#" + metrics_id + "_import_value").removeClass().addClass("metric metric-green");
         $("#" + metrics_id + "_import_icon").removeClass().addClass("metric-icon metric-green");
         $("#" + metrics_id + "_import_unit").removeClass().addClass("metric-unit metric-green");
-        $("#" + metrics_id + "_import_caption").removeClass().addClass("metric-caption metric-green");
+        $("#" + metrics_id + "_import_caption").removeClass().addClass("metric-caption metric-grey");
     }
 
     value_dict = format_energy_value(metrics_source.solar, 
