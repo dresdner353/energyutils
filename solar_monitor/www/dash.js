@@ -993,13 +993,11 @@ function populate_metrics(metrics_id, metric_key, layout) {
         $("#" + metrics_id + "_import_value").removeClass().addClass("metric metric-red");
         $("#" + metrics_id + "_import_icon").removeClass().addClass("metric-icon metric-red");
         $("#" + metrics_id + "_import_unit").removeClass().addClass("metric-unit metric-red");
-        $("#" + metrics_id + "_import_caption").removeClass().addClass("metric-caption metric-white");
     }
     else {
         $("#" + metrics_id + "_import_value").removeClass().addClass("metric metric-green");
         $("#" + metrics_id + "_import_icon").removeClass().addClass("metric-icon metric-green");
         $("#" + metrics_id + "_import_unit").removeClass().addClass("metric-unit metric-green");
-        $("#" + metrics_id + "_import_caption").removeClass().addClass("metric-caption metric-grey");
     }
 
     value_dict = format_energy_value(metrics_source.solar, 
@@ -1020,13 +1018,11 @@ function populate_metrics(metrics_id, metric_key, layout) {
         $("#" + metrics_id + "_solar_value").removeClass().addClass("metric metric-yellow");
         $("#" + metrics_id + "_solar_icon").removeClass().addClass("metric-icon metric-yellow");
         $("#" + metrics_id + "_solar_unit").removeClass().addClass("metric-unit metric-yellow");
-        $("#" + metrics_id + "_solar_caption").removeClass().addClass("metric-caption metric-white");
     }
     else {
         $("#" + metrics_id + "_solar_value").removeClass().addClass("metric metric-grey");
         $("#" + metrics_id + "_solar_icon").removeClass().addClass("metric-icon metric-grey");
         $("#" + metrics_id + "_solar_unit").removeClass().addClass("metric-unit metric-grey");
-        $("#" + metrics_id + "_solar_caption").removeClass().addClass("metric-caption metric-grey");
     }
 
     if (metric_key == 'pv_total') {
@@ -1043,13 +1039,11 @@ function populate_metrics(metrics_id, metric_key, layout) {
             $("#" + metrics_id + "_solar_live_value").removeClass().addClass("metric metric-yellow");
             $("#" + metrics_id + "_solar_live_icon").removeClass().addClass("metric-icon metric-yellow");
             $("#" + metrics_id + "_solar_live_unit").removeClass().addClass("metric-unit metric-yellow");
-            $("#" + metrics_id + "_solar_live_caption").removeClass().addClass("metric-caption metric-white");
         }
         else {
             $("#" + metrics_id + "_solar_live_value").removeClass().addClass("metric metric-grey");
             $("#" + metrics_id + "_solar_live_icon").removeClass().addClass("metric-icon metric-grey");
             $("#" + metrics_id + "_solar_live_unit").removeClass().addClass("metric-unit metric-grey");
-            $("#" + metrics_id + "_solar_live_caption").removeClass().addClass("metric-caption metric-grey");
         }
 
         value_dict = format_energy_value(metrics_source.solar_today, 
@@ -1064,13 +1058,11 @@ function populate_metrics(metrics_id, metric_key, layout) {
             $("#" + metrics_id + "_solar_today_value").removeClass().addClass("metric metric-yellow");
             $("#" + metrics_id + "_solar_today_icon").removeClass().addClass("metric-icon metric-yellow");
             $("#" + metrics_id + "_solar_today_unit").removeClass().addClass("metric-unit metric-yellow");
-            $("#" + metrics_id + "_solar_today_caption").removeClass().addClass("metric-caption metric-white");
         }
         else {
             $("#" + metrics_id + "_solar_today_value").removeClass().addClass("metric metric-grey");
             $("#" + metrics_id + "_solar_today_icon").removeClass().addClass("metric-icon metric-grey");
             $("#" + metrics_id + "_solar_today_unit").removeClass().addClass("metric-unit metric-grey");
-            $("#" + metrics_id + "_solar_today_caption").removeClass().addClass("metric-caption metric-grey");
         }
     }
 
@@ -1086,13 +1078,11 @@ function populate_metrics(metrics_id, metric_key, layout) {
         $("#" + metrics_id + "_export_value").removeClass().addClass("metric metric-blue");
         $("#" + metrics_id + "_export_icon").removeClass().addClass("metric-icon metric-blue");
         $("#" + metrics_id + "_export_unit").removeClass().addClass("metric-unit metric-blue");
-        $("#" + metrics_id + "_export_caption").removeClass().addClass("metric-caption metric-white");
     }
     else {
         $("#" + metrics_id + "_export_value").removeClass().addClass("metric metric-grey");
         $("#" + metrics_id + "_export_icon").removeClass().addClass("metric-icon metric-grey");
         $("#" + metrics_id + "_export_unit").removeClass().addClass("metric-unit metric-grey");
-        $("#" + metrics_id + "_export_caption").removeClass().addClass("metric-caption metric-grey");
     }
 
     value_dict = format_energy_value(metrics_source.consumed, 
@@ -1107,19 +1097,16 @@ function populate_metrics(metrics_id, metric_key, layout) {
         $("#" + metrics_id + "_consumed_value").removeClass().addClass("metric metric-green");
         $("#" + metrics_id + "_consumed_icon").removeClass().addClass("metric-icon metric-green");
         $("#" + metrics_id + "_consumed_unit").removeClass().addClass("metric-unit metric-green");
-        $("#" + metrics_id + "_consumed_caption").removeClass().addClass("metric-caption metric-white");
     }
     else if (metrics_source.solar > 0) {
         $("#" + metrics_id + "_consumed_value").removeClass().addClass("metric metric-orange");
         $("#" + metrics_id + "_consumed_icon").removeClass().addClass("metric-icon metric-orange");
         $("#" + metrics_id + "_consumed_unit").removeClass().addClass("metric-unit metric-orange");
-        $("#" + metrics_id + "_consumed_caption").removeClass().addClass("metric-caption metric-white");
     }
     else {
         $("#" + metrics_id + "_consumed_value").removeClass().addClass("metric metric-red");
         $("#" + metrics_id + "_consumed_icon").removeClass().addClass("metric-icon metric-red");
         $("#" + metrics_id + "_consumed_unit").removeClass().addClass("metric-unit metric-red");
-        $("#" + metrics_id + "_consumed_caption").removeClass().addClass("metric-caption metric-white");
     }
 
     if ('battery_charge' in metrics_source) {
@@ -1210,13 +1197,11 @@ function populate_metrics(metrics_id, metric_key, layout) {
         $("#" + metrics_id + "_co2_value").removeClass().addClass("metric metric-green");
         $("#" + metrics_id + "_co2_icon").removeClass().addClass("metric-icon metric-green");
         $("#" + metrics_id + "_co2_unit").removeClass().addClass("metric-unit metric-green");
-        $("#" + metrics_id + "_co2_caption").removeClass().addClass("metric-caption metric-white");
     }
     else {
         $("#" + metrics_id + "_co2_value").removeClass().addClass("metric metric-grey");
         $("#" + metrics_id + "_co2_icon").removeClass().addClass("metric-icon metric-grey");
         $("#" + metrics_id + "_co2_unit").removeClass().addClass("metric-unit metric-grey");
-        $("#" + metrics_id + "_co2_caption").removeClass().addClass("metric-caption metric-grey");
     }
 
     value_dict = format_trees(metrics_source.trees);
@@ -1227,13 +1212,11 @@ function populate_metrics(metrics_id, metric_key, layout) {
         $("#" + metrics_id + "_trees_value").removeClass().addClass("metric metric-green");
         $("#" + metrics_id + "_trees_icon").removeClass().addClass("metric-icon metric-green");
         $("#" + metrics_id + "_trees_unit").removeClass().addClass("metric-unit metric-green");
-        $("#" + metrics_id + "_trees_caption").removeClass().addClass("metric-caption metric-white");
     }
     else {
         $("#" + metrics_id + "_trees_value").removeClass().addClass("metric metric-grey");
         $("#" + metrics_id + "_trees_icon").removeClass().addClass("metric-icon metric-grey");
         $("#" + metrics_id + "_trees_unit").removeClass().addClass("metric-unit metric-grey");
-        $("#" + metrics_id + "_trees_caption").removeClass().addClass("metric-caption metric-grey");
     }
 
 }
