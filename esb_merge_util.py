@@ -101,25 +101,37 @@ for filename in sorted(os.listdir(inverter_dir)):
     inverter_dict = load_jsonl_file(inverter_filename)
 
     # load and merge ESB data is present
+    esb_dict = {}
     context = 'No ESB data'
     if os.path.exists(esb_filename):
         esb_dict = load_jsonl_file(esb_filename)
         context = 'Merged with ESB data'
 
-        # merge data
-        for ts in inverter_dict:
-            if ts in esb_dict:
-                inverter_rec = inverter_dict[ts]
-                esb_rec = esb_dict[ts]
+    # merge data
+    for ts in inverter_dict:
+        inverter_rec = inverter_dict[ts]
 
-                # direct overwrite of the import/export values
-                inverter_rec['import'] = esb_rec['import']
-                inverter_rec['export'] = esb_rec['export']
+        # Copy current import/export to 
+        # "ct" (current transformer) variants
+        inverter_rec['ct_import'] = inverter_rec['import']
+        inverter_rec['ct_export'] = inverter_rec['export']
+        inverter_rec['ct_import_delta'] = 0
+        inverter_rec['ct_export_delta'] = 0
 
-                # solar_consumed and consumed recalcs
-                if 'solar' in inverter_rec:
-                    inverter_rec['solar_consumed'] = inverter_rec['solar'] - inverter_rec['export']
-                    inverter_rec['consumed'] = inverter_rec['import'] + inverter_rec['solar_consumed']
+        if ts in esb_dict:
+            esb_rec = esb_dict[ts]
+
+            # direct overwrite of the import/export values
+            # and recalc of these versus the CT variants
+            inverter_rec['import'] = esb_rec['import']
+            inverter_rec['export'] = esb_rec['export']
+            inverter_rec['ct_import_delta'] = inverter_rec['import'] - inverter_rec['ct_import']
+            inverter_rec['ct_export_delta'] = inverter_rec['export'] - inverter_rec['ct_export']
+
+            # solar_consumed and consumed recalcs
+            if 'solar' in inverter_rec:
+                inverter_rec['solar_consumed'] = inverter_rec['solar'] - inverter_rec['export']
+                inverter_rec['consumed'] = inverter_rec['import'] + inverter_rec['solar_consumed']
 
     log_message(1, 'Writing %s (%s)' % (merge_filename, context))
     with open(merge_filename, 'w') as f:
