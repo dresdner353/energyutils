@@ -109,6 +109,18 @@ field_dict = {
             'header_format' : 'header',
             'format' : 'currency_4dp',
             },
+        'ct_import' : {
+            'title' : 'CT Import',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'kwh',
+            },
+        'ct_import_delta' : {
+            'title' : 'CT Import Delta',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'kwh',
+            },
 
         'grid_voltage_min' : {
             'title' : 'Min AC',
@@ -276,6 +288,18 @@ field_dict = {
             'width' : 12,
             'header_format' : 'header',
             'format' : 'currency_2dp',
+            },
+        'ct_export' : {
+            'title' : 'CT Export',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'kwh',
+            },
+        'ct_export_delta' : {
+            'title' : 'CT Export Delta',
+            'width' : 12,
+            'header_format' : 'header',
+            'format' : 'kwh',
             },
 
         'consumed' : {
