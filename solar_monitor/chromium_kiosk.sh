@@ -34,6 +34,12 @@ flags=(
    --disable-component-update
    --disable-features=TranslateUI
    --autoplay-policy=no-user-gesture-required
+   --disable-field-trial-config
+   --disable-features=PersistentHistograms
+   --metrics-recording-only
+   --disable-logging
+   --disk-cache-dir=/dev/null
+   --disk-cache-size=1
 )
 
 # launch chrome against the Solarmon dashboard 
